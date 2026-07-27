@@ -14,7 +14,7 @@ export default function MediaCard() {
     cava.stereo = false;
   }
 
-  const [activePlayerBusName, setActivePlayerBusName] = createState('');
+  const [activePlayer, setActivePlayer] = createState<Mpris.Player | null>(null);
 
   return (
     <box class="cc-media-container" orientation={Gtk.Orientation.VERTICAL} spacing={8}>
@@ -27,32 +27,18 @@ export default function MediaCard() {
         <label label="No Media Playing" css="color: alpha(currentColor, 0.5); font-weight: 700;" />
       </box>
 
-      <stack
-        transitionType={Gtk.StackTransitionType.CROSSFADE}
-        transitionDuration={250}
-        visibleChildName={activePlayerBusName.as((b) => b || 'empty')}
-        $={(self: Gtk.Stack) => {
-          const pages = self.get_pages();
-          pages.connect('items-changed', () => {
-            let i = 0;
-            let page = pages.get_item(i) as Gtk.StackPage | null;
-            while (page) {
-              const child = page.get_child();
-              const name = child.get_name();
-              if (name && page.get_name() !== name) {
-                page.set_name(name);
-              }
-              i++;
-              page = pages.get_item(i) as Gtk.StackPage | null;
-            }
-          });
-
+      <box
+        orientation={Gtk.Orientation.VERTICAL}
+        $={(self: Gtk.Box) => {
           const updateActivePlayer = () => {
             const players = mpris.get_players();
             if (players.length > 0) {
-              if (!players.find((p) => p.bus_name === activePlayerBusName())) {
-                setActivePlayerBusName(players[0].bus_name);
+              const current = activePlayer();
+              if (!current || !players.some((p) => p.bus_name === current.bus_name)) {
+                setActivePlayer(players[0]);
               }
+            } else {
+              setActivePlayer(null);
             }
           };
 
@@ -61,21 +47,21 @@ export default function MediaCard() {
           self.connect('destroy', () => mpris.disconnect(hook));
         }}
       >
-        <For each={bind(mpris, 'players')}>
+        <For each={activePlayer.as((player) => (player ? [player] : []))}>
           {(player: Mpris.Player) => {
             const onSwitch = () => {
               const players = mpris.get_players();
               if (players.length > 1) {
-                const idx = players.findIndex((p) => p.bus_name === activePlayerBusName());
+                const idx = players.findIndex((p) => p.bus_name === player.bus_name);
                 const nextIdx = (idx + 1) % players.length;
-                setActivePlayerBusName(players[nextIdx].bus_name);
+                setActivePlayer(players[nextIdx]);
               }
             };
 
             return <PlayerCard player={player} onSwitch={onSwitch} name={player.bus_name} />;
           }}
         </For>
-      </stack>
+      </box>
     </box>
   );
 }
