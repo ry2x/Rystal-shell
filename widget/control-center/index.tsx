@@ -1,4 +1,4 @@
-import { createState } from 'ags';
+import { For, createState } from 'ags';
 import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
@@ -42,6 +42,26 @@ function ClickCatcher({
   return box;
 }
 
+function Lazy({
+  build,
+  register,
+}: {
+  build: () => Gtk.Widget;
+  register: (initialize: () => void, dispose: () => void) => void;
+}) {
+  const [loaded, setLoaded] = createState(false);
+  register(
+    () => setLoaded(true),
+    () => setLoaded(false),
+  );
+
+  return (
+    <box>
+      <For each={loaded.as((isLoaded) => (isLoaded ? [true] : []))}>{() => build()}</For>
+    </box>
+  ) as Gtk.Box;
+}
+
 export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
   const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
 
@@ -50,6 +70,8 @@ export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
   const windowName = `control-center-${gdkmonitor.get_connector()}`;
 
   let hideTimeout: ReturnType<typeof setTimeout> | null = null;
+  let initializeContent = () => {};
+  let disposeContent = () => {};
 
   const hide_animated = () => {
     setIsRevealed(false);
@@ -59,12 +81,14 @@ export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
       clearTimeout(hideTimeout);
     }
     hideTimeout = setTimeout(() => {
+      disposeContent();
       if (w) w.set_visible(false);
       hideTimeout = null;
     }, 300);
   };
 
   const show_animated = () => {
+    initializeContent();
     if (hideTimeout !== null) {
       clearTimeout(hideTimeout);
       hideTimeout = null;
@@ -92,56 +116,66 @@ export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
         <box orientation={Gtk.Orientation.HORIZONTAL} vexpand={true}>
           {(() => {
             const rev = (
-              <revealer
-                transitionType={Gtk.RevealerTransitionType.CROSSFADE}
-                transitionDuration={300}
-                revealChild={isRevealed}
-              >
-                <box orientation={Gtk.Orientation.HORIZONTAL}>
-                  {(() => {
-                    const container = (
-                      <box
-                        cssClasses={isRevealed.as((r) =>
-                          r ? ['cc-container', 'revealed'] : ['cc-container'],
-                        )}
-                        css={animDx((dx) => {
-                          const ml = dx - 537;
-                          const op = Math.max(0, Math.min(1, (dx - 47) / 490));
-                          return `transform: translateX(${ml < -490 ? -490 : ml}px); opacity: ${op};`;
-                        })}
-                        orientation={Gtk.Orientation.VERTICAL}
-                        spacing={16}
-                        widthRequest={400}
-                      >
-                        <box spacing={12} halign={Gtk.Align.START}>
-                          <LucideIcon name="settings-2" pixelSize={24} />
-                          <label label="Control Center" class="cc-title" />
-                        </box>
+              <Lazy
+                register={(initialize, dispose) => {
+                  initializeContent = initialize;
+                  disposeContent = dispose;
+                }}
+                build={() =>
+                  (
+                    <revealer
+                      transitionType={Gtk.RevealerTransitionType.CROSSFADE}
+                      transitionDuration={300}
+                      revealChild={isRevealed}
+                    >
+                      <box orientation={Gtk.Orientation.HORIZONTAL}>
+                        {(() => {
+                          const container = (
+                            <box
+                              cssClasses={isRevealed.as((r) =>
+                                r ? ['cc-container', 'revealed'] : ['cc-container'],
+                              )}
+                              css={animDx((dx) => {
+                                const ml = dx - 537;
+                                const op = Math.max(0, Math.min(1, (dx - 47) / 490));
+                                return `transform: translateX(${ml < -490 ? -490 : ml}px); opacity: ${op};`;
+                              })}
+                              orientation={Gtk.Orientation.VERTICAL}
+                              spacing={16}
+                              widthRequest={400}
+                            >
+                              <box spacing={12} halign={Gtk.Align.START}>
+                                <LucideIcon name="settings-2" pixelSize={24} />
+                                <label label="Control Center" class="cc-title" />
+                              </box>
 
-                        <QuickToggles />
-                        <VolumeSlider />
-                        <BrightnessSlider />
-                        <MediaCard />
+                              <QuickToggles />
+                              <VolumeSlider />
+                              <BrightnessSlider />
+                              <MediaCard />
 
-                        <box orientation={Gtk.Orientation.HORIZONTAL} spacing={16}>
-                          <SystemMetrics />
-                        </box>
+                              <box orientation={Gtk.Orientation.HORIZONTAL} spacing={16}>
+                                <SystemMetrics />
+                              </box>
 
-                        <UpdatesCard />
-                        <ScreenCapture />
+                              <UpdatesCard />
+                              <ScreenCapture />
+                            </box>
+                          ) as Gtk.Box;
+
+                          container.set_hexpand(false);
+                          container.set_hexpand_set(true);
+                          container.set_vexpand(true);
+                          container.set_valign(Gtk.Align.FILL);
+                          container.set_halign(Gtk.Align.START);
+
+                          return container;
+                        })()}
                       </box>
-                    ) as Gtk.Box;
-
-                    container.set_hexpand(false);
-                    container.set_hexpand_set(true);
-                    container.set_vexpand(true);
-                    container.set_valign(Gtk.Align.FILL);
-                    container.set_halign(Gtk.Align.START);
-
-                    return container;
-                  })()}
-                </box>
-              </revealer>
+                    </revealer>
+                  ) as Gtk.Widget
+                }
+              />
             ) as Gtk.Widget;
 
             rev.set_hexpand(false);

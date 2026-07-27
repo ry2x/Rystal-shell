@@ -1,4 +1,4 @@
-import { createState } from 'ags';
+import { For, createState } from 'ags';
 import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
@@ -39,6 +39,26 @@ function ClickCatcher({
   return box;
 }
 
+function Lazy({
+  build,
+  register,
+}: {
+  build: () => Gtk.Widget;
+  register: (initialize: () => void, dispose: () => void) => void;
+}) {
+  const [loaded, setLoaded] = createState(false);
+  register(
+    () => setLoaded(true),
+    () => setLoaded(false),
+  );
+
+  return (
+    <box>
+      <For each={loaded.as((isLoaded) => (isLoaded ? [true] : []))}>{() => build()}</For>
+    </box>
+  ) as Gtk.Box;
+}
+
 export default function DateWeatherPopup(gdkmonitor: Gdk.Monitor) {
   const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
 
@@ -47,6 +67,8 @@ export default function DateWeatherPopup(gdkmonitor: Gdk.Monitor) {
   const windowName = `date-weather-popup-${gdkmonitor.get_connector()}`;
 
   let hideTimeout: ReturnType<typeof setTimeout> | null = null;
+  let initializeContent = () => {};
+  let disposeContent = () => {};
 
   const hide_animated = () => {
     setIsRevealed(false);
@@ -56,12 +78,14 @@ export default function DateWeatherPopup(gdkmonitor: Gdk.Monitor) {
       clearTimeout(hideTimeout);
     }
     hideTimeout = setTimeout(() => {
+      disposeContent();
       if (w) w.set_visible(false);
       hideTimeout = null;
     }, 800);
   };
 
   const show_animated = () => {
+    initializeContent();
     if (hideTimeout !== null) {
       clearTimeout(hideTimeout);
       hideTimeout = null;
@@ -89,61 +113,71 @@ export default function DateWeatherPopup(gdkmonitor: Gdk.Monitor) {
         <box orientation={Gtk.Orientation.HORIZONTAL} vexpand={true}>
           {(() => {
             const rev = (
-              <revealer
-                transitionType={Gtk.RevealerTransitionType.CROSSFADE}
-                transitionDuration={800}
-                revealChild={isRevealed}
-              >
-                <box orientation={Gtk.Orientation.HORIZONTAL}>
-                  {(() => {
-                    const container = (
-                      <box
-                        cssClasses={isRevealed.as((r) =>
-                          r ? ['dw-container', 'revealed'] : ['dw-container'],
-                        )}
-                        css={animDx((dx) => {
-                          const ml = dx - 947;
-                          const op = Math.max(0, Math.min(1, (dx - 47) / 900));
-                          return `transform: translateX(${ml < -900 ? -900 : ml}px); opacity: ${op};`;
-                        })}
-                        spacing={24}
-                      >
-                        {/* LEFT COLUMN: Weather & Calendar */}
-                        <box
-                          orientation={Gtk.Orientation.VERTICAL}
-                          spacing={16}
-                          class="left-column"
-                        >
-                          <ClockCard />
-                          <WorldClockCard />
-                          <WeatherCard />
-                          <box class="calendar-card widget-card" halign={Gtk.Align.FILL}>
-                            {Object.assign(new Gtk.Calendar(), {
-                              halign: Gtk.Align.CENTER,
-                              hexpand: true,
-                            })}
-                          </box>
-                          <ProfileCard />
-                        </box>
+              <Lazy
+                register={(initialize, dispose) => {
+                  initializeContent = initialize;
+                  disposeContent = dispose;
+                }}
+                build={() =>
+                  (
+                    <revealer
+                      transitionType={Gtk.RevealerTransitionType.CROSSFADE}
+                      transitionDuration={800}
+                      revealChild={isRevealed}
+                    >
+                      <box orientation={Gtk.Orientation.HORIZONTAL}>
+                        {(() => {
+                          const container = (
+                            <box
+                              cssClasses={isRevealed.as((r) =>
+                                r ? ['dw-container', 'revealed'] : ['dw-container'],
+                              )}
+                              css={animDx((dx) => {
+                                const ml = dx - 947;
+                                const op = Math.max(0, Math.min(1, (dx - 47) / 900));
+                                return `transform: translateX(${ml < -900 ? -900 : ml}px); opacity: ${op};`;
+                              })}
+                              spacing={24}
+                            >
+                              {/* LEFT COLUMN: Weather & Calendar */}
+                              <box
+                                orientation={Gtk.Orientation.VERTICAL}
+                                spacing={16}
+                                class="left-column"
+                              >
+                                <ClockCard />
+                                <WorldClockCard />
+                                <WeatherCard />
+                                <box class="calendar-card widget-card" halign={Gtk.Align.FILL}>
+                                  {Object.assign(new Gtk.Calendar(), {
+                                    halign: Gtk.Align.CENTER,
+                                    hexpand: true,
+                                  })}
+                                </box>
+                                <ProfileCard />
+                              </box>
 
-                        {/* Separator between columns */}
-                        <box class="vertical-sep" />
+                              {/* Separator between columns */}
+                              <box class="vertical-sep" />
 
-                        {/* RIGHT COLUMN: Notifications */}
-                        <NotificationList />
+                              {/* RIGHT COLUMN: Notifications */}
+                              <NotificationList />
+                            </box>
+                          ) as Gtk.Box;
+
+                          container.set_hexpand(false);
+                          container.set_hexpand_set(true);
+                          container.set_vexpand(true);
+                          container.set_valign(Gtk.Align.FILL);
+                          container.set_halign(Gtk.Align.START);
+
+                          return container;
+                        })()}
                       </box>
-                    ) as Gtk.Box;
-
-                    container.set_hexpand(false);
-                    container.set_hexpand_set(true);
-                    container.set_vexpand(true);
-                    container.set_valign(Gtk.Align.FILL);
-                    container.set_halign(Gtk.Align.START);
-
-                    return container;
-                  })()}
-                </box>
-              </revealer>
+                    </revealer>
+                  ) as Gtk.Widget
+                }
+              />
             ) as Gtk.Widget;
 
             rev.set_hexpand(false);
