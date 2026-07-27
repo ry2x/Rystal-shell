@@ -4,9 +4,9 @@ import { createBinding as bind } from 'ags';
 import { Gdk, Gtk } from 'ags/gtk4';
 
 import Mpris from 'gi://AstalMpris';
-import Gio from 'gi://Gio';
 import Pango from 'gi://Pango';
 
+import { loadTextureFromUri } from '../../../../lib/image';
 import { LucideIcon } from '../../../../lib/lucide';
 import { fetchYouTubeThumbnail } from '../../../../services/mpris';
 import { closeAllControlCenters, focusWindow } from '../../../../services/windowManager';
@@ -30,8 +30,7 @@ function updatePicture(pic: Gtk.Picture, artUrl: string | null) {
   }
 
   try {
-    const file = Gio.File.new_for_uri(uri);
-    pic.set_paintable(Gdk.Texture.new_from_file(file));
+    pic.set_paintable(loadTextureFromUri(uri, 160, 160));
   } catch (e) {
     pic.set_paintable(null as unknown as Gdk.Paintable);
     console.error(e);
