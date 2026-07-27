@@ -1,0 +1,13 @@
+node_modules/
+
+@girs/
+
+themes/matugen.scss
+
+config.json
+
+assets/launcher_bg_*.png
+assets/bg.scss
+assets/icons/hicolor/icon-theme.cache
+
+start-ags
