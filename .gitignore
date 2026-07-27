@@ -6,8 +6,7 @@ themes/matugen.scss
 
 config.json
 
-assets/launcher_bg_*.png
-assets/bg.scss
+assets/launcher_bg*.png
 assets/icons/hicolor/icon-theme.cache
 
 start-ags
