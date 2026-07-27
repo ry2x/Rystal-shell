@@ -14,11 +14,13 @@ export default function ScrollerIndicator({ gdkmonitor }: { gdkmonitor: Gdk.Moni
   const [info, setInfo] = createState({ current: 0, total: 0 });
 
   let currentLayout = 'scrolling';
+  let disposed = false;
 
   function updateLayout() {
     hypr.message_async('j/getoption general:layout', (_, res) => {
       try {
         const out = hypr.message_finish(res);
+        if (disposed) return;
         const data = JSON.parse(out);
         currentLayout = data.str;
         updateVisibility();
@@ -37,6 +39,7 @@ export default function ScrollerIndicator({ gdkmonitor }: { gdkmonitor: Gdk.Moni
     if (updateTimeout) return;
     updateTimeout = setTimeout(() => {
       updateTimeout = null;
+      if (disposed) return;
 
       const monitor = hypr.monitors.find((m) => m.name === connector);
       if (!monitor) {
@@ -90,7 +93,14 @@ export default function ScrollerIndicator({ gdkmonitor }: { gdkmonitor: Gdk.Moni
       transitionType={Gtk.RevealerTransitionType.SLIDE_RIGHT}
       transitionDuration={250}
       revealChild={isVisible}
-      onDestroy={() => hooks.forEach((h) => hypr.disconnect(h))}
+      onDestroy={() => {
+        disposed = true;
+        if (updateTimeout !== null) {
+          clearTimeout(updateTimeout);
+          updateTimeout = null;
+        }
+        hooks.forEach((h) => hypr.disconnect(h));
+      }}
     >
       <box orientation={Gtk.Orientation.VERTICAL}>
         <button class="ScrollerIndicator" onClicked={toggleScrollerOverview}>
