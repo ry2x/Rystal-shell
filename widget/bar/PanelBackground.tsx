@@ -79,7 +79,7 @@ export default function PanelBackground({ gdkmonitor }: { gdkmonitor: Gdk.Monito
   let currentDx = BAR_WIDTH;
   let animTickId = 0;
 
-  activeSidePanel.subscribe(({ panel, monitor }) => {
+  const unsubscribePanel = activeSidePanel.subscribe(({ panel, monitor }) => {
     // Only expand the bar on the monitor where the panel is active.
     if (monitor === gdkmonitor.get_connector() || monitor === '') {
       if (panel === 'control-center') {
@@ -120,6 +120,11 @@ export default function PanelBackground({ gdkmonitor }: { gdkmonitor: Gdk.Monito
       canFocus={false}
       sensitive={false}
       onDestroy={(da) => {
+        unsubscribePanel();
+        if (animTickId !== 0) {
+          GLib.source_remove(animTickId);
+          animTickId = 0;
+        }
         const idx = drawingAreas.indexOf(da as Gtk.DrawingArea);
         if (idx !== -1) drawingAreas.splice(idx, 1);
       }}

@@ -18,6 +18,10 @@ export const activeSidePanel = {
   subscribe(cb: (val: { panel: string; monitor: string }) => void) {
     this.callbacks.push(cb);
     cb(this.value);
+    return () => {
+      const index = this.callbacks.indexOf(cb);
+      if (index !== -1) this.callbacks.splice(index, 1);
+    };
   },
 };
 
