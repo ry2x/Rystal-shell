@@ -7,8 +7,17 @@ import Gio from 'gi://Gio';
 const CACHE_DIR = `${GLib.get_user_cache_dir()}/ags`;
 const HISTORY_FILE = `${CACHE_DIR}/app_history.json`;
 const MAX_APP_RESULTS = 30;
+const MAX_HISTORY_ENTRIES = 100;
 
 let appHistory: Record<string, number> = {};
+
+function trimAppHistory() {
+  const entries = Object.entries(appHistory)
+    .filter(([, score]) => Number.isFinite(score) && score > 0)
+    .sort(([, scoreA], [, scoreB]) => scoreB - scoreA)
+    .slice(0, MAX_HISTORY_ENTRIES);
+  appHistory = Object.fromEntries(entries);
+}
 
 export function loadAppHistory() {
   try {
@@ -17,6 +26,7 @@ export function loadAppHistory() {
       const [ok, contents] = file.load_contents(null);
       if (ok) {
         appHistory = JSON.parse(new TextDecoder().decode(contents));
+        trimAppHistory();
       }
     }
   } catch (e) {
@@ -45,6 +55,7 @@ export function recordAppLaunch(app: Apps.Application) {
     appHistory[k] *= 0.99;
   }
   appHistory[key] = (appHistory[key] || 0) + 1;
+  trimAppHistory();
   saveAppHistory();
 }
 
