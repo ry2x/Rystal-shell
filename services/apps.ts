@@ -6,6 +6,7 @@ import Gio from 'gi://Gio';
 
 const CACHE_DIR = `${GLib.get_user_cache_dir()}/ags`;
 const HISTORY_FILE = `${CACHE_DIR}/app_history.json`;
+const MAX_APP_RESULTS = 30;
 
 let appHistory: Record<string, number> = {};
 
@@ -65,7 +66,7 @@ export function getAppList() {
 
 export function searchApps(q: string) {
   const allApps = getAppList();
-  if (q === '') return allApps;
+  if (q === '') return allApps.slice(0, MAX_APP_RESULTS);
   const keywords = q.split(/\s+/);
 
   const results = allApps
@@ -95,7 +96,7 @@ export function searchApps(q: string) {
     .filter((x) => x.score > 0);
 
   results.sort((a, b) => b.score - a.score);
-  return results.map((x) => x.app).slice(0, 30); // LIMIT TO 30 APPS TO SAVE MEMORY
+  return results.map((x) => x.app).slice(0, MAX_APP_RESULTS);
 }
 
 export function searchWeb(query: string) {
