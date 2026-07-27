@@ -5,9 +5,9 @@ import { Gtk } from 'ags/gtk4';
 
 import Notifd from 'gi://AstalNotifd';
 import Gdk from 'gi://Gdk';
-import Gio from 'gi://Gio';
 import Pango from 'gi://Pango';
 
+import { loadTextureFromUri } from '../../lib/image';
 import { LucideIcon } from '../../lib/lucide';
 
 export function resolveImage(img: string | null) {
@@ -113,8 +113,7 @@ export default function NotificationCard({
                   });
                   appIconPic = pic;
                   try {
-                    const file = Gio.File.new_for_uri(appIconPath);
-                    pic.set_paintable(Gdk.Texture.new_from_file(file));
+                    pic.set_paintable(loadTextureFromUri(appIconPath, 64, 64));
                   } catch (e) {
                     console.error(e);
                   }
@@ -199,8 +198,7 @@ export default function NotificationCard({
               });
               imagePic = pic;
               try {
-                const file = Gio.File.new_for_uri(imageToDisplay);
-                pic.set_paintable(Gdk.Texture.new_from_file(file));
+                pic.set_paintable(loadTextureFromUri(imageToDisplay, 760, 280));
               } catch (e) {
                 console.error(e);
               }
