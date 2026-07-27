@@ -19,7 +19,7 @@
     "tsc": "tsc --noEmit",
     "build": "ags bundle app.ts start-ags",
     "start": "./start-ags",
-    "dev" : "ags bundle app.ts start-ags && ./start-ags"
+    "dev": "ags bundle app.ts start-ags && ./start-ags"
   },
   "name": "ryprags-shell",
   "private": true

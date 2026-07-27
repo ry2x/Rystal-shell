@@ -4,7 +4,6 @@
 To use it, you must be using Ryprland.
 For installation instructions, please refer to the Ryprland repository.
 
-
 [https://github.com/user-attachments/assets/5e309397-45a1-4d81-b356-dac4220af26a](https://github.com/user-attachments/assets/8e5a3ac4-4107-4b52-b694-a8c6a0ac113e)
 
 > [!IMPORTANT]
