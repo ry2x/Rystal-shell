@@ -56,8 +56,13 @@ export function AppList({
     });
     onResultsChanged(currentResults);
 
-    for (const [, w] of widgetMap) {
-      w.set_visible(false);
+    const currentKeys = new Set(currentResults.map((res) => getAppKey(res)));
+    for (const [key, w] of widgetMap) {
+      if (!currentKeys.has(key)) {
+        appList.remove(w);
+        w.run_dispose();
+        widgetMap.delete(key);
+      }
     }
 
     let prev: Gtk.Widget | null = null;
