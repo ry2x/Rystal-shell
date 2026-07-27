@@ -1,5 +1,3 @@
-import system from 'system';
-
 import { createBinding as bind } from 'ags';
 import { Gdk, Gtk } from 'ags/gtk4';
 
@@ -52,23 +50,20 @@ export default function PlayerCard({
     canShrink: true,
   });
   const picRef = pic;
+  let disposed = false;
+  let updateGeneration = 0;
 
   const updateImg = async () => {
+    const generation = ++updateGeneration;
     try {
       const ytArt = await fetchYouTubeThumbnail(player);
+      if (disposed || generation !== updateGeneration) return;
       updatePicture(picRef, ytArt || player.cover_art);
     } catch (e) {
+      if (disposed || generation !== updateGeneration) return;
       console.error(e);
       updatePicture(picRef, player.cover_art);
     }
-
-    setTimeout(() => {
-      try {
-        system.gc();
-      } catch (e) {
-        console.error(e);
-      }
-    }, 100);
   };
 
   const hook = player.connect('notify::cover-art', updateImg);
@@ -79,8 +74,10 @@ export default function PlayerCard({
       name={name}
       cssClasses={['cc-media-card']}
       onDestroy={() => {
+        disposed = true;
+        updateGeneration++;
         player.disconnect(hook);
-        if (picRef) picRef.set_paintable(null as unknown as Gdk.Paintable);
+        picRef.set_paintable(null as unknown as Gdk.Paintable);
       }}
       $={(self: Gtk.Overlay) => {
         const cavaContainer = (
