@@ -7,5 +7,8 @@
     { "label": "Brisbane", "tz": "Australia/Brisbane" },
     { "label": "New York", "tz": "America/New_York" },
     { "label": "Los Angeles", "tz": "America/Los_Angeles" }
-  ]
+  ],
+  "profile": {
+    "avatarPath": "~/Profile/Profile.png"
+  }
 }
