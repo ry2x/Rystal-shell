@@ -1,5 +1,4 @@
 @use 'variables' as *;
-@use '../assets/bg.scss' as *;
 
 window.AppLauncher,
 .applauncher-window {
@@ -21,9 +20,6 @@ window.AppLauncher,
 }
 
 .applauncher-left-panel {
-  background-image: url(#{$launcher_bg});
-  background-size: cover;
-  background-position: center;
   background-color: $bg;
   border-radius: 1em 0 0 1em;
   min-width: 32em;

@@ -5,6 +5,7 @@ import app from 'ags/gtk4/app';
 import Apps from 'gi://AstalApps';
 import GLib from 'gi://GLib';
 
+import { registerLauncherBackground } from '../../services/launcherBackground';
 import { AppList } from './widget/AppList';
 import { SearchInput } from './widget/SearchInput';
 
@@ -16,6 +17,18 @@ export default function AppLauncher(gdkmonitor: Gdk.Monitor) {
   const monitorConnector = gdkmonitor.get_connector();
 
   let currentResults: Apps.Application[] = [];
+  const launcherBackground = new Gtk.Picture({
+    contentFit: Gtk.ContentFit.COVER,
+    canTarget: false,
+    canShrink: true,
+  });
+  launcherBackground.set_hexpand(true);
+  launcherBackground.set_vexpand(true);
+  launcherBackground.set_halign(Gtk.Align.FILL);
+  launcherBackground.set_valign(Gtk.Align.FILL);
+  launcherBackground.set_size_request(1, 1);
+  const unregisterLauncherBackground = registerLauncherBackground(launcherBackground);
+  launcherBackground.connect('destroy', unregisterLauncherBackground);
 
   const searchInput = SearchInput({
     text,
@@ -25,6 +38,15 @@ export default function AppLauncher(gdkmonitor: Gdk.Monitor) {
     getResults: () => currentResults,
     monitorConnector,
   });
+
+  const launcherContent = (
+    <box orientation={Gtk.Orientation.VERTICAL} vexpand>
+      <box vexpand />
+      <box class="applauncher-search-container" hexpand>
+        {searchInput}
+      </box>
+    </box>
+  ) as Gtk.Box;
 
   const appList = AppList({
     text,
@@ -62,11 +84,20 @@ export default function AppLauncher(gdkmonitor: Gdk.Monitor) {
       <box class="applauncher-window" halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER}>
         <box class="applauncher-box-wrapper" halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER}>
           {/* Left Panel */}
-          <box class="applauncher-left-panel" orientation={Gtk.Orientation.VERTICAL} vexpand>
-            <box vexpand />
-            <box class="applauncher-search-container" hexpand>
-              {searchInput}
-            </box>
+          <box
+            class="applauncher-left-panel"
+            orientation={Gtk.Orientation.VERTICAL}
+            vexpand
+            overflow={Gtk.Overflow.HIDDEN}
+          >
+            <overlay
+              hexpand
+              vexpand
+              $={(self: Gtk.Overlay) => {
+                self.set_child(launcherBackground);
+                self.add_overlay(launcherContent);
+              }}
+            />
           </box>
 
           {/* Right Panel */}
