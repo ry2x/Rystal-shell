@@ -1,5 +1,3 @@
-import system from 'system';
-
 import { Gdk, Gtk } from 'ags/gtk4';
 import { execAsync } from 'ags/process';
 
@@ -17,6 +15,12 @@ export function reloadCss(cssInput: string) {
     throw new Error('Cannot reload CSS without a default display');
   }
 
+  if (globalCssProvider) {
+    Gtk.StyleContext.remove_provider_for_display(display, globalCssProvider);
+    globalCssProvider.run_dispose();
+    globalCssProvider = null;
+  }
+
   const nextProvider = new Gtk.CssProvider();
   if (GLib.file_test(cssInput, GLib.FileTest.EXISTS)) {
     nextProvider.load_from_path(cssInput);
@@ -29,18 +33,6 @@ export function reloadCss(cssInput: string) {
     nextProvider,
     Gtk.STYLE_PROVIDER_PRIORITY_USER,
   );
-
-  if (globalCssProvider) {
-    Gtk.StyleContext.remove_provider_for_display(display, globalCssProvider);
-  }
-
-  globalCssProvider = null;
-
-  try {
-    system.gc();
-  } catch (e) {
-    console.error(e);
-  }
 
   globalCssProvider = nextProvider;
 
