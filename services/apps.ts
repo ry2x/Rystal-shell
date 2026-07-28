@@ -8,8 +8,22 @@ const CACHE_DIR = `${GLib.get_user_cache_dir()}/ags`;
 const HISTORY_FILE = `${CACHE_DIR}/app_history.json`;
 const MAX_APP_RESULTS = 30;
 const MAX_HISTORY_ENTRIES = 100;
+const apps = new Apps.Apps();
+
+interface HistoryStore {
+  version: 2;
+  scores: Record<string, number>;
+}
 
 let appHistory: Record<string, number> = {};
+
+function getAppHistoryKey(app: Apps.Application) {
+  return app.entry || app.executable || app.name;
+}
+
+function getRawAppList() {
+  return apps.get_list();
+}
 
 function trimAppHistory() {
   const entries = Object.entries(appHistory)
@@ -25,7 +39,32 @@ export function loadAppHistory() {
     if (file.query_exists(null)) {
       const [ok, contents] = file.load_contents(null);
       if (ok) {
-        appHistory = JSON.parse(new TextDecoder().decode(contents));
+        const parsed: unknown = JSON.parse(new TextDecoder().decode(contents));
+        if (
+          typeof parsed === 'object' &&
+          parsed !== null &&
+          'version' in parsed &&
+          parsed.version === 2 &&
+          'scores' in parsed &&
+          typeof parsed.scores === 'object' &&
+          parsed.scores !== null
+        ) {
+          appHistory = parsed.scores as Record<string, number>;
+        } else if (typeof parsed === 'object' && parsed !== null) {
+          const legacy = parsed as Record<string, number>;
+          const migrated: Record<string, number> = {};
+          for (const [legacyKey, score] of Object.entries(legacy)) {
+            const matches = getRawAppList().filter(
+              (app) => app.executable === legacyKey || app.name === legacyKey,
+            );
+            if (matches.length === 1 && Number.isFinite(score)) {
+              const key = getAppHistoryKey(matches[0]);
+              migrated[key] = (migrated[key] ?? 0) + score;
+            }
+          }
+          appHistory = migrated;
+          saveAppHistory();
+        }
         trimAppHistory();
       }
     }
@@ -41,7 +80,9 @@ export function saveAppHistory() {
     if (parent && !parent.query_exists(null)) {
       parent.make_directory_with_parents(null);
     }
-    const contents = new TextEncoder().encode(JSON.stringify(appHistory));
+    const contents = new TextEncoder().encode(
+      JSON.stringify({ version: 2, scores: appHistory } satisfies HistoryStore),
+    );
     file.replace_contents(contents, null, false, Gio.FileCreateFlags.NONE, null);
   } catch (e) {
     console.error('Failed to save app history', e);
@@ -49,7 +90,7 @@ export function saveAppHistory() {
 }
 
 export function recordAppLaunch(app: Apps.Application) {
-  const key = app.executable || app.name;
+  const key = getAppHistoryKey(app);
   if (!key) return;
   for (const k in appHistory) {
     appHistory[k] *= 0.99;
@@ -62,12 +103,10 @@ export function recordAppLaunch(app: Apps.Application) {
 // Load initially
 loadAppHistory();
 
-const apps = new Apps.Apps();
-
 export function getAppList() {
-  return apps.get_list().sort((a, b) => {
-    const keyA = a.executable || a.name;
-    const keyB = b.executable || b.name;
+  return getRawAppList().sort((a, b) => {
+    const keyA = getAppHistoryKey(a);
+    const keyB = getAppHistoryKey(b);
     const scoreA = appHistory[keyA] || 0;
     const scoreB = appHistory[keyB] || 0;
     if (scoreB !== scoreA) return scoreB - scoreA;
@@ -96,7 +135,7 @@ export function searchApps(q: string) {
       const matchesAll = keywords.every((kw) => searchString.includes(kw));
       if (!matchesAll) score = 0;
 
-      const key = appItem.executable || appItem.name;
+      const key = getAppHistoryKey(appItem);
       const historyScore = appHistory[key] || 0;
       if (score > 0) {
         score += historyScore * 10;
@@ -114,4 +153,26 @@ export function searchWeb(query: string) {
   execAsync(['xdg-open', `https://google.com/search?q=${encodeURIComponent(query)}`]).catch(
     () => {},
   );
+}
+
+const DOMAIN_PATTERN =
+  /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}(?::\d{1,5})?(?:[/?#][^\s]*)?$/i;
+const HTTP_URL_PATTERN = /^https?:\/\/[^\s]+$/i;
+
+export function getDirectUrl(value: string) {
+  const query = value.trim();
+  if (!query || /\s/.test(query)) return null;
+
+  if (HTTP_URL_PATTERN.test(query)) return query;
+  return DOMAIN_PATTERN.test(query) ? `https://${query}` : null;
+}
+
+export function openQuery(value: string) {
+  const url = getDirectUrl(value);
+  if (url) {
+    execAsync(['xdg-open', url]).catch(console.error);
+    return 'url' as const;
+  }
+  searchWeb(value);
+  return 'search' as const;
 }
