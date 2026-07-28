@@ -1,4 +1,7 @@
 {
+  "brightness": {
+    "backend": "auto"
+  },
   "weather": {
     "location": "Osaka"
   },
