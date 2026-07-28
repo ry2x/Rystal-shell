@@ -1,18 +1,12 @@
 import { For, createBinding as bind, createState } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
-import AstalCava from 'gi://AstalCava';
 import Mpris from 'gi://AstalMpris';
 
 import PlayerCard from './PlayerCard';
 
 export default function MediaCard() {
   const mpris = Mpris.get_default();
-  const cava = AstalCava.get_default();
-  if (cava) {
-    cava.bars = 16;
-    cava.stereo = false;
-  }
 
   const [activePlayer, setActivePlayer] = createState<Mpris.Player | null>(null);
 

@@ -6,6 +6,9 @@ export default function CavaWidget() {
   const cava = AstalCava.get_default();
   if (!cava) return <box visible={false} />;
 
+  cava.bars = 16;
+  cava.stereo = false;
+
   const area = new Gtk.DrawingArea();
   area.set_size_request(-1, 160);
   area.set_hexpand(true);
