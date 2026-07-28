@@ -2,7 +2,7 @@ import { Gdk, Gtk } from 'ags/gtk4';
 
 import Apps from 'gi://AstalApps';
 
-import { recordAppLaunch, searchWeb } from '../../../services/apps';
+import { openQuery, recordAppLaunch } from '../../../services/apps';
 import { toggleAppLauncher } from '../../../services/windowManager';
 
 interface State<T> {
@@ -58,7 +58,7 @@ export function SearchInput({
       if (idx === results.length) {
         const searchQuery = text.get();
         toggleAppLauncher(monitorConnector);
-        searchWeb(searchQuery);
+        openQuery(searchQuery);
       } else if (idx < results.length) {
         toggleAppLauncher(monitorConnector);
         recordAppLaunch(results[idx]);

@@ -2,7 +2,7 @@ import { Gtk } from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
-import { searchWeb } from '../../../services/apps';
+import { getDirectUrl, openQuery } from '../../../services/apps';
 import { toggleAppLauncher } from '../../../services/windowManager';
 
 interface TextState {
@@ -26,19 +26,27 @@ export function SearchGoogleBtn({
       onClicked={() => {
         const t = textState.peek() || '';
         toggleAppLauncher(monitorConnector);
-        searchWeb(t);
+        openQuery(t);
       }}
     >
       <box orientation={Gtk.Orientation.HORIZONTAL} spacing={12}>
         <image iconName="web-browser" class="applauncher-item-icon" />
         <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
           <label
-            label={textState.as((t: string) => `Search "${t || ''}"`)}
+            label={textState.as((t: string) =>
+              getDirectUrl(t || '') ? `Open "${t || ''}"` : `Search "${t || ''}"`,
+            )}
             halign={Gtk.Align.START}
             class="applauncher-item-name"
             ellipsize={Pango.EllipsizeMode.END}
           />
-          <label label="Search on Google" halign={Gtk.Align.START} class="applauncher-item-desc" />
+          <label
+            label={textState.as((t: string) =>
+              getDirectUrl(t || '') ? 'Open URL' : 'Search on Google',
+            )}
+            halign={Gtk.Align.START}
+            class="applauncher-item-desc"
+          />
         </box>
       </box>
     </button>
