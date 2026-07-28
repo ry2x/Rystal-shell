@@ -1,10 +1,7 @@
 import { execAsync } from 'ags/process';
 
-import GLib from 'gi://GLib';
-
 export function openFcitxConfig() {
-  const env = GLib.getenv('QT_QPA_PLATFORMTHEME');
-  execAsync(['bash', '-c', `QT_QPA_PLATFORMTHEME=${env} fcitx5-configtool`]).catch(() => {});
+  execAsync('fcitx5-configtool').catch(() => {});
 }
 
 export function reloadFcitx() {
