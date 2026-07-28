@@ -26,6 +26,8 @@ window.DateWeatherPopup {
     // 2-column layout width
     min-width: 830px;
     min-height: 600px;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .left-column {
