@@ -1,0 +1,262 @@
+@use 'sass:color';
+@use 'variables' as *;
+
+// Date & Weather popup
+window.DateWeatherPopup {
+  background: transparent;
+  color: $text;
+  font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
+
+  .dw-container {
+    background: transparent;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    padding: 24px;
+    box-shadow: none;
+    min-width: 830px;
+    min-height: 600px;
+  }
+
+  .left-column {
+    min-width: 320px;
+  }
+  .right-column {
+    min-width: 450px;
+  }
+
+  .widget-card {
+    background: rgba($on-surface, 0.04);
+    border: 1px solid rgba($on-surface, 0.08);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transition: all 200ms;
+    &:hover {
+      background: rgba($on-surface, 0.06);
+    }
+  }
+
+  .calendar-card {
+    padding: 16px;
+    calendar {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      color: $text;
+      font-size: 1.1em;
+      header {
+        margin-bottom: 12px;
+        button {
+          background: transparent;
+          border: none;
+          box-shadow: none;
+          border-radius: 50%;
+          min-width: 32px;
+          min-height: 32px;
+          color: $text;
+          transition: all 200ms;
+          &:hover {
+            background: rgba($primary, 0.15);
+            color: $primary;
+          }
+        }
+        label.year,
+        stack.month {
+          font-size: 1.1em;
+          font-weight: 800;
+          color: $primary;
+        }
+      }
+      grid {
+        label:nth-child(7n + 1) {
+          color: $error;
+        }
+        label:nth-child(7n) {
+          color: $secondary;
+        }
+        label.day-name {
+          font-size: 0.9em;
+          font-weight: 700;
+          margin-bottom: 8px;
+          opacity: 0.7;
+        }
+        label.day-number {
+          padding: 5px 0;
+          border: 1px solid transparent;
+          border-radius: 1em;
+          transition: all 200ms;
+          &:hover {
+            background: rgba($on-surface, 0.1);
+          }
+          &:selected {
+            background: rgba($primary, 0.3);
+            border-color: $primary;
+            color: $text;
+          }
+        }
+        label.other-month {
+          opacity: 0.25;
+        }
+        label.today {
+          background: $primary;
+          color: $on-primary;
+          font-weight: 800;
+          box-shadow: 0 4px 12px rgba($primary, 0.4);
+          &:hover {
+            background: color.adjust($primary, $lightness: 5%);
+          }
+        }
+      }
+    }
+  }
+
+  .vertical-sep {
+    min-width: 1px;
+    background: $border;
+    margin: 8px 0;
+  }
+  .notif-header-btn {
+    background: rgba($on-surface, 0.05);
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    transition: all 200ms;
+    &.clear-all:hover {
+      background: $error;
+      color: $on-error;
+    }
+    &.dnd:hover {
+      background: rgba($on-surface, 0.1);
+    }
+    &.dnd.active {
+      background: rgba($primary, 0.15);
+      color: $primary;
+    }
+  }
+  .notif-scroll {
+    min-height: 500px;
+  }
+  .dw-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: $text;
+  }
+
+  .click-catcher {
+    background-color: rgba(0, 0, 0, 0.01);
+    border: none;
+    box-shadow: none;
+    background-image: none;
+    outline: none;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+    &:hover,
+    &:active,
+    &:focus {
+      background-color: rgba(0, 0, 0, 0.01);
+      background-image: none;
+      border: none;
+      box-shadow: none;
+      outline: none;
+    }
+  }
+
+  &.urgency-2 {
+    border: 1px solid rgba($error, 0.5);
+    background: rgba($error, 0.05);
+  }
+}
+
+.clock-time {
+  font-size: 3.5em;
+  font-weight: 800;
+  color: $primary;
+}
+.clock-day {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: $text;
+}
+.clock-dot {
+  font-size: 1.1em;
+  color: rgba($text, 0.5);
+}
+.clock-date {
+  font-size: 1.1em;
+  color: rgba($text, 0.8);
+}
+.clock-tz {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: $primary;
+  margin-bottom: 8px;
+}
+
+.weather-icon {
+  color: $primary;
+}
+.weather-temp {
+  font-size: 2.2em;
+  font-weight: 800;
+  color: $primary;
+}
+.weather-desc {
+  font-size: 1.1em;
+  color: rgba($text, 0.7);
+}
+.weather-info {
+  font-size: 0.9em;
+  color: rgba($text, 0.6);
+}
+.weather-info-icon {
+  color: $secondary;
+}
+.forecast-day {
+  font-size: 0.95em;
+  font-weight: 800;
+  min-width: 45px;
+  color: $text;
+}
+.forecast-icon {
+  color: $primary;
+}
+.forecast-max {
+  font-size: 0.85em;
+  font-weight: 700;
+  color: $secondary;
+}
+.forecast-min {
+  font-size: 0.8em;
+  color: rgba($text, 0.6);
+}
+
+.world-clock-card .world-clock-label {
+  font-weight: 700;
+  color: $primary;
+}
+
+.profile-card {
+  padding: 16px;
+  .profile-avatar {
+    border: 2px solid $primary;
+    box-shadow:
+      0 0 8px rgba($primary, 0.8),
+      0 0 16px rgba($primary, 0.4);
+  }
+  .profile-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: $primary;
+  }
+  .profile-env {
+    font-size: 0.9em;
+    color: rgba($text, 0.7);
+  }
+  .profile-uptime {
+    font-size: 0.8em;
+    color: rgba($text, 0.5);
+  }
+}
