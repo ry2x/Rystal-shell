@@ -54,7 +54,7 @@ export default function NotificationList() {
         vexpand={true}
       >
         <box orientation={Gtk.Orientation.VERTICAL} spacing={12} class="notif-list">
-          <For each={notifications} cleanup={(element) => element.run_dispose()}>
+          <For each={notifications}>
             {(notif) => {
               const n = notif as Notifd.Notification;
               return (

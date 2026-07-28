@@ -92,7 +92,7 @@ export default function NotificationPopups(gdkmonitor: Gdk.Monitor) {
       }}
     >
       <box orientation={Gtk.Orientation.VERTICAL} spacing={8} valign={Gtk.Align.START}>
-        <For each={popups} cleanup={(element) => element.run_dispose()}>
+        <For each={popups}>
           {(notif) => {
             const n = notif as Notifd.Notification;
             return (
