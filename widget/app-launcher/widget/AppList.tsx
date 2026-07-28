@@ -11,7 +11,7 @@ interface State<T> {
   get: () => T;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   as: (cb: (v: T) => any) => any;
-  subscribe: (cb: () => void) => void;
+  subscribe: (cb: () => void) => () => void;
 }
 
 export function AppList({
@@ -60,7 +60,6 @@ export function AppList({
     for (const [key, w] of widgetMap) {
       if (!currentKeys.has(key)) {
         appList.remove(w);
-        w.run_dispose();
         widgetMap.delete(key);
       }
     }
@@ -85,7 +84,7 @@ export function AppList({
     });
   }
 
-  text.subscribe(() => populateApps());
+  const unsubscribeText = text.subscribe(() => populateApps());
 
   GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
     populateApps();
@@ -159,7 +158,13 @@ export function AppList({
     }
   }
 
-  selectedIndex.subscribe(() => updateSelection());
+  const unsubscribeSelection = selectedIndex.subscribe(() => updateSelection());
+
+  scrollWindow.connect('destroy', () => {
+    unsubscribeText();
+    unsubscribeSelection();
+    widgetMap.clear();
+  });
 
   return scrollWindow;
 }
