@@ -3,6 +3,13 @@ import app from 'ags/gtk4/app';
 import Hyprland from 'gi://AstalHyprland';
 import Notifd from 'gi://AstalNotifd';
 
+import {
+  brightnessStep,
+  changeBrightness,
+  getBrightnessBackend,
+  refreshBrightness,
+  refreshBrightnessBackend,
+} from '../services/brightness';
 import { getPowerProfile, setPowerProfile } from '../services/powerProfile';
 import { isRecording, startRecord, stopRecord } from '../services/recordService';
 import {
@@ -50,6 +57,30 @@ function handleRecord(args: string[], res: ResponseCallback) {
   } else {
     res('Usage: ags request "record [start|stop|toggle] [monitor|slurp]"');
   }
+}
+
+function handleBrightness(args: string[], res: ResponseCallback) {
+  const action = args[0] ?? 'get';
+  if (action === 'up' || action === 'down') {
+    const delta = action === 'up' ? brightnessStep : -brightnessStep;
+    changeBrightness(delta)
+      .then((value) => res(`Brightness: ${value}%`))
+      .catch((err) => res(`Error: ${String(err)}`));
+    return;
+  }
+  if (action === 'get') {
+    Promise.all([refreshBrightness(), getBrightnessBackend()])
+      .then(([value, backend]) => res(`Brightness: ${value}% (${backend})`))
+      .catch((err) => res(`Error: ${String(err)}`));
+    return;
+  }
+  if (action === 'refresh') {
+    refreshBrightnessBackend()
+      .then((value) => res(`Brightness backend refreshed: ${value}%`))
+      .catch((err) => res(`Error: ${String(err)}`));
+    return;
+  }
+  res('Usage: ags request "brightness [get|up|down|refresh]"');
 }
 
 export function requestHandler(request: string[], res: ResponseCallback) {
@@ -103,6 +134,10 @@ export function requestHandler(request: string[], res: ResponseCallback) {
 
     case 'record':
       handleRecord(args, res);
+      break;
+
+    case 'brightness':
+      handleBrightness(args, res);
       break;
 
     default:
