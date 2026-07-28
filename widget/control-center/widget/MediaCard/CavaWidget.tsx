@@ -2,12 +2,10 @@ import { Gtk } from 'ags/gtk4';
 
 import AstalCava from 'gi://AstalCava';
 
-export default function CavaWidget() {
-  const cava = AstalCava.get_default();
-  if (!cava) return <box visible={false} />;
+const cava = AstalCava.get_default();
 
-  cava.bars = 16;
-  cava.stereo = false;
+export default function CavaWidget() {
+  if (!cava) return <box visible={false} />;
 
   const area = new Gtk.DrawingArea();
   area.set_size_request(-1, 160);
