@@ -4,6 +4,7 @@ import { Gtk } from 'ags/gtk4';
 import Mpris from 'gi://AstalMpris';
 
 import PlayerCard from './PlayerCard';
+import { LucideIcon } from '../../../../lib/lucide';
 
 export default function MediaCard() {
   const mpris = Mpris.get_default();
@@ -18,6 +19,7 @@ export default function MediaCard() {
         valign={Gtk.Align.CENTER}
         css="min-height: 160px;"
       >
+        <LucideIcon name="music" pixelSize={25} css="margin-right: 8px; color: alpha(currentColor, 0.5);" />
         <label label="No Media Playing" css="color: alpha(currentColor, 0.5); font-weight: 700;" />
       </box>
 
