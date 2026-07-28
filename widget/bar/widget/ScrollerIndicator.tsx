@@ -4,7 +4,6 @@ import { Gdk, Gtk } from 'ags/gtk4';
 import Hyprland from 'gi://AstalHyprland';
 
 import { LucideIcon } from '../../../lib/lucide';
-import { toggleScrollerOverview } from '../../../services/windowManager';
 
 export default function ScrollerIndicator({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
   const hypr = Hyprland.get_default();
@@ -103,7 +102,10 @@ export default function ScrollerIndicator({ gdkmonitor }: { gdkmonitor: Gdk.Moni
       }}
     >
       <box orientation={Gtk.Orientation.VERTICAL}>
-        <button class="ScrollerIndicator" onClicked={toggleScrollerOverview}>
+        <button
+            class="ScrollerIndicator"
+            onClicked={() => hypr.dispatch('hl.plugin.scrolloverview.overview("toggle")', '')}
+        >
           <box
             spacing={0}
             orientation={Gtk.Orientation.VERTICAL}

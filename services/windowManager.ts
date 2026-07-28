@@ -134,7 +134,3 @@ export function toggleAppLauncher(monitorName?: string | null) {
     }
   });
 }
-
-export function toggleScrollerOverview() {
-  execAsync('hyprctl dispatch "hl.plugin.scrolloverview.overview(\'toggle\')"').catch(() => {});
-}
