@@ -103,8 +103,8 @@ export default function ScrollerIndicator({ gdkmonitor }: { gdkmonitor: Gdk.Moni
     >
       <box orientation={Gtk.Orientation.VERTICAL}>
         <button
-            class="ScrollerIndicator"
-            onClicked={() => hypr.dispatch('hl.plugin.scrolloverview.overview("toggle")', '')}
+          class="ScrollerIndicator"
+          onClicked={() => hypr.dispatch('hl.plugin.scrolloverview.overview("toggle")', '')}
         >
           <box
             spacing={0}
