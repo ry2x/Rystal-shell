@@ -1,7 +1,6 @@
 import { createState } from 'ags';
 import { Astal } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
-import { execAsync } from 'ags/process';
 
 import Hyprland from 'gi://AstalHyprland';
 
