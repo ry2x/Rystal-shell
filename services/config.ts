@@ -1,6 +1,9 @@
 import GLib from 'gi://GLib?version=2.0';
 
 export interface AppConfig {
+  brightness?: {
+    backend?: 'auto' | 'ddcutil' | 'brightnessctl';
+  };
   weather: {
     location: string;
   };
@@ -22,6 +25,9 @@ export interface AppConfig {
 }
 
 const DEFAULT_CONFIG: AppConfig = {
+  brightness: {
+    backend: 'auto',
+  },
   weather: {
     location: 'Osaka',
   },
