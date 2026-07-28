@@ -39,6 +39,7 @@ export default function NotificationList() {
           </box>
         </button>
 
+        {/* Clear All Button */}
         <button class="notif-header-btn clear-all" onClicked={clearNotifications}>
           <box spacing={6}>
             <LucideIcon name="trash-2" pixelSize={14} />
@@ -47,6 +48,16 @@ export default function NotificationList() {
         </button>
       </box>
 
+      {/* Notification List */}
+      <box
+        visible={notifications.as((items) => items.length === 0)}
+        halign={Gtk.Align.CENTER}
+        valign={Gtk.Align.CENTER}
+        css="min-height: 160px; color: alpha(currentColor, 0.5);"
+      >
+        <LucideIcon name="bell-check" pixelSize={25} css="margin-right: 8px;" />
+        <label label="No Notifications" css="font-weight: 700;" />
+      </box>
       <scrolledwindow
         cssClasses={['notif-scroll']}
         vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}
