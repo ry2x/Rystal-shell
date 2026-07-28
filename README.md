@@ -6,10 +6,6 @@ For installation instructions, please refer to the Ryprland repository.
 
 [https://github.com/user-attachments/assets/5e309397-45a1-4d81-b356-dac4220af26a](https://github.com/user-attachments/assets/8e5a3ac4-4107-4b52-b694-a8c6a0ac113e)
 
-> [!IMPORTANT]
-> Ryprland is currently in the process of transitioning to a different GUI shell. Once the migration is complete, this repository will be archived.
-> The new shell under development is planned to be a lightweight shell based on [astal](https://aylur.github.io/astal/), which will not use AGS (gJS).
-
 > [!NOTE]
 > [WHY AGS?](#why-ags-was-chosen-and-its-memory-consumption)
 
