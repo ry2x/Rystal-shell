@@ -1,6 +1,7 @@
 import { createBinding as bind } from 'ags';
 import { Gdk, Gtk } from 'ags/gtk4';
 
+import Apps from 'gi://AstalApps';
 import Mpris from 'gi://AstalMpris';
 import Pango from 'gi://Pango';
 
@@ -9,6 +10,22 @@ import { LucideIcon } from '../../../../lib/lucide';
 import { fetchYouTubeThumbnail } from '../../../../services/mpris';
 import { closeAllControlCenters, focusWindow } from '../../../../services/windowManager';
 import CavaWidget from './CavaWidget';
+
+const apps = new Apps.Apps();
+
+function getMediaSource(player: Mpris.Player) {
+  const entry = player.entry || '';
+  const normalizedEntry = entry.replace(/\.desktop$/, '');
+  const app = apps.get_list().find((candidate) => {
+    const candidateEntry = candidate.entry.replace(/\.desktop$/, '');
+    return candidateEntry === normalizedEntry;
+  });
+
+  return {
+    iconName: app?.iconName || 'multimedia-player-symbolic',
+    name: app?.name || player.identity || entry || 'Media Player',
+  };
+}
 
 function updatePicture(pic: Gtk.Picture, artUrl: string | null) {
   if (!pic) return;
@@ -44,6 +61,7 @@ export default function PlayerCard({
   onSwitch: () => void;
   name: string;
 }) {
+  const mediaSource = getMediaSource(player);
   const pic = new Gtk.Picture({
     contentFit: Gtk.ContentFit.COVER,
     canFocus: false,
@@ -55,14 +73,23 @@ export default function PlayerCard({
 
   const updateImg = async () => {
     const generation = ++updateGeneration;
+    const coverArt = player.cover_art;
+
+    // AstalMpris caches art_url as a local file path. Prefer it to avoid an
+    // unnecessary YouTube thumbnail request whenever the player provides art.
+    if (coverArt) {
+      updatePicture(picRef, coverArt);
+      return;
+    }
+
     try {
       const ytArt = await fetchYouTubeThumbnail(player);
       if (disposed || generation !== updateGeneration) return;
-      updatePicture(picRef, ytArt || player.cover_art);
+      updatePicture(picRef, ytArt);
     } catch (e) {
       if (disposed || generation !== updateGeneration) return;
       console.error(e);
-      updatePicture(picRef, player.cover_art);
+      updatePicture(picRef, null);
     }
   };
 
@@ -180,6 +207,26 @@ export default function PlayerCard({
           </box>
         ) as Gtk.Widget;
         self.add_overlay(controlsBox);
+
+        const sourceBadge = (
+          <box
+            class="cc-media-source"
+            spacing={5}
+            halign={Gtk.Align.END}
+            valign={Gtk.Align.END}
+            marginBottom={10}
+            marginEnd={12}
+          >
+            <image iconName={mediaSource.iconName} pixelSize={14} />
+            <label
+              label={mediaSource.name}
+              ellipsize={Pango.EllipsizeMode.END}
+              maxWidthChars={16}
+              lines={1}
+            />
+          </box>
+        ) as Gtk.Widget;
+        self.add_overlay(sourceBadge);
       }}
     />
   );

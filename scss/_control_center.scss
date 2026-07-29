@@ -214,6 +214,18 @@ levelbar {
   padding: 0;
 }
 
+.cc-media-source {
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba($surface, 0.68);
+  color: rgba($text, 0.78);
+  font-size: 0.75em;
+
+  image {
+    color: inherit;
+  }
+}
+
 // Screen Capture & Record
 .power-btn.active-record {
   background: rgba($error, 0.15);
