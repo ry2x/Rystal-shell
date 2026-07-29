@@ -1,4 +1,4 @@
-import { createBinding as bind } from 'ags';
+import { For, createBinding as bind, createState } from 'ags';
 import { Gdk, Gtk } from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
@@ -7,11 +7,7 @@ import { LucideIcon } from '../../../lib/lucide';
 import { playVolumeSound } from '../../../services/audio';
 import { toggleControlCenter } from '../../../services/windowManager';
 
-export default function Volume({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
-  const speaker = Wp.get_default()!.audio.default_speaker!;
-
-  if (!speaker) return <box />;
-
+function VolumeButton({ speaker, gdkmonitor }: { speaker: Wp.Endpoint; gdkmonitor: Gdk.Monitor }) {
   const volIcon = bind(speaker, 'volume_icon').as((icon) => {
     if (icon.includes('muted')) return 'volume-x';
     if (icon.includes('high')) return 'volume-2';
@@ -61,4 +57,27 @@ export default function Volume({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
   btn.add_controller(scroll);
 
   return btn;
+}
+
+export default function Volume({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
+  const audio = Wp.get_default().audio;
+  const [speaker, setSpeaker] = createState<Wp.Endpoint | null>(audio.default_speaker ?? null);
+
+  return (
+    <box
+      orientation={Gtk.Orientation.VERTICAL}
+      hexpand
+      halign={Gtk.Align.FILL}
+      $={(self: Gtk.Box) => {
+        const hook = audio.connect('notify::default-speaker', () =>
+          setSpeaker(audio.default_speaker ?? null),
+        );
+        self.connect('destroy', () => audio.disconnect(hook));
+      }}
+    >
+      <For each={speaker.as((value) => (value ? [value] : []))}>
+        {(endpoint: Wp.Endpoint) => <VolumeButton speaker={endpoint} gdkmonitor={gdkmonitor} />}
+      </For>
+    </box>
+  );
 }
