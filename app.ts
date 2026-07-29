@@ -8,6 +8,7 @@ import { requestHandler } from './lib/requestHandler';
 import AppLauncher from './widget/app-launcher';
 import Bar from './widget/bar';
 import ControlCenter from './widget/control-center';
+import WifiPasswordDialog from './widget/control-center/widget/Connectivity/WifiPasswordDialog';
 import DateWeatherPopup from './widget/date-weather';
 import NotificationPopups from './widget/notification-popups';
 
@@ -29,6 +30,7 @@ app.start({
     app.get_monitors().forEach((m) => {
       Bar(m);
       ControlCenter(m);
+      WifiPasswordDialog(m);
       DateWeatherPopup(m);
       NotificationPopups(m);
       AppLauncher(m);
