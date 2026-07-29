@@ -98,6 +98,7 @@ switch.cc-connectivity-switch {
 
 .cc-modal {
   min-width: 280px;
+  margin-left: 28px;
   padding: 16px;
   background: rgba($surface, 0.96);
   border: 1px solid rgba($on-surface, 0.12);
@@ -106,7 +107,7 @@ switch.cc-connectivity-switch {
 }
 
 .cc-modal-backdrop {
-  background: rgba(0, 0, 0, 0.45);
+  background: transparent;
   padding: 24px;
 }
 
