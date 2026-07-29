@@ -1,0 +1,176 @@
+@use 'variables' as *;
+
+.cc-sound-page {
+  .cc-section-title {
+    margin: 2px 0;
+    color: rgba($text, 0.86);
+    font-size: 0.98em;
+    font-weight: 700;
+  }
+}
+
+.cc-sound-header {
+  min-height: 36px;
+}
+
+.cc-sound-section-header {
+  margin: 4px 6px;
+  color: $primary;
+}
+
+.cc-sound-device-card {
+  padding: 15px 14px;
+  background: rgba($primary, 0.1);
+  border: 2px solid rgba($primary, 0.82);
+  border-radius: 16px;
+  color: $primary;
+  box-shadow:
+    inset 0 0 28px rgba($primary, 0.1),
+    0 0 20px rgba($primary, 0.36);
+  transition: all 200ms;
+
+  &:hover {
+    background: rgba($primary, 0.14);
+    box-shadow:
+      inset 0 0 28px rgba($primary, 0.12),
+      0 0 22px rgba($primary, 0.42);
+  }
+}
+
+.cc-sound-device-name {
+  color: $text;
+  font-size: 1em;
+  font-weight: 800;
+}
+
+.cc-sound-device-route {
+  color: rgba($primary, 0.88);
+  font-size: 0.78em;
+}
+
+.cc-sound-device-chevron {
+  color: rgba($text, 0.78);
+}
+
+popover.cc-sound-device-menu {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+
+  > contents {
+    min-width: 330px;
+    padding: 6px;
+    background: rgba($surface, 0.98);
+    border: 1px solid rgba($on-surface, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.42);
+  }
+}
+
+.cc-sound-device-option {
+  padding: 10px 12px;
+  background: transparent;
+  border: 0;
+  border-radius: 11px;
+  box-shadow: none;
+  color: $text;
+
+  &:hover {
+    background: rgba($on-surface, 0.08);
+  }
+
+  &.active {
+    background: rgba($primary, 0.12);
+    color: $primary;
+  }
+}
+
+.cc-sound-device-option-route {
+  color: rgba($text, 0.62);
+  font-size: 0.76em;
+}
+
+.cc-sound-device-option.active .cc-sound-device-option-route {
+  color: rgba($primary, 0.78);
+}
+
+.cc-sound-device-check {
+  color: $primary;
+}
+
+.cc-sound-controls {
+  padding: 13px 14px 14px;
+  background: rgba($on-surface, 0.04);
+  border: 1px solid rgba($on-surface, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.cc-sound-control-label {
+  margin-bottom: 8px;
+  color: rgba($text, 0.84);
+  font-size: 0.86em;
+  font-weight: 700;
+}
+
+.cc-sound-volume-icon {
+  min-width: 20px;
+  color: rgba($text, 0.78);
+}
+
+.cc-sound-volume-value {
+  min-width: 38px;
+  color: $text;
+  font-weight: 700;
+}
+
+.cc-sound-mute-btn {
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0;
+  background: rgba($on-surface, 0.04);
+  border: 1px solid rgba($on-surface, 0.1);
+  border-radius: 11px;
+  box-shadow: none;
+  color: $text;
+
+  &:hover {
+    background: rgba($primary, 0.12);
+    border-color: rgba($primary, 0.3);
+    color: $primary;
+  }
+
+  &.muted {
+    background: rgba($error, 0.1);
+    border-color: rgba($error, 0.26);
+    color: $error;
+  }
+}
+
+.cc-sound-unavailable {
+  padding: 18px;
+  background: rgba($on-surface, 0.04);
+  border: 1px solid rgba($on-surface, 0.08);
+  border-radius: 16px;
+  color: rgba($text, 0.65);
+}
+
+.cc-sound-advanced {
+  padding: 12px 14px;
+  background: rgba($on-surface, 0.04);
+  border: 1px solid rgba($on-surface, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  color: $text;
+
+  &:hover {
+    background: rgba($on-surface, 0.08);
+    border-color: rgba($primary, 0.24);
+  }
+}
+
+.cc-sound-advanced-subtitle {
+  color: rgba($text, 0.6);
+  font-size: 0.78em;
+}
