@@ -55,6 +55,8 @@ export function BluetoothPage({ page, onBack }: { page: PageState; onBack: () =>
       class="cc-bluetooth-page"
       orientation={Gtk.Orientation.VERTICAL}
       spacing={12}
+      hexpand
+      halign={Gtk.Align.FILL}
       $={(self: Gtk.Box) => {
         const hooks = [
           bluetooth.connect('notify::devices', refreshDevices),

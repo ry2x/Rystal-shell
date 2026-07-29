@@ -104,6 +104,8 @@ export function WifiPage({
       class="cc-wifi-page"
       orientation={Gtk.Orientation.VERTICAL}
       spacing={12}
+      hexpand
+      halign={Gtk.Align.FILL}
       $={(self: Gtk.Box) => {
         const hooks = [
           wifi.connect('notify::access-points', refreshAccessPoints),
