@@ -1,5 +1,10 @@
 import { LucideIcon } from '../../../lib/lucide';
-import { brightness, setBrightness } from '../../../services/brightness';
+import {
+  brightness,
+  cycleBrightnessPreset,
+  setBrightness,
+  toggleBrightnessDim,
+} from '../../../services/brightness';
 
 export default function BrightnessSlider() {
   const icon = brightness.as((val) => {
@@ -10,7 +15,11 @@ export default function BrightnessSlider() {
 
   return (
     <box class="cc-card" spacing={16}>
-      <button class="icon-btn">
+      <button
+        class="icon-btn"
+        tooltipText="Dim to 0% / restore previous brightness"
+        onClicked={toggleBrightnessDim}
+      >
         <LucideIcon name={icon} pixelSize={20} />
       </button>
 
@@ -29,6 +38,8 @@ export default function BrightnessSlider() {
       <button
         class="icon-btn"
         css="min-width: 40px; padding: 4px; font-weight: 700; border-radius: 10px;"
+        tooltipText="Cycle brightness presets"
+        onClicked={cycleBrightnessPreset}
       >
         <label label={brightness.as((v) => `${Math.round(v * 100)}%`)} />
       </button>

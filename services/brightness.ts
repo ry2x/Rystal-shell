@@ -11,6 +11,8 @@ type ConfiguredBackend = BrightnessBackend | 'auto';
 
 const DDC_VCP_BRIGHTNESS = '10';
 const KEYBOARD_STEP = 10;
+const DEFAULT_RESTORE_BRIGHTNESS = 0.25;
+const BRIGHTNESS_PRESETS = [0, 0.25, 0.5, 0.75, 1];
 
 export const [brightness, setBrightnessState] = createState(0.5);
 
@@ -19,6 +21,11 @@ let ddcBuses: string[] = [];
 let pendingTarget: number | null = null;
 let isSetting = false;
 let setTimer: ReturnType<typeof setTimeout> | null = null;
+let lastNonZeroBrightness: number | null = null;
+
+function rememberNonZeroBrightness(value: number) {
+  if (value > 0) lastNonZeroBrightness = value;
+}
 
 function clampPercent(value: number) {
   return Math.max(0, Math.min(100, Math.round(value)));
@@ -151,7 +158,9 @@ async function processSet() {
 
   try {
     await applyPercent(target);
-    setBrightnessState(target / 100);
+    const value = target / 100;
+    rememberNonZeroBrightness(value);
+    setBrightnessState(value);
   } catch (error) {
     console.error('Failed to set brightness:', error);
   } finally {
@@ -162,7 +171,9 @@ async function processSet() {
 
 export function setBrightness(value: number) {
   const percent = clampPercent(value * 100);
-  setBrightnessState(percent / 100);
+  const normalizedValue = percent / 100;
+  rememberNonZeroBrightness(normalizedValue);
+  setBrightnessState(normalizedValue);
   pendingTarget = percent;
 
   if (setTimer) clearTimeout(setTimer);
@@ -170,6 +181,23 @@ export function setBrightness(value: number) {
     setTimer = null;
     void processSet();
   }, 100);
+}
+
+export function toggleBrightnessDim() {
+  const current = brightness();
+  if (current > 0) {
+    lastNonZeroBrightness = current;
+    setBrightness(0);
+    return;
+  }
+
+  setBrightness(lastNonZeroBrightness ?? DEFAULT_RESTORE_BRIGHTNESS);
+}
+
+export function cycleBrightnessPreset() {
+  const current = brightness();
+  const next = BRIGHTNESS_PRESETS.find((preset) => preset > current) ?? BRIGHTNESS_PRESETS[0];
+  setBrightness(next);
 }
 
 export async function changeBrightness(delta: number) {
@@ -191,7 +219,9 @@ export async function changeBrightness(delta: number) {
 
 export async function refreshBrightness() {
   const percent = await getPercent();
-  setBrightnessState(percent / 100);
+  const value = percent / 100;
+  rememberNonZeroBrightness(value);
+  setBrightnessState(value);
   return percent;
 }
 
