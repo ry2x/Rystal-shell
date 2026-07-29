@@ -5,6 +5,7 @@ import app from 'ags/gtk4/app';
 import { LucideIcon } from '../../lib/lucide';
 import { activeSidePanel, animDx } from '../../services/windowManager';
 import BrightnessSlider from './widget/BrightnessSlider';
+import { BluetoothPage, ControlCenterPage, WifiPage } from './widget/Connectivity';
 import MediaCard from './widget/MediaCard/index';
 import QuickToggles from './widget/QuickToggles';
 import ScreenCapture from './widget/ScreenCapture';
@@ -62,10 +63,118 @@ function Lazy({
   ) as Gtk.Box;
 }
 
+type PageState = ReturnType<typeof createState<ControlCenterPage>>[0];
+type SetPage = ReturnType<typeof createState<ControlCenterPage>>[1];
+
+function ControlCenterPages({
+  isRevealed,
+  page,
+  setPage,
+  monitorConnector,
+}: {
+  isRevealed: ReturnType<typeof createState<boolean>>[0];
+  page: PageState;
+  setPage: SetPage;
+  monitorConnector: string;
+}) {
+  const makeContainer = (child: Gtk.Widget) =>
+    (
+      <box
+        cssClasses={isRevealed.as((revealed) =>
+          revealed ? ['cc-container', 'revealed'] : ['cc-container'],
+        )}
+        css={animDx((dx) => {
+          const marginLeft = dx - 537;
+          const opacity = Math.max(0, Math.min(1, (dx - 47) / 490));
+          return `transform: translateX(${marginLeft < -490 ? -490 : marginLeft}px); opacity: ${opacity};`;
+        })}
+        orientation={Gtk.Orientation.VERTICAL}
+        spacing={16}
+        widthRequest={400}
+        vexpand
+        valign={Gtk.Align.FILL}
+        halign={Gtk.Align.START}
+      >
+        {child}
+      </box>
+    ) as Gtk.Box;
+
+  const [wifiLoaded, setWifiLoaded] = createState(false);
+  const [bluetoothLoaded, setBluetoothLoaded] = createState(false);
+
+  const openPage = (target: Exclude<ControlCenterPage, 'main'>) => {
+    if (target === 'wifi') setWifiLoaded(true);
+    else setBluetoothLoaded(true);
+    setPage(target);
+  };
+
+  return (
+    <stack
+      transitionType={Gtk.StackTransitionType.SLIDE_LEFT_RIGHT}
+      transitionDuration={220}
+      $={(self: Gtk.Stack) => {
+        const main = makeContainer(
+          (
+            <box orientation={Gtk.Orientation.VERTICAL} spacing={16}>
+              <box spacing={12} halign={Gtk.Align.START}>
+                <LucideIcon name="settings-2" pixelSize={24} />
+                <label label="Control Center" class="cc-title" />
+              </box>
+
+              <QuickToggles
+                onOpenWifi={() => openPage('wifi')}
+                onOpenBluetooth={() => openPage('bluetooth')}
+              />
+              <VolumeSlider />
+              <BrightnessSlider />
+              <MediaCard />
+
+              <box orientation={Gtk.Orientation.HORIZONTAL} spacing={16}>
+                <SystemMetrics />
+              </box>
+
+              <UpdatesCard />
+              <ScreenCapture />
+            </box>
+          ) as Gtk.Widget,
+        );
+        const wifi = makeContainer(
+          (
+            <box>
+              <For each={wifiLoaded.as((loaded) => (loaded ? [true] : []))}>
+                {() => (
+                  <WifiPage monitorConnector={monitorConnector} onBack={() => setPage('main')} />
+                )}
+              </For>
+            </box>
+          ) as Gtk.Widget,
+        );
+        const bluetooth = makeContainer(
+          (
+            <box>
+              <For each={bluetoothLoaded.as((loaded) => (loaded ? [true] : []))}>
+                {() => <BluetoothPage page={page} onBack={() => setPage('main')} />}
+              </For>
+            </box>
+          ) as Gtk.Widget,
+        );
+        self.add_named(main, 'main');
+        self.add_named(wifi, 'wifi');
+        self.add_named(bluetooth, 'bluetooth');
+
+        const update = () => self.set_visible_child_name(page());
+        const unsubscribe = page.subscribe(update);
+        self.connect('destroy', unsubscribe);
+      }}
+    />
+  ) as Gtk.Stack;
+}
+
 export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
   const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
 
   const [isRevealed, setIsRevealed] = createState(false);
+  const [page, setPage] = createState<ControlCenterPage>('main');
 
   const windowName = `control-center-${gdkmonitor.get_connector()}`;
 
@@ -75,6 +184,7 @@ export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
 
   const hide_animated = () => {
     setIsRevealed(false);
+    setPage('main');
     activeSidePanel.set('', '');
     const w = app.get_window(windowName);
     if (hideTimeout !== null) {
@@ -129,48 +239,12 @@ export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
                       revealChild={isRevealed}
                     >
                       <box orientation={Gtk.Orientation.HORIZONTAL}>
-                        {(() => {
-                          const container = (
-                            <box
-                              cssClasses={isRevealed.as((r) =>
-                                r ? ['cc-container', 'revealed'] : ['cc-container'],
-                              )}
-                              css={animDx((dx) => {
-                                const ml = dx - 537;
-                                const op = Math.max(0, Math.min(1, (dx - 47) / 490));
-                                return `transform: translateX(${ml < -490 ? -490 : ml}px); opacity: ${op};`;
-                              })}
-                              orientation={Gtk.Orientation.VERTICAL}
-                              spacing={16}
-                              widthRequest={400}
-                            >
-                              <box spacing={12} halign={Gtk.Align.START}>
-                                <LucideIcon name="settings-2" pixelSize={24} />
-                                <label label="Control Center" class="cc-title" />
-                              </box>
-
-                              <QuickToggles />
-                              <VolumeSlider />
-                              <BrightnessSlider />
-                              <MediaCard />
-
-                              <box orientation={Gtk.Orientation.HORIZONTAL} spacing={16}>
-                                <SystemMetrics />
-                              </box>
-
-                              <UpdatesCard />
-                              <ScreenCapture />
-                            </box>
-                          ) as Gtk.Box;
-
-                          container.set_hexpand(false);
-                          container.set_hexpand_set(true);
-                          container.set_vexpand(true);
-                          container.set_valign(Gtk.Align.FILL);
-                          container.set_halign(Gtk.Align.START);
-
-                          return container;
-                        })()}
+                        <ControlCenterPages
+                          isRevealed={isRevealed}
+                          page={page}
+                          setPage={setPage}
+                          monitorConnector={gdkmonitor.get_connector() ?? ''}
+                        />
                       </box>
                     </revealer>
                   ) as Gtk.Widget

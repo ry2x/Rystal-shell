@@ -7,12 +7,7 @@ import Pango from 'gi://Pango';
 
 import { LucideIcon } from '../../../lib/lucide';
 import { CaffeineState, caffeineState, toggleCaffeine } from '../../../services/caffeine';
-import {
-  openBluetoothMenu,
-  openWifiMenu,
-  toggleBluetooth,
-  toggleWifi,
-} from '../../../services/network';
+import { toggleBluetooth, toggleWifi } from '../../../services/network';
 import {
   cyclePowerProfile,
   getPowerIcon,
@@ -20,7 +15,13 @@ import {
   getPowerProfile,
 } from '../../../services/powerProfile';
 
-export default function QuickToggles() {
+export default function QuickToggles({
+  onOpenWifi,
+  onOpenBluetooth,
+}: {
+  onOpenWifi: () => void;
+  onOpenBluetooth: () => void;
+}) {
   const network = Network.get_default();
   const wifi = network.wifi;
   const bt = Bluetooth.get_default();
@@ -65,8 +66,8 @@ export default function QuickToggles() {
             <button
               class="cc-split-btn-right"
               css="padding: 16px;"
-              onClicked={() => openWifiMenu()}
-              tooltipText="Open Wi-Fi Menu"
+              onClicked={onOpenWifi}
+              tooltipText="Manage Wi-Fi"
             >
               <LucideIcon name="chevron-right" pixelSize={20} />
             </button>
@@ -107,8 +108,8 @@ export default function QuickToggles() {
           <button
             class="cc-split-btn-right"
             css="padding: 16px;"
-            onClicked={() => openBluetoothMenu()}
-            tooltipText="Open Bluetooth Menu"
+            onClicked={onOpenBluetooth}
+            tooltipText="Manage Bluetooth"
           >
             <LucideIcon name="chevron-right" pixelSize={20} />
           </button>
