@@ -9,6 +9,7 @@ import { BluetoothPage, ControlCenterPage, WifiPage } from './widget/Connectivit
 import MediaCard from './widget/MediaCard/index';
 import QuickToggles from './widget/QuickToggles';
 import ScreenCapture from './widget/ScreenCapture';
+import { SoundPage } from './widget/Sound';
 import SystemMetrics from './widget/SystemMetrics';
 import UpdatesCard from './widget/UpdatesCard';
 import VolumeSlider from './widget/VolumeSlider';
@@ -77,8 +78,11 @@ function ControlCenterPages({
   setPage: SetPage;
   monitorConnector: string;
 }) {
-  const makeContainer = (child: Gtk.Widget) =>
-    (
+  const makeContainer = (child: Gtk.Widget) => {
+    child.set_hexpand(true);
+    child.set_halign(Gtk.Align.FILL);
+
+    return (
       <box
         cssClasses={isRevealed.as((revealed) =>
           revealed ? ['cc-container', 'revealed'] : ['cc-container'],
@@ -90,21 +94,24 @@ function ControlCenterPages({
         })}
         orientation={Gtk.Orientation.VERTICAL}
         spacing={16}
-        widthRequest={400}
+        hexpand
         vexpand
         valign={Gtk.Align.FILL}
-        halign={Gtk.Align.START}
+        halign={Gtk.Align.FILL}
       >
         {child}
       </box>
     ) as Gtk.Box;
+  };
 
   const [wifiLoaded, setWifiLoaded] = createState(false);
   const [bluetoothLoaded, setBluetoothLoaded] = createState(false);
+  const [soundLoaded, setSoundLoaded] = createState(false);
 
   const openPage = (target: Exclude<ControlCenterPage, 'main'>) => {
     if (target === 'wifi') setWifiLoaded(true);
-    else setBluetoothLoaded(true);
+    else if (target === 'bluetooth') setBluetoothLoaded(true);
+    else setSoundLoaded(true);
     setPage(target);
   };
 
@@ -125,7 +132,7 @@ function ControlCenterPages({
                 onOpenWifi={() => openPage('wifi')}
                 onOpenBluetooth={() => openPage('bluetooth')}
               />
-              <VolumeSlider />
+              <VolumeSlider onOpenSound={() => openPage('sound')} />
               <BrightnessSlider />
               <MediaCard />
 
@@ -140,7 +147,7 @@ function ControlCenterPages({
         );
         const wifi = makeContainer(
           (
-            <box>
+            <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
               <For each={wifiLoaded.as((loaded) => (loaded ? [true] : []))}>
                 {() => (
                   <WifiPage monitorConnector={monitorConnector} onBack={() => setPage('main')} />
@@ -151,9 +158,18 @@ function ControlCenterPages({
         );
         const bluetooth = makeContainer(
           (
-            <box>
+            <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
               <For each={bluetoothLoaded.as((loaded) => (loaded ? [true] : []))}>
                 {() => <BluetoothPage page={page} onBack={() => setPage('main')} />}
+              </For>
+            </box>
+          ) as Gtk.Widget,
+        );
+        const sound = makeContainer(
+          (
+            <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
+              <For each={soundLoaded.as((loaded) => (loaded ? [true] : []))}>
+                {() => <SoundPage onBack={() => setPage('main')} />}
               </For>
             </box>
           ) as Gtk.Widget,
@@ -161,6 +177,7 @@ function ControlCenterPages({
         self.add_named(main, 'main');
         self.add_named(wifi, 'wifi');
         self.add_named(bluetooth, 'bluetooth');
+        self.add_named(sound, 'sound');
 
         const update = () => self.set_visible_child_name(page());
         const unsubscribe = page.subscribe(update);
