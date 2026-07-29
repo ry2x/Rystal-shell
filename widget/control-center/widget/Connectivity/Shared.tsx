@@ -5,7 +5,7 @@ import Pango from 'gi://Pango';
 
 import { LucideIcon } from '../../../../lib/lucide';
 
-export type ControlCenterPage = 'main' | 'wifi' | 'bluetooth';
+export type ControlCenterPage = 'main' | 'wifi' | 'bluetooth' | 'sound';
 
 export interface PageState {
   (): ControlCenterPage;
