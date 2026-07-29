@@ -1,14 +1,12 @@
-import { createBinding as bind } from 'ags';
+import { For, createBinding as bind, createState } from 'ags';
+import { Gtk } from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
 import { LucideIcon } from '../../../lib/lucide';
-import { openAudioControl, playVolumeSound } from '../../../services/audio';
+import { playVolumeSound } from '../../../services/audio';
 
-export default function VolumeSlider() {
-  const speaker = Wp.get_default()?.audio.default_speaker;
-  if (!speaker) return <box />;
-
+function Slider({ speaker, onOpenSound }: { speaker: Wp.Endpoint; onOpenSound: () => void }) {
   const volIcon = bind(speaker, 'volume_icon').as((icon) => {
     if (icon.includes('muted')) return 'volume-x';
     if (icon.includes('high')) return 'volume-2';
@@ -52,11 +50,32 @@ export default function VolumeSlider() {
       <button
         class="icon-btn"
         css="min-width: 40px; padding: 4px; font-weight: 700; border-radius: 10px;"
-        onClicked={() => openAudioControl()}
-        tooltipText="Open Audio Control"
+        onClicked={onOpenSound}
+        tooltipText="Open Sound Controls"
       >
         <label label={bind(speaker, 'volume').as((v) => `${Math.round(v * 100)}%`)} />
       </button>
+    </box>
+  );
+}
+
+export default function VolumeSlider({ onOpenSound }: { onOpenSound: () => void }) {
+  const audio = Wp.get_default().audio;
+  const [speaker, setSpeaker] = createState<Wp.Endpoint | null>(audio.default_speaker ?? null);
+
+  return (
+    <box
+      hexpand
+      $={(self: Gtk.Box) => {
+        const hook = audio.connect('notify::default-speaker', () =>
+          setSpeaker(audio.default_speaker ?? null),
+        );
+        self.connect('destroy', () => audio.disconnect(hook));
+      }}
+    >
+      <For each={speaker.as((value) => (value ? [value] : []))}>
+        {(endpoint: Wp.Endpoint) => <Slider speaker={endpoint} onOpenSound={onOpenSound} />}
+      </For>
     </box>
   );
 }
