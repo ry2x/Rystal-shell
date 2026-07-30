@@ -1,6 +1,7 @@
-# RyprAGS-Shell
+# Rystal-Shell
 
-**RyprAGS-Shell** is a part of the GUI shell for [Ryprland](https://github.com/ry2x/Ryprland-dot/).
+**Rystal-Shell** is a part of the GUI shell for [Ryprland](https://github.com/ry2x/Ryprland-dot/).
+This shell is based on [Aylur's GTK Shell](https://github.com/aylur/ags).
 To use it, you must be using Ryprland.
 For installation instructions, please refer to the Ryprland repository.
 
