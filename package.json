@@ -21,6 +21,6 @@
     "start": "./start-ags",
     "dev": "ags bundle app.ts start-ags && ./start-ags"
   },
-  "name": "ryprags-shell",
+  "name": "rystal-shell",
   "private": true
 }
