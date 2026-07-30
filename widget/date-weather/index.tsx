@@ -2,6 +2,7 @@ import { For, createState } from 'ags';
 import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
+import { shellMotion } from '../../lib/motion';
 import { activeSidePanel, animDx } from '../../services/windowManager';
 import ClockCard from './widget/ClockCard';
 import NotificationList from './widget/NotificationList';
@@ -76,7 +77,7 @@ export default function DateWeatherPopup(gdkmonitor: Gdk.Monitor) {
     hideTimeout = setTimeout(() => {
       if (w) w.set_visible(false);
       hideTimeout = null;
-    }, 800);
+    }, shellMotion.panelDuration);
   };
 
   const show_animated = () => {
@@ -116,7 +117,7 @@ export default function DateWeatherPopup(gdkmonitor: Gdk.Monitor) {
                   (
                     <revealer
                       transitionType={Gtk.RevealerTransitionType.CROSSFADE}
-                      transitionDuration={800}
+                      transitionDuration={shellMotion.panelDuration}
                       revealChild={isRevealed}
                     >
                       <box orientation={Gtk.Orientation.HORIZONTAL}>

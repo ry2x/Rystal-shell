@@ -6,6 +6,7 @@ import Pango from 'gi://Pango';
 
 import { LucideIcon } from '../../../../lib/lucide';
 import { toggleBluetooth } from '../../../../services/network';
+import AnimatedList from '../../../common/AnimatedList';
 import {
   ConfirmOverlay,
   Confirmation,
@@ -90,12 +91,12 @@ export function BluetoothPage({ page, onBack }: { page: PageState; onBack: () =>
             <LucideIcon name="link-2" pixelSize={17} />
             <label label="Connected Devices" class="cc-section-title" halign={Gtk.Align.START} />
           </box>
-          <box
-            class="cc-connectivity-list cc-bt-connected-list"
-            orientation={Gtk.Orientation.VERTICAL}
-          >
-            <For each={connected}>
-              {(device: Bluetooth.Device) => (
+          <AnimatedList
+            className="cc-connectivity-list cc-bt-connected-list"
+            items={connected}
+            idFor={(device: Bluetooth.Device) => device.address}
+            renderItem={(device: Bluetooth.Device) =>
+              (
                 <box class="cc-connectivity-row active" spacing={14}>
                   <image class="cc-bt-device-icon" iconName={bind(device, 'icon')} pixelSize={24} />
                   <box orientation={Gtk.Orientation.VERTICAL} hexpand>
@@ -139,16 +140,19 @@ export function BluetoothPage({ page, onBack }: { page: PageState; onBack: () =>
                     }
                   />
                 </box>
-              )}
-            </For>
-          </box>
+              ) as Gtk.Widget
+            }
+          />
           <box class="cc-bt-section-header" spacing={8}>
             <LucideIcon name="bluetooth" pixelSize={17} />
             <label label="Available Devices" class="cc-section-title" halign={Gtk.Align.START} />
           </box>
-          <box class="cc-connectivity-list" orientation={Gtk.Orientation.VERTICAL}>
-            <For each={available}>
-              {(device: Bluetooth.Device) => (
+          <AnimatedList
+            className="cc-connectivity-list"
+            items={available}
+            idFor={(device: Bluetooth.Device) => device.address}
+            renderItem={(device: Bluetooth.Device) =>
+              (
                 <button
                   class="cc-connectivity-row"
                   onClicked={() => {
@@ -183,9 +187,9 @@ export function BluetoothPage({ page, onBack }: { page: PageState; onBack: () =>
                     </box>
                   </box>
                 </button>
-              )}
-            </For>
-          </box>
+              ) as Gtk.Widget
+            }
+          />
           <button
             class={bind(adapter, 'discovering').as((discovering) =>
               discovering ? 'cc-bt-scan-btn scanning' : 'cc-bt-scan-btn',

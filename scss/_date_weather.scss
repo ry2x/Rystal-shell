@@ -31,7 +31,7 @@ window.DateWeatherPopup {
     border-radius: 16px;
     padding: 16px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    transition: all 200ms;
+    transition: all $motion-standard $motion-ease;
     &:hover {
       background: rgba($on-surface, 0.06);
     }
@@ -55,7 +55,7 @@ window.DateWeatherPopup {
           min-width: 32px;
           min-height: 32px;
           color: $text;
-          transition: all 200ms;
+          transition: all $motion-standard $motion-ease;
           &:hover {
             background: rgba($primary, 0.15);
             color: $primary;
@@ -85,7 +85,7 @@ window.DateWeatherPopup {
           padding: 5px 0;
           border: 1px solid transparent;
           border-radius: 1em;
-          transition: all 200ms;
+          transition: all $motion-standard $motion-ease;
           &:hover {
             background: rgba($on-surface, 0.1);
           }
@@ -121,7 +121,7 @@ window.DateWeatherPopup {
     border: none;
     border-radius: 8px;
     padding: 6px 12px;
-    transition: all 200ms;
+    transition: all $motion-standard $motion-ease;
     &.clear-all:hover {
       background: $error;
       color: $on-error;

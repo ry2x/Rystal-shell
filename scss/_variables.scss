@@ -12,3 +12,11 @@ $text: $on-surface;
 $text-dim: $on-surface-variant;
 $accent: $primary;
 $accent-glow: color.adjust($primary, $alpha: -0.6);
+
+// Motion
+$motion-fast: 120ms;
+$motion-standard: 200ms;
+$motion-page: 220ms;
+$motion-panel: 300ms;
+$motion-metric: 360ms;
+$motion-ease: cubic-bezier(0.25, 1, 0.5, 1);

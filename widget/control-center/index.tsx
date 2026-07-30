@@ -3,6 +3,7 @@ import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import { LucideIcon } from '../../lib/lucide';
+import { shellMotion } from '../../lib/motion';
 import { activeSidePanel, animDx } from '../../services/windowManager';
 import BrightnessSlider from './widget/BrightnessSlider';
 import { BluetoothPage, ControlCenterPage, WifiPage } from './widget/Connectivity';
@@ -115,7 +116,7 @@ function ControlCenterPages({
   return (
     <stack
       transitionType={Gtk.StackTransitionType.SLIDE_LEFT_RIGHT}
-      transitionDuration={220}
+      transitionDuration={shellMotion.pageDuration}
       $={(self: Gtk.Stack) => {
         const main = makeContainer(
           (
@@ -206,7 +207,7 @@ export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
     hideTimeout = setTimeout(() => {
       if (w) w.set_visible(false);
       hideTimeout = null;
-    }, 300);
+    }, shellMotion.panelDuration);
   };
 
   const show_animated = () => {
@@ -246,7 +247,7 @@ export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
                   (
                     <revealer
                       transitionType={Gtk.RevealerTransitionType.CROSSFADE}
-                      transitionDuration={300}
+                      transitionDuration={shellMotion.panelDuration}
                       revealChild={isRevealed}
                     >
                       <box orientation={Gtk.Orientation.HORIZONTAL}>

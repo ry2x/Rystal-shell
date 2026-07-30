@@ -5,6 +5,7 @@ import app from 'ags/gtk4/app';
 import Hyprland from 'gi://AstalHyprland';
 import Notifd from 'gi://AstalNotifd';
 
+import { shellMotion } from '../../lib/motion';
 import NotificationCard from '../common/NotificationCard';
 
 const TIMEOUT_MS = 5000;
@@ -37,7 +38,7 @@ export default function NotificationPopups(gdkmonitor: Gdk.Monitor) {
       if (n.transient) {
         n.dismiss();
       }
-    }, 300);
+    }, shellMotion.listDuration);
   };
 
   const notifiedHook = notifd.connect('notified', (_, id) => {
@@ -97,13 +98,13 @@ export default function NotificationPopups(gdkmonitor: Gdk.Monitor) {
             const n = notif as Notifd.Notification;
             return (
               <revealer
-                transitionType={Gtk.RevealerTransitionType.SLIDE_LEFT}
-                transitionDuration={300}
+                transitionType={Gtk.RevealerTransitionType.SLIDE_UP}
+                transitionDuration={shellMotion.listDuration}
                 revealChild={revealed.as((ids) => ids.includes(n.id))}
               >
                 <revealer
                   transitionType={Gtk.RevealerTransitionType.CROSSFADE}
-                  transitionDuration={300}
+                  transitionDuration={shellMotion.listDuration}
                   revealChild={revealed.as((ids) => ids.includes(n.id))}
                 >
                   <box halign={Gtk.Align.END}>

@@ -1,6 +1,9 @@
 import { Gtk } from 'ags/gtk4';
 
+import GLib from 'gi://GLib';
+
 import { LucideIcon } from '../../lib/lucide';
+import { shellMotion } from '../../lib/motion';
 
 export default function CircularProgress<T>({
   variable,
@@ -10,7 +13,7 @@ export default function CircularProgress<T>({
   sublabel,
   cssClass,
 }: {
-  variable: { get: () => T; subscribe: (fn: () => void) => void };
+  variable: { get: () => T; subscribe: (fn: () => void) => () => void };
   transformer: (v: T) => number;
   icon: string;
   label: string;
@@ -23,10 +26,46 @@ export default function CircularProgress<T>({
   area.set_content_height(120);
   area.set_size_request(120, 120);
 
-  let currentValue = transformer(variable.get());
-  variable.subscribe(() => {
-    currentValue = transformer(variable.get());
+  const normalize = (value: number) =>
+    Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
+
+  let currentValue = normalize(transformer(variable.get()));
+  let startValue = currentValue;
+  let targetValue = currentValue;
+  let animationStartedAt = 0;
+  let animationSourceId = 0;
+
+  const animate = () => {
+    const elapsed = (GLib.get_monotonic_time() - animationStartedAt) / 1000;
+    const progress = Math.min(1, elapsed / shellMotion.metricDuration);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    currentValue = startValue + (targetValue - startValue) * eased;
     area.queue_draw();
+
+    if (progress === 1) {
+      animationSourceId = 0;
+      return GLib.SOURCE_REMOVE;
+    }
+    return GLib.SOURCE_CONTINUE;
+  };
+
+  const updateValue = () => {
+    targetValue = normalize(transformer(variable.get()));
+    startValue = currentValue;
+    animationStartedAt = GLib.get_monotonic_time();
+
+    if (animationSourceId === 0) {
+      animationSourceId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000 / 60, animate);
+    }
+  };
+  const unsubscribe = variable.subscribe(updateValue);
+
+  area.connect('destroy', () => {
+    unsubscribe();
+    if (animationSourceId !== 0) {
+      GLib.source_remove(animationSourceId);
+      animationSourceId = 0;
+    }
   });
 
   area.set_draw_func((_area, cr, width, height) => {
@@ -40,18 +79,16 @@ export default function CircularProgress<T>({
     const center_y = height / 2;
     const radius = Math.min(width, height) / 2 - 6;
 
-    const safeValue = isNaN(currentValue) ? 0 : Math.max(0, Math.min(1, currentValue));
-
     cr.setSourceRGBA(r, g, b, 0.15);
     cr.setLineWidth(6);
     cr.arc(center_x, center_y, radius, 0, 2 * Math.PI);
     cr.stroke();
 
-    if (safeValue > 0) {
+    if (currentValue > 0) {
       cr.setSourceRGBA(r, g, b, 1.0);
       cr.setLineWidth(6);
       cr.setLineCap(1); // ROUND
-      cr.arc(center_x, center_y, radius, 1.5 * Math.PI, 1.5 * Math.PI + safeValue * 2 * Math.PI);
+      cr.arc(center_x, center_y, radius, 1.5 * Math.PI, 1.5 * Math.PI + currentValue * 2 * Math.PI);
       cr.stroke();
     }
   });

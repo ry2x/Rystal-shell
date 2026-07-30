@@ -1,4 +1,4 @@
-import { For, createBinding as bind } from 'ags';
+import { createBinding as bind } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
 import Notifd from 'gi://AstalNotifd';
@@ -9,6 +9,7 @@ import {
   dismissNotification,
   notifications,
 } from '../../../services/notifications';
+import AnimatedList from '../../common/AnimatedList';
 import NotificationCard from '../../common/NotificationCard';
 
 export default function NotificationList() {
@@ -64,28 +65,20 @@ export default function NotificationList() {
         hscrollbarPolicy={Gtk.PolicyType.NEVER}
         vexpand={true}
       >
-        <box orientation={Gtk.Orientation.VERTICAL} spacing={12} class="notif-list">
-          <For each={notifications}>
-            {(notif) => {
-              const n = notif as Notifd.Notification;
-              return (
-                <revealer
-                  transitionType={Gtk.RevealerTransitionType.SLIDE_UP}
-                  transitionDuration={300}
-                  revealChild={true}
-                >
-                  <revealer
-                    transitionType={Gtk.RevealerTransitionType.CROSSFADE}
-                    transitionDuration={300}
-                    revealChild={true}
-                  >
-                    <NotificationCard notif={n} onDismiss={() => dismissNotification(n)} />
-                  </revealer>
-                </revealer>
-              );
-            }}
-          </For>
-        </box>
+        <AnimatedList
+          items={notifications}
+          idFor={(notification: Notifd.Notification) => String(notification.id)}
+          className="notif-list"
+          spacing={12}
+          renderItem={(notification: Notifd.Notification) =>
+            (
+              <NotificationCard
+                notif={notification}
+                onDismiss={() => dismissNotification(notification)}
+              />
+            ) as unknown as Gtk.Widget
+          }
+        />
       </scrolledwindow>
     </box>
   );

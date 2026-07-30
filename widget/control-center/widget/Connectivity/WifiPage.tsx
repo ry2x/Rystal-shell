@@ -16,6 +16,7 @@ import {
   listWifiAccessPoints,
 } from '../../../../services/wifi';
 import { openWifiPasswordDialog } from '../../../../services/wifiPasswordDialog';
+import AnimatedList from '../../../common/AnimatedList';
 import { ConfirmOverlay, Confirmation, DetailMenuButton, ErrorLabel, PageHeader } from './Shared';
 
 export function WifiPage({
@@ -159,12 +160,12 @@ export function WifiPage({
             <LucideIcon name="link-2" pixelSize={17} />
             <label label="Connected" class="cc-section-title" hexpand halign={Gtk.Align.START} />
           </box>
-          <box
-            class="cc-connectivity-list cc-wifi-connected-list"
-            orientation={Gtk.Orientation.VERTICAL}
-          >
-            <For each={active.as((ap) => (ap ? [ap] : []))}>
-              {(ap: Network.AccessPoint) => (
+          <AnimatedList
+            className="cc-connectivity-list cc-wifi-connected-list"
+            items={active.as((ap) => (ap ? [ap] : []))}
+            idFor={(ap: Network.AccessPoint) => ap.bssid || ap.ssid || 'active'}
+            renderItem={(ap: Network.AccessPoint) =>
+              (
                 <box class="cc-connectivity-row active" spacing={14}>
                   <image
                     class="cc-wifi-network-icon"
@@ -223,9 +224,9 @@ export function WifiPage({
                     }
                   />
                 </box>
-              )}
-            </For>
-          </box>
+              ) as Gtk.Widget
+            }
+          />
           <label
             label="Not connected"
             class="cc-row-subtitle"
@@ -236,9 +237,12 @@ export function WifiPage({
             <LucideIcon name="wifi" pixelSize={17} />
             <label label="Available Networks" class="cc-section-title" halign={Gtk.Align.START} />
           </box>
-          <box class="cc-connectivity-list" orientation={Gtk.Orientation.VERTICAL}>
-            <For each={available}>
-              {(ap: Network.AccessPoint) => (
+          <AnimatedList
+            className="cc-connectivity-list"
+            items={available}
+            idFor={(ap: Network.AccessPoint) => ap.bssid || ap.ssid || 'network'}
+            renderItem={(ap: Network.AccessPoint) =>
+              (
                 <button class="cc-connectivity-row" onClicked={() => void selectAccessPoint(ap)}>
                   <box spacing={14}>
                     <image
@@ -273,9 +277,9 @@ export function WifiPage({
                     </button>
                   </box>
                 </button>
-              )}
-            </For>
-          </box>
+              ) as Gtk.Widget
+            }
+          />
           <button
             class={bind(wifi, 'scanning').as((scanning) =>
               scanning ? 'cc-wifi-scan-btn scanning' : 'cc-wifi-scan-btn',
