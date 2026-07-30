@@ -59,7 +59,9 @@ export default function Workspaces({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) 
                 class={bind(hypr, 'focused_workspace').as((fw) =>
                   fw?.id === ws.id ? 'workspace active' : 'workspace',
                 )}
-                onClicked={() => hypr.dispatch(`hl.dsp.focus({ workspace = ${ws.id} })`, '')}
+                onClicked={() => {
+                  hypr.dispatch(`hl.dsp.focus({ workspace = "${ws.name}" })`, '');
+                }}
               />
             </box>
           )}
