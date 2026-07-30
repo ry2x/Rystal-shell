@@ -49,13 +49,10 @@ function Lazy({
   register,
 }: {
   build: () => Gtk.Widget;
-  register: (initialize: () => void, dispose: () => void) => void;
+  register: (initialize: () => void) => void;
 }) {
   const [loaded, setLoaded] = createState(false);
-  register(
-    () => setLoaded(true),
-    () => setLoaded(false),
-  );
+  register(() => setLoaded(true));
 
   return (
     <box>
@@ -197,7 +194,6 @@ export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
 
   let hideTimeout: ReturnType<typeof setTimeout> | null = null;
   let initializeContent = () => {};
-  let disposeContent = () => {};
 
   const hide_animated = () => {
     setIsRevealed(false);
@@ -208,7 +204,6 @@ export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
       clearTimeout(hideTimeout);
     }
     hideTimeout = setTimeout(() => {
-      disposeContent();
       if (w) w.set_visible(false);
       hideTimeout = null;
     }, 300);
@@ -244,9 +239,8 @@ export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
           {(() => {
             const rev = (
               <Lazy
-                register={(initialize, dispose) => {
+                register={(initialize) => {
                   initializeContent = initialize;
-                  disposeContent = dispose;
                 }}
                 build={() =>
                   (
