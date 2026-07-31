@@ -1,0 +1,130 @@
+/* The layer-shell surface is larger than the launcher because the launcher
+ * itself owns its outer margin.  Keep that surface transparent. */
+window.applauncher-surface,
+window.applauncher-surface.background {
+  background-color: transparent;
+  background-image: none;
+  border-color: transparent;
+  box-shadow: none;
+  font-size: 18px;
+}
+
+.applauncher-box-wrapper {
+  min-width: 66em;
+  min-height: 34em;
+  /*
+   * This is the layer surface's root widget.  A widget margin becomes part of
+   * the surface, which exposes the top-level GTK background around the frame.
+   * Keep the surface exactly the same size as the visible launcher instead.
+   */
+  margin: 0;
+  padding: 1em;
+  background: @window_bg_color;
+  border: 3px solid @accent_color;
+  border-radius: 1em;
+  box-shadow:
+    0 19px 38px rgba(0, 0, 0, 0.3),
+    0 15px 12px rgba(0, 0, 0, 0.22);
+}
+
+.applauncher-left-panel,
+.applauncher-right-panel {
+  min-width: 32em;
+  background: @window_bg_color;
+}
+
+.applauncher-left-panel {
+  border-radius: 1em 0 0 1em;
+}
+
+.applauncher-right-panel {
+  border-radius: 0 1em 1em 0;
+}
+
+.applauncher-search-container {
+  padding: 6px 12px;
+}
+
+.applauncher-input,
+.applauncher-input:focus,
+.applauncher-input:focus-visible {
+  margin: 0 6em 1em 0;
+  padding: 8px 16px;
+  color: @window_fg_color;
+  caret-color: @accent_color;
+  background: @window_bg_color;
+  border: 2px solid @accent_color;
+  border-color: @accent_color;
+  border-radius: 0.5em;
+  box-shadow: none;
+  outline: none;
+  font-family: 'GeistMono Nerd Font', monospace;
+  font-weight: bold;
+}
+
+.applauncher-scroll {
+  min-width: 32em;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.applauncher-list {
+  padding: 0 32px;
+  margin-right: 8px;
+  color: @window_fg_color;
+}
+
+.applauncher-item {
+  min-height: 2.8em;
+  margin: 1px 0;
+  padding: 0.6em 0.5em 0.6em 1.2em;
+  color: @window_fg_color;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.applauncher-item:hover,
+.applauncher-item:focus,
+.applauncher-item.selected {
+  color: @window_bg_color;
+  background-image: linear-gradient(
+    90deg,
+    @accent_color 0%,
+    @accent_color 65%,
+    alpha(@accent_color, 0.4) 100%
+  );
+  box-shadow:
+    0 0 8px alpha(@accent_color, 0.6),
+    0 0 16px alpha(@accent_color, 0.3);
+}
+
+.applauncher-item:hover label,
+.applauncher-item:focus label,
+.applauncher-item.selected label {
+  color: @window_bg_color;
+}
+
+.applauncher-item:hover .applauncher-item-desc,
+.applauncher-item:focus .applauncher-item-desc,
+.applauncher-item.selected .applauncher-item-desc {
+  opacity: 0.6;
+}
+
+.applauncher-item-icon {
+  font-size: 1.5em;
+  -gtk-icon-size: 1.5em;
+  margin-right: 0.8em;
+}
+
+.applauncher-item-name {
+  font-size: 1em;
+  font-weight: normal;
+}
+
+.applauncher-item-desc {
+  opacity: 0.7;
+  font-size: 0.75em;
+  font-weight: bold;
+}

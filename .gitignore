@@ -10,3 +10,6 @@ assets/launcher_bg*.png
 assets/icons/hicolor/icon-theme.cache
 
 start-ags
+
+oneshot/style.css
+oneshot/**/build/
