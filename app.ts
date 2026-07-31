@@ -5,7 +5,6 @@ import GLib from 'gi://GLib';
 
 import { initCss } from './lib/css';
 import { requestHandler } from './lib/requestHandler';
-import AppLauncher from './widget/app-launcher';
 import Bar from './widget/bar';
 import ControlCenter from './widget/control-center';
 import WifiPasswordDialog from './widget/control-center/widget/Connectivity/WifiPasswordDialog';
@@ -33,7 +32,6 @@ app.start({
       WifiPasswordDialog(m);
       DateWeatherPopup(m);
       NotificationPopups(m);
-      AppLauncher(m);
     });
   },
 });

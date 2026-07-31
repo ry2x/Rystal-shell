@@ -57,17 +57,9 @@ export function closeAllDateWeathers() {
   if (activeSidePanel.get().panel === 'date-weather') activeSidePanel.set('', '');
 }
 
-export function closeAllAppLaunchers() {
-  app.get_monitors().forEach((m) => {
-    const al = app.get_window(`applauncher-${m.get_connector()}`);
-    if (al) al.set_visible(false);
-  });
-}
-
 export function closeAllMenus() {
   closeAllControlCenters();
   closeAllDateWeathers();
-  closeAllAppLaunchers();
 }
 
 export function toggleControlCenter(monitorName?: string | null) {
@@ -115,20 +107,6 @@ export function toggleDateWeather(monitorName?: string | null) {
         }
       } else {
         if (dw.get_visible()) dw.hide_animated?.();
-      }
-    }
-  });
-}
-
-export function toggleAppLauncher(monitorName?: string | null) {
-  const targetMonitor = monitorName || Hyprland.get_default().get_focused_monitor().name;
-  app.get_monitors().forEach((m) => {
-    const al = app.get_window(`applauncher-${m.get_connector()}`);
-    if (al) {
-      if (m.get_connector() === targetMonitor) {
-        al.set_visible(!al.get_visible());
-      } else {
-        al.set_visible(false);
       }
     }
   });
