@@ -29,7 +29,7 @@ const DEFAULT_CONFIG: AppConfig = {
     backend: 'auto',
   },
   weather: {
-    location: 'Osaka',
+    location: '',
   },
   worldClocks: [
     { label: 'London', tz: 'Europe/London' },

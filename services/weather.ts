@@ -10,7 +10,9 @@ export const LOCATION = appConfig.weather.location;
 export const [weatherJson, setWeatherJson] = createState('{}');
 
 export function refreshWeather() {
-  fetch(`https://wttr.in/${LOCATION}?format=j1`)
+  const url =
+    LOCATION === '' ? 'https://wttr.in/?format=j1' : `https://wttr.in/${LOCATION}?format=j1`;
+  fetch(url)
     .then((res) => {
       if (!res.ok) throw new Error(`Weather fetch failed: ${res.status}`);
       return res.text();
