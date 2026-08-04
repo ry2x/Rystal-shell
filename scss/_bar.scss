@@ -181,7 +181,10 @@ window.Bar {
 //========================
 popover.tray-menu,
 popover.tray-expander,
-popover.tray-item-menu {
+popover.tray-item-menu,
+// Gtk creates nested submenu popovers internally, so only their `.menu`
+// class is available to style them.
+popover.menu {
   background: transparent;
   border: none;
   box-shadow: none;
@@ -232,7 +235,8 @@ popover.tray-expander {
   }
 }
 
-popover.tray-item-menu button.model {
+popover.tray-item-menu button.model,
+popover.menu button.model {
   background: transparent;
   border: 0;
   border-radius: 9px;
@@ -242,4 +246,9 @@ popover.tray-item-menu button.model {
   &:hover {
     background: rgba($on-surface, 0.08);
   }
+}
+
+.tray-menu-placeholder {
+  color: rgba($text, 0.7);
+  padding: 8px 12px;
 }

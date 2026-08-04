@@ -24,16 +24,30 @@ function TrayItemButton({
     </menubutton>
   ) as Gtk.MenuButton;
 
-  const menu = Gtk.PopoverMenu.new_from_model(item.menu_model);
+  const menuModel = item.menu_model;
+  const menu = menuModel
+    ? Gtk.PopoverMenu.new_from_model_full(menuModel, Gtk.PopoverMenuFlags.NESTED)
+    : new Gtk.Popover({
+        child: (
+          <label
+            class="tray-menu-placeholder"
+            label="No menu available"
+            wrap
+            justify={Gtk.Justification.CENTER}
+          />
+        ) as Gtk.Widget,
+      });
   menu.set_has_arrow(false);
   menu.set_position(Gtk.PositionType.RIGHT);
   menu.add_css_class('tray-item-menu');
   button.set_popover(menu);
 
   const updateActionGroup = () => button.insert_action_group('dbusmenu', item.action_group);
-  updateActionGroup();
-  const actionGroupHook = item.connect('notify::action-group', updateActionGroup);
-  button.connect('destroy', () => item.disconnect(actionGroupHook));
+  if (menuModel) {
+    updateActionGroup();
+    const actionGroupHook = item.connect('notify::action-group', updateActionGroup);
+    button.connect('destroy', () => item.disconnect(actionGroupHook));
+  }
 
   const leftClick = new Gtk.GestureClick({ button: 1 });
   leftClick.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
