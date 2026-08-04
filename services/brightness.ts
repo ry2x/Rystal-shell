@@ -146,6 +146,7 @@ function notify(percent: number) {
     app_name: 'Brightness',
     summary: `Brightness: ${percent}%`,
     body: backend === 'ddcutil' ? 'DDC/CI display brightness' : 'System backlight brightness',
+    transient: true,
   });
 }
 
