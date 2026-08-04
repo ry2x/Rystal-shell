@@ -12,7 +12,11 @@ import {
 } from '../services/brightness';
 import { getPowerProfile, setPowerProfile } from '../services/powerProfile';
 import { isRecording, startRecord, stopRecord } from '../services/recordService';
-import { toggleControlCenter, toggleDateWeather } from '../services/windowManager';
+import {
+  toggleAppLauncher,
+  toggleControlCenter,
+  toggleDateWeather,
+} from '../services/windowManager';
 import { compileAndReloadCss } from './css';
 
 type ResponseCallback = (response: string) => void;
@@ -104,6 +108,11 @@ export function requestHandler(request: string[], res: ResponseCallback) {
     case 'toggle-cc':
       toggleControlCenter();
       res('Toggled Control Center');
+      break;
+
+    case 'toggle-launcher':
+      toggleAppLauncher();
+      res('Toggled App Launcher');
       break;
 
     case 'list-windows': {
