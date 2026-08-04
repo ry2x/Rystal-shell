@@ -5,6 +5,7 @@ import GLib from 'gi://GLib';
 
 import style from '../style.scss';
 
+import { reloadLauncherBackground } from '../services/launcherBackground';
 import { forceRedrawBar } from '../widget/bar';
 
 let globalCssProvider: Gtk.CssProvider | null = null;
@@ -36,6 +37,7 @@ export function reloadCss(cssInput: string) {
 
   globalCssProvider = nextProvider;
 
+  reloadLauncherBackground();
   forceRedrawBar();
 }
 
