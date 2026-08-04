@@ -12,10 +12,7 @@ import {
 } from '../services/brightness';
 import { getPowerProfile, setPowerProfile } from '../services/powerProfile';
 import { isRecording, startRecord, stopRecord } from '../services/recordService';
-import {
-  toggleControlCenter,
-  toggleDateWeather,
-} from '../services/windowManager';
+import { toggleControlCenter, toggleDateWeather } from '../services/windowManager';
 import { compileAndReloadCss } from './css';
 
 type ResponseCallback = (response: string) => void;
