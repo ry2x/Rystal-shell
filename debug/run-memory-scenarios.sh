@@ -11,7 +11,7 @@ usage() {
 Usage: run-memory-scenarios.sh [OPTIONS]
 
 Options:
-  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, notifications-date-weather, or all (default: all)
+  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, notifications-date-weather, notifications-date-weather-repeat, or all (default: all)
   --iterations N        Panel open/theme-change/close repetitions (default: 30)
   --notifications N     Number of random image notifications (default: 30)
   --settle-seconds N    Delay after UI and wallpaper operations (default: 2)
@@ -44,7 +44,7 @@ while (($#)); do
   esac
 done
 
-case "$scenario" in launcher|launcher-no-theme|theme-only|css-only|cc|cc-no-theme|date-weather|date-weather-no-theme|date-weather-css-only|notifications|notifications-date-weather|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
+case "$scenario" in launcher|launcher-no-theme|theme-only|css-only|cc|cc-no-theme|date-weather|date-weather-no-theme|date-weather-css-only|notifications|notifications-date-weather|notifications-date-weather-repeat|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
 [[ $iterations =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--iterations must be a positive integer' >&2; exit 2; }
 [[ $notification_count =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--notifications must be a positive integer' >&2; exit 2; }
 [[ $settle_seconds =~ ^[0-9]+$ && $gc_wait_seconds =~ ^[0-9]+$ ]] || { printf '%s\n' 'wait values must be non-negative integers' >&2; exit 2; }
@@ -164,9 +164,10 @@ run_date_weather_css_only_scenario() {
 
 run_notification_scenario() {
   local with_date_weather=${1:-false}
+  local batch_count=${2:-1}
   local scenario_name=notifications
   local -a images=()
-  local image size i
+  local image size i batch added_phase cleared_phase settled_phase
   local image_count
 
   if "$with_date_weather"; then
@@ -185,32 +186,46 @@ run_notification_scenario() {
     wait_for_settle "$settle_seconds"
     snapshot "$scenario_name" 0 date_weather_opened
   fi
-  if "$dry_run"; then
-    printf '+ select %s random PNG/JPEG/WebP files under %q\n' "$notification_count" "$HOME/Pictures"
-    printf '+ notify-send -a AGS-Memory-Test -t 0 -h string:image-path:<image> ...\n'
-  else
-    mapfile -d '' -t images < <(find "$HOME/Pictures" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) -print0 | shuf -z -n "$notification_count")
-    printf 'index\tbytes\tpath\n' > "$images_tsv"
-    for ((i = 0; i < ${#images[@]}; i++)); do
-      image=${images[i]}
-      size=$(stat -c '%s' "$image")
-      printf '%s\t%s\t%s\n' "$((i + 1))" "$size" "$image" >> "$images_tsv"
-      notify-send -a AGS-Memory-Test -t 0 -h "string:image-path:$image" \
-        "Memory image test $((i + 1))/$notification_count" "$(basename "$image")"
-      wait_for_settle 1
-    done
+  if ! "$dry_run"; then
+    printf 'batch\tindex\tbytes\tpath\n' > "$images_tsv"
   fi
-  wait_for_settle "$settle_seconds"
-  snapshot "$scenario_name" "$notification_count" added
-  ags_request clear-notifications
-  wait_for_settle "$settle_seconds"
-  snapshot "$scenario_name" "$notification_count" cleared
-  wait_for_settle "$gc_wait_seconds"
-  snapshot "$scenario_name" "$notification_count" gc_settled
+  for ((batch = 1; batch <= batch_count; batch++)); do
+    if ((batch_count == 1)); then
+      added_phase=added
+      cleared_phase=cleared
+      settled_phase=gc_settled
+    else
+      added_phase="batch_${batch}_added"
+      cleared_phase="batch_${batch}_cleared"
+      settled_phase="batch_${batch}_gc_settled"
+    fi
+
+    if "$dry_run"; then
+      printf '+ select %s random PNG/JPEG/WebP files under %q (batch %s/%s)\n' "$notification_count" "$HOME/Pictures" "$batch" "$batch_count"
+      printf '+ notify-send -a AGS-Memory-Test -t 0 -h string:image-path:<image> ...\n'
+    else
+      mapfile -d '' -t images < <(find "$HOME/Pictures" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) -print0 | shuf -z -n "$notification_count")
+      for ((i = 0; i < ${#images[@]}; i++)); do
+        image=${images[i]}
+        size=$(stat -c '%s' "$image")
+        printf '%s\t%s\t%s\t%s\n' "$batch" "$((i + 1))" "$size" "$image" >> "$images_tsv"
+        notify-send -a AGS-Memory-Test -t 0 -h "string:image-path:$image" \
+          "Memory image test $((i + 1))/$notification_count" "$(basename "$image")"
+        wait_for_settle 1
+      done
+    fi
+    wait_for_settle "$settle_seconds"
+    snapshot "$scenario_name" "$batch" "$added_phase"
+    ags_request clear-notifications
+    wait_for_settle "$settle_seconds"
+    snapshot "$scenario_name" "$batch" "$cleared_phase"
+    wait_for_settle "$gc_wait_seconds"
+    snapshot "$scenario_name" "$batch" "$settled_phase"
+  done
   if "$with_date_weather"; then
     ags_request toggle-notif
     wait_for_settle "$settle_seconds"
-    snapshot "$scenario_name" "$notification_count" date_weather_closed
+    snapshot "$scenario_name" "$batch_count" date_weather_closed
   fi
 }
 
@@ -237,6 +252,7 @@ case "$scenario" in
   date-weather-css-only) run_date_weather_css_only_scenario ;;
   notifications) run_notification_scenario ;;
   notifications-date-weather) run_notification_scenario true ;;
+  notifications-date-weather-repeat) run_notification_scenario true 2 ;;
   all)
     run_panel_scenario launcher toggle-launcher
     run_panel_scenario cc toggle-cc
