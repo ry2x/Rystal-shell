@@ -9,6 +9,7 @@ import { reloadLauncherBackground } from '../services/launcherBackground';
 import { forceRedrawBar } from '../widget/bar';
 
 let globalCssProvider: Gtk.CssProvider | null = null;
+let lastCompiledCss: string | null = null;
 
 export function reloadCss(cssInput: string) {
   const display = Gdk.Display.get_default();
@@ -48,7 +49,16 @@ export function compileAndReloadCss(): Promise<void> {
 
   return execAsync(`sass ${scssPath} ${cssPath}`)
     .then(() => {
-      reloadCss(cssPath);
+      const [success, bytes] = GLib.file_get_contents(cssPath);
+      if (!success || !bytes) {
+        throw new Error(`Cannot read compiled CSS: ${cssPath}`);
+      }
+
+      const css = new TextDecoder().decode(bytes);
+      if (css === lastCompiledCss) return;
+
+      reloadCss(css);
+      lastCompiledCss = css;
     })
     .catch((err) => {
       console.error(`Error compiling SCSS: ${err}`);
