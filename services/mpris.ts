@@ -41,10 +41,12 @@ async function downloadThumbnailUrl(url: string, localPath: string) {
 }
 
 async function downloadThumbnail(id: string, localPath: string) {
-  const maxResolutionUrl = `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
-  if (await downloadThumbnailUrl(maxResolutionUrl, localPath)) return `file://${localPath}`;
+  // The card renders at 80x80 (160x160 decode limit), so downloading the
+  // 1280x720 max-resolution image only increases JPEG/Pixbuf working memory.
+  const mediumQualityUrl = `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+  if (await downloadThumbnailUrl(mediumQualityUrl, localPath)) return `file://${localPath}`;
 
-  const fallbackUrl = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+  const fallbackUrl = `https://img.youtube.com/vi/${id}/default.jpg`;
   if (await downloadThumbnailUrl(fallbackUrl, localPath)) return `file://${localPath}`;
 
   return null;
@@ -79,7 +81,7 @@ export async function fetchYouTubeThumbnail(player: Mpris.Player): Promise<strin
   if (!id) return null;
 
   const cacheDir = `${GLib.get_user_cache_dir()}/ags/media`;
-  const localPath = `${cacheDir}/${id}.jpg`;
+  const localPath = `${cacheDir}/${id}-mq.jpg`;
   if (GLib.file_test(localPath, GLib.FileTest.EXISTS)) return `file://${localPath}`;
 
   const inFlight = thumbnailDownloads.get(id);
