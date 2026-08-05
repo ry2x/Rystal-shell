@@ -11,7 +11,7 @@ usage() {
 Usage: run-memory-scenarios.sh [OPTIONS]
 
 Options:
-  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, or all (default: all)
+  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, notifications-date-weather, or all (default: all)
   --iterations N        Panel open/theme-change/close repetitions (default: 30)
   --notifications N     Number of random image notifications (default: 30)
   --settle-seconds N    Delay after UI and wallpaper operations (default: 2)
@@ -44,7 +44,7 @@ while (($#)); do
   esac
 done
 
-case "$scenario" in launcher|launcher-no-theme|theme-only|css-only|cc|cc-no-theme|date-weather|date-weather-no-theme|date-weather-css-only|notifications|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
+case "$scenario" in launcher|launcher-no-theme|theme-only|css-only|cc|cc-no-theme|date-weather|date-weather-no-theme|date-weather-css-only|notifications|notifications-date-weather|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
 [[ $iterations =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--iterations must be a positive integer' >&2; exit 2; }
 [[ $notification_count =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--notifications must be a positive integer' >&2; exit 2; }
 [[ $settle_seconds =~ ^[0-9]+$ && $gc_wait_seconds =~ ^[0-9]+$ ]] || { printf '%s\n' 'wait values must be non-negative integers' >&2; exit 2; }
@@ -163,9 +163,15 @@ run_date_weather_css_only_scenario() {
 }
 
 run_notification_scenario() {
+  local with_date_weather=${1:-false}
+  local scenario_name=notifications
   local -a images=()
   local image size i
   local image_count
+
+  if "$with_date_weather"; then
+    scenario_name=notifications-date-weather
+  fi
 
   image_count=$(find "$HOME/Pictures" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) -print | wc -l)
   if ((image_count < notification_count)); then
@@ -173,7 +179,12 @@ run_notification_scenario() {
     exit 1
   fi
 
-  snapshot notifications 0 baseline
+  snapshot "$scenario_name" 0 baseline
+  if "$with_date_weather"; then
+    ags_request toggle-notif
+    wait_for_settle "$settle_seconds"
+    snapshot "$scenario_name" 0 date_weather_opened
+  fi
   if "$dry_run"; then
     printf '+ select %s random PNG/JPEG/WebP files under %q\n' "$notification_count" "$HOME/Pictures"
     printf '+ notify-send -a AGS-Memory-Test -t 0 -h string:image-path:<image> ...\n'
@@ -190,12 +201,17 @@ run_notification_scenario() {
     done
   fi
   wait_for_settle "$settle_seconds"
-  snapshot notifications "$notification_count" added
+  snapshot "$scenario_name" "$notification_count" added
   ags_request clear-notifications
   wait_for_settle "$settle_seconds"
-  snapshot notifications "$notification_count" cleared
+  snapshot "$scenario_name" "$notification_count" cleared
   wait_for_settle "$gc_wait_seconds"
-  snapshot notifications "$notification_count" gc_settled
+  snapshot "$scenario_name" "$notification_count" gc_settled
+  if "$with_date_weather"; then
+    ags_request toggle-notif
+    wait_for_settle "$settle_seconds"
+    snapshot "$scenario_name" "$notification_count" date_weather_closed
+  fi
 }
 
 for command in ags waypaper notify-send pgrep ps awk find shuf stat; do require_command "$command"; done
@@ -220,6 +236,7 @@ case "$scenario" in
   date-weather-no-theme) run_panel_without_theme date-weather-no-theme toggle-notif ;;
   date-weather-css-only) run_date_weather_css_only_scenario ;;
   notifications) run_notification_scenario ;;
+  notifications-date-weather) run_notification_scenario true ;;
   all)
     run_panel_scenario launcher toggle-launcher
     run_panel_scenario cc toggle-cc
