@@ -11,7 +11,7 @@ usage() {
 Usage: run-memory-scenarios.sh [OPTIONS]
 
 Options:
-  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, notifications-date-weather, notifications-date-weather-repeat, notifications-date-weather-close-wait, or all (default: all)
+  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, notifications-date-weather, notifications-date-weather-repeat, notifications-date-weather-close-wait, or all (runs every scenario with AGS restart between each; default: all)
   --iterations N        Panel open/theme-change/close repetitions (default: 30)
   --notifications N     Number of random image notifications (default: 30)
   --settle-seconds N    Delay after UI and wallpaper operations (default: 2)
@@ -28,6 +28,10 @@ notification_count=30
 settle_seconds=2
 gc_wait_seconds=15
 results_dir=''
+base_results_dir=''
+current_results_dir=''
+memory_csv=''
+images_tsv=''
 dry_run=false
 
 while (($#)); do
@@ -52,8 +56,28 @@ case "$scenario" in launcher|launcher-no-theme|theme-only|css-only|cc|cc-no-them
 if [[ -z $results_dir ]]; then
   results_dir="$ROOT_DIR/debug/results/$(date +%Y%m%dT%H%M%S)"
 fi
-memory_csv="$results_dir/memory.csv"
-images_tsv="$results_dir/selected-images.tsv"
+base_results_dir=$results_dir
+
+configure_results_paths() {
+  local scenario_name=$1
+
+  if [[ $scenario == all ]]; then
+    current_results_dir="$base_results_dir/$scenario_name"
+  else
+    current_results_dir=$base_results_dir
+  fi
+
+  memory_csv="$current_results_dir/memory.csv"
+  images_tsv="$current_results_dir/selected-images.tsv"
+
+  if "$dry_run"; then
+    printf 'Results would be written to: %s\n' "$current_results_dir"
+  else
+    mkdir -p "$current_results_dir"
+    printf 'scenario=%s\niterations=%s\nnotifications=%s\nsettle_seconds=%s\ngc_wait_seconds=%s\n' \
+      "$scenario_name" "$iterations" "$notification_count" "$settle_seconds" "$gc_wait_seconds" > "$current_results_dir/run-info.txt"
+  fi
+}
 
 require_command() {
   command -v "$1" >/dev/null || { printf 'Missing required command: %s\n' "$1" >&2; exit 1; }
@@ -91,6 +115,73 @@ randomize_theme() {
   else
     waypaper --random
   fi
+}
+
+stop_ags() {
+  if "$dry_run"; then
+    printf '+ killall gjs ags\n'
+  else
+    killall gjs ags >/dev/null 2>&1 || true
+  fi
+}
+
+start_ags() {
+  if "$dry_run"; then
+    printf '+ ags run\n'
+  else
+    ags run >/dev/null 2>&1 &
+  fi
+  wait_for_settle "$settle_seconds"
+}
+
+restart_ags() {
+  stop_ags
+  start_ags
+}
+
+run_named_scenario() {
+  case "$1" in
+    launcher) run_panel_scenario launcher toggle-launcher ;;
+    launcher-no-theme) run_launcher_no_theme_scenario ;;
+    theme-only) run_theme_only_scenario ;;
+    css-only) run_css_only_scenario ;;
+    cc) run_panel_scenario cc toggle-cc ;;
+    cc-no-theme) run_panel_without_theme cc-no-theme toggle-cc ;;
+    date-weather) run_panel_scenario date-weather toggle-notif ;;
+    date-weather-no-theme) run_panel_without_theme date-weather-no-theme toggle-notif ;;
+    date-weather-css-only) run_date_weather_css_only_scenario ;;
+    notifications) run_notification_scenario ;;
+    notifications-date-weather) run_notification_scenario true ;;
+    notifications-date-weather-repeat) run_notification_scenario true 2 ;;
+    notifications-date-weather-close-wait) run_notification_scenario true 1 true ;;
+    *) printf 'Invalid scenario: %s\n' "$1" >&2; exit 2 ;;
+  esac
+}
+
+run_all_scenarios() {
+  local scenario_name
+  local -a scenarios=(
+    launcher
+    launcher-no-theme
+    theme-only
+    css-only
+    cc
+    cc-no-theme
+    date-weather
+    date-weather-no-theme
+    date-weather-css-only
+    notifications
+    notifications-date-weather
+    notifications-date-weather-repeat
+    notifications-date-weather-close-wait
+  )
+
+  for scenario_name in "${scenarios[@]}"; do
+    configure_results_paths "$scenario_name"
+    restart_ags
+    run_named_scenario "$scenario_name"
+  done
+  stop_ags
 }
 
 run_panel_scenario() {
@@ -245,39 +336,29 @@ run_notification_scenario() {
   fi
 }
 
-for command in ags waypaper notify-send pgrep ps awk find shuf stat; do require_command "$command"; done
+for command in ags waypaper notify-send pgrep ps awk find shuf stat killall; do require_command "$command"; done
 [[ -x $COLLECTOR ]] || { printf 'Collector is not executable: %s\n' "$COLLECTOR" >&2; exit 1; }
 
 if "$dry_run"; then
-  printf 'Results would be written to: %s\n' "$results_dir"
+  if [[ $scenario == all ]]; then
+    printf 'Results would be written under: %s\n' "$base_results_dir"
+  else
+    configure_results_paths "$scenario"
+  fi
 else
-  mkdir -p "$results_dir"
+  mkdir -p "$base_results_dir"
   printf 'scenario=%s\niterations=%s\nnotifications=%s\nsettle_seconds=%s\ngc_wait_seconds=%s\n' \
-    "$scenario" "$iterations" "$notification_count" "$settle_seconds" "$gc_wait_seconds" > "$results_dir/run-info.txt"
+    "$scenario" "$iterations" "$notification_count" "$settle_seconds" "$gc_wait_seconds" > "$base_results_dir/run-info.txt"
+  if [[ $scenario != all ]]; then
+    configure_results_paths "$scenario"
+  fi
 fi
 
 case "$scenario" in
-  launcher) run_panel_scenario launcher toggle-launcher ;;
-  launcher-no-theme) run_launcher_no_theme_scenario ;;
-  theme-only) run_theme_only_scenario ;;
-  css-only) run_css_only_scenario ;;
-  cc) run_panel_scenario cc toggle-cc ;;
-  cc-no-theme) run_panel_without_theme cc-no-theme toggle-cc ;;
-  date-weather) run_panel_scenario date-weather toggle-notif ;;
-  date-weather-no-theme) run_panel_without_theme date-weather-no-theme toggle-notif ;;
-  date-weather-css-only) run_date_weather_css_only_scenario ;;
-  notifications) run_notification_scenario ;;
-  notifications-date-weather) run_notification_scenario true ;;
-  notifications-date-weather-repeat) run_notification_scenario true 2 ;;
-  notifications-date-weather-close-wait) run_notification_scenario true 1 true ;;
-  all)
-    run_panel_scenario launcher toggle-launcher
-    run_panel_scenario cc toggle-cc
-    run_panel_scenario date-weather toggle-notif
-    run_notification_scenario
-    ;;
+  all) run_all_scenarios ;;
+  *) run_named_scenario "$scenario" ;;
 esac
 
 if ! "$dry_run"; then
-  printf 'Results written to %s\n' "$results_dir"
+  printf 'Results written to %s\n' "$base_results_dir"
 fi
