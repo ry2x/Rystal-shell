@@ -11,7 +11,7 @@ usage() {
 Usage: run-memory-scenarios.sh [OPTIONS]
 
 Options:
-  --scenario NAME       launcher, launcher-no-theme, theme-only, cc, date-weather, notifications, or all (default: all)
+  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, date-weather, notifications, or all (default: all)
   --iterations N        Panel open/theme-change/close repetitions (default: 30)
   --notifications N     Number of random image notifications (default: 30)
   --settle-seconds N    Delay after UI and wallpaper operations (default: 2)
@@ -44,7 +44,7 @@ while (($#)); do
   esac
 done
 
-case "$scenario" in launcher|launcher-no-theme|theme-only|cc|date-weather|notifications|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
+case "$scenario" in launcher|launcher-no-theme|theme-only|css-only|cc|date-weather|notifications|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
 [[ $iterations =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--iterations must be a positive integer' >&2; exit 2; }
 [[ $notification_count =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--notifications must be a positive integer' >&2; exit 2; }
 [[ $settle_seconds =~ ^[0-9]+$ && $gc_wait_seconds =~ ^[0-9]+$ ]] || { printf '%s\n' 'wait values must be non-negative integers' >&2; exit 2; }
@@ -131,6 +131,16 @@ run_theme_only_scenario() {
   done
 }
 
+run_css_only_scenario() {
+  snapshot css-only 0 baseline
+  for ((i = 1; i <= iterations; i++)); do
+    snapshot css-only "$i" before_css
+    ags_request reload-css
+    wait_for_settle "$settle_seconds"
+    snapshot css-only "$i" css_reloaded
+  done
+}
+
 run_notification_scenario() {
   local -a images=()
   local image size i
@@ -182,6 +192,7 @@ case "$scenario" in
   launcher) run_panel_scenario launcher toggle-launcher ;;
   launcher-no-theme) run_launcher_no_theme_scenario ;;
   theme-only) run_theme_only_scenario ;;
+  css-only) run_css_only_scenario ;;
   cc) run_panel_scenario cc toggle-cc ;;
   date-weather) run_panel_scenario date-weather toggle-notif ;;
   notifications) run_notification_scenario ;;
