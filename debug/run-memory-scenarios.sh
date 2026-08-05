@@ -11,7 +11,7 @@ usage() {
 Usage: run-memory-scenarios.sh [OPTIONS]
 
 Options:
-  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, notifications-date-weather, notifications-date-weather-repeat, or all (default: all)
+  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, notifications-date-weather, notifications-date-weather-repeat, notifications-date-weather-close-wait, or all (default: all)
   --iterations N        Panel open/theme-change/close repetitions (default: 30)
   --notifications N     Number of random image notifications (default: 30)
   --settle-seconds N    Delay after UI and wallpaper operations (default: 2)
@@ -44,7 +44,7 @@ while (($#)); do
   esac
 done
 
-case "$scenario" in launcher|launcher-no-theme|theme-only|css-only|cc|cc-no-theme|date-weather|date-weather-no-theme|date-weather-css-only|notifications|notifications-date-weather|notifications-date-weather-repeat|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
+case "$scenario" in launcher|launcher-no-theme|theme-only|css-only|cc|cc-no-theme|date-weather|date-weather-no-theme|date-weather-css-only|notifications|notifications-date-weather|notifications-date-weather-repeat|notifications-date-weather-close-wait|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
 [[ $iterations =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--iterations must be a positive integer' >&2; exit 2; }
 [[ $notification_count =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--notifications must be a positive integer' >&2; exit 2; }
 [[ $settle_seconds =~ ^[0-9]+$ && $gc_wait_seconds =~ ^[0-9]+$ ]] || { printf '%s\n' 'wait values must be non-negative integers' >&2; exit 2; }
@@ -165,6 +165,7 @@ run_date_weather_css_only_scenario() {
 run_notification_scenario() {
   local with_date_weather=${1:-false}
   local batch_count=${2:-1}
+  local observe_close=${3:-false}
   local scenario_name=notifications
   local -a images=()
   local image size i batch added_phase cleared_phase settled_phase
@@ -172,6 +173,9 @@ run_notification_scenario() {
 
   if "$with_date_weather"; then
     scenario_name=notifications-date-weather
+  fi
+  if "$observe_close"; then
+    scenario_name=notifications-date-weather-close-wait
   fi
 
   image_count=$(find "$HOME/Pictures" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) -print | wc -l)
@@ -224,6 +228,18 @@ run_notification_scenario() {
   done
   if "$with_date_weather"; then
     ags_request toggle-notif
+    if "$observe_close"; then
+      snapshot "$scenario_name" "$batch_count" date_weather_close_requested
+      wait_for_settle 1
+      snapshot "$scenario_name" "$batch_count" date_weather_hidden_1s
+      wait_for_settle 4
+      snapshot "$scenario_name" "$batch_count" date_weather_hidden_5s
+      wait_for_settle 10
+      snapshot "$scenario_name" "$batch_count" date_weather_hidden_15s
+      wait_for_settle 15
+      snapshot "$scenario_name" "$batch_count" date_weather_hidden_30s
+      return
+    fi
     wait_for_settle "$settle_seconds"
     snapshot "$scenario_name" "$batch_count" date_weather_closed
   fi
@@ -253,6 +269,7 @@ case "$scenario" in
   notifications) run_notification_scenario ;;
   notifications-date-weather) run_notification_scenario true ;;
   notifications-date-weather-repeat) run_notification_scenario true 2 ;;
+  notifications-date-weather-close-wait) run_notification_scenario true 1 true ;;
   all)
     run_panel_scenario launcher toggle-launcher
     run_panel_scenario cc toggle-cc
