@@ -10,9 +10,9 @@ import {
   refreshBrightness,
   refreshBrightnessBackend,
 } from '../services/brightness';
+import { clearNotifications } from '../services/notifications';
 import { getPowerProfile, setPowerProfile } from '../services/powerProfile';
 import { isRecording, startRecord, stopRecord } from '../services/recordService';
-import { clearNotifications } from '../services/notifications';
 import {
   toggleAppLauncher,
   toggleControlCenter,
