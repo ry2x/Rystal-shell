@@ -70,6 +70,7 @@ export default function PlayerCard({
   const picRef = pic;
   let disposed = false;
   let updateGeneration = 0;
+  let lastYouTubeArt: string | null = null;
 
   const updateImg = async () => {
     const generation = ++updateGeneration;
@@ -78,6 +79,7 @@ export default function PlayerCard({
     // AstalMpris caches art_url as a local file path. Prefer it to avoid an
     // unnecessary YouTube thumbnail request whenever the player provides art.
     if (coverArt) {
+      lastYouTubeArt = null;
       updatePicture(picRef, coverArt);
       return;
     }
@@ -85,6 +87,8 @@ export default function PlayerCard({
     try {
       const ytArt = await fetchYouTubeThumbnail(player);
       if (disposed || generation !== updateGeneration) return;
+      if (ytArt && ytArt === lastYouTubeArt) return;
+      lastYouTubeArt = ytArt;
       updatePicture(picRef, ytArt);
     } catch (e) {
       if (disposed || generation !== updateGeneration) return;
