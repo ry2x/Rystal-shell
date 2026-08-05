@@ -5,10 +5,27 @@ import Soup from 'gi://Soup?version=3.0';
 const thumbnailSession = new Soup.Session();
 const thumbnailDownloads = new Map<string, Promise<string | null>>();
 
+function sendAndRead(message: Soup.Message): Promise<GLib.Bytes> {
+  return new Promise((resolve, reject) => {
+    thumbnailSession.send_and_read_async(
+      message,
+      GLib.PRIORITY_DEFAULT,
+      null,
+      (_session, result) => {
+        try {
+          resolve(thumbnailSession.send_and_read_finish(result));
+        } catch (error) {
+          reject(error);
+        }
+      },
+    );
+  });
+}
+
 async function downloadThumbnailUrl(url: string, localPath: string) {
   try {
     const message = Soup.Message.new('GET', url);
-    const bytes = await thumbnailSession.send_and_read_async(message, GLib.PRIORITY_DEFAULT, null);
+    const bytes = await sendAndRead(message);
     if (message.status_code < 200 || message.status_code >= 300) return false;
 
     const data = bytes.get_data();
