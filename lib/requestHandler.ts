@@ -12,6 +12,7 @@ import {
 } from '../services/brightness';
 import { getPowerProfile, setPowerProfile } from '../services/powerProfile';
 import { isRecording, startRecord, stopRecord } from '../services/recordService';
+import { clearNotifications } from '../services/notifications';
 import {
   toggleAppLauncher,
   toggleControlCenter,
@@ -113,6 +114,11 @@ export function requestHandler(request: string[], res: ResponseCallback) {
     case 'toggle-launcher':
       toggleAppLauncher();
       res('Toggled App Launcher');
+      break;
+
+    case 'clear-notifications':
+      clearNotifications();
+      res('Cleared Notifications');
       break;
 
     case 'list-windows': {
