@@ -11,7 +11,7 @@ usage() {
 Usage: run-memory-scenarios.sh [OPTIONS]
 
 Options:
-  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, date-weather, date-weather-no-theme, notifications, or all (default: all)
+  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, date-weather, date-weather-no-theme, date-weather-css-only, notifications, or all (default: all)
   --iterations N        Panel open/theme-change/close repetitions (default: 30)
   --notifications N     Number of random image notifications (default: 30)
   --settle-seconds N    Delay after UI and wallpaper operations (default: 2)
@@ -44,7 +44,7 @@ while (($#)); do
   esac
 done
 
-case "$scenario" in launcher|launcher-no-theme|theme-only|css-only|cc|date-weather|date-weather-no-theme|notifications|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
+case "$scenario" in launcher|launcher-no-theme|theme-only|css-only|cc|date-weather|date-weather-no-theme|date-weather-css-only|notifications|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
 [[ $iterations =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--iterations must be a positive integer' >&2; exit 2; }
 [[ $notification_count =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--notifications must be a positive integer' >&2; exit 2; }
 [[ $settle_seconds =~ ^[0-9]+$ && $gc_wait_seconds =~ ^[0-9]+$ ]] || { printf '%s\n' 'wait values must be non-negative integers' >&2; exit 2; }
@@ -146,6 +146,22 @@ run_css_only_scenario() {
   done
 }
 
+run_date_weather_css_only_scenario() {
+  snapshot date-weather-css-only 0 baseline
+  ags_request toggle-notif
+  wait_for_settle "$settle_seconds"
+  snapshot date-weather-css-only 0 opened
+  for ((i = 1; i <= iterations; i++)); do
+    snapshot date-weather-css-only "$i" before_css
+    ags_request reload-css
+    wait_for_settle "$settle_seconds"
+    snapshot date-weather-css-only "$i" css_reloaded
+  done
+  ags_request toggle-notif
+  wait_for_settle "$settle_seconds"
+  snapshot date-weather-css-only "$iterations" closed
+}
+
 run_notification_scenario() {
   local -a images=()
   local image size i
@@ -201,6 +217,7 @@ case "$scenario" in
   cc) run_panel_scenario cc toggle-cc ;;
   date-weather) run_panel_scenario date-weather toggle-notif ;;
   date-weather-no-theme) run_panel_without_theme date-weather-no-theme toggle-notif ;;
+  date-weather-css-only) run_date_weather_css_only_scenario ;;
   notifications) run_notification_scenario ;;
   all)
     run_panel_scenario launcher toggle-launcher
