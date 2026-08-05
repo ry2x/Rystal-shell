@@ -5,7 +5,10 @@ import app from 'ags/gtk4/app';
 import Apps from 'gi://AstalApps';
 import GLib from 'gi://GLib';
 
-import { registerLauncherBackground } from '../../services/launcherBackground';
+import {
+  ensureLauncherBackground,
+  registerLauncherBackground,
+} from '../../services/launcherBackground';
 import { AppList } from './widget/AppList';
 import { SearchInput } from './widget/SearchInput';
 
@@ -73,6 +76,7 @@ export default function AppLauncher(gdkmonitor: Gdk.Monitor) {
           setText('');
           setSelectedIndex(0);
         } else {
+          ensureLauncherBackground();
           GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
             searchInput.grab_focus();
             appList.get_vadjustment()?.set_value(0);
