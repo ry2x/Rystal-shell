@@ -11,7 +11,7 @@ usage() {
 Usage: run-memory-scenarios.sh [OPTIONS]
 
 Options:
-  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, date-weather, notifications, or all (default: all)
+  --scenario NAME       launcher, launcher-no-theme, theme-only, css-only, cc, date-weather, date-weather-no-theme, notifications, or all (default: all)
   --iterations N        Panel open/theme-change/close repetitions (default: 30)
   --notifications N     Number of random image notifications (default: 30)
   --settle-seconds N    Delay after UI and wallpaper operations (default: 2)
@@ -44,7 +44,7 @@ while (($#)); do
   esac
 done
 
-case "$scenario" in launcher|launcher-no-theme|theme-only|css-only|cc|date-weather|notifications|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
+case "$scenario" in launcher|launcher-no-theme|theme-only|css-only|cc|date-weather|date-weather-no-theme|notifications|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
 [[ $iterations =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--iterations must be a positive integer' >&2; exit 2; }
 [[ $notification_count =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--notifications must be a positive integer' >&2; exit 2; }
 [[ $settle_seconds =~ ^[0-9]+$ && $gc_wait_seconds =~ ^[0-9]+$ ]] || { printf '%s\n' 'wait values must be non-negative integers' >&2; exit 2; }
@@ -110,14 +110,19 @@ run_panel_scenario() {
 }
 
 run_launcher_no_theme_scenario() {
-  snapshot launcher-no-theme 0 baseline
+  run_panel_without_theme launcher-no-theme toggle-launcher
+}
+
+run_panel_without_theme() {
+  local name=$1 request=$2
+  snapshot "$name" 0 baseline
   for ((i = 1; i <= iterations; i++)); do
-    ags_request toggle-launcher
+    ags_request "$request"
     wait_for_settle "$settle_seconds"
-    snapshot launcher-no-theme "$i" opened
-    ags_request toggle-launcher
+    snapshot "$name" "$i" opened
+    ags_request "$request"
     wait_for_settle "$settle_seconds"
-    snapshot launcher-no-theme "$i" closed
+    snapshot "$name" "$i" closed
   done
 }
 
@@ -195,6 +200,7 @@ case "$scenario" in
   css-only) run_css_only_scenario ;;
   cc) run_panel_scenario cc toggle-cc ;;
   date-weather) run_panel_scenario date-weather toggle-notif ;;
+  date-weather-no-theme) run_panel_without_theme date-weather-no-theme toggle-notif ;;
   notifications) run_notification_scenario ;;
   all)
     run_panel_scenario launcher toggle-launcher
