@@ -3,7 +3,7 @@ import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import { shellMotion } from '../../lib/motion';
-import { activeSidePanel } from '../../services/windowManager';
+import { activeSidePanel, animDx } from '../../services/windowManager';
 import ClockCard from './widget/ClockCard';
 import NotificationList from './widget/NotificationList';
 import ProfileCard from './widget/ProfileCard';
@@ -127,6 +127,11 @@ export default function DateWeatherPopup(gdkmonitor: Gdk.Monitor) {
                               cssClasses={isRevealed.as((r) =>
                                 r ? ['dw-container', 'revealed'] : ['dw-container'],
                               )}
+                              css={animDx((dx) => {
+                                const ml = dx - 947;
+                                const op = Math.max(0, Math.min(1, (dx - 47) / 900));
+                                return `transform: translateX(${ml < -900 ? -900 : ml}px); opacity: ${op};`;
+                              })}
                               spacing={24}
                             >
                               {/* LEFT COLUMN: Weather & Calendar */}
