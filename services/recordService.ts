@@ -105,6 +105,7 @@ async function addCaptureTarget(cmd: string[], mode: 'monitor' | 'slurp') {
       summary: 'Recording cancelled',
       body: 'Selection was cancelled',
       app_name: 'Recorder',
+      transient: true,
     });
     return false;
   }
@@ -141,6 +142,7 @@ export async function startRecord(mode: 'monitor' | 'slurp') {
       summary: 'Recording started',
       body: `Recording to ${fullPath}`,
       app_name: 'Recorder',
+      transient: true,
     });
     setIsRecording(true);
   } catch (e) {
