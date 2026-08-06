@@ -17,9 +17,7 @@
     "lint": "eslint .",
     "format": "prettier --write \"./**/*.{js,ts,tsx,json,css,scss,md,html}\" \"./*.{js,ts,tsx,json}\"",
     "tsc": "tsc --noEmit",
-    "build": "ags bundle app.ts start-ags",
-    "start": "./start-ags",
-    "dev": "ags bundle app.ts start-ags && ./start-ags"
+    "build": "ags bundle app.ts start-ags"
   },
   "name": "rystal-shell",
   "private": true
