@@ -100,7 +100,7 @@ async function addCaptureTarget(cmd: string[], mode: 'monitor' | 'slurp') {
     cmd.push('--geometry', region.trim());
     return true;
   } catch (error) {
-    console.warn('Cancelled Slurp [This is not an error. Emit by user operation]', error);
+    console.warn('Cancelled Slurp [This is not an error. Emitted by user operation]', error);
     sendNotification({
       summary: 'Recording cancelled',
       body: 'Selection was cancelled',
