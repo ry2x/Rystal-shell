@@ -5,16 +5,22 @@ import Notifd from 'gi://AstalNotifd';
 const notifd = Notifd.get_default();
 const MAX_NOTIFICATIONS = 30;
 
-const persistentNotifications = notifd
-  .get_notifications()
-  .filter((notification) => !notification.transient)
-  .sort((a, b) => b.time - a.time);
-const initialNotifications = persistentNotifications.slice(0, MAX_NOTIFICATIONS);
+function getInitialNotifications() {
+  const persistentNotifications = notifd
+    .get_notifications()
+    .filter((notification) => !notification.transient)
+    .sort((a, b) => b.time - a.time);
+  const initialNotifications = persistentNotifications.slice(0, MAX_NOTIFICATIONS);
 
-persistentNotifications.slice(MAX_NOTIFICATIONS).forEach((notification) => notification.dismiss());
+  persistentNotifications
+    .slice(MAX_NOTIFICATIONS)
+    .forEach((notification) => notification.dismiss());
+
+  return initialNotifications;
+}
 
 export const [notifications, setNotifications] =
-  createState<Notifd.Notification[]>(initialNotifications);
+  createState<Notifd.Notification[]>(getInitialNotifications());
 
 const notifiedHook = notifd.connect('notified', (_, id) => {
   const notification = notifd.get_notification(id);
