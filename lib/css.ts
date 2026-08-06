@@ -66,7 +66,11 @@ export function compileAndReloadCss(): Promise<void> {
     });
 }
 
-export function initCss() {
-  reloadCss(style);
-  compileAndReloadCss().catch(() => {});
+export async function initCss() {
+  try {
+    await compileAndReloadCss();
+  } catch {
+    reloadCss(style);
+    lastCompiledCss = style;
+  }
 }

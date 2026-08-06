@@ -16,8 +16,8 @@ GLib.setenv('GSK_RENDERER', 'gl', true);
 
 app.start({
   requestHandler,
-  main() {
-    initCss();
+  async main() {
+    await initCss();
 
     // Add lucide symbolic icons to GTK Icon Theme search path
     const display = Gdk.Display.get_default();
