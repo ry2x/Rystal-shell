@@ -7,6 +7,9 @@ export interface AppConfig {
   weather: {
     location: string;
   };
+  notifications?: {
+    maxCount?: number;
+  };
   worldClocks: {
     label: string;
     tz: string;
@@ -30,6 +33,9 @@ const DEFAULT_CONFIG: AppConfig = {
   },
   weather: {
     location: '',
+  },
+  notifications: {
+    maxCount: 30,
   },
   worldClocks: [
     { label: 'London', tz: 'Europe/London' },

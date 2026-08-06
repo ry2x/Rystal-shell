@@ -5,6 +5,9 @@
   "weather": {
     "location": "Tokyo"
   },
+  "notifications": {
+    "maxCount": 30
+  },
   "worldClocks": [
     { "label": "London", "tz": "Europe/London" },
     { "label": "Brisbane", "tz": "Australia/Brisbane" },

@@ -2,8 +2,17 @@ import { createState } from 'ags';
 
 import Notifd from 'gi://AstalNotifd';
 
+import { appConfig } from './config';
+
 const notifd = Notifd.get_default();
-const MAX_NOTIFICATIONS = 30;
+const DEFAULT_MAX_NOTIFICATIONS = 30;
+const configuredMaxNotifications = appConfig.notifications?.maxCount;
+const MAX_NOTIFICATIONS =
+  typeof configuredMaxNotifications === 'number' &&
+  Number.isInteger(configuredMaxNotifications) &&
+  configuredMaxNotifications > 0
+    ? configuredMaxNotifications
+    : DEFAULT_MAX_NOTIFICATIONS;
 
 function getInitialNotifications() {
   const persistentNotifications = notifd
