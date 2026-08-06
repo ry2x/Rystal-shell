@@ -1,7 +1,7 @@
 import { createState } from 'ags';
-import { fetch } from 'ags/fetch';
 
 import GLib from 'gi://GLib?version=2.0';
+import Soup from 'gi://Soup?version=3.0';
 
 import { appConfig } from './config';
 
@@ -9,33 +9,73 @@ export const LOCATION = appConfig.weather.location;
 
 export const [weatherJson, setWeatherJson] = createState('{}');
 
-export function refreshWeather() {
-  const url =
-    LOCATION === '' ? 'https://wttr.in/?format=j1' : `https://wttr.in/${LOCATION}?format=j1`;
-  fetch(url)
-    .then((res) => {
-      if (!res.ok) throw new Error(`Weather fetch failed: ${res.status}`);
-      return res.text();
-    })
-    .then((out) => {
-      if (!out || out.trim() === '') throw new Error('Empty weather response');
-      JSON.parse(out);
-      setWeatherJson(out);
-    })
-    .catch((err) => {
-      console.error('Weather fetch failed:', err);
-      GLib.timeout_add(GLib.PRIORITY_DEFAULT, 60000, () => {
-        refreshWeather();
-        return GLib.SOURCE_REMOVE;
-      });
+const NORMAL_INTERVAL_MS = 30 * 60_000;
+const RETRY_INTERVAL_MS = 60_000;
+const weatherSession = new Soup.Session();
+const textDecoder = new TextDecoder('utf-8');
+
+let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+let refreshPromise: Promise<void> | null = null;
+
+function sendAndRead(message: Soup.Message): Promise<GLib.Bytes> {
+  return new Promise((resolve, reject) => {
+    weatherSession.send_and_read_async(message, GLib.PRIORITY_DEFAULT, null, (_session, result) => {
+      try {
+        resolve(weatherSession.send_and_read_finish(result));
+      } catch (error) {
+        reject(error);
+      }
     });
+  });
 }
 
-refreshWeather();
-GLib.timeout_add(GLib.PRIORITY_DEFAULT, 60000 * 30, () => {
-  refreshWeather();
-  return GLib.SOURCE_CONTINUE;
-});
+function clearRefreshTimer() {
+  if (refreshTimer === null) return;
+  clearTimeout(refreshTimer);
+  refreshTimer = null;
+}
+
+function scheduleRefresh(delay: number) {
+  clearRefreshTimer();
+  refreshTimer = setTimeout(() => {
+    refreshTimer = null;
+    void refreshWeather();
+  }, delay);
+}
+
+async function runRefresh() {
+  const url =
+    LOCATION === '' ? 'https://wttr.in/?format=j1' : `https://wttr.in/${LOCATION}?format=j1`;
+  try {
+    const message = Soup.Message.new('GET', url);
+    const bytes = await sendAndRead(message);
+    if (message.status_code < 200 || message.status_code >= 300) {
+      throw new Error(`Weather fetch failed: ${message.status_code}`);
+    }
+
+    const data = bytes.get_data();
+    const out = data ? textDecoder.decode(data) : '';
+    if (!out || out.trim() === '') throw new Error('Empty weather response');
+    JSON.parse(out);
+    if (out !== weatherJson.peek()) setWeatherJson(out);
+    scheduleRefresh(NORMAL_INTERVAL_MS);
+  } catch (error) {
+    console.error('Weather fetch failed:', error);
+    scheduleRefresh(RETRY_INTERVAL_MS);
+  }
+}
+
+export function refreshWeather(): Promise<void> {
+  if (refreshPromise) return refreshPromise;
+
+  clearRefreshTimer();
+  refreshPromise = runRefresh().finally(() => {
+    refreshPromise = null;
+  });
+  return refreshPromise;
+}
+
+void refreshWeather();
 
 // eslint-disable-next-line complexity
 export function getWeatherIcon(code: string) {
