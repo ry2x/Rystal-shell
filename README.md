@@ -111,7 +111,7 @@ I've been reading the GJS and Gnim documentation and doing my best to avoid memo
 
 For those interested, here are the memory usage numbers I've observed, including the worst-case scenario:
 
-- **Usually case:**
+- **Typical case:**
   - `around 270 ~ 350 MB` (usually around 300 MB)
 
 - **Worst case:**
