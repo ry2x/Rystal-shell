@@ -1,5 +1,5 @@
 import { Gdk, Gtk } from 'ags/gtk4';
-import { execAsync } from 'ags/process';
+import { exec, execAsync } from 'ags/process';
 
 import GLib from 'gi://GLib';
 
@@ -10,6 +10,17 @@ import { forceRedrawBar } from '../widget/bar';
 
 let globalCssProvider: Gtk.CssProvider | null = null;
 let lastCompiledCss: string | null = null;
+const configDir = `${GLib.get_user_config_dir()}/ags`;
+const scssPath = `${configDir}/style.scss`;
+const cssPath = `/tmp/ags-style.css`;
+
+function readCompiledCss() {
+  const [success, bytes] = GLib.file_get_contents(cssPath);
+  if (!success || !bytes) {
+    throw new Error(`Cannot read compiled CSS: ${cssPath}`);
+  }
+  return new TextDecoder().decode(bytes);
+}
 
 export function reloadCss(cssInput: string) {
   const display = Gdk.Display.get_default();
@@ -43,18 +54,9 @@ export function reloadCss(cssInput: string) {
 }
 
 export function compileAndReloadCss(): Promise<void> {
-  const configDir = `${GLib.get_user_config_dir()}/ags`;
-  const scssPath = `${configDir}/style.scss`;
-  const cssPath = `/tmp/ags-style.css`;
-
   return execAsync(`sass ${scssPath} ${cssPath}`)
     .then(() => {
-      const [success, bytes] = GLib.file_get_contents(cssPath);
-      if (!success || !bytes) {
-        throw new Error(`Cannot read compiled CSS: ${cssPath}`);
-      }
-
-      const css = new TextDecoder().decode(bytes);
+      const css = readCompiledCss();
       if (css === lastCompiledCss) return;
 
       reloadCss(css);
@@ -66,10 +68,14 @@ export function compileAndReloadCss(): Promise<void> {
     });
 }
 
-export async function initCss() {
+export function initCss() {
   try {
-    await compileAndReloadCss();
-  } catch {
+    exec(['sass', scssPath, cssPath]);
+    const css = readCompiledCss();
+    reloadCss(css);
+    lastCompiledCss = css;
+  } catch (error) {
+    console.error(`Error compiling initial SCSS, using bundled CSS: ${error}`);
     reloadCss(style);
     lastCompiledCss = style;
   }
