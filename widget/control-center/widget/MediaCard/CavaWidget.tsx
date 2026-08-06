@@ -9,7 +9,6 @@ function getCava() {
   if (cavaInstance) return cavaInstance;
 
   cavaInstance = AstalCava.get_default();
-  if (cavaInstance) cavaInstance.active = false;
   return cavaInstance;
 }
 
@@ -25,39 +24,34 @@ export default function CavaWidget() {
   let valuesSignalId = 0;
   let isMapped = false;
 
-  const syncMappedState = () => {
-    const mapped = area.get_mapped();
-    if (mapped === isMapped) return;
+  const activate = () => {
+    if (isMapped) return;
 
-    isMapped = mapped;
-    if (mapped) {
-      mappedWidgetCount++;
-      if (mappedWidgetCount === 1) cava.active = true;
-      valuesSignalId = cava.connect('notify::values', () => area.queue_draw());
-      area.queue_draw();
-      return;
-    }
+    isMapped = true;
+    mappedWidgetCount++;
+    if (mappedWidgetCount === 1) cava.active = true;
+    valuesSignalId = cava.connect('notify::values', () => area.queue_draw());
+    area.queue_draw();
+  };
+
+  const deactivate = () => {
+    if (!isMapped) return;
 
     if (valuesSignalId !== 0) {
       cava.disconnect(valuesSignalId);
       valuesSignalId = 0;
     }
+    isMapped = false;
     mappedWidgetCount = Math.max(0, mappedWidgetCount - 1);
     if (mappedWidgetCount === 0) cava.active = false;
   };
 
-  const mappedSignalId = area.connect('notify::mapped', syncMappedState);
+  const mapSignalId = area.connect('map', activate);
+  const unmapSignalId = area.connect('unmap', deactivate);
   area.connect('destroy', () => {
-    if (isMapped) {
-      isMapped = false;
-      mappedWidgetCount = Math.max(0, mappedWidgetCount - 1);
-    }
-    if (valuesSignalId !== 0) {
-      cava.disconnect(valuesSignalId);
-      valuesSignalId = 0;
-    }
-    if (mappedWidgetCount === 0) cava.active = false;
-    area.disconnect(mappedSignalId);
+    deactivate();
+    area.disconnect(mapSignalId);
+    area.disconnect(unmapSignalId);
   });
 
   let cachedColor = { r: 1, g: 1, b: 1, a: 0.15 };
