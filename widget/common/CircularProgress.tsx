@@ -51,6 +51,17 @@ export default function CircularProgress<T>({
 
   const updateValue = () => {
     targetValue = normalize(transformer(variable.get()));
+
+    if (!area.get_mapped()) {
+      if (animationSourceId !== 0) {
+        GLib.source_remove(animationSourceId);
+        animationSourceId = 0;
+      }
+      currentValue = targetValue;
+      startValue = targetValue;
+      return;
+    }
+
     startValue = currentValue;
     animationStartedAt = GLib.get_monotonic_time();
 
@@ -59,6 +70,18 @@ export default function CircularProgress<T>({
     }
   };
   const unsubscribe = variable.subscribe(updateValue);
+  const mappedSignalId = area.connect('notify::mapped', () => {
+    if (area.get_mapped()) {
+      currentValue = targetValue;
+      startValue = targetValue;
+      area.queue_draw();
+    } else if (animationSourceId !== 0) {
+      GLib.source_remove(animationSourceId);
+      animationSourceId = 0;
+      currentValue = targetValue;
+      startValue = targetValue;
+    }
+  });
 
   area.connect('destroy', () => {
     unsubscribe();
@@ -66,6 +89,7 @@ export default function CircularProgress<T>({
       GLib.source_remove(animationSourceId);
       animationSourceId = 0;
     }
+    area.disconnect(mappedSignalId);
   });
 
   area.set_draw_func((_area, cr, width, height) => {

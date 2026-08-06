@@ -2,9 +2,19 @@ import { Gtk } from 'ags/gtk4';
 
 import AstalCava from 'gi://AstalCava';
 
-const cava = AstalCava.get_default();
+let cavaInstance: AstalCava.Cava | null = null;
+let mappedWidgetCount = 0;
+
+function getCava() {
+  if (cavaInstance) return cavaInstance;
+
+  cavaInstance = AstalCava.get_default();
+  if (cavaInstance) cavaInstance.active = false;
+  return cavaInstance;
+}
 
 export default function CavaWidget() {
+  const cava = getCava();
   if (!cava) return <box visible={false} />;
 
   const area = new Gtk.DrawingArea();
@@ -12,12 +22,42 @@ export default function CavaWidget() {
   area.set_hexpand(true);
   area.set_valign(Gtk.Align.END);
 
-  const signalId = cava.connect('notify::values', () => {
-    area.queue_draw();
-  });
+  let valuesSignalId = 0;
+  let isMapped = false;
 
+  const syncMappedState = () => {
+    const mapped = area.get_mapped();
+    if (mapped === isMapped) return;
+
+    isMapped = mapped;
+    if (mapped) {
+      mappedWidgetCount++;
+      if (mappedWidgetCount === 1) cava.active = true;
+      valuesSignalId = cava.connect('notify::values', () => area.queue_draw());
+      area.queue_draw();
+      return;
+    }
+
+    if (valuesSignalId !== 0) {
+      cava.disconnect(valuesSignalId);
+      valuesSignalId = 0;
+    }
+    mappedWidgetCount = Math.max(0, mappedWidgetCount - 1);
+    if (mappedWidgetCount === 0) cava.active = false;
+  };
+
+  const mappedSignalId = area.connect('notify::mapped', syncMappedState);
   area.connect('destroy', () => {
-    cava.disconnect(signalId);
+    if (isMapped) {
+      isMapped = false;
+      mappedWidgetCount = Math.max(0, mappedWidgetCount - 1);
+    }
+    if (valuesSignalId !== 0) {
+      cava.disconnect(valuesSignalId);
+      valuesSignalId = 0;
+    }
+    if (mappedWidgetCount === 0) cava.active = false;
+    area.disconnect(mappedSignalId);
   });
 
   let cachedColor = { r: 1, g: 1, b: 1, a: 0.15 };
