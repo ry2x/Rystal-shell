@@ -2,19 +2,34 @@ import { createState } from 'ags';
 
 import Notifd from 'gi://AstalNotifd';
 
+import { appConfig } from './config';
+
 const notifd = Notifd.get_default();
-const MAX_NOTIFICATIONS = 30;
+const DEFAULT_MAX_NOTIFICATIONS = 30;
+const configuredMaxNotifications = appConfig.notifications?.maxCount;
+const MAX_NOTIFICATIONS =
+  typeof configuredMaxNotifications === 'number' &&
+  Number.isInteger(configuredMaxNotifications) &&
+  configuredMaxNotifications > 0
+    ? configuredMaxNotifications
+    : DEFAULT_MAX_NOTIFICATIONS;
 
-const persistentNotifications = notifd
-  .get_notifications()
-  .filter((notification) => !notification.transient)
-  .sort((a, b) => b.time - a.time);
-const initialNotifications = persistentNotifications.slice(0, MAX_NOTIFICATIONS);
+function getInitialNotifications() {
+  const persistentNotifications = notifd
+    .get_notifications()
+    .filter((notification) => !notification.transient)
+    .sort((a, b) => b.time - a.time);
+  const initialNotifications = persistentNotifications.slice(0, MAX_NOTIFICATIONS);
 
-persistentNotifications.slice(MAX_NOTIFICATIONS).forEach((notification) => notification.dismiss());
+  persistentNotifications
+    .slice(MAX_NOTIFICATIONS)
+    .forEach((notification) => notification.dismiss());
+
+  return initialNotifications;
+}
 
 export const [notifications, setNotifications] =
-  createState<Notifd.Notification[]>(initialNotifications);
+  createState<Notifd.Notification[]>(getInitialNotifications());
 
 const notifiedHook = notifd.connect('notified', (_, id) => {
   const notification = notifd.get_notification(id);

@@ -1,27 +1,42 @@
 # Rystal-Shell
 
 **Rystal-Shell** is a part of the GUI shell for [Ryprland](https://github.com/ry2x/Ryprland-dot/).
-This shell is based on [Aylur's GTK Shell](https://github.com/aylur/ags).
-To use it, you must be using Ryprland.
-For installation instructions, please refer to the Ryprland repository.
+This shell is based on [Aylur's GTK Shell](https://github.com/aylur/ags) called AGS.
 
 [https://github.com/user-attachments/assets/5e309397-45a1-4d81-b356-dac4220af26a](https://github.com/user-attachments/assets/8e5a3ac4-4107-4b52-b694-a8c6a0ac113e)
 
 > [!NOTE]
-> [WHY AGS?](#why-ags-was-chosen-and-its-memory-consumption)
+> [WHY AGS? AND ABOUT MEMORY CONSUMPTION](#why-ags-was-chosen-and-its-memory-consumption)
 
-## Usage
+## Requirements
 
-When you install Ryprland, this repository is cloned as a submodule.
-It will be extracted to `/base/.config/ags/` and becomes usable by running `stow ./base`.
+When you install Ryprland, this repository is cloned as a submodule and included in the Ryprland configuration.
+So, you don't need to install it separately.
+
+If you want to use this shell in your own configuration, you can clone this repository and use it as a part of your configuration.
+
+- [aylurs-gtk-shell-git](https://aur.archlinux.org/packages/aylurs-gtk-shell-git)
+- [libastal-meta](https://aur.archlinux.org/packages/libastal-meta)
+- pnpm (for development only)
+
+```sh
+# for Arch Linux
+paru -S aylurs-gtk-shell-git libastal-meta
+```
 
 ### How to Start
 
+These are pre-configured in Ryprland's configuration, so normally you don't need to start it manually.
+
+Make sure you have created a `~/.config/ags` directory and copied the contents of this repository into it.
+
+Run the following command to start the shell:
+
 ```sh
+cd ~/.config/ags
 ./launch.sh
 ```
 
-This command will automatically start the shell, provided AGS is installed.
 In practice, it relies on Hyprland's autostart capabilities.
 When doing so, you need to account for the lag associated with loading the modules.
 Therefore, you must introduce a startup delay as shown below:
@@ -35,8 +50,6 @@ hl.on("hyprland.start",
   end
 )
 ```
-
-This is pre-configured in Ryprland.
 
 ### Configuration
 
@@ -55,47 +68,36 @@ By modifying each setting in that file, you can alter the shell's behavior and s
   "weather": {
     "location": "<Your preferred location; if left blank, the location will be determined from your IP address.>"
   },
+  "notifications": {
+    "maxCount": "<Maximum number of persistent notifications; positive integer.>"
+  },
   "worldClocks": [
     { "label": "<Your preferred location>", "tz": "<Timezone of that location>" },
     ...
   ],
   "recorder": {
     "savePath": "<Directory to save recorded videos>",
-    "filenameFormat": "<Filename format for the recorded videos>"
+    "filenameFormat": "<Filename format for the recorded videos>",
+    "recordAudio": "<Boolean(true/false) value indicating whether to record audio or not>",
+    "audioSource": "<Audio source for recording audio; 'system' or 'mic'>"
   },
   "profile": {
     "avatarPath": "<Profile picture; 512x512 .png format is recommended>"
+  },
+  "brightness": {
+    "backend": "<Backend for brightness control; 'auto', 'brightnessctl', 'ddcutil'.>"
   }
 }
 ```
 
-## Development
+## Development Note
 
-### Requirement
+Running `pnpm run tsc` will throw errors in the following 2 files:
 
-- pnpm
-
-### Usage
-
-```bash
-# init
-ags init         # generate the types for GTK4 and AGS
-pnpm install     # install devDependencies
-
-pnpm run lint    # Run ESLint
-pnpm run tsc     # Run the TypeScript type checker
-pnpm run format  # Run Prettier
-pnpm run build   # Build the AGS module
-pnpm run start   # Start the AGS module
-pnpm run dev     # Start the AGS module with new build
-```
-
-> [!NOTE]
-> Running `pnpm run tsc` will throw errors in the following three files:
 > `../../../usr/share/ags/js/lib/gtk4/app.ts:288`
-> `../../../usr/share/ags/js/node_modules/gnim/dist/fetch.ts:406`
 > `../../../usr/share/ags/js/node_modules/gnim/dist/jsx/state.ts:715`
-> You can safely ignore these errors.
+
+You can safely ignore these errors.
 
 ## Why AGS was chosen and its memory consumption
 
@@ -109,12 +111,8 @@ I've been reading the GJS and Gnim documentation and doing my best to avoid memo
 
 For those interested, here are the memory usage numbers I've observed, including the worst-case scenario:
 
-- **Usually case:**
-  - `around 350~450 MB`
-- **Worst case (many notifications containing large images):**
-  - Idle: `~540 MB`
-  - Peak: Depends on the number of notifications and the size of the attachments.
-    > I think it can be scale unlimited. I tested it with 100 notifications which has 2MB Image each, and the memory usage was around 1.7 GB
+- **Typical case:**
+  - `around 270 ~ 350 MB` (usually around 300 MB)
 
-Memory usage returns to the idle level after those notifications are cleared.
-(not immediately, but gjs will gc them)
+- **Worst case:**
+  - `around 350 ~ 450 MB` (I have never seen it exceed around 450 MB with `maxCount = 30`)

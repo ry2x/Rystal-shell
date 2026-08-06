@@ -13,3 +13,5 @@ start-ags
 
 oneshot/style.css
 oneshot/**/build/
+
+debug/results/

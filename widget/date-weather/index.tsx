@@ -47,6 +47,8 @@ function Lazy({
   build: () => Gtk.Widget;
   register: (initialize: () => void) => void;
 }) {
+  // Intentionally load once and retain the widget tree while hidden. Rebuilding
+  // it on every open caused cumulative GTK/GSK and notification image allocations.
   const [loaded, setLoaded] = createState(false);
   register(() => setLoaded(true));
 

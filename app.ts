@@ -5,13 +5,12 @@ import GLib from 'gi://GLib';
 
 import { initCss } from './lib/css';
 import { requestHandler } from './lib/requestHandler';
+import AppLauncher from './widget/app-launcher';
 import Bar from './widget/bar';
 import ControlCenter from './widget/control-center';
 import WifiPasswordDialog from './widget/control-center/widget/Connectivity/WifiPasswordDialog';
 import DateWeatherPopup from './widget/date-weather';
 import NotificationPopups from './widget/notification-popups';
-
-GLib.setenv('GSK_RENDERER', 'gl', true);
 
 app.start({
   requestHandler,
@@ -32,6 +31,7 @@ app.start({
       WifiPasswordDialog(m);
       DateWeatherPopup(m);
       NotificationPopups(m);
+      AppLauncher(m);
     });
   },
 });

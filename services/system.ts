@@ -51,11 +51,16 @@ interface CpuCounters {
 }
 
 let previousCpuCounters: CpuCounters | null = null;
+const textDecoder = new TextDecoder('utf-8');
+const gpuBusyPaths = Array.from(
+  { length: 32 },
+  (_, card) => `/sys/class/drm/card${card}/device/gpu_busy_percent`,
+).filter((path) => GLib.file_test(path, GLib.FileTest.EXISTS));
 
 function readText(path: string) {
   try {
     const [success, bytes] = GLib.file_get_contents(path);
-    return success && bytes ? new TextDecoder('utf-8').decode(bytes) : null;
+    return success && bytes ? textDecoder.decode(bytes) : null;
   } catch {
     return null;
   }
@@ -108,12 +113,12 @@ function updateRamUsage() {
 function updateGpuUsage() {
   let highestUsage = 0;
 
-  for (let card = 0; card < 32; card++) {
-    const usage = Number(readText(`/sys/class/drm/card${card}/device/gpu_busy_percent`)?.trim());
+  for (const path of gpuBusyPaths) {
+    const usage = Number(readText(path)?.trim());
     if (Number.isFinite(usage)) highestUsage = Math.max(highestUsage, usage);
   }
 
-  setGpuUsage(highestUsage);
+  if (highestUsage !== gpuUsage()) setGpuUsage(highestUsage);
 }
 
 function formatUptime(seconds: number) {
@@ -134,15 +139,17 @@ function formatUptime(seconds: number) {
 
 function updateUptime() {
   const seconds = Number(readText('/proc/uptime')?.split(/\s+/)[0]);
-  if (Number.isFinite(seconds) && seconds >= 0) setUptime(formatUptime(seconds));
+  if (!Number.isFinite(seconds) || seconds < 0) return;
+
+  const formatted = formatUptime(seconds);
+  if (formatted !== uptime()) setUptime(formatted);
 }
 
 function pollSystemMetrics() {
   updateCpuUsage();
   updateRamUsage();
   updateGpuUsage();
-  updateUptime();
 }
 
-pollSystemMetrics();
 export const systemPoll = interval(2000, pollSystemMetrics);
+export const uptimePoll = interval(60_000, updateUptime);

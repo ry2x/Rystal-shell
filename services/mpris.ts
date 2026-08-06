@@ -1,7 +1,56 @@
-import { fetch } from 'ags/fetch';
-
 import Mpris from 'gi://AstalMpris';
 import GLib from 'gi://GLib?version=2.0';
+import Soup from 'gi://Soup?version=3.0';
+
+const thumbnailSession = new Soup.Session();
+const thumbnailDownloads = new Map<string, Promise<string | null>>();
+
+function sendAndRead(message: Soup.Message): Promise<GLib.Bytes> {
+  return new Promise((resolve, reject) => {
+    thumbnailSession.send_and_read_async(
+      message,
+      GLib.PRIORITY_DEFAULT,
+      null,
+      (_session, result) => {
+        try {
+          resolve(thumbnailSession.send_and_read_finish(result));
+        } catch (error) {
+          reject(error);
+        }
+      },
+    );
+  });
+}
+
+async function downloadThumbnailUrl(url: string, localPath: string) {
+  try {
+    const message = Soup.Message.new('GET', url);
+    const bytes = await sendAndRead(message);
+    if (message.status_code < 200 || message.status_code >= 300) return false;
+
+    const data = bytes.get_data();
+    if (data && data.length > 0) {
+      GLib.file_set_contents(localPath, data);
+      return true;
+    }
+  } catch (error) {
+    console.error(`Failed to download YouTube thumbnail from ${url}:`, error);
+  }
+
+  return false;
+}
+
+async function downloadThumbnail(id: string, localPath: string) {
+  // The card renders at 80x80 (160x160 decode limit), so downloading the
+  // 1280x720 max-resolution image only increases JPEG/Pixbuf working memory.
+  const mediumQualityUrl = `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+  if (await downloadThumbnailUrl(mediumQualityUrl, localPath)) return `file://${localPath}`;
+
+  const fallbackUrl = `https://img.youtube.com/vi/${id}/default.jpg`;
+  if (await downloadThumbnailUrl(fallbackUrl, localPath)) return `file://${localPath}`;
+
+  return null;
+}
 
 export async function fetchYouTubeThumbnail(player: Mpris.Player): Promise<string | null> {
   const busName = player.bus_name;
@@ -32,24 +81,14 @@ export async function fetchYouTubeThumbnail(player: Mpris.Player): Promise<strin
   if (!id) return null;
 
   const cacheDir = `${GLib.get_user_cache_dir()}/ags/media`;
-  const localPath = `${cacheDir}/${id}.jpg`;
-  let isDownloaded = GLib.file_test(localPath, GLib.FileTest.EXISTS);
+  const localPath = `${cacheDir}/${id}-mq.jpg`;
+  if (GLib.file_test(localPath, GLib.FileTest.EXISTS)) return `file://${localPath}`;
 
-  if (!isDownloaded) {
-    GLib.mkdir_with_parents(cacheDir, 0o755);
-    let res = await fetch(`https://img.youtube.com/vi/${id}/maxresdefault.jpg`);
-    if (!res.ok) {
-      res = await fetch(`https://img.youtube.com/vi/${id}/hqdefault.jpg`);
-    }
-    if (res.ok) {
-      const arrayBuffer = await res.arrayBuffer();
-      if (arrayBuffer) {
-        const bytes = new Uint8Array(arrayBuffer);
-        GLib.file_set_contents(localPath, bytes);
-        isDownloaded = true;
-      }
-    }
-  }
+  const inFlight = thumbnailDownloads.get(id);
+  if (inFlight) return inFlight;
 
-  return isDownloaded ? `file://${localPath}` : null;
+  GLib.mkdir_with_parents(cacheDir, 0o755);
+  const download = downloadThumbnail(id, localPath).finally(() => thumbnailDownloads.delete(id));
+  thumbnailDownloads.set(id, download);
+  return download;
 }

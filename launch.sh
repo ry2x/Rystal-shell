@@ -10,5 +10,8 @@ if [ ! -f "start-ags" ]; then
     ags bundle app.ts start-ags
 fi
 
+# Prefer Vulkan for normal use while allowing per-launch renderer overrides.
+export GSK_RENDERER="${GSK_RENDERER:-vulkan}"
+
 # Execute start-ags with any passed arguments
 exec ./start-ags "$@"

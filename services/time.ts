@@ -1,8 +1,18 @@
-import { createPoll } from 'ags/time';
+import { createState } from 'ags';
 
-const now = createPoll(Temporal.Now.zonedDateTimeISO(), 1000, () =>
-  Temporal.Now.zonedDateTimeISO(),
-);
+const MINUTE_MS = 60_000;
+const [now, setNow] = createState(Temporal.Now.zonedDateTimeISO());
+
+function scheduleNextMinute() {
+  const delay = MINUTE_MS - (Date.now() % MINUTE_MS);
+
+  setTimeout(() => {
+    setNow(Temporal.Now.zonedDateTimeISO());
+    scheduleNextMinute();
+  }, delay);
+}
+
+scheduleNextMinute();
 
 export const clockTime = now.as(
   (t) => `${String(t.hour).padStart(2, '0')}:${String(t.minute).padStart(2, '0')}`,

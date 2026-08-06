@@ -101,7 +101,7 @@ export default function PanelBackground({ gdkmonitor }: { gdkmonitor: Gdk.Monito
             return GLib.SOURCE_REMOVE;
           }
           // Simple ease-out
-          const speed = 0.15;
+          const speed = 0.22;
 
           currentDx += diff * speed;
           setAnimDx(currentDx);
