@@ -12,8 +12,6 @@ import WifiPasswordDialog from './widget/control-center/widget/Connectivity/Wifi
 import DateWeatherPopup from './widget/date-weather';
 import NotificationPopups from './widget/notification-popups';
 
-GLib.setenv('GSK_RENDERER', 'gl', true);
-
 app.start({
   requestHandler,
   main() {

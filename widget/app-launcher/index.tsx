@@ -12,8 +12,6 @@ import {
 import { AppList } from './widget/AppList';
 import { SearchInput } from './widget/SearchInput';
 
-GLib.setenv('GSK_RENDERER', 'gl', true);
-
 export default function AppLauncher(gdkmonitor: Gdk.Monitor) {
   const [text, setText] = createState('');
   const [selectedIndex, setSelectedIndex] = createState(0);
