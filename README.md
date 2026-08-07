@@ -3,7 +3,7 @@
 **Rystal-Shell** is a part of the GUI shell for [Ryprland](https://github.com/ry2x/Ryprland-dot/).
 This shell is based on [Aylur's GTK Shell](https://github.com/aylur/ags) called AGS.
 
-[https://github.com/user-attachments/assets/5e309397-45a1-4d81-b356-dac4220af26a](https://github.com/user-attachments/assets/8e5a3ac4-4107-4b52-b694-a8c6a0ac113e)
+https://github.com/user-attachments/assets/8cb65a27-2284-4302-b0b1-8c1be2ef4631
 
 > [!NOTE]
 > [WHY AGS? AND ABOUT MEMORY CONSUMPTION](#why-ags-was-chosen-and-its-memory-consumption)
