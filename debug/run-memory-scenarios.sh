@@ -111,9 +111,9 @@ ags_request() {
 
 randomize_theme() {
   if "$dry_run"; then
-    printf '+ waypaper --random\n'
+    printf '+ theme-switch.sh random\n'
   else
-    waypaper --random
+    theme-switch.sh random
   fi
 }
 
@@ -336,7 +336,7 @@ run_notification_scenario() {
   fi
 }
 
-for command in ags waypaper notify-send pgrep ps awk find shuf stat killall; do require_command "$command"; done
+for command in ags theme-switch.sh notify-send pgrep ps awk find shuf stat killall; do require_command "$command"; done
 [[ -x $COLLECTOR ]] || { printf 'Collector is not executable: %s\n' "$COLLECTOR" >&2; exit 1; }
 
 if "$dry_run"; then
