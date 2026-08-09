@@ -20,5 +20,6 @@
     "build": "ags bundle app.ts start-ags"
   },
   "name": "rystal-shell",
+  "license": "GPL-3.0-or-later",
   "private": true
 }

@@ -116,3 +116,12 @@ For those interested, here are the memory usage numbers I've observed, including
 
 - **Worst case:**
   - `around 350 ~ 450 MB` (I have never seen it exceed around 450 MB with `maxCount = 30`)
+
+## License
+
+Rystal-shell's original source code is licensed under the
+[GNU General Public License v3.0 or later](LICENSE).
+
+The Lucide icon assets under `assets/icons/` retain their upstream ISC and MIT
+license terms. See [Third-Party Notices](THIRD_PARTY_NOTICES.md) and the
+[Lucide license text](assets/icons/LUCIDE_LICENSE) for details.
