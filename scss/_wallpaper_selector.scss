@@ -1,0 +1,83 @@
+@use 'variables' as *;
+
+window.WallpaperSelector {
+  background: transparent;
+  color: $text;
+  font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
+
+  .click-catcher {
+    background: rgba(0, 0, 0, 0.01);
+    border: none;
+    box-shadow: none;
+  }
+}
+
+.wallpaper-selector-panel {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.wallpaper-selector-content {
+  padding: 8px 28px 10px;
+}
+
+.wallpaper-coverflow {
+  min-height: 280px;
+  transform: translateY(32px);
+}
+
+.wallpaper-card {
+  min-width: 384px;
+  min-height: 252px;
+  padding: 0;
+  margin: 0;
+  border: 2px solid rgba($on-surface, 0.12);
+  border-radius: 18px;
+  background: rgba($surface, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  outline: none;
+
+  &:hover {
+    border-color: rgba($primary, 0.55);
+  }
+
+  &.selected {
+    border-width: 3px;
+    border-color: $primary;
+    box-shadow:
+      0 20px 44px rgba(0, 0, 0, 0.5),
+      0 0 18px rgba($primary, 0.62),
+      0 0 42px rgba($primary, 0.42),
+      0 0 72px rgba($primary, 0.24);
+  }
+
+  picture {
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.wallpaper-path {
+  min-height: 20px;
+  transform: translateY(12px);
+  color: rgba($text, 0.82);
+  font-family: 'GeistMono Nerd Font', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.92em;
+  font-weight: 700;
+}
+
+.wallpaper-count {
+  min-width: 72px;
+  color: rgba($text, 0.55);
+  font-size: 0.82em;
+  font-weight: 700;
+}
+
+.wallpaper-status {
+  min-height: 18px;
+  color: $error;
+  font-size: 0.82em;
+  font-weight: 700;
+}

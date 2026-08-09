@@ -71,7 +71,12 @@ export default function DateWeatherPopup(gdkmonitor: Gdk.Monitor) {
 
   const hide_animated = () => {
     setIsRevealed(false);
-    activeSidePanel.set('', '');
+    if (
+      activeSidePanel.get().panel === 'date-weather' &&
+      activeSidePanel.get().monitor === gdkmonitor.get_connector()
+    ) {
+      activeSidePanel.set('', '');
+    }
     const w = app.get_window(windowName);
     if (hideTimeout !== null) {
       clearTimeout(hideTimeout);

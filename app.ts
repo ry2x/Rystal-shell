@@ -11,6 +11,7 @@ import ControlCenter from './widget/control-center';
 import WifiPasswordDialog from './widget/control-center/widget/Connectivity/WifiPasswordDialog';
 import DateWeatherPopup from './widget/date-weather';
 import NotificationPopups from './widget/notification-popups';
+import WallpaperSelector from './widget/wallpaper-selector';
 
 app.start({
   requestHandler,
@@ -32,6 +33,7 @@ app.start({
       DateWeatherPopup(m);
       NotificationPopups(m);
       AppLauncher(m);
+      WallpaperSelector(m);
     });
   },
 });

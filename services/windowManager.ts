@@ -25,6 +25,7 @@ export const activeSidePanel = {
 };
 
 export const [animDx, setAnimDx] = createState<number>(47);
+export const [animBottomHeight, setAnimBottomHeight] = createState<number>(0);
 
 type AnimatedWindow = Astal.Window & {
   hide_animated?: () => void;
@@ -64,10 +65,22 @@ export function closeAllAppLaunchers() {
   });
 }
 
+export function closeAllWallpaperSelectors() {
+  app.get_monitors().forEach((m) => {
+    const selector = app.get_window(`wallpaper-selector-${m.get_connector()}`) as AnimatedWindow;
+    if (selector?.get_visible()) {
+      if (selector.hide_animated) selector.hide_animated();
+      else selector.set_visible(false);
+    }
+  });
+  if (activeSidePanel.get().panel === 'wallpaper-selector') activeSidePanel.set('', '');
+}
+
 export function closeAllMenus() {
   closeAllControlCenters();
   closeAllDateWeathers();
   closeAllAppLaunchers();
+  closeAllWallpaperSelectors();
 }
 
 export function toggleControlCenter(monitorName?: string | null) {
@@ -84,6 +97,8 @@ export function toggleControlCenter(monitorName?: string | null) {
         if (isActive) {
           cc.hide_animated?.();
         } else {
+          closeAllWallpaperSelectors();
+          closeAllAppLaunchers();
           if (dw && dw.get_visible()) dw.hide_animated?.();
           cc.show_animated?.();
           activeSidePanel.set('control-center', connector ?? '');
@@ -109,6 +124,8 @@ export function toggleDateWeather(monitorName?: string | null) {
         if (isActive) {
           dw.hide_animated?.();
         } else {
+          closeAllWallpaperSelectors();
+          closeAllAppLaunchers();
           if (cc && cc.get_visible()) cc.hide_animated?.();
           dw.show_animated?.();
           activeSidePanel.set('date-weather', connector ?? '');
@@ -126,10 +143,42 @@ export function toggleAppLauncher(monitorName?: string | null) {
     const al = app.get_window(`applauncher-${m.get_connector()}`);
     if (al) {
       if (m.get_connector() === targetMonitor) {
-        al.set_visible(!al.get_visible());
+        const show = !al.get_visible();
+        if (show) {
+          closeAllControlCenters();
+          closeAllDateWeathers();
+          closeAllWallpaperSelectors();
+        }
+        al.set_visible(show);
       } else {
         al.set_visible(false);
       }
+    }
+  });
+}
+
+export function toggleWallpaperSelector(monitorName?: string | null) {
+  const targetMonitor = monitorName || Hyprland.get_default().get_focused_monitor().name;
+  app.get_monitors().forEach((m) => {
+    const connector = m.get_connector();
+    const selector = app.get_window(`wallpaper-selector-${connector}`) as AnimatedWindow;
+    if (!selector) return;
+
+    if (connector === targetMonitor) {
+      const isActive =
+        activeSidePanel.get().panel === 'wallpaper-selector' &&
+        activeSidePanel.get().monitor === connector;
+      if (isActive) {
+        selector.hide_animated?.();
+      } else {
+        closeAllControlCenters();
+        closeAllDateWeathers();
+        closeAllAppLaunchers();
+        selector.show_animated?.();
+        activeSidePanel.set('wallpaper-selector', connector ?? '');
+      }
+    } else if (selector.get_visible()) {
+      selector.hide_animated?.();
     }
   });
 }

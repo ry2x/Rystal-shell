@@ -17,6 +17,7 @@ import {
   toggleAppLauncher,
   toggleControlCenter,
   toggleDateWeather,
+  toggleWallpaperSelector,
 } from '../services/windowManager';
 import { compileAndReloadCss } from './css';
 
@@ -114,6 +115,11 @@ export function requestHandler(request: string[], res: ResponseCallback) {
     case 'toggle-launcher':
       toggleAppLauncher();
       res('Toggled App Launcher');
+      break;
+
+    case 'toggle-wallpaper':
+      toggleWallpaperSelector();
+      res('Toggled Wallpaper Selector');
       break;
 
     case 'clear-notifications':

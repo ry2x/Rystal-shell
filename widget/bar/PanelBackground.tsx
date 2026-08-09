@@ -3,10 +3,11 @@ import { Gdk, Gtk } from 'ags/gtk4';
 import GLib from 'gi://GLib';
 import Cairo from 'gi://cairo';
 
-import { activeSidePanel, setAnimDx } from '../../services/windowManager';
+import { activeSidePanel, setAnimBottomHeight, setAnimDx } from '../../services/windowManager';
 
 const BORDER_WIDTH = 3;
 const BAR_WIDTH = 47;
+const WALLPAPER_PANEL_HEIGHT = 390;
 const MATUGEN_PATH = `${GLib.get_user_config_dir()}/ags/themes/matugen.scss`;
 
 // --- Color parsing ---
@@ -75,13 +76,27 @@ function getAccentRgba(): [number, number, number, number] {
 }
 
 export default function PanelBackground({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
+  const monitorConnector = gdkmonitor.get_connector();
   let targetDx = BAR_WIDTH;
   let currentDx = BAR_WIDTH;
+  let targetBottomHeight = 0;
+  let currentBottomHeight = 0;
   let animTickId = 0;
 
+  const publishPanelSize = (dx: number, bottomHeight: number) => {
+    const activeMonitor = activeSidePanel.get().monitor;
+    // Popup windows consume these shared values. During a monitor switch, the
+    // old monitor still animates closed but must not overwrite the new popup's
+    // opening animation.
+    if (activeMonitor === monitorConnector || activeMonitor === '') {
+      setAnimDx(dx);
+      setAnimBottomHeight(bottomHeight);
+    }
+  };
+
   const unsubscribePanel = activeSidePanel.subscribe(({ panel, monitor }) => {
-    // Only expand the bar on the monitor where the panel is active.
-    if (monitor === gdkmonitor.get_connector() || monitor === '') {
+    const isTargetMonitor = monitor === monitorConnector;
+    if (isTargetMonitor) {
       if (panel === 'control-center') {
         targetDx = BAR_WIDTH + 490;
       } else if (panel === 'date-weather') {
@@ -89,26 +104,35 @@ export default function PanelBackground({ gdkmonitor }: { gdkmonitor: Gdk.Monito
       } else {
         targetDx = BAR_WIDTH;
       }
+      targetBottomHeight = panel === 'wallpaper-selector' ? WALLPAPER_PANEL_HEIGHT : 0;
+    } else {
+      // A panel opened on another monitor must also collapse this monitor's
+      // previously expanded bar background.
+      targetDx = BAR_WIDTH;
+      targetBottomHeight = 0;
+    }
 
-      if (animTickId === 0) {
-        animTickId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000 / 60, () => {
-          const diff = targetDx - currentDx;
-          if (Math.abs(diff) < 1.0) {
-            currentDx = targetDx;
-            setAnimDx(targetDx);
-            animTickId = 0;
-            for (const da of drawingAreas) da.queue_draw();
-            return GLib.SOURCE_REMOVE;
-          }
-          // Simple ease-out
-          const speed = 0.22;
-
-          currentDx += diff * speed;
-          setAnimDx(currentDx);
+    if (animTickId === 0) {
+      animTickId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000 / 60, () => {
+        const horizontalDiff = targetDx - currentDx;
+        const bottomDiff = targetBottomHeight - currentBottomHeight;
+        if (Math.abs(horizontalDiff) < 1.0 && Math.abs(bottomDiff) < 1.0) {
+          currentDx = targetDx;
+          currentBottomHeight = targetBottomHeight;
+          publishPanelSize(targetDx, targetBottomHeight);
+          animTickId = 0;
           for (const da of drawingAreas) da.queue_draw();
-          return GLib.SOURCE_CONTINUE;
-        });
-      }
+          return GLib.SOURCE_REMOVE;
+        }
+        // Simple ease-out
+        const speed = 0.22;
+
+        currentDx += horizontalDiff * speed;
+        currentBottomHeight += bottomDiff * speed;
+        publishPanelSize(currentDx, currentBottomHeight);
+        for (const da of drawingAreas) da.queue_draw();
+        return GLib.SOURCE_CONTINUE;
+      });
     }
   });
 
@@ -145,7 +169,7 @@ export default function PanelBackground({ gdkmonitor }: { gdkmonitor: Gdk.Monito
           const dx = currentDx + halfBw;
           const dy = halfBw;
           const dw = w - currentDx - bw;
-          const dh = h - bw;
+          const dh = h - currentBottomHeight - bw;
 
           // 1. Fill entire screen with background color
           ctx.setOperator(Cairo.Operator.OVER);

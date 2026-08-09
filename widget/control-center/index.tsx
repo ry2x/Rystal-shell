@@ -201,7 +201,12 @@ export default function ControlCenter(gdkmonitor: Gdk.Monitor) {
   const hide_animated = () => {
     setIsRevealed(false);
     setPage('main');
-    activeSidePanel.set('', '');
+    if (
+      activeSidePanel.get().panel === 'control-center' &&
+      activeSidePanel.get().monitor === gdkmonitor.get_connector()
+    ) {
+      activeSidePanel.set('', '');
+    }
     const w = app.get_window(windowName);
     if (hideTimeout !== null) {
       clearTimeout(hideTimeout);
