@@ -4,8 +4,11 @@ import Apps from 'gi://AstalApps';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-const CACHE_DIR = `${GLib.get_user_cache_dir()}/ags`;
-const HISTORY_FILE = `${CACHE_DIR}/app_history.json`;
+import { ryprlandStateDir } from '../lib/paths';
+
+const STATE_DIR = `${ryprlandStateDir}/rystal-shell`;
+const HISTORY_FILE = `${STATE_DIR}/app-history.json`;
+const LEGACY_HISTORY_FILE = `${GLib.get_user_cache_dir()}/ags/app_history.json`;
 const MAX_APP_RESULTS = 30;
 const MAX_HISTORY_ENTRIES = 100;
 const apps = new Apps.Apps();
@@ -35,7 +38,10 @@ function trimAppHistory() {
 
 function loadAppHistory() {
   try {
-    const file = Gio.File.new_for_path(HISTORY_FILE);
+    const currentFile = Gio.File.new_for_path(HISTORY_FILE);
+    const usingLegacyFile = !currentFile.query_exists(null);
+    let shouldSave = usingLegacyFile;
+    const file = usingLegacyFile ? Gio.File.new_for_path(LEGACY_HISTORY_FILE) : currentFile;
     if (file.query_exists(null)) {
       const [ok, contents] = file.load_contents(null);
       if (ok) {
@@ -63,9 +69,10 @@ function loadAppHistory() {
             }
           }
           appHistory = migrated;
-          saveAppHistory();
+          shouldSave = true;
         }
         trimAppHistory();
+        if (shouldSave) saveAppHistory();
       }
     }
   } catch (e) {

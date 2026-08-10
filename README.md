@@ -90,6 +90,19 @@ By modifying each setting in that file, you can alter the shell's behavior and s
 }
 ```
 
+### Ryprland data directories
+
+Ryprland exports shared directory roots from its Hyprland configuration:
+
+- `RYPRLAND_CACHE_DIR` (default: `${XDG_CACHE_HOME:-$HOME/.cache}/ryprland`)
+- `RYPRLAND_STATE_DIR` (default: `${XDG_STATE_HOME:-$HOME/.local/state}/ryprland`)
+- `RYPRLAND_RUNTIME_DIR` (default: `$XDG_RUNTIME_DIR/ryprland`)
+- `RYPRLAND_WALLPAPER_DIR` (default: `$HOME/Pictures/Wallpapers`)
+
+Rystal-shell uses subdirectories below these roots for wallpaper thumbnails,
+media artwork, application history, compiled CSS, and Caffeine state. The same
+roots are also used by Ryprland's theme-switching scripts.
+
 ## Development Note
 
 Run the static checks before submitting changes:

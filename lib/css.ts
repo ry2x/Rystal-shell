@@ -7,12 +7,18 @@ import style from '../style.scss';
 
 import { reloadLauncherBackground } from '../services/launcherBackground';
 import { forceRedrawBar } from '../widget/bar';
+import { ryprlandRuntimeDir } from './paths';
 
 let globalCssProvider: Gtk.CssProvider | null = null;
 let lastCompiledCss: string | null = null;
 const configDir = `${GLib.get_user_config_dir()}/ags`;
 const scssPath = `${configDir}/style.scss`;
-const cssPath = `/tmp/ags-style.css`;
+const runtimeDir = `${ryprlandRuntimeDir}/rystal-shell`;
+const cssPath = `${runtimeDir}/style.css`;
+
+function ensureRuntimeDir() {
+  GLib.mkdir_with_parents(runtimeDir, 0o700);
+}
 
 function readCompiledCss() {
   const [success, bytes] = GLib.file_get_contents(cssPath);
@@ -54,6 +60,7 @@ function reloadCss(cssInput: string) {
 }
 
 export function compileAndReloadCss(): Promise<void> {
+  ensureRuntimeDir();
   return execAsync(`sass ${scssPath} ${cssPath}`)
     .then(() => {
       const css = readCompiledCss();
@@ -70,6 +77,7 @@ export function compileAndReloadCss(): Promise<void> {
 
 export function initCss() {
   try {
+    ensureRuntimeDir();
     exec(['sass', scssPath, cssPath]);
     const css = readCompiledCss();
     reloadCss(css);

@@ -3,7 +3,10 @@ import { execAsync } from 'ags/process';
 
 import GLib from 'gi://GLib?version=2.0';
 
-const CAFFEINE_REMOTE_FILE = '/tmp/rystal_caffeine_remote';
+import { ryprlandRuntimeDir } from '../lib/paths';
+
+const RUNTIME_DIR = `${ryprlandRuntimeDir}/rystal-shell`;
+const CAFFEINE_REMOTE_FILE = `${RUNTIME_DIR}/caffeine-remote`;
 
 export type CaffeineState = 'disabled' | 'enabled' | 'remote';
 
@@ -20,6 +23,7 @@ const IDLE_DAEMONS = ['hypridle', 'swayidle'];
 let activeDaemon = 'hypridle';
 
 function startInhibit() {
+  GLib.mkdir_with_parents(RUNTIME_DIR, 0o700);
   const fd = GLib.creat(CAFFEINE_REMOTE_FILE, 0o644);
   if (fd === -1) {
     console.error(`Failed to create ${CAFFEINE_REMOTE_FILE}`);

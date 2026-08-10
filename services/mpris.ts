@@ -2,6 +2,8 @@ import Mpris from 'gi://AstalMpris';
 import GLib from 'gi://GLib?version=2.0';
 import Soup from 'gi://Soup?version=3.0';
 
+import { ryprlandCacheDir } from '../lib/paths';
+
 const thumbnailSession = new Soup.Session();
 const thumbnailDownloads = new Map<string, Promise<string | null>>();
 
@@ -80,7 +82,7 @@ export async function fetchYouTubeThumbnail(player: Mpris.Player): Promise<strin
 
   if (!id) return null;
 
-  const cacheDir = `${GLib.get_user_cache_dir()}/ags/media`;
+  const cacheDir = `${ryprlandCacheDir}/rystal-shell/media`;
   const localPath = `${cacheDir}/${id}-mq.jpg`;
   if (GLib.file_test(localPath, GLib.FileTest.EXISTS)) return `file://${localPath}`;
 

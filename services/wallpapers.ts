@@ -4,6 +4,8 @@ import { execAsync } from 'ags/process';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
+import { ryprlandCacheDir, ryprlandWallpaperDir } from '../lib/paths';
+
 export type Wallpaper = {
   path: string;
   relativePath: string;
@@ -21,13 +23,9 @@ const SUPPORTED_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'webp', 'gif']);
 const thumbnailSubscribers = new Set<(path: string, thumbnailPath: string) => void>();
 const textEncoder = new TextEncoder();
 
-const configuredRoot = GLib.getenv('RYPRLAND_WALLPAPER_DIR');
-const wallpaperRoot = GLib.canonicalize_filename(
-  configuredRoot || `${GLib.get_home_dir()}/Pictures/Wallpapers`,
-  GLib.get_home_dir(),
-);
+const wallpaperRoot = GLib.canonicalize_filename(ryprlandWallpaperDir, GLib.get_home_dir());
 
-const cacheRoot = `${GLib.get_user_cache_dir()}/wallpaper-selector`;
+const cacheRoot = `${ryprlandCacheDir}/wallpapers/thumbnails`;
 
 const [wallpapersState, setWallpapers] = createState<Wallpaper[]>([]);
 const [wallpapersLoadingState, setWallpapersLoading] = createState(false);
