@@ -22,7 +22,7 @@ function readCompiledCss() {
   return new TextDecoder().decode(bytes);
 }
 
-export function reloadCss(cssInput: string) {
+function reloadCss(cssInput: string) {
   const display = Gdk.Display.get_default();
   if (!display) {
     throw new Error('Cannot reload CSS without a default display');

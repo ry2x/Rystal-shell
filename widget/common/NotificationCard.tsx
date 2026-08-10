@@ -10,7 +10,7 @@ import Pango from 'gi://Pango';
 import { loadTextureFromUri } from '../../lib/image';
 import { LucideIcon } from '../../lib/lucide';
 
-export function resolveImage(img: string | null) {
+function resolveImage(img: string | null) {
   if (!img) return null;
   if (img.startsWith('file://')) return img;
   if (img.startsWith('/')) return `file://${img}`;

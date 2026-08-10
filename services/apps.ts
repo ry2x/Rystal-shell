@@ -33,7 +33,7 @@ function trimAppHistory() {
   appHistory = Object.fromEntries(entries);
 }
 
-export function loadAppHistory() {
+function loadAppHistory() {
   try {
     const file = Gio.File.new_for_path(HISTORY_FILE);
     if (file.query_exists(null)) {
@@ -73,7 +73,7 @@ export function loadAppHistory() {
   }
 }
 
-export function saveAppHistory() {
+function saveAppHistory() {
   try {
     const file = Gio.File.new_for_path(HISTORY_FILE);
     const parent = file.get_parent();
@@ -103,7 +103,7 @@ export function recordAppLaunch(app: Apps.Application) {
 // Load initially
 loadAppHistory();
 
-export function getAppList() {
+function getAppList() {
   return getRawAppList().sort((a, b) => {
     const keyA = getAppHistoryKey(a);
     const keyB = getAppHistoryKey(b);
@@ -149,7 +149,7 @@ export function searchApps(q: string) {
   return results.map((x) => x.app).slice(0, MAX_APP_RESULTS);
 }
 
-export function searchWeb(query: string) {
+function searchWeb(query: string) {
   execAsync(['xdg-open', `https://google.com/search?q=${encodeURIComponent(query)}`]).catch(
     () => {},
   );

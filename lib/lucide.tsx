@@ -3,7 +3,7 @@
  * @param name The icon name (e.g., "activity", "check-circle")
  * @returns The symbolic icon name
  */
-export function lucideIcon(name: string): string {
+function lucideIcon(name: string): string {
   // Prefix with 'lucide-' to prevent collisions with system GTK icons like Adwaita
   return `lucide-${name}-symbolic`;
 }

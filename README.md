@@ -92,6 +92,15 @@ By modifying each setting in that file, you can alter the shell's behavior and s
 
 ## Development Note
 
+Run the static checks before submitting changes:
+
+```sh
+pnpm lint
+pnpm knip
+pnpm tsc
+pnpm build
+```
+
 Running `pnpm run tsc` will throw errors in the following 2 files:
 
 > `../../../usr/share/ags/js/lib/gtk4/app.ts:288`

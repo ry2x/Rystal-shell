@@ -16,7 +16,8 @@ export function openUpdateManager() {
     .catch(console.error);
 }
 
-export const [updatesPoll, setUpdates] = createState('0');
+const [updatesState, setUpdates] = createState('0');
+export const updatesPoll = updatesState;
 
 function clearRefreshTimer() {
   if (refreshTimer === null) return;
@@ -47,7 +48,7 @@ async function runRefresh() {
   }
 }
 
-export function refreshUpdates(): Promise<void> {
+function refreshUpdates(): Promise<void> {
   if (refreshPromise) return refreshPromise;
 
   clearRefreshTimer();

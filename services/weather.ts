@@ -7,7 +7,7 @@ import { appConfig } from './config';
 
 export const LOCATION = appConfig.weather.location;
 
-export const [weatherJson, setWeatherJson] = createState('{}');
+const [weatherJson, setWeatherJson] = createState('{}');
 
 const NORMAL_INTERVAL_MS = 30 * 60_000;
 const RETRY_INTERVAL_MS = 60_000;
@@ -65,7 +65,7 @@ async function runRefresh() {
   }
 }
 
-export function refreshWeather(): Promise<void> {
+function refreshWeather(): Promise<void> {
   if (refreshPromise) return refreshPromise;
 
   clearRefreshTimer();

@@ -25,7 +25,7 @@ export const activeSidePanel = {
 };
 
 export const [animDx, setAnimDx] = createState<number>(47);
-export const [animBottomHeight, setAnimBottomHeight] = createState<number>(0);
+export const setAnimBottomHeight = createState<number>(0)[1];
 
 type AnimatedWindow = Astal.Window & {
   hide_animated?: () => void;
@@ -47,7 +47,7 @@ export function closeAllControlCenters() {
   if (activeSidePanel.get().panel === 'control-center') activeSidePanel.set('', '');
 }
 
-export function closeAllDateWeathers() {
+function closeAllDateWeathers() {
   app.get_monitors().forEach((m) => {
     const dw = app.get_window(`date-weather-popup-${m.get_connector()}`) as AnimatedWindow;
     if (dw && dw.get_visible()) {
@@ -58,14 +58,14 @@ export function closeAllDateWeathers() {
   if (activeSidePanel.get().panel === 'date-weather') activeSidePanel.set('', '');
 }
 
-export function closeAllAppLaunchers() {
+function closeAllAppLaunchers() {
   app.get_monitors().forEach((m) => {
     const al = app.get_window(`applauncher-${m.get_connector()}`);
     if (al) al.set_visible(false);
   });
 }
 
-export function closeAllWallpaperSelectors() {
+function closeAllWallpaperSelectors() {
   app.get_monitors().forEach((m) => {
     const selector = app.get_window(`wallpaper-selector-${m.get_connector()}`) as AnimatedWindow;
     if (selector?.get_visible()) {
@@ -74,13 +74,6 @@ export function closeAllWallpaperSelectors() {
     }
   });
   if (activeSidePanel.get().panel === 'wallpaper-selector') activeSidePanel.set('', '');
-}
-
-export function closeAllMenus() {
-  closeAllControlCenters();
-  closeAllDateWeathers();
-  closeAllAppLaunchers();
-  closeAllWallpaperSelectors();
 }
 
 export function toggleControlCenter(monitorName?: string | null) {

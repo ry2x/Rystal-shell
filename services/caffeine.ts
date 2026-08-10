@@ -7,7 +7,8 @@ const CAFFEINE_REMOTE_FILE = '/tmp/ags_caffeine_remote';
 
 export type CaffeineState = 'disabled' | 'enabled' | 'remote';
 
-export const [caffeineState, setCaffeineStateObj] = createState<CaffeineState>('disabled');
+const [caffeineStateValue, setCaffeineStateObj] = createState<CaffeineState>('disabled');
+export const caffeineState = caffeineStateValue;
 let currentState: CaffeineState = 'disabled';
 
 function setCaffeineState(val: CaffeineState) {

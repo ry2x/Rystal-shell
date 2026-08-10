@@ -28,10 +28,11 @@ function getInitialNotifications() {
   return initialNotifications;
 }
 
-export const [notifications, setNotifications] =
+const [notificationsState, setNotifications] =
   createState<Notifd.Notification[]>(getInitialNotifications());
+export const notifications = notificationsState;
 
-const notifiedHook = notifd.connect('notified', (_, id) => {
+notifd.connect('notified', (_, id) => {
   const notification = notifd.get_notification(id);
   if (notification && !notification.transient) {
     const nextNotifications = [notification, ...notifications.peek()];
@@ -41,7 +42,7 @@ const notifiedHook = notifd.connect('notified', (_, id) => {
   }
 });
 
-const resolvedHook = notifd.connect('resolved', (_, id) => {
+notifd.connect('resolved', (_, id) => {
   setNotifications(notifications.peek().filter((notification) => notification.id !== id));
 });
 
@@ -53,9 +54,4 @@ export function clearNotifications() {
   const current = notifications.peek();
   setNotifications([]);
   current.forEach((notification) => notification.dismiss());
-}
-
-export function disposeNotifications() {
-  notifd.disconnect(notifiedHook);
-  notifd.disconnect(resolvedHook);
 }

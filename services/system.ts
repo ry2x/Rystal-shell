@@ -40,10 +40,14 @@ export interface RamData {
   percent: number;
 }
 
-export const [cpuUsage, setCpuUsage] = createState(0);
-export const [ramUsage, setRamUsage] = createState<RamData>({ used: 0, total: 0, percent: 0 });
-export const [gpuUsage, setGpuUsage] = createState(0);
-export const [uptime, setUptime] = createState('0m');
+const [cpuUsageState, setCpuUsage] = createState(0);
+const [ramUsageState, setRamUsage] = createState<RamData>({ used: 0, total: 0, percent: 0 });
+const [gpuUsageState, setGpuUsage] = createState(0);
+const [uptimeState, setUptime] = createState('0m');
+export const cpuUsage = cpuUsageState;
+export const ramUsage = ramUsageState;
+export const gpuUsage = gpuUsageState;
+export const uptime = uptimeState;
 
 interface CpuCounters {
   total: number;
@@ -151,5 +155,5 @@ function pollSystemMetrics() {
   updateGpuUsage();
 }
 
-export const systemPoll = interval(2000, pollSystemMetrics);
-export const uptimePoll = interval(60_000, updateUptime);
+const _systemPoll = interval(2000, pollSystemMetrics);
+const _uptimePoll = interval(60_000, updateUptime);

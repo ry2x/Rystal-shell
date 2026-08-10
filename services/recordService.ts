@@ -8,7 +8,8 @@ import GLib from 'gi://GLib';
 import { sendNotification } from '../lib/notification';
 import { appConfig } from './config';
 
-export const [isRecording, setIsRecording] = createState(false);
+const [isRecordingState, setIsRecording] = createState(false);
+export const isRecording = isRecordingState;
 
 const SIGINT = 2;
 

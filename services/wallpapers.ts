@@ -22,17 +22,21 @@ const thumbnailSubscribers = new Set<(path: string, thumbnailPath: string) => vo
 const textEncoder = new TextEncoder();
 
 const configuredRoot = GLib.getenv('RYPRLAND_WALLPAPER_DIR');
-export const wallpaperRoot = GLib.canonicalize_filename(
+const wallpaperRoot = GLib.canonicalize_filename(
   configuredRoot || `${GLib.get_home_dir()}/Pictures/Wallpapers`,
   GLib.get_home_dir(),
 );
 
 const cacheRoot = `${GLib.get_user_cache_dir()}/wallpaper-selector`;
 
-export const [wallpapers, setWallpapers] = createState<Wallpaper[]>([]);
-export const [wallpapersLoading, setWallpapersLoading] = createState(false);
-export const [wallpaperApplying, setWallpaperApplying] = createState(false);
-export const [wallpaperError, setWallpaperError] = createState('');
+const [wallpapersState, setWallpapers] = createState<Wallpaper[]>([]);
+const [wallpapersLoadingState, setWallpapersLoading] = createState(false);
+const [wallpaperApplyingState, setWallpaperApplying] = createState(false);
+const [wallpaperErrorState, setWallpaperError] = createState('');
+export const wallpapers = wallpapersState;
+export const wallpapersLoading = wallpapersLoadingState;
+export const wallpaperApplying = wallpaperApplyingState;
+export const wallpaperError = wallpaperErrorState;
 
 type ThumbnailJob = {
   wallpaper: Wallpaper;

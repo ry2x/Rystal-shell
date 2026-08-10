@@ -6,8 +6,10 @@ export interface WifiPasswordRequest {
   submit: (password: string) => Promise<void>;
 }
 
-export const [wifiPasswordRequest, setWifiPasswordRequest] =
-  createState<WifiPasswordRequest | null>(null);
+const [wifiPasswordRequestState, setWifiPasswordRequest] = createState<WifiPasswordRequest | null>(
+  null,
+);
+export const wifiPasswordRequest = wifiPasswordRequestState;
 
 export function openWifiPasswordDialog(request: WifiPasswordRequest) {
   setWifiPasswordRequest(request);
