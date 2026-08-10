@@ -27,7 +27,6 @@ function notifyFailure(body: string) {
   sendNotification({
     summary: 'Recording failed',
     body,
-    app_name: 'Recorder',
   });
 }
 
@@ -44,7 +43,6 @@ function finishRecording(recording: ActiveRecording, code: number, signaled: boo
     sendNotification({
       summary: 'Recording saved',
       body: `Saved to ${recording.path}`,
-      app_name: 'Recorder',
     });
     return;
   }
@@ -105,7 +103,6 @@ async function addCaptureTarget(cmd: string[], mode: 'monitor' | 'slurp') {
     sendNotification({
       summary: 'Recording cancelled',
       body: 'Selection was cancelled',
-      app_name: 'Recorder',
       transient: true,
     });
     return false;
@@ -142,7 +139,6 @@ export async function startRecord(mode: 'monitor' | 'slurp') {
     sendNotification({
       summary: 'Recording started',
       body: `Recording to ${fullPath}`,
-      app_name: 'Recorder',
       transient: true,
     });
     setIsRecording(true);

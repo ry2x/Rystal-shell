@@ -3,7 +3,7 @@ import { execAsync } from 'ags/process';
 
 import GLib from 'gi://GLib?version=2.0';
 
-const CAFFEINE_REMOTE_FILE = '/tmp/ags_caffeine_remote';
+const CAFFEINE_REMOTE_FILE = '/tmp/rystal_caffeine_remote';
 
 export type CaffeineState = 'disabled' | 'enabled' | 'remote';
 
