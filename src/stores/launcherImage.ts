@@ -3,15 +3,20 @@ import { Gdk, Gtk } from 'ags/gtk4';
 import GLib from 'gi://GLib';
 
 import { loadTextureFromUri } from '../lib/image';
+import { rystalShellConfigDir, rystalShellDataDir } from '../lib/paths';
 
-const BACKGROUND_PATH = `${GLib.get_user_config_dir()}/ags/assets/launcher_bg.png`;
+const configuredBackgroundPath = `${rystalShellConfigDir}/assets/launcher_bg.png`;
+const defaultBackgroundPath = `${rystalShellDataDir}/assets/icon.png`;
 const pictures = new Set<Gtk.Picture>();
 let texture: Gdk.Texture | null = null;
 let backgroundDirty = true;
 
 function loadBackground() {
   try {
-    return loadTextureFromUri(`file://${BACKGROUND_PATH}`, 500, 500);
+    const path = GLib.file_test(configuredBackgroundPath, GLib.FileTest.EXISTS)
+      ? configuredBackgroundPath
+      : defaultBackgroundPath;
+    return loadTextureFromUri(`file://${path}`, 500, 500);
   } catch (error) {
     console.error('Failed to load launcher background:', error);
     return null;

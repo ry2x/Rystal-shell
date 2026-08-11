@@ -1,10 +1,9 @@
 import { Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import GLib from 'gi://GLib';
-
+import { requestHandler } from './ipc';
 import { initCss } from './lib/css';
-import { requestHandler } from './requestHandler';
+import { rystalShellDataDir, rystalShellInstance } from './lib/paths';
 import AppLauncher from './widget/app-launcher';
 import Bar from './widget/bar';
 import ControlCenter from './widget/control-center';
@@ -14,6 +13,7 @@ import NotificationPopups from './widget/notification-popups';
 import WallpaperSelector from './widget/wallpaper-selector';
 
 app.start({
+  instanceName: rystalShellInstance,
   requestHandler,
   main() {
     initCss();
@@ -21,9 +21,7 @@ app.start({
     // Add lucide symbolic icons to GTK Icon Theme search path
     const display = Gdk.Display.get_default();
     if (display) {
-      Gtk.IconTheme.get_for_display(display).add_search_path(
-        `${GLib.get_user_config_dir()}/ags/assets/icons`,
-      );
+      Gtk.IconTheme.get_for_display(display).add_search_path(`${rystalShellDataDir}/assets/icons`);
     }
 
     app.get_monitors().forEach((m) => {

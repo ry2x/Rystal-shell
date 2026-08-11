@@ -3,12 +3,14 @@ import { Gdk, Gtk } from 'ags/gtk4';
 import GLib from 'gi://GLib';
 import Cairo from 'gi://cairo';
 
+import { rystalShellConfigDir, rystalShellDataDir } from '../../lib/paths';
 import { activeSidePanel, setAnimBottomHeight, setAnimDx } from '../../stores/windowManager';
 
 const BORDER_WIDTH = 3;
 const BAR_WIDTH = 47;
 const WALLPAPER_PANEL_HEIGHT = 390;
-const MATUGEN_PATH = `${GLib.get_user_config_dir()}/ags/themes/matugen.scss`;
+const configuredThemePath = `${rystalShellConfigDir}/theme.scss`;
+const defaultThemePath = `${rystalShellDataDir}/styles/default/theme.scss`;
 
 // --- Color parsing ---
 function hexToRgba(hex: string): [number, number, number, number] {
@@ -34,7 +36,10 @@ function hexToRgba(hex: string): [number, number, number, number] {
 
 function readMatugenColors(): { surface: string; primary: string } {
   try {
-    const [ok, bytes] = GLib.file_get_contents(MATUGEN_PATH);
+    const themePath = GLib.file_test(configuredThemePath, GLib.FileTest.EXISTS)
+      ? configuredThemePath
+      : defaultThemePath;
+    const [ok, bytes] = GLib.file_get_contents(themePath);
     if (!ok || !bytes) throw new Error('read failed');
     const contents = new TextDecoder().decode(bytes);
 

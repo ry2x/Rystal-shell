@@ -5,6 +5,8 @@ set -euo pipefail
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 ROOT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
 COLLECTOR="$SCRIPT_DIR/collect-memory.sh"
+AGS_INSTANCE="${RYSTAL_SHELL_INSTANCE:-rystal-shell-dev}"
+export RYSTAL_SHELL_INSTANCE="$AGS_INSTANCE"
 
 usage() {
   cat <<'EOF'
@@ -103,9 +105,9 @@ snapshot() {
 
 ags_request() {
   if "$dry_run"; then
-    printf '+ ags request %q\n' "$1"
+    printf '+ ags request -i %q %q\n' "$AGS_INSTANCE" "$1"
   else
-    ags request "$1"
+    ags request -i "$AGS_INSTANCE" "$1"
   fi
 }
 
@@ -119,17 +121,17 @@ randomize_theme() {
 
 stop_ags() {
   if "$dry_run"; then
-    printf '+ killall gjs ags\n'
+    printf '+ ags quit -i %q\n' "$AGS_INSTANCE"
   else
-    killall gjs ags >/dev/null 2>&1 || true
+    ags quit -i "$AGS_INSTANCE" >/dev/null 2>&1 || true
   fi
 }
 
 start_ags() {
   if "$dry_run"; then
-    printf '+ ags run\n'
+    printf '+ %q/scripts/dev.sh\n' "$ROOT_DIR"
   else
-    ags run >/dev/null 2>&1 &
+    "$ROOT_DIR/scripts/dev.sh" >/dev/null 2>&1 &
   fi
   wait_for_settle "$settle_seconds"
 }

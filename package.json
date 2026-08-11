@@ -15,12 +15,15 @@
     "typescript-eslint": "^8.62.0"
   },
   "scripts": {
-    "generate-type": "ags types",
+    "generate-type": "ags types -d .generated/types",
     "lint": "eslint .",
     "format": "prettier --write \"./**/*.{js,ts,tsx,json,css,scss,md,html}\" \"./*.{js,ts,tsx,json}\"",
     "tsc": "tsc --noEmit",
     "knip": "knip",
-    "build": "ags bundle app.ts start-ags"
+    "check": "pnpm lint && pnpm knip && pnpm tsc",
+    "build": "./scripts/build.sh",
+    "dev": "./scripts/dev.sh",
+    "deploy:user": "./scripts/deploy-user.sh"
   },
   "name": "rystal-shell",
   "license": "GPL-3.0-or-later",

@@ -10,8 +10,8 @@ https://github.com/user-attachments/assets/8cb65a27-2284-4302-b0b1-8c1be2ef4631
 
 ## Requirements
 
-When you install Ryprland, this repository is cloned as a submodule and included in the Ryprland configuration.
-So, you don't need to install it separately.
+When you install Ryprland, this repository is cloned as a submodule and deployed by the
+Ryprland configuration. The source tree is separate from the runtime installation.
 
 If you want to use this shell in your own configuration, you can clone this repository and use it as a part of your configuration.
 
@@ -24,18 +24,20 @@ If you want to use this shell in your own configuration, you can clone this repo
 paru -S aylurs-gtk-shell-git libastal-meta
 ```
 
-### How to Start
+### Build, Deploy, and Start
 
 These are pre-configured in Ryprland's configuration, so normally you don't need to start it manually.
 
-Make sure you have created a `~/.config/ags` directory and copied the contents of this repository into it.
-
-Run the following command to start the shell:
+Build and deploy the runtime bundle, static assets, and styles to
+`${XDG_DATA_HOME:-$HOME/.local/share}/rystal-shell`:
 
 ```sh
-cd ~/.config/ags
-./launch.sh
+pnpm install
+pnpm deploy:user
 ```
+
+Place user configuration in `${XDG_CONFIG_HOME:-$HOME/.config}/rystal-shell`, then start the
+deployed shell through the `rystal-shell` launcher supplied by Ryprland-dot.
 
 In practice, it relies on Hyprland's autostart capabilities.
 When doing so, you need to account for the lag associated with loading the modules.
@@ -45,7 +47,7 @@ Therefore, you must introduce a startup delay as shown below:
 -- hyprland.lua
 hl.on("hyprland.start",
   function()
-    hl.exec_cmd("sleep 5; ~/.config/ags/launch.sh")
+    hl.exec_cmd("sleep 5; rystal-shell")
     hl.exec_cmd("sleep 10; blueman-applet")
   end
 )
@@ -55,10 +57,12 @@ hl.on("hyprland.start",
 
 There are several configurable items in this shell.
 
-First, copy the [config template](./config.json.template) using the following command:
+First, copy the [config template](./config/config.json.template):
 
 ```sh
-cp ./config.json.template ./config.json
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/rystal-shell"
+cp ./config/config.json.template \
+  "${XDG_CONFIG_HOME:-$HOME/.config}/rystal-shell/config.json"
 ```
 
 By modifying each setting in that file, you can alter the shell's behavior and some of the displayed information.
@@ -103,14 +107,16 @@ Rystal-shell uses subdirectories below these roots for wallpaper thumbnails,
 media artwork, application history, compiled CSS, and Caffeine state. The same
 roots are also used by Ryprland's theme-switching scripts.
 
-## Development Note
+## Development
+
+`pnpm dev` starts the `rystal-shell-dev` AGS instance with config, cache, state, and runtime
+data isolated below `.dev/`. Optionally run `direnv allow` to load the same environment while
+working in the repository.
 
 Run the static checks before submitting changes:
 
 ```sh
-pnpm lint
-pnpm knip
-pnpm tsc
+pnpm check
 pnpm build
 ```
 

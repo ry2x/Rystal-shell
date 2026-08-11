@@ -1,5 +1,7 @@
 import GLib from 'gi://GLib?version=2.0';
 
+import { rystalShellConfigDir } from './paths';
+
 export interface AppConfig {
   brightness?: {
     backend?: 'auto' | 'ddcutil' | 'brightnessctl';
@@ -56,8 +58,7 @@ const DEFAULT_CONFIG: AppConfig = {
 
 function loadConfig(): AppConfig {
   try {
-    const configDir = `${GLib.get_user_config_dir()}/ags`;
-    const configPath = `${configDir}/config.json`;
+    const configPath = `${rystalShellConfigDir}/config.json`;
     if (GLib.file_test(configPath, GLib.FileTest.EXISTS)) {
       const [success, bytes] = GLib.file_get_contents(configPath);
       if (success && bytes) {

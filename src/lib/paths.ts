@@ -6,6 +6,18 @@ function configuredDirectory(name: string, fallback: string) {
   return GLib.getenv(name) || fallback;
 }
 
+export const rystalShellConfigDir = configuredDirectory(
+  'RYSTAL_SHELL_CONFIG_DIR',
+  `${GLib.get_user_config_dir()}/rystal-shell`,
+);
+
+export const rystalShellDataDir = configuredDirectory(
+  'RYSTAL_SHELL_DATA_DIR',
+  `${GLib.get_user_data_dir()}/rystal-shell`,
+);
+
+export const rystalShellInstance = configuredDirectory('RYSTAL_SHELL_INSTANCE', 'rystal-shell');
+
 export const ryprlandCacheDir = configuredDirectory(
   'RYPRLAND_CACHE_DIR',
   `${GLib.get_user_cache_dir()}/${IDENTIFIER}`,
