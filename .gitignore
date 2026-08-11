@@ -1,14 +1,15 @@
 node_modules/
 
+.generated/
 @girs/
-
-themes/matugen.scss
+.dev/
 
 config.json
 
 assets/launcher_bg*.png
 assets/icons/hicolor/icon-theme.cache
 
+dist/
 start-ags
 
 oneshot/style.css

@@ -1,8 +1,9 @@
 import Notifd from 'gi://AstalNotifd';
-import GLib from 'gi://GLib';
+
+import { rystalShellDataDir } from './paths';
 
 const APP_NAME = 'Rystal Shell';
-const APP_ICON = `${GLib.get_user_config_dir()}/ags/assets/icon.png`;
+const APP_ICON = `${rystalShellDataDir}/assets/icon.png`;
 
 export function sendNotification(properties: Partial<Notifd.Notification.ConstructorProps>) {
   const notification = new Notifd.Notification({

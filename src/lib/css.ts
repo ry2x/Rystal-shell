@@ -3,16 +3,15 @@ import { exec, execAsync } from 'ags/process';
 
 import GLib from 'gi://GLib';
 
-import style from '../style.scss';
-
 import { reloadLauncherBackground } from '../stores/launcherImage';
 import { forceRedrawBar } from '../widget/bar';
-import { ryprlandRuntimeDir } from './paths';
+import { ryprlandRuntimeDir, rystalShellConfigDir, rystalShellDataDir } from './paths';
 
 let globalCssProvider: Gtk.CssProvider | null = null;
 let lastCompiledCss: string | null = null;
-const configDir = `${GLib.get_user_config_dir()}/ags`;
-const scssPath = `${configDir}/style.scss`;
+const styleEntry = `${rystalShellDataDir}/styles/style.scss`;
+const defaultThemeDir = `${rystalShellDataDir}/styles/default`;
+const defaultCssPath = `${rystalShellDataDir}/styles/default.css`;
 const runtimeDir = `${ryprlandRuntimeDir}/rystal-shell`;
 const cssPath = `${runtimeDir}/style.css`;
 
@@ -20,10 +19,10 @@ function ensureRuntimeDir() {
   GLib.mkdir_with_parents(runtimeDir, 0o700);
 }
 
-function readCompiledCss() {
-  const [success, bytes] = GLib.file_get_contents(cssPath);
+function readCss(path: string) {
+  const [success, bytes] = GLib.file_get_contents(path);
   if (!success || !bytes) {
-    throw new Error(`Cannot read compiled CSS: ${cssPath}`);
+    throw new Error(`Cannot read CSS: ${path}`);
   }
   return new TextDecoder().decode(bytes);
 }
@@ -54,37 +53,50 @@ function reloadCss(cssInput: string) {
   );
 
   globalCssProvider = nextProvider;
-
   reloadLauncherBackground();
   forceRedrawBar();
 }
 
+function sassCommand() {
+  return [
+    'sass',
+    '--load-path',
+    rystalShellConfigDir,
+    '--load-path',
+    defaultThemeDir,
+    styleEntry,
+    cssPath,
+  ];
+}
+
 export function compileAndReloadCss(): Promise<void> {
   ensureRuntimeDir();
-  return execAsync(`sass ${scssPath} ${cssPath}`)
+  return execAsync(sassCommand())
     .then(() => {
-      const css = readCompiledCss();
+      const css = readCss(cssPath);
       if (css === lastCompiledCss) return;
 
       reloadCss(css);
       lastCompiledCss = css;
     })
     .catch((err) => {
-      console.error(`Error compiling SCSS: ${err}`);
+      console.error(`Error compiling CSS; keeping the active stylesheet: ${err}`);
       throw err;
     });
 }
 
 export function initCss() {
+  ensureRuntimeDir();
   try {
-    ensureRuntimeDir();
-    exec(['sass', scssPath, cssPath]);
-    const css = readCompiledCss();
+    exec(sassCommand());
+    const css = readCss(cssPath);
     reloadCss(css);
     lastCompiledCss = css;
   } catch (error) {
-    console.error(`Error compiling initial SCSS, using bundled CSS: ${error}`);
-    reloadCss(style);
-    lastCompiledCss = style;
+    console.error(`Error compiling initial SCSS: ${error}`);
+    const fallbackPath = GLib.file_test(cssPath, GLib.FileTest.EXISTS) ? cssPath : defaultCssPath;
+    const css = readCss(fallbackPath);
+    reloadCss(css);
+    lastCompiledCss = css;
   }
 }

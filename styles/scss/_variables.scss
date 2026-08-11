@@ -1,6 +1,6 @@
-@forward '../themes/matugen';
+@forward 'theme';
 @use 'sass:color';
-@use '../themes/matugen' as *;
+@use 'theme' as *;
 
 // Base colors
 $bg: color.adjust($surface, $alpha: -0.25);
