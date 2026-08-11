@@ -3,7 +3,7 @@ import { createState } from 'ags';
 import GLib from 'gi://GLib?version=2.0';
 import Soup from 'gi://Soup?version=3.0';
 
-import { appConfig } from './config';
+import { appConfig } from '../lib/config';
 
 export const LOCATION = appConfig.weather.location;
 

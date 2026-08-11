@@ -3,12 +3,12 @@ import { Gtk } from 'ags/gtk4';
 
 import Notifd from 'gi://AstalNotifd';
 
-import { LucideIcon } from '../../../lib/lucide';
 import {
   clearNotifications,
   dismissNotification,
   notifications,
-} from '../../../services/notifications';
+} from '../../../stores/notification';
+import { LucideIcon } from '../../../widget/common/lucide';
 import AnimatedList from '../../common/AnimatedList';
 import NotificationCard from '../../common/NotificationCard';
 

@@ -4,11 +4,11 @@ import app from 'ags/gtk4/app';
 
 import Pango from 'gi://Pango';
 
-import { LucideIcon } from '../../../../lib/lucide';
 import {
   closeWifiPasswordDialog,
   wifiPasswordRequest,
-} from '../../../../services/wifiPasswordDialog';
+} from '../../../../stores/wifiPasswordDialog';
+import { LucideIcon } from '../../../../widget/common/lucide';
 
 export default function WifiPasswordDialog(gdkmonitor: Gdk.Monitor) {
   const connector = gdkmonitor.get_connector() ?? '';

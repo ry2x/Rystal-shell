@@ -3,12 +3,12 @@ import { Gtk } from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
-import { LucideIcon } from '../../../../lib/lucide';
 import {
   openAudioControl,
   playVolumeSound,
   setDefaultAudioEndpoint,
-} from '../../../../services/audio';
+} from '../../../../stores/audio';
+import { LucideIcon } from '../../../../widget/common/lucide';
 import { DeviceSelector } from './DeviceSelector';
 
 function volumeIcon(endpoint: Wp.Endpoint) {

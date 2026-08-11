@@ -2,8 +2,8 @@ import { Gdk, Gtk } from 'ags/gtk4';
 
 import Apps from 'gi://AstalApps';
 
-import { openQuery, recordAppLaunch } from '../../../services/apps';
-import { toggleAppLauncher } from '../../../services/windowManager';
+import { openQuery, recordAppLaunch } from '../../../stores/application';
+import { toggleAppLauncher } from '../../../stores/windowManager';
 
 interface State<T> {
   get: () => T;

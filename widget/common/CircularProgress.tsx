@@ -2,8 +2,8 @@ import { Gtk } from 'ags/gtk4';
 
 import GLib from 'gi://GLib';
 
-import { LucideIcon } from '../../lib/lucide';
 import { shellMotion } from '../../lib/motion';
+import { LucideIcon } from '../../widget/common/lucide';
 
 export default function CircularProgress<T>({
   variable,

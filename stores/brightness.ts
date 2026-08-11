@@ -3,8 +3,8 @@ import { execAsync } from 'ags/process';
 
 import GLib from 'gi://GLib';
 
+import { appConfig } from '../lib/config';
 import { sendNotification } from '../lib/notification';
-import { appConfig } from './config';
 
 type BrightnessBackend = 'ddcutil' | 'brightnessctl';
 type ConfiguredBackend = BrightnessBackend | 'auto';

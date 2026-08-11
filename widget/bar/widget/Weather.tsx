@@ -1,9 +1,9 @@
 import { Gdk } from 'ags/gtk4';
 import { Gtk } from 'ags/gtk4';
 
-import { LucideIcon } from '../../../lib/lucide';
-import { getWeatherIcon, weatherInfo } from '../../../services/weather';
-import { toggleDateWeather } from '../../../services/windowManager';
+import { getWeatherIcon, weatherInfo } from '../../../stores/weather';
+import { toggleDateWeather } from '../../../stores/windowManager';
+import { LucideIcon } from '../../../widget/common/lucide';
 
 export default function Weather({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
   return (

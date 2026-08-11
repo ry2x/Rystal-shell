@@ -5,10 +5,7 @@ import app from 'ags/gtk4/app';
 import Apps from 'gi://AstalApps';
 import GLib from 'gi://GLib';
 
-import {
-  ensureLauncherBackground,
-  registerLauncherBackground,
-} from '../../services/launcherBackground';
+import { ensureLauncherBackground, registerLauncherBackground } from '../../stores/launcherImage';
 import { AppList } from './widget/AppList';
 import { SearchInput } from './widget/SearchInput';
 

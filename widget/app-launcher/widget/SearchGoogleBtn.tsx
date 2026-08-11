@@ -2,8 +2,8 @@ import { Gtk } from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
-import { getDirectUrl, openQuery } from '../../../services/apps';
-import { toggleAppLauncher } from '../../../services/windowManager';
+import { getDirectUrl, openQuery } from '../../../stores/application';
+import { toggleAppLauncher } from '../../../stores/windowManager';
 
 interface TextState {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -3,8 +3,8 @@ import { Gtk } from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
-import { LucideIcon } from '../../../lib/lucide';
-import { playVolumeSound } from '../../../services/audio';
+import { playVolumeSound } from '../../../stores/audio';
+import { LucideIcon } from '../../../widget/common/lucide';
 
 function Slider({ speaker, onOpenSound }: { speaker: Wp.Endpoint; onOpenSound: () => void }) {
   const volIcon = bind(speaker, 'volume_icon').as((icon) => {

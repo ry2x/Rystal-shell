@@ -4,7 +4,7 @@ import app from 'ags/gtk4/app';
 import GLib from 'gi://GLib';
 
 import { initCss } from './lib/css';
-import { requestHandler } from './lib/requestHandler';
+import { requestHandler } from './requestHandler';
 import AppLauncher from './widget/app-launcher';
 import Bar from './widget/bar';
 import ControlCenter from './widget/control-center';

@@ -1,10 +1,10 @@
-import { LucideIcon } from '../../../lib/lucide';
 import {
   brightness,
   cycleBrightnessPreset,
   setBrightness,
   toggleBrightnessDim,
-} from '../../../services/brightness';
+} from '../../../stores/brightness';
+import { LucideIcon } from '../../../widget/common/lucide';
 
 export default function BrightnessSlider() {
   const icon = brightness.as((val) => {

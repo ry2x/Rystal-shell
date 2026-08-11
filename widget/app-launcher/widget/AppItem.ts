@@ -3,8 +3,8 @@ import { Gtk } from 'ags/gtk4';
 import Apps from 'gi://AstalApps';
 import Pango from 'gi://Pango';
 
-import { recordAppLaunch } from '../../../services/apps';
-import { toggleAppLauncher } from '../../../services/windowManager';
+import { recordAppLaunch } from '../../../stores/application';
+import { toggleAppLauncher } from '../../../stores/windowManager';
 
 export function createAppItem(res: Apps.Application, monitorConnector: string | null) {
   const btn = new Gtk.Button({

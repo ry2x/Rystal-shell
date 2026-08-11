@@ -4,8 +4,8 @@ import { Gtk } from 'ags/gtk4';
 import Bluetooth from 'gi://AstalBluetooth';
 import Pango from 'gi://Pango';
 
-import { LucideIcon } from '../../../../lib/lucide';
-import { toggleBluetooth } from '../../../../services/network';
+import { toggleBluetooth } from '../../../../stores/network';
+import { LucideIcon } from '../../../../widget/common/lucide';
 import AnimatedList from '../../../common/AnimatedList';
 import {
   ConfirmOverlay,

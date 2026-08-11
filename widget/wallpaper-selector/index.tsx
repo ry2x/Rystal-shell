@@ -8,8 +8,8 @@ import {
   cancelWallpaperWork,
   clearWallpaperError,
   refreshWallpapers,
-} from '../../services/wallpapers';
-import { activeSidePanel } from '../../services/windowManager';
+} from '../../stores/wallpaper';
+import { activeSidePanel } from '../../stores/windowManager';
 import { createCoverFlow } from './widget/CoverFlow';
 
 const PANEL_HEIGHT = 390;

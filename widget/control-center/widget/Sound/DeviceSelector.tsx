@@ -4,7 +4,7 @@ import { Gtk } from 'ags/gtk4';
 import Wp from 'gi://AstalWp';
 import Pango from 'gi://Pango';
 
-import { LucideIcon } from '../../../../lib/lucide';
+import { LucideIcon } from '../../../../widget/common/lucide';
 
 type EndpointList = ReturnType<typeof createState<Wp.Endpoint[]>>[0];
 

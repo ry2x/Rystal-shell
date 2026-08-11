@@ -3,9 +3,9 @@ import { Gdk, Gtk } from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
-import { LucideIcon } from '../../../lib/lucide';
-import { playVolumeSound } from '../../../services/audio';
-import { toggleControlCenter } from '../../../services/windowManager';
+import { playVolumeSound } from '../../../stores/audio';
+import { toggleControlCenter } from '../../../stores/windowManager';
+import { LucideIcon } from '../../../widget/common/lucide';
 
 function VolumeButton({ speaker, gdkmonitor }: { speaker: Wp.Endpoint; gdkmonitor: Gdk.Monitor }) {
   const volIcon = bind(speaker, 'volume_icon').as((icon) => {

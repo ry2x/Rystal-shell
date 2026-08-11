@@ -5,7 +5,7 @@ import GLib from 'gi://GLib';
 
 import style from '../style.scss';
 
-import { reloadLauncherBackground } from '../services/launcherBackground';
+import { reloadLauncherBackground } from '../stores/launcherImage';
 import { forceRedrawBar } from '../widget/bar';
 import { ryprlandRuntimeDir } from './paths';
 

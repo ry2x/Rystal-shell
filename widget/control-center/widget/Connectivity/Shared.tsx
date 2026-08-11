@@ -3,7 +3,7 @@ import { Gtk } from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
-import { LucideIcon } from '../../../../lib/lucide';
+import { LucideIcon } from '../../../../widget/common/lucide';
 
 export type ControlCenterPage = 'main' | 'wifi' | 'bluetooth' | 'sound';
 

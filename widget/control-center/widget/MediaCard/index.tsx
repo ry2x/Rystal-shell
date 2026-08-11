@@ -3,7 +3,7 @@ import { Gtk } from 'ags/gtk4';
 
 import Mpris from 'gi://AstalMpris';
 
-import { LucideIcon } from '../../../../lib/lucide';
+import { LucideIcon } from '../../../../widget/common/lucide';
 import PlayerCard from './PlayerCard';
 
 export default function MediaCard() {

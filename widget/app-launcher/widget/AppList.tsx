@@ -3,7 +3,7 @@ import { Gtk } from 'ags/gtk4';
 import Apps from 'gi://AstalApps';
 import GLib from 'gi://GLib';
 
-import { searchApps } from '../../../services/apps';
+import { searchApps } from '../../../stores/application';
 import { createAppItem } from './AppItem';
 import { SearchGoogleBtn } from './SearchGoogleBtn';
 

@@ -5,15 +5,15 @@ import Bluetooth from 'gi://AstalBluetooth';
 import Network from 'gi://AstalNetwork';
 import Pango from 'gi://Pango';
 
-import { LucideIcon } from '../../../lib/lucide';
-import { CaffeineState, caffeineState, toggleCaffeine } from '../../../services/caffeine';
-import { toggleBluetooth, toggleWifi } from '../../../services/network';
+import { CaffeineState, caffeineState, toggleCaffeine } from '../../../stores/caffeine';
+import { toggleBluetooth, toggleWifi } from '../../../stores/network';
 import {
   cyclePowerProfile,
   getPowerIcon,
   getPowerLabel,
   getPowerProfile,
-} from '../../../services/powerProfile';
+} from '../../../stores/powerProfile';
+import { LucideIcon } from '../../../widget/common/lucide';
 
 export default function QuickToggles({
   onOpenWifi,

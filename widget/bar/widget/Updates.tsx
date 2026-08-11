@@ -1,9 +1,9 @@
 import { Gdk } from 'ags/gtk4';
 import { Gtk } from 'ags/gtk4';
 
-import { LucideIcon } from '../../../lib/lucide';
-import { updatesPoll } from '../../../services/updates';
-import { toggleControlCenter } from '../../../services/windowManager';
+import { updatesPoll } from '../../../stores/update';
+import { toggleControlCenter } from '../../../stores/windowManager';
+import { LucideIcon } from '../../../widget/common/lucide';
 
 export default function Updates({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
   const isVisible = updatesPoll.as((u) => parseInt(u) > 0);

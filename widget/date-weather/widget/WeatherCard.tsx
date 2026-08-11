@@ -1,7 +1,7 @@
 import { Gtk } from 'ags/gtk4';
 
-import { LucideIcon } from '../../../lib/lucide';
-import { LOCATION, getWeatherIcon, weatherInfo } from '../../../services/weather';
+import { LOCATION, getWeatherIcon, weatherInfo } from '../../../stores/weather';
+import { LucideIcon } from '../../../widget/common/lucide';
 
 export default function WeatherCard() {
   return (

@@ -3,23 +3,23 @@ import app from 'ags/gtk4/app';
 import Hyprland from 'gi://AstalHyprland';
 import Notifd from 'gi://AstalNotifd';
 
+import { compileAndReloadCss } from './lib/css';
 import {
   brightnessStep,
   changeBrightness,
   getBrightnessBackend,
   refreshBrightness,
   refreshBrightnessBackend,
-} from '../services/brightness';
-import { clearNotifications } from '../services/notifications';
-import { getPowerProfile, setPowerProfile } from '../services/powerProfile';
-import { isRecording, startRecord, stopRecord } from '../services/recordService';
+} from './stores/brightness';
+import { clearNotifications } from './stores/notification';
+import { getPowerProfile, setPowerProfile } from './stores/powerProfile';
+import { isRecording, startRecord, stopRecord } from './stores/recording';
 import {
   toggleAppLauncher,
   toggleControlCenter,
   toggleDateWeather,
   toggleWallpaperSelector,
-} from '../services/windowManager';
-import { compileAndReloadCss } from './css';
+} from './stores/windowManager';
 
 type ResponseCallback = (response: string) => void;
 

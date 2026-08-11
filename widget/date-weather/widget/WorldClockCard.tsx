@@ -1,7 +1,7 @@
 import { Gtk } from 'ags/gtk4';
 
-import { appConfig } from '../../../services/config';
-import { clockTime } from '../../../services/time';
+import { appConfig } from '../../../lib/config';
+import { clockTime } from '../../../stores/time';
 
 const WORLD_CLOCKS = appConfig.worldClocks;
 

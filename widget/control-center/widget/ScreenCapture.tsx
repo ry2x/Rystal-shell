@@ -1,9 +1,9 @@
 import { Gtk } from 'ags/gtk4';
 import { execAsync } from 'ags/process';
 
-import { LucideIcon } from '../../../lib/lucide';
-import { isRecording, startRecord, stopRecord } from '../../../services/recordService';
-import { closeAllControlCenters } from '../../../services/windowManager';
+import { isRecording, startRecord, stopRecord } from '../../../stores/recording';
+import { closeAllControlCenters } from '../../../stores/windowManager';
+import { LucideIcon } from '../../../widget/common/lucide';
 
 export default function ScreenCapture() {
   const handleScreenshot = (mode: string) => {

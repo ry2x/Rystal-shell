@@ -6,16 +6,16 @@ import GObject from 'gi://GObject';
 import NM from 'gi://NM';
 import Pango from 'gi://Pango';
 
-import { LucideIcon } from '../../../../lib/lucide';
-import { toggleWifi } from '../../../../services/network';
+import { toggleWifi } from '../../../../stores/network';
 import {
   connectWifi,
   deleteWifiProfiles,
   getWifiProfileDuplicates,
   hasWifiProfile,
   listWifiAccessPoints,
-} from '../../../../services/wifi';
-import { openWifiPasswordDialog } from '../../../../services/wifiPasswordDialog';
+} from '../../../../stores/wifi';
+import { openWifiPasswordDialog } from '../../../../stores/wifiPasswordDialog';
+import { LucideIcon } from '../../../../widget/common/lucide';
 import AnimatedList from '../../../common/AnimatedList';
 import { ConfirmOverlay, Confirmation, DetailMenuButton, ErrorLabel, PageHeader } from './Shared';
 

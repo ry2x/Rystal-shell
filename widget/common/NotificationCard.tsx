@@ -8,7 +8,7 @@ import Gdk from 'gi://Gdk';
 import Pango from 'gi://Pango';
 
 import { loadTextureFromUri } from '../../lib/image';
-import { LucideIcon } from '../../lib/lucide';
+import { LucideIcon } from '../../widget/common/lucide';
 
 function resolveImage(img: string | null) {
   if (!img) return null;

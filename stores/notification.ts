@@ -2,7 +2,7 @@ import { createState } from 'ags';
 
 import Notifd from 'gi://AstalNotifd';
 
-import { appConfig } from './config';
+import { appConfig } from '../lib/config';
 
 const notifd = Notifd.get_default();
 const DEFAULT_MAX_NOTIFICATIONS = 30;

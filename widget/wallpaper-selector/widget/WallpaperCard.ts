@@ -2,7 +2,7 @@ import { Gtk } from 'ags/gtk4';
 
 import GLib from 'gi://GLib';
 
-import type { Wallpaper } from '../../../services/wallpapers';
+import type { Wallpaper } from '../../../stores/wallpaper';
 
 export type WallpaperCardController = {
   widget: Gtk.Button;

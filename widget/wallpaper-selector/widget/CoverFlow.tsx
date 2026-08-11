@@ -13,7 +13,7 @@ import {
   wallpaperError,
   wallpapers,
   wallpapersLoading,
-} from '../../../services/wallpapers';
+} from '../../../stores/wallpaper';
 import { WallpaperCardController, createWallpaperCard } from './WallpaperCard';
 
 const CARD_WIDTH = 384;

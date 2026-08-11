@@ -3,7 +3,7 @@ import { Gdk, Gtk } from 'ags/gtk4';
 import GLib from 'gi://GLib';
 import Cairo from 'gi://cairo';
 
-import { activeSidePanel, setAnimBottomHeight, setAnimDx } from '../../services/windowManager';
+import { activeSidePanel, setAnimBottomHeight, setAnimDx } from '../../stores/windowManager';
 
 const BORDER_WIDTH = 3;
 const BAR_WIDTH = 47;

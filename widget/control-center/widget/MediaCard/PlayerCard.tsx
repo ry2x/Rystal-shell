@@ -6,9 +6,9 @@ import Mpris from 'gi://AstalMpris';
 import Pango from 'gi://Pango';
 
 import { loadTextureFromUri } from '../../../../lib/image';
-import { LucideIcon } from '../../../../lib/lucide';
-import { fetchYouTubeThumbnail } from '../../../../services/mpris';
-import { closeAllControlCenters, focusWindow } from '../../../../services/windowManager';
+import { fetchYouTubeThumbnail } from '../../../../stores/mprisThumbnail';
+import { closeAllControlCenters, focusWindow } from '../../../../stores/windowManager';
+import { LucideIcon } from '../../../../widget/common/lucide';
 import CavaWidget from './CavaWidget';
 
 const apps = new Apps.Apps();

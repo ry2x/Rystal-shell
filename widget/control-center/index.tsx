@@ -2,9 +2,9 @@ import { For, createState } from 'ags';
 import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import { LucideIcon } from '../../lib/lucide';
 import { shellMotion } from '../../lib/motion';
-import { activeSidePanel, animDx } from '../../services/windowManager';
+import { activeSidePanel, animDx } from '../../stores/windowManager';
+import { LucideIcon } from '../../widget/common/lucide';
 import BrightnessSlider from './widget/BrightnessSlider';
 import { BluetoothPage, ControlCenterPage, WifiPage } from './widget/Connectivity';
 import MediaCard from './widget/MediaCard/index';

@@ -1,8 +1,8 @@
 import { Gdk, Gtk } from 'ags/gtk4';
 
-import { LucideIcon } from '../../../lib/lucide';
-import { cpuUsage, gpuUsage, ramUsage } from '../../../services/system';
-import { toggleControlCenter } from '../../../services/windowManager';
+import { cpuUsage, gpuUsage, ramUsage } from '../../../stores/system';
+import { toggleControlCenter } from '../../../stores/windowManager';
+import { LucideIcon } from '../../../widget/common/lucide';
 
 export default function SysMetrics({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
   const toggleMenu = () => {

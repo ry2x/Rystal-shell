@@ -3,7 +3,7 @@ import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import { shellMotion } from '../../lib/motion';
-import { activeSidePanel, animDx } from '../../services/windowManager';
+import { activeSidePanel, animDx } from '../../stores/windowManager';
 import ClockCard from './widget/ClockCard';
 import NotificationList from './widget/NotificationList';
 import ProfileCard from './widget/ProfileCard';

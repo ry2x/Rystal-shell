@@ -5,8 +5,8 @@ import Hyprland from 'gi://AstalHyprland';
 import Wp from 'gi://AstalWp';
 import GLib from 'gi://GLib';
 
+import { appConfig } from '../lib/config';
 import { sendNotification } from '../lib/notification';
-import { appConfig } from './config';
 
 const [isRecordingState, setIsRecording] = createState(false);
 export const isRecording = isRecordingState;

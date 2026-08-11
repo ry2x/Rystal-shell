@@ -2,9 +2,9 @@ import { Gtk } from 'ags/gtk4';
 
 import GLib from 'gi://GLib?version=2.0';
 
+import { appConfig } from '../../../lib/config';
 import { loadTextureFromUri } from '../../../lib/image';
-import { appConfig } from '../../../services/config';
-import { getOsInfo, uptime, userName } from '../../../services/system';
+import { getOsInfo, uptime, userName } from '../../../stores/system';
 
 const osInfoCache = getOsInfo();
 

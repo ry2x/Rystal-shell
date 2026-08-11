@@ -3,7 +3,7 @@ import { Gdk, Gtk } from 'ags/gtk4';
 
 import Hyprland from 'gi://AstalHyprland';
 
-import { LucideIcon } from '../../../lib/lucide';
+import { LucideIcon } from '../../../widget/common/lucide';
 
 export default function ScrollerIndicator({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
   const hypr = Hyprland.get_default();
