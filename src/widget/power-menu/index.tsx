@@ -10,6 +10,11 @@ import { LucideIcon } from '../common/lucide';
 const BAR_WIDTH = 47;
 const PANEL_HEIGHT = 350;
 const HIDE_DELAY_MS = 300;
+const CONFIRM_MOVE_MS = 300;
+const CONFIRM_FADE_MS = 180;
+const CARD_OUTER_WIDTH = 260;
+const CARD_GAP = 18;
+const CONFIRMATION_FIRST_CARD_OFFSET = 123;
 
 interface PowerItem {
   action: PowerAction;
@@ -42,13 +47,31 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
   const [isRevealed, setIsRevealed] = createState(false);
   const [selectedIndex, setSelectedIndex] = createState(0);
   const [confirmation, setConfirmation] = createState<PowerItem | null>(null);
+  const [confirmationMotion, setConfirmationMotion] = createState(false);
   const [errorMessage, setErrorMessage] = createState('');
 
   const itemButtons: Gtk.Button[] = [];
   let cancelButton: Gtk.Button | null = null;
   let confirmButton: Gtk.Button | null = null;
   let hideTimeout: ReturnType<typeof setTimeout> | null = null;
+  let transitionTimeouts: ReturnType<typeof setTimeout>[] = [];
   let isExecuting = false;
+  let isTransitioning = false;
+
+  const scheduleTransition = (callback: () => void, delay: number) => {
+    const timeout = setTimeout(() => {
+      transitionTimeouts = transitionTimeouts.filter((candidate) => candidate !== timeout);
+      callback();
+    }, delay);
+    transitionTimeouts.push(timeout);
+  };
+
+  const clearConfirmationTransition = () => {
+    transitionTimeouts.forEach(clearTimeout);
+    transitionTimeouts = [];
+    isTransitioning = false;
+    setConfirmationMotion(false);
+  };
 
   const focusItem = (index: number) => {
     const next = (index + POWER_ITEMS.length) % POWER_ITEMS.length;
@@ -58,6 +81,7 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
 
   const hideAnimated = () => {
     if (isExecuting) return;
+    clearConfirmationTransition();
     setIsRevealed(false);
     setConfirmation(null);
     setErrorMessage('');
@@ -75,6 +99,7 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
   };
 
   const showAnimated = () => {
+    clearConfirmationTransition();
     if (hideTimeout !== null) {
       clearTimeout(hideTimeout);
       hideTimeout = null;
@@ -110,11 +135,42 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
     }
   };
 
-  const requestAction = (item: PowerItem) => {
-    if (item.dangerous) {
+  const beginConfirmation = (item: PowerItem) => {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    setErrorMessage('');
+    focusItem(POWER_ITEMS.indexOf(item));
+    setConfirmationMotion(true);
+
+    scheduleTransition(() => {
       setConfirmation(item);
-      setErrorMessage('');
-      setTimeout(() => cancelButton?.grab_focus(), 0);
+      scheduleTransition(() => {
+        setConfirmationMotion(false);
+        isTransitioning = false;
+        cancelButton?.grab_focus();
+      }, CONFIRM_FADE_MS);
+    }, CONFIRM_MOVE_MS);
+  };
+
+  const cancelConfirmation = () => {
+    if (!confirmation() || isTransitioning) return;
+    isTransitioning = true;
+    setConfirmationMotion(true);
+    setConfirmation(null);
+
+    scheduleTransition(() => {
+      setConfirmationMotion(false);
+      scheduleTransition(() => {
+        isTransitioning = false;
+        focusItem(selectedIndex());
+      }, CONFIRM_MOVE_MS);
+    }, CONFIRM_FADE_MS);
+  };
+
+  const requestAction = (item: PowerItem) => {
+    if (isTransitioning) return;
+    if (item.dangerous) {
+      beginConfirmation(item);
     } else {
       void runAction(item);
     }
@@ -126,6 +182,14 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
         cssClasses={selectedIndex.as((selected) =>
           selected === index ? ['power-menu-item', 'selected'] : ['power-menu-item'],
         )}
+        css={confirmationMotion.as((moving) => {
+          if (!moving) return '';
+          if (selectedIndex() === index) {
+            const offset = CONFIRMATION_FIRST_CARD_OFFSET - index * (CARD_OUTER_WIDTH + CARD_GAP);
+            return `opacity: 1; transform: translateX(${offset}px) translateY(-5px);`;
+          }
+          return 'opacity: 0; transform: scale(0.92);';
+        })}
         onClicked={() => requestAction(item)}
       >
         <box orientation={Gtk.Orientation.VERTICAL} vexpand>
@@ -175,7 +239,12 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
   ) as Gtk.Box;
 
   const confirmationView = (
-    <box class="power-menu-confirmation" halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER}>
+    <box
+      class="power-menu-confirmation"
+      spacing={14}
+      halign={Gtk.Align.CENTER}
+      valign={Gtk.Align.CENTER}
+    >
       <box class="power-menu-confirmation-card">
         <box orientation={Gtk.Orientation.VERTICAL} hexpand vexpand>
           <box vexpand valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}>
@@ -206,10 +275,7 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
         <box class="power-menu-confirmation-actions" valign={Gtk.Align.CENTER} spacing={14}>
           <button
             class="power-menu-cancel"
-            onClicked={() => {
-              setConfirmation(null);
-              setTimeout(() => focusItem(selectedIndex()), 0);
-            }}
+            onClicked={cancelConfirmation}
             $={(self) => {
               cancelButton = self;
             }}
@@ -226,7 +292,11 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
               confirmButton = self;
             }}
           >
-            <label label={confirmation.as((item) => (item ? `${item.label}  ↵` : 'Confirm  ↵'))} />
+            <label
+              label={confirmation.as((item) =>
+                item ? `${item.label}  ${item.shortcut.toUpperCase()}` : 'Confirm',
+              )}
+            />
           </button>
         </box>
       </box>
@@ -238,7 +308,7 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
     // Vulkan/GSK snapshot below the layer-shell window. Keep the horizontal confirmation
     // layout, but crossfade between views so every frame is composited in-place.
     transitionType: Gtk.StackTransitionType.CROSSFADE,
-    transitionDuration: HIDE_DELAY_MS,
+    transitionDuration: CONFIRM_FADE_MS,
     hexpand: true,
     vexpand: true,
     halign: Gtk.Align.FILL,
@@ -286,13 +356,9 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
   const keyController = new Gtk.EventControllerKey();
   keyController.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
   keyController.connect('key-pressed', (_controller, keyval) => {
+    if (isTransitioning) return true;
     if (keyval === Gdk.KEY_Escape) {
-      if (confirmation()) {
-        setConfirmation(null);
-        setTimeout(() => focusItem(selectedIndex()), 0);
-      } else {
-        hideAnimated();
-      }
+      hideAnimated();
       return true;
     }
 
@@ -300,6 +366,13 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
       if (keyval === Gdk.KEY_Left || keyval === Gdk.KEY_Right) {
         if (cancelButton?.has_focus) confirmButton?.grab_focus();
         else cancelButton?.grab_focus();
+        return true;
+      }
+
+      const typed = Gdk.keyval_to_unicode(keyval);
+      if (typed > 0 && String.fromCodePoint(typed).toLowerCase() === confirmation()?.shortcut) {
+        const item = confirmation();
+        if (item) void runAction(item);
         return true;
       }
       return false;
@@ -330,6 +403,7 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
 
   win.connect('destroy', () => {
     unsubscribeConfirmation();
+    clearConfirmationTransition();
     if (hideTimeout !== null) clearTimeout(hideTimeout);
   });
 

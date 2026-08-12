@@ -50,7 +50,7 @@ window.PowerMenu {
   border-radius: 24px;
   box-shadow: none;
   outline: none;
-  transition: all $motion-standard $motion-ease;
+  transition: all $motion-panel $motion-ease;
 
   image {
     color: $text;
@@ -112,11 +112,10 @@ window.PowerMenu {
   min-width: 1080px;
   min-height: 250px;
   padding: 0;
-  transform: none;
-  background: rgba($surface, 0.78);
-  border: 2px solid rgba($primary, 0.18);
-  border-radius: 24px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+  transform: translateY(-1px);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 
   image {
     color: $on-primary;
@@ -129,7 +128,8 @@ window.PowerMenu {
   padding: 24px 18px 28px;
   color: $on-primary;
   background: $primary;
-  border-radius: 22px 0 0 22px;
+  border: 2px solid $primary;
+  border-radius: 24px;
   box-shadow: 0 0 24px rgba($primary, 0.42);
 
   image {
@@ -140,6 +140,10 @@ window.PowerMenu {
 .power-menu-confirmation-body {
   min-width: 780px;
   padding: 32px 34px;
+  background: rgba($surface, 0.78);
+  border: 2px solid rgba($primary, 0.18);
+  border-radius: 24px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
 }
 
 .power-menu-confirmation-title {
@@ -159,6 +163,9 @@ window.PowerMenu {
   min-width: 150px;
   min-height: 64px;
   padding: 12px 20px;
+  color: $text;
+  background: rgba($on-surface, 0.08);
+  border: 1px solid rgba($on-surface, 0.15);
   border-radius: 12px;
   font-weight: 750;
   outline: none;
@@ -166,24 +173,22 @@ window.PowerMenu {
 }
 
 .power-menu-cancel {
-  color: $text;
-  background: rgba($on-surface, 0.08);
-  border: 1px solid rgba($on-surface, 0.15);
-
   &:hover,
   &:focus {
+    color: $primary;
     background: rgba($on-surface, 0.16);
     border-color: $primary;
+    box-shadow: 0 0 20px rgba($primary, 0.32);
+    transform: translateY(-2px);
   }
 }
 
 .power-menu-confirm {
-  color: $on-error;
-  background: $error;
-  border: 1px solid $error;
-
   &:hover,
   &:focus {
+    color: $on-error;
+    background: $error;
+    border-color: $error;
     box-shadow: 0 0 20px rgba($error, 0.5);
     transform: translateY(-2px);
   }
