@@ -13,7 +13,7 @@ window.PowerMenu {
 }
 
 .power-menu-panel {
-  padding: 28px 42px 24px;
+  padding: 0 42px;
   background: transparent;
   opacity: 0;
   transform: translateY(350px);
@@ -33,7 +33,7 @@ window.PowerMenu {
 }
 
 .power-menu-main {
-  transform: translateY(40px);
+  transform: translateY(20px);
 }
 
 .power-menu-items {
@@ -112,7 +112,7 @@ window.PowerMenu {
   min-width: 1080px;
   min-height: 250px;
   padding: 0;
-  transform: translateY(20px);
+  transform: none;
   background: rgba($surface, 0.78);
   border: 2px solid rgba($primary, 0.18);
   border-radius: 24px;

@@ -234,7 +234,10 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
   ) as Gtk.Box;
 
   const stack = new Gtk.Stack({
-    transitionType: Gtk.StackTransitionType.SLIDE_LEFT_RIGHT,
+    // Sliding a transparent Stack while the parent panel is transformed can leave a stale
+    // Vulkan/GSK snapshot below the layer-shell window. Keep the horizontal confirmation
+    // layout, but crossfade between views so every frame is composited in-place.
+    transitionType: Gtk.StackTransitionType.CROSSFADE,
     transitionDuration: HIDE_DELAY_MS,
     hexpand: true,
     vexpand: true,
