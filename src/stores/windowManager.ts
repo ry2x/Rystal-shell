@@ -76,6 +76,17 @@ function closeAllWallpaperSelectors() {
   if (activeSidePanel.get().panel === 'wallpaper-selector') activeSidePanel.set('', '');
 }
 
+function closeAllPowerMenus() {
+  app.get_monitors().forEach((m) => {
+    const menu = app.get_window(`power-menu-${m.get_connector()}`) as AnimatedWindow;
+    if (menu?.get_visible()) {
+      if (menu.hide_animated) menu.hide_animated();
+      else menu.set_visible(false);
+    }
+  });
+  if (activeSidePanel.get().panel === 'power-menu') activeSidePanel.set('', '');
+}
+
 export function toggleControlCenter(monitorName?: string | null) {
   const targetMonitor = monitorName || Hyprland.get_default().get_focused_monitor().name;
   app.get_monitors().forEach((m) => {
@@ -91,6 +102,7 @@ export function toggleControlCenter(monitorName?: string | null) {
           cc.hide_animated?.();
         } else {
           closeAllWallpaperSelectors();
+          closeAllPowerMenus();
           closeAllAppLaunchers();
           if (dw && dw.get_visible()) dw.hide_animated?.();
           cc.show_animated?.();
@@ -118,6 +130,7 @@ export function toggleDateWeather(monitorName?: string | null) {
           dw.hide_animated?.();
         } else {
           closeAllWallpaperSelectors();
+          closeAllPowerMenus();
           closeAllAppLaunchers();
           if (cc && cc.get_visible()) cc.hide_animated?.();
           dw.show_animated?.();
@@ -141,6 +154,7 @@ export function toggleAppLauncher(monitorName?: string | null) {
           closeAllControlCenters();
           closeAllDateWeathers();
           closeAllWallpaperSelectors();
+          closeAllPowerMenus();
         }
         al.set_visible(show);
       } else {
@@ -167,11 +181,38 @@ export function toggleWallpaperSelector(monitorName?: string | null) {
         closeAllControlCenters();
         closeAllDateWeathers();
         closeAllAppLaunchers();
+        closeAllPowerMenus();
         selector.show_animated?.();
         activeSidePanel.set('wallpaper-selector', connector ?? '');
       }
     } else if (selector.get_visible()) {
       selector.hide_animated?.();
+    }
+  });
+}
+
+export function togglePowerMenu(monitorName?: string | null) {
+  const targetMonitor = monitorName || Hyprland.get_default().get_focused_monitor().name;
+  app.get_monitors().forEach((m) => {
+    const connector = m.get_connector();
+    const menu = app.get_window(`power-menu-${connector}`) as AnimatedWindow;
+    if (!menu) return;
+
+    if (connector === targetMonitor) {
+      const isActive =
+        activeSidePanel.get().panel === 'power-menu' && activeSidePanel.get().monitor === connector;
+      if (isActive) {
+        menu.hide_animated?.();
+      } else {
+        closeAllControlCenters();
+        closeAllDateWeathers();
+        closeAllWallpaperSelectors();
+        closeAllAppLaunchers();
+        menu.show_animated?.();
+        activeSidePanel.set('power-menu', connector ?? '');
+      }
+    } else if (menu.get_visible()) {
+      menu.hide_animated?.();
     }
   });
 }

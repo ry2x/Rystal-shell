@@ -13,7 +13,7 @@ usage() {
 Usage: run-memory-scenarios.sh [OPTIONS]
 
 Options:
-  --scenario NAME       launcher, launcher-no-theme, wallpaper, wallpaper-no-theme, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, notifications-date-weather, notifications-date-weather-repeat, notifications-date-weather-close-wait, or all (runs every scenario with AGS restart between each; default: all)
+  --scenario NAME       launcher, launcher-no-theme, wallpaper, wallpaper-no-theme, power-menu, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, notifications-date-weather, notifications-date-weather-repeat, notifications-date-weather-close-wait, or all (runs every scenario with AGS restart between each; default: all)
   --iterations N        Panel open/theme-change/close repetitions (default: 30)
   --notifications N     Number of random image notifications (default: 30)
   --settle-seconds N    Delay after UI and wallpaper operations (default: 2)
@@ -50,7 +50,7 @@ while (($#)); do
   esac
 done
 
-case "$scenario" in launcher|launcher-no-theme|wallpaper|wallpaper-no-theme|theme-only|css-only|cc|cc-no-theme|date-weather|date-weather-no-theme|date-weather-css-only|notifications|notifications-date-weather|notifications-date-weather-repeat|notifications-date-weather-close-wait|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
+case "$scenario" in launcher|launcher-no-theme|wallpaper|wallpaper-no-theme|power-menu|theme-only|css-only|cc|cc-no-theme|date-weather|date-weather-no-theme|date-weather-css-only|notifications|notifications-date-weather|notifications-date-weather-repeat|notifications-date-weather-close-wait|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
 [[ $iterations =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--iterations must be a positive integer' >&2; exit 2; }
 [[ $notification_count =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--notifications must be a positive integer' >&2; exit 2; }
 [[ $settle_seconds =~ ^[0-9]+$ && $gc_wait_seconds =~ ^[0-9]+$ ]] || { printf '%s\n' 'wait values must be non-negative integers' >&2; exit 2; }
@@ -147,6 +147,7 @@ run_named_scenario() {
     launcher-no-theme) run_launcher_no_theme_scenario ;;
     wallpaper) run_panel_scenario wallpaper toggle-wallpaper ;;
     wallpaper-no-theme) run_panel_without_theme wallpaper-no-theme toggle-wallpaper ;;
+    power-menu) run_panel_scenario power-menu toggle-power-menu ;;
     theme-only) run_theme_only_scenario ;;
     css-only) run_css_only_scenario ;;
     cc) run_panel_scenario cc toggle-cc ;;
@@ -169,6 +170,7 @@ run_all_scenarios() {
     launcher-no-theme
     wallpaper
     wallpaper-no-theme
+    power-menu
     theme-only
     css-only
     cc

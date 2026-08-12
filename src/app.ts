@@ -10,6 +10,7 @@ import ControlCenter from './widget/control-center';
 import WifiPasswordDialog from './widget/control-center/widget/Connectivity/WifiPasswordDialog';
 import DateWeatherPopup from './widget/date-weather';
 import NotificationPopups from './widget/notification-popups';
+import PowerMenu from './widget/power-menu';
 import WallpaperSelector from './widget/wallpaper-selector';
 
 app.start({
@@ -32,6 +33,7 @@ app.start({
       NotificationPopups(m);
       AppLauncher(m);
       WallpaperSelector(m);
+      PowerMenu(m);
     });
   },
 });

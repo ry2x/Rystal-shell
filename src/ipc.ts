@@ -18,6 +18,7 @@ import {
   toggleAppLauncher,
   toggleControlCenter,
   toggleDateWeather,
+  togglePowerMenu,
   toggleWallpaperSelector,
 } from './stores/windowManager';
 
@@ -120,6 +121,11 @@ export function requestHandler(request: string[], res: ResponseCallback) {
     case 'toggle-wallpaper':
       toggleWallpaperSelector();
       res('Toggled Wallpaper Selector');
+      break;
+
+    case 'toggle-power-menu':
+      togglePowerMenu();
+      res('Toggled Power Menu');
       break;
 
     case 'clear-notifications':

@@ -9,6 +9,7 @@ import { activeSidePanel, setAnimBottomHeight, setAnimDx } from '../../stores/wi
 const BORDER_WIDTH = 3;
 const BAR_WIDTH = 47;
 const WALLPAPER_PANEL_HEIGHT = 390;
+const POWER_MENU_PANEL_HEIGHT = 350;
 const configuredThemePath = `${rystalShellConfigDir}/theme.scss`;
 const defaultThemePath = `${rystalShellDataDir}/styles/default/theme.scss`;
 
@@ -109,7 +110,13 @@ export default function PanelBackground({ gdkmonitor }: { gdkmonitor: Gdk.Monito
       } else {
         targetDx = BAR_WIDTH;
       }
-      targetBottomHeight = panel === 'wallpaper-selector' ? WALLPAPER_PANEL_HEIGHT : 0;
+      if (panel === 'wallpaper-selector') {
+        targetBottomHeight = WALLPAPER_PANEL_HEIGHT;
+      } else if (panel === 'power-menu') {
+        targetBottomHeight = POWER_MENU_PANEL_HEIGHT;
+      } else {
+        targetBottomHeight = 0;
+      }
     } else {
       // A panel opened on another monitor must also collapse this monitor's
       // previously expanded bar background.
