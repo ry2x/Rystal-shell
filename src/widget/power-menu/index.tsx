@@ -4,10 +4,10 @@ import app from 'ags/gtk4/app';
 
 import GLib from 'gi://GLib';
 
-import type { PowerAction } from '../../stores/powerMenu';
 import { executePowerAction } from '../../stores/powerMenu';
 import { activeSidePanel } from '../../stores/windowManager';
-import { LucideIcon } from '../common/lucide';
+import { POWER_ITEMS, type PowerItem } from './items';
+import { createPowerMenuConfirmationView, createPowerMenuMainView } from './widget/PowerMenuViews';
 
 const BAR_WIDTH = 47;
 const PANEL_HEIGHT = 350;
@@ -15,25 +15,6 @@ const HIDE_DELAY_MS = 300;
 const CONFIRM_MOVE_MS = 300;
 const CONFIRM_FADE_MS = 180;
 const MOVE_INTERVAL_US = 83_333;
-const CARD_OUTER_WIDTH = 260;
-const CARD_GAP = 18;
-const CONFIRMATION_FIRST_CARD_OFFSET = 123;
-
-interface PowerItem {
-  action: PowerAction;
-  label: string;
-  shortcut: string;
-  icon: string;
-  dangerous?: boolean;
-}
-
-const POWER_ITEMS: PowerItem[] = [
-  { action: 'shutdown', label: 'Shutdown', shortcut: 'u', icon: 'power', dangerous: true },
-  { action: 'reboot', label: 'Reboot', shortcut: 'r', icon: 'rotate-ccw', dangerous: true },
-  { action: 'logout', label: 'Logout', shortcut: 'e', icon: 'log-out', dangerous: true },
-  { action: 'sleep', label: 'Sleep', shortcut: 's', icon: 'moon' },
-  { action: 'lock', label: 'Lock', shortcut: 'l', icon: 'lock' },
-];
 
 function ClickCatcher({ onClick }: { onClick: () => void }) {
   const box = (<box class="click-catcher" hexpand vexpand />) as Gtk.Box;
@@ -188,143 +169,34 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
     }
   };
 
-  const makeItemButton = (item: PowerItem, index: number) => {
-    const button = (
-      <button
-        cssClasses={selectedIndex.as((selected) =>
-          selected === index ? ['power-menu-item', 'selected'] : ['power-menu-item'],
-        )}
-        css={confirmationMotion.as((moving) => {
-          if (!moving) return '';
-          if (selectedIndex() === index) {
-            const offset = CONFIRMATION_FIRST_CARD_OFFSET - index * (CARD_OUTER_WIDTH + CARD_GAP);
-            return `opacity: 1; transform: translateX(${offset}px) translateY(-5px);`;
-          }
-          return 'opacity: 0; transform: scale(0.92);';
-        })}
-        onClicked={() => requestAction(item)}
-      >
-        <box orientation={Gtk.Orientation.VERTICAL} vexpand>
-          <box vexpand valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}>
-            <LucideIcon name={item.icon} pixelSize={54} />
-          </box>
-          <label
-            class="power-menu-label"
-            label={`${item.label} (<u>${item.shortcut.toUpperCase()}</u>)`}
-            useMarkup
-          />
-        </box>
-      </button>
-    ) as Gtk.Button;
-    const focusController = new Gtk.EventControllerFocus();
-    focusController.connect('enter', () => setSelectedIndex(index));
-    button.add_controller(focusController);
-    itemButtons[index] = button;
-    return button;
-  };
+  const mainView = createPowerMenuMainView({
+    selectedIndex,
+    confirmationMotion,
+    errorMessage,
+    onRequestAction: requestAction,
+    onItemFocused: setSelectedIndex,
+    onButtonCreated: (index, button) => {
+      itemButtons[index] = button;
+    },
+  });
 
-  const mainView = (
-    <box
-      class="power-menu-main"
-      orientation={Gtk.Orientation.VERTICAL}
-      spacing={14}
-      hexpand
-      halign={Gtk.Align.FILL}
-    >
-      <box
-        class="power-menu-items"
-        spacing={18}
-        halign={Gtk.Align.CENTER}
-        valign={Gtk.Align.CENTER}
-        vexpand
-      >
-        {POWER_ITEMS.map((item, index) => makeItemButton(item, index))}
-      </box>
-      <label
-        cssClasses={errorMessage.as((message) =>
-          message ? ['power-menu-error', 'visible'] : ['power-menu-error'],
-        )}
-        label={errorMessage}
-        ellipsize={3}
-      />
-    </box>
-  ) as Gtk.Box;
-
-  const confirmationView = (
-    <box
-      class="power-menu-confirmation"
-      spacing={14}
-      halign={Gtk.Align.CENTER}
-      valign={Gtk.Align.CENTER}
-    >
-      <box class="power-menu-confirmation-card">
-        <box orientation={Gtk.Orientation.VERTICAL} hexpand vexpand>
-          <box vexpand valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}>
-            <LucideIcon name={confirmation.as((item) => item?.icon ?? 'power')} pixelSize={54} />
-          </box>
-          <label
-            class="power-menu-label"
-            label={confirmation.as((item) =>
-              item ? `${item.label} (<u>${item.shortcut.toUpperCase()}</u>)` : '',
-            )}
-            useMarkup
-          />
-        </box>
-      </box>
-      <box class="power-menu-confirmation-body" spacing={28}>
-        <box orientation={Gtk.Orientation.VERTICAL} spacing={8} hexpand valign={Gtk.Align.CENTER}>
-          <label
-            class="power-menu-confirmation-title"
-            label={confirmation.as((item) => (item ? `${item.label}?` : 'Confirm action'))}
-            halign={Gtk.Align.START}
-          />
-          <label
-            class="power-menu-confirmation-copy"
-            label="Any unsaved work will be lost."
-            halign={Gtk.Align.START}
-          />
-        </box>
-        <box class="power-menu-confirmation-actions" valign={Gtk.Align.CENTER} spacing={14}>
-          <button
-            class="power-menu-cancel"
-            onClicked={hideAnimated}
-            $={(self) => {
-              cancelButton = self;
-              const focusController = new Gtk.EventControllerFocus();
-              focusController.connect('enter', () => {
-                confirmationSelectedIndex = 0;
-              });
-              self.add_controller(focusController);
-            }}
-          >
-            <label label="Cancel (<u>ESC</u>)" useMarkup />
-          </button>
-          <button
-            class="power-menu-confirm"
-            onClicked={() => {
-              const item = confirmation();
-              if (item) void runAction(item);
-            }}
-            $={(self) => {
-              confirmButton = self;
-              const focusController = new Gtk.EventControllerFocus();
-              focusController.connect('enter', () => {
-                confirmationSelectedIndex = 1;
-              });
-              self.add_controller(focusController);
-            }}
-          >
-            <label
-              label={confirmation.as((item) =>
-                item ? `${item.label} (<u>${item.shortcut.toUpperCase()}</u>)` : 'Confirm',
-              )}
-              useMarkup
-            />
-          </button>
-        </box>
-      </box>
-    </box>
-  ) as Gtk.Box;
+  const confirmationView = createPowerMenuConfirmationView({
+    confirmation,
+    onCancel: hideAnimated,
+    onConfirm: () => {
+      const item = confirmation();
+      if (item) void runAction(item);
+    },
+    onSelectionChanged: (index) => {
+      confirmationSelectedIndex = index;
+    },
+    onCancelButtonCreated: (button) => {
+      cancelButton = button;
+    },
+    onConfirmButtonCreated: (button) => {
+      confirmButton = button;
+    },
+  });
 
   const stack = new Gtk.Stack({
     // Sliding a transparent Stack while the parent panel is transformed can leave a stale
