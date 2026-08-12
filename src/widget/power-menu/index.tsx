@@ -2,6 +2,8 @@ import { createState } from 'ags';
 import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
+import GLib from 'gi://GLib';
+
 import type { PowerAction } from '../../stores/powerMenu';
 import { executePowerAction } from '../../stores/powerMenu';
 import { activeSidePanel } from '../../stores/windowManager';
@@ -12,6 +14,7 @@ const PANEL_HEIGHT = 350;
 const HIDE_DELAY_MS = 300;
 const CONFIRM_MOVE_MS = 300;
 const CONFIRM_FADE_MS = 180;
+const MOVE_INTERVAL_US = 83_333;
 const CARD_OUTER_WIDTH = 260;
 const CARD_GAP = 18;
 const CONFIRMATION_FIRST_CARD_OFFSET = 123;
@@ -57,6 +60,15 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
   let transitionTimeouts: ReturnType<typeof setTimeout>[] = [];
   let isExecuting = false;
   let isTransitioning = false;
+  let lastMoveAt = 0;
+  let confirmationSelectedIndex = 0;
+
+  const canMoveSelection = () => {
+    const now = GLib.get_monotonic_time();
+    if (now - lastMoveAt < MOVE_INTERVAL_US) return false;
+    lastMoveAt = now;
+    return true;
+  };
 
   const scheduleTransition = (callback: () => void, delay: number) => {
     const timeout = setTimeout(() => {
@@ -79,12 +91,24 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
     itemButtons[next]?.grab_focus();
   };
 
+  const moveItemSelection = (delta: number) => {
+    if (canMoveSelection()) focusItem(selectedIndex() + delta);
+  };
+
+  const moveConfirmationSelection = () => {
+    if (!canMoveSelection()) return;
+    confirmationSelectedIndex = confirmationSelectedIndex === 0 ? 1 : 0;
+    if (confirmationSelectedIndex === 0) cancelButton?.grab_focus();
+    else confirmButton?.grab_focus();
+  };
+
   const hideAnimated = () => {
     if (isExecuting) return;
     clearConfirmationTransition();
     setIsRevealed(false);
     setConfirmation(null);
     setErrorMessage('');
+    confirmationSelectedIndex = 0;
     if (
       activeSidePanel.get().panel === 'power-menu' &&
       activeSidePanel.get().monitor === monitorConnector
@@ -100,6 +124,7 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
 
   const showAnimated = () => {
     clearConfirmationTransition();
+    lastMoveAt = 0;
     if (hideTimeout !== null) {
       clearTimeout(hideTimeout);
       hideTimeout = null;
@@ -139,6 +164,7 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
     if (isTransitioning) return;
     isTransitioning = true;
     setErrorMessage('');
+    confirmationSelectedIndex = 0;
     focusItem(POWER_ITEMS.indexOf(item));
     setConfirmationMotion(true);
 
@@ -147,24 +173,10 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
       scheduleTransition(() => {
         setConfirmationMotion(false);
         isTransitioning = false;
+        lastMoveAt = 0;
         cancelButton?.grab_focus();
       }, CONFIRM_FADE_MS);
     }, CONFIRM_MOVE_MS);
-  };
-
-  const cancelConfirmation = () => {
-    if (!confirmation() || isTransitioning) return;
-    isTransitioning = true;
-    setConfirmationMotion(true);
-    setConfirmation(null);
-
-    scheduleTransition(() => {
-      setConfirmationMotion(false);
-      scheduleTransition(() => {
-        isTransitioning = false;
-        focusItem(selectedIndex());
-      }, CONFIRM_MOVE_MS);
-    }, CONFIRM_FADE_MS);
   };
 
   const requestAction = (item: PowerItem) => {
@@ -275,12 +287,17 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
         <box class="power-menu-confirmation-actions" valign={Gtk.Align.CENTER} spacing={14}>
           <button
             class="power-menu-cancel"
-            onClicked={cancelConfirmation}
+            onClicked={hideAnimated}
             $={(self) => {
               cancelButton = self;
+              const focusController = new Gtk.EventControllerFocus();
+              focusController.connect('enter', () => {
+                confirmationSelectedIndex = 0;
+              });
+              self.add_controller(focusController);
             }}
           >
-            <label label="Cancel  ESC" />
+            <label label="Cancel (<u>ESC</u>)" useMarkup />
           </button>
           <button
             class="power-menu-confirm"
@@ -290,12 +307,18 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
             }}
             $={(self) => {
               confirmButton = self;
+              const focusController = new Gtk.EventControllerFocus();
+              focusController.connect('enter', () => {
+                confirmationSelectedIndex = 1;
+              });
+              self.add_controller(focusController);
             }}
           >
             <label
               label={confirmation.as((item) =>
-                item ? `${item.label}  ${item.shortcut.toUpperCase()}` : 'Confirm',
+                item ? `${item.label} (<u>${item.shortcut.toUpperCase()}</u>)` : 'Confirm',
               )}
+              useMarkup
             />
           </button>
         </box>
@@ -364,8 +387,7 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
 
     if (confirmation()) {
       if (keyval === Gdk.KEY_Left || keyval === Gdk.KEY_Right) {
-        if (cancelButton?.has_focus) confirmButton?.grab_focus();
-        else cancelButton?.grab_focus();
+        moveConfirmationSelection();
         return true;
       }
 
@@ -379,11 +401,11 @@ export default function PowerMenu(gdkmonitor: Gdk.Monitor) {
     }
 
     if (keyval === Gdk.KEY_Left || keyval === Gdk.KEY_Up) {
-      focusItem(selectedIndex() - 1);
+      moveItemSelection(-1);
       return true;
     }
     if (keyval === Gdk.KEY_Right || keyval === Gdk.KEY_Down) {
-      focusItem(selectedIndex() + 1);
+      moveItemSelection(1);
       return true;
     }
 
