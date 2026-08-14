@@ -1,7 +1,7 @@
+import { onCleanup } from 'ags';
 import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
-
-import GLib from 'gi://GLib';
+import { type Timer, idle } from 'ags/time';
 
 import { createAppLauncherState } from '../../stores/appLauncher';
 import { ensureLauncherBackground, registerLauncherBackground } from '../../stores/launcherImage';
@@ -39,10 +39,9 @@ function resetLauncherState(
 
 function focusLauncher(searchInput: Gtk.Entry, appList: Gtk.ScrolledWindow) {
   ensureLauncherBackground();
-  GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+  return idle(() => {
     searchInput.grab_focus();
     appList.get_vadjustment()?.set_value(0);
-    return GLib.SOURCE_REMOVE;
   });
 }
 
@@ -57,10 +56,14 @@ function addEscapeHandler(window: Astal.Window) {
   window.add_controller(controller);
 }
 
-export default function AppLauncher(monitor: Gdk.Monitor) {
-  const { text, setText, selectedIndex, setSelectedIndex, results, setResults } =
-    createAppLauncherState();
+export interface AppLauncherProps {
+  monitor: Gdk.Monitor;
+}
+
+export default function AppLauncher({ monitor }: AppLauncherProps) {
+  const { text, setText, selectedIndex, setSelectedIndex, results } = createAppLauncherState();
   const monitorConnector = monitor.get_connector();
+  let focusTimer: Timer | null = null;
 
   const launcherBackground = createLauncherBackground();
 
@@ -86,7 +89,6 @@ export default function AppLauncher(monitor: Gdk.Monitor) {
     text,
     selectedIndex,
     results,
-    setResults,
     monitorConnector,
   });
 
@@ -101,10 +103,13 @@ export default function AppLauncher(monitor: Gdk.Monitor) {
       application={app}
       visible={false}
       onNotifyVisible={(self) => {
+        focusTimer?.cancel();
+        focusTimer = null;
+
         if (!self.visible) {
           resetLauncherState(searchInput, setText, setSelectedIndex);
         } else {
-          focusLauncher(searchInput, appList);
+          focusTimer = focusLauncher(searchInput, appList);
         }
       }}
     >
@@ -141,6 +146,10 @@ export default function AppLauncher(monitor: Gdk.Monitor) {
   ) as Astal.Window;
 
   addEscapeHandler(win);
+  onCleanup(() => {
+    focusTimer?.cancel();
+    focusTimer = null;
+  });
 
   return win;
 }

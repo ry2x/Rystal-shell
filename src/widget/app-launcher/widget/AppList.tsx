@@ -1,89 +1,36 @@
-import type { Accessor, Setter } from 'ags';
+import { type Accessor, For, createEffect, onCleanup } from 'ags';
 import { Gtk } from 'ags/gtk4';
+import { type Timer, idle } from 'ags/time';
 
 import Apps from 'gi://AstalApps';
-import GLib from 'gi://GLib';
 
-import { searchApps } from '../../../stores/application';
-import { createAppItem } from './AppItem';
+import { AppItem } from './AppItem';
 import { SearchGoogleBtn } from './SearchGoogleBtn';
 
 export interface AppListProps {
   text: Accessor<string>;
   selectedIndex: Accessor<number>;
   results: Accessor<Apps.Application[]>;
-  setResults: Setter<Apps.Application[]>;
   monitorConnector: string | null;
 }
 
-function getAppKey(appInstance: Apps.Application) {
-  return appInstance.name + (appInstance.description || '') + (appInstance.iconName || '');
-}
-
-function getUniqueResults(query: string) {
-  const uniqueResults: Apps.Application[] = [];
-  const seen = new Set<string>();
-
-  for (const appInstance of searchApps(query)) {
-    const key = getAppKey(appInstance);
-    if (seen.has(key)) continue;
-
-    seen.add(key);
-    uniqueResults.push(appInstance);
-  }
-
-  return uniqueResults;
-}
-
-function syncAppWidgets(
-  appList: Gtk.Box,
-  widgetMap: Map<string, Gtk.Widget>,
-  currentResults: Apps.Application[],
-  monitorConnector: string | null,
-) {
-  const resultKeys = new Set(currentResults.map((appInstance) => getAppKey(appInstance)));
-
-  for (const [key, widget] of widgetMap) {
-    if (!resultKeys.has(key)) {
-      appList.remove(widget);
-      widgetMap.delete(key);
-    }
-  }
-
-  let previousWidget: Gtk.Widget | null = null;
-  for (const appInstance of currentResults) {
-    const key = getAppKey(appInstance);
-    let widget = widgetMap.get(key);
-
-    if (!widget) {
-      widget = createAppItem({ res: appInstance, monitorConnector });
-      widgetMap.set(key, widget);
-      appList.append(widget);
-    }
-
-    widget.set_visible(true);
-    appList.reorder_child_after(widget, previousWidget);
-    previousWidget = widget;
-  }
-}
-
 function scrollToSelection(scrollWindow: Gtk.ScrolledWindow, targetChild: Gtk.Widget) {
-  const vadj = scrollWindow.get_vadjustment();
+  const adjustment = scrollWindow.get_vadjustment();
   const viewport = scrollWindow.get_child();
-  if (!vadj || !viewport) return;
+  if (!adjustment || !viewport) return;
 
   const itemHeight = targetChild.get_height() || 50;
   const position = targetChild.translate_coordinates(viewport, 0, 0);
-  if (!Array.isArray(position) || !position[0]) return;
+  if (!position[0]) return;
 
   const visibleY = position[2];
   const visibleBottom = visibleY + itemHeight;
-  const pageSize = vadj.get_page_size();
+  const pageSize = adjustment.get_page_size();
 
   if (visibleY < 0) {
-    vadj.set_value(vadj.get_value() + visibleY - 10);
+    adjustment.set_value(adjustment.get_value() + visibleY - 10);
   } else if (visibleBottom > pageSize) {
-    vadj.set_value(vadj.get_value() + (visibleBottom - pageSize) + 10);
+    adjustment.set_value(adjustment.get_value() + visibleBottom - pageSize + 10);
   }
 }
 
@@ -96,21 +43,17 @@ function updateSelection(
   query: string,
 ) {
   let targetChild: Gtk.Widget | null = null;
-
   let child = appList.get_first_child();
   let index = 0;
+
   while (child) {
-    if (child.get_visible()) {
-      if (index === selectedIndex) {
-        child.add_css_class('selected');
-        targetChild = child;
-      } else {
-        child.remove_css_class('selected');
-      }
-      index++;
+    if (index === selectedIndex) {
+      child.add_css_class('selected');
+      targetChild = child;
     } else {
       child.remove_css_class('selected');
     }
+    index++;
     child = child.get_next_sibling();
   }
 
@@ -128,7 +71,6 @@ export function AppList({
   text,
   selectedIndex,
   results,
-  setResults,
   monitorConnector,
 }: AppListProps): Gtk.ScrolledWindow {
   const searchGoogleBtn = SearchGoogleBtn({
@@ -136,69 +78,56 @@ export function AppList({
     monitorConnector,
   });
 
-  const appList = (<box orientation={Gtk.Orientation.VERTICAL} spacing={10} />) as Gtk.Box;
-  const widgetMap = new Map<string, Gtk.Widget>();
-  const scrollWindow = Object.assign(new Gtk.ScrolledWindow(), {
-    cssClasses: ['applauncher-scroll'],
-    hscrollbarPolicy: Gtk.PolicyType.NEVER,
-    vscrollbarPolicy: Gtk.PolicyType.AUTOMATIC,
-    vexpand: true,
-    minContentWidth: 400,
-    minContentHeight: 300,
-    maxContentHeight: 600,
-    propagateNaturalHeight: false,
-    child: (
+  let appList!: Gtk.Box;
+  let scrollWindow!: Gtk.ScrolledWindow;
+  let selectionTimer: Timer | null = null;
+
+  const widget = (
+    <scrolledwindow
+      class="applauncher-scroll"
+      hscrollbarPolicy={Gtk.PolicyType.NEVER}
+      vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}
+      vexpand
+      minContentWidth={400}
+      minContentHeight={300}
+      maxContentHeight={600}
+      propagateNaturalHeight={false}
+      $={(self) => (scrollWindow = self)}
+    >
       <box orientation={Gtk.Orientation.VERTICAL} class="applauncher-list" spacing={10}>
-        {appList}
+        <box orientation={Gtk.Orientation.VERTICAL} spacing={10} $={(self) => (appList = self)}>
+          <For each={results}>
+            {(appInstance) => <AppItem res={appInstance} monitorConnector={monitorConnector} />}
+          </For>
+        </box>
         {searchGoogleBtn}
       </box>
-    ),
-  }) as Gtk.ScrolledWindow;
+    </scrolledwindow>
+  ) as Gtk.ScrolledWindow;
 
-  function populateApps() {
-    const safeT = text.peek() || '';
-    const q = safeT.trim().toLowerCase();
-    const currentResults = getUniqueResults(q);
+  createEffect(() => {
+    selectedIndex();
+    results();
+    text();
 
-    setResults(currentResults);
-    syncAppWidgets(appList, widgetMap, currentResults, monitorConnector);
-
-    GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+    selectionTimer?.cancel();
+    selectionTimer = idle(() => {
+      selectionTimer = null;
       updateSelection(
         appList,
         searchGoogleBtn,
         scrollWindow,
         selectedIndex.peek(),
-        currentResults,
-        q,
+        results.peek(),
+        text.peek().trim(),
       );
-      return GLib.SOURCE_REMOVE;
     });
-  }
-
-  const unsubscribeText = text.subscribe(() => populateApps());
-
-  GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
-    populateApps();
-    return GLib.SOURCE_REMOVE;
   });
 
-  const unsubscribeSelection = selectedIndex.subscribe(() => {
-    updateSelection(
-      appList,
-      searchGoogleBtn,
-      scrollWindow,
-      selectedIndex.peek(),
-      results.peek(),
-      text.peek().trim(),
-    );
+  onCleanup(() => {
+    selectionTimer?.cancel();
+    selectionTimer = null;
   });
 
-  scrollWindow.connect('destroy', () => {
-    unsubscribeText();
-    unsubscribeSelection();
-    widgetMap.clear();
-  });
-
-  return scrollWindow;
+  return widget;
 }

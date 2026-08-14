@@ -31,7 +31,7 @@ app.start({
       WifiPasswordDialog(m);
       DateWeatherPopup(m);
       NotificationPopups(m);
-      AppLauncher(m);
+      AppLauncher({ monitor: m });
       WallpaperSelector(m);
       PowerMenu(m);
     });

@@ -25,7 +25,7 @@ function createImageProp(iconStr: string): Partial<Gtk.Image.ConstructorProps> {
   return iconProps;
 }
 
-export function createAppItem({ res, monitorConnector }: AppItemProps): Gtk.Button {
+export function AppItem({ res, monitorConnector }: AppItemProps): Gtk.Button {
   return (
     <button
       class="applauncher-item"
