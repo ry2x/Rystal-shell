@@ -123,9 +123,6 @@ export default function CircularProgress<T>({
     }
   });
 
-  const overlay = new Gtk.Overlay();
-  overlay.set_child(area);
-
   const textContainer = (
     <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}>
       <box spacing={6} valign={Gtk.Align.CENTER} class={cssClass}>
@@ -145,7 +142,13 @@ export default function CircularProgress<T>({
     </box>
   );
 
-  overlay.add_overlay(textContainer as Gtk.Widget);
-
-  return overlay;
+  return (
+    <overlay
+      $={(self: Gtk.Overlay) => {
+        self.add_overlay(textContainer as Gtk.Widget);
+      }}
+    >
+      {area}
+    </overlay>
+  );
 }
