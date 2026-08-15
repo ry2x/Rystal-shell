@@ -33,7 +33,7 @@ export default function NotificationList() {
               name={doNotDisturb.as((enabled) => (enabled ? 'bell-off' : 'bell'))}
               pixelSize={14}
             />
-            <label label="DND" css="font-size: 0.8em; font-weight: 600;" />
+            <label label="DND" />
           </box>
         </button>
 
@@ -41,20 +41,20 @@ export default function NotificationList() {
         <button class="notif-header-btn clear-all" onClicked={clearNotifications}>
           <box spacing={6}>
             <LucideIcon name="trash-2" pixelSize={14} />
-            <label label="Clear All" css="font-size: 0.8em; font-weight: 600;" />
+            <label label="Clear All" />
           </box>
         </button>
       </box>
 
       {/* Notification List */}
       <box
+        class="notif-empty"
         visible={notifications.as((items) => items.length === 0)}
         halign={Gtk.Align.CENTER}
         valign={Gtk.Align.CENTER}
-        css="min-height: 160px; color: alpha(currentColor, 0.5);"
       >
-        <LucideIcon name="bell-check" pixelSize={25} css="margin-right: 8px;" />
-        <label label="No Notifications" css="font-weight: 700;" />
+        <LucideIcon name="bell-check" pixelSize={25} class="notif-empty-icon" />
+        <label label="No Notifications" class="notif-empty-label" />
       </box>
       <scrolledwindow
         cssClasses={['notif-scroll']}

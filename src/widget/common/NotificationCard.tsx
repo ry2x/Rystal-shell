@@ -94,11 +94,7 @@ export default function NotificationCard({ notif, onDismiss }: NotificationCardP
       <box spacing={12}>
         <box class="notif-icon-container" valign={Gtk.Align.START}>
           {appIconPath ? (
-            <box
-              css="min-width: 32px; min-height: 32px;"
-              overflow={Gtk.Overflow.HIDDEN}
-              valign={Gtk.Align.CENTER}
-            >
+            <box class="notif-app-icon" overflow={Gtk.Overflow.HIDDEN} valign={Gtk.Align.CENTER}>
               <overlay>
                 <box widthRequest={32} heightRequest={32} />
                 <Gtk.Picture
@@ -173,11 +169,7 @@ export default function NotificationCard({ notif, onDismiss }: NotificationCardP
       )}
 
       {imageToDisplay && (
-        <box
-          class="notif-image"
-          css="border-radius: 8px; min-height: 140px; margin-top: 4px;"
-          overflow={Gtk.Overflow.HIDDEN}
-        >
+        <box class="notif-image" overflow={Gtk.Overflow.HIDDEN}>
           <overlay>
             <box hexpand heightRequest={140} />
             <Gtk.Picture

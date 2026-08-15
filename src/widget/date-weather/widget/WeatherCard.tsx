@@ -40,7 +40,7 @@ export default function WeatherCard() {
         </box>
         <label
           label={weatherInfo.as((w) => (w ? w.region : LOCATION))}
-          css="font-size: 1.1em; font-weight: 700; color: alpha(currentColor, 0.7);"
+          class="weather-region"
           halign={Gtk.Align.END}
           valign={Gtk.Align.CENTER}
         />
@@ -59,7 +59,12 @@ export default function WeatherCard() {
       </box>
 
       {/* 2-Day Forecast */}
-      <box orientation={Gtk.Orientation.HORIZONTAL} spacing={16} homogeneous css="margin-top: 4px;">
+      <box
+        class="weather-forecast"
+        orientation={Gtk.Orientation.HORIZONTAL}
+        spacing={16}
+        homogeneous
+      >
         <ForecastItem index={0} />
         <ForecastItem index={1} />
       </box>

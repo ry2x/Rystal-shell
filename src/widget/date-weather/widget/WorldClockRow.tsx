@@ -14,14 +14,14 @@ export default function WorldClockRow({ label, timeZone }: WorldClockRowProps) {
       <box orientation={Gtk.Orientation.HORIZONTAL} halign={Gtk.Align.FILL}>
         <label label={label} halign={Gtk.Align.START} hexpand class="world-clock-label" />
         <label
+          class="world-clock-time"
           halign={Gtk.Align.END}
-          css="font-weight: 700; font-size: 1.1em;"
           label={clockTime.as(() => formatWorldClockTime(new Date(), timeZone))}
         />
       </box>
       <label
+        class="world-clock-details"
         halign={Gtk.Align.START}
-        css="color: alpha(currentColor, 0.7); font-size: 0.85em;"
         label={clockTime.as(() => formatWorldClockDetails(new Date(), timeZone))}
       />
     </box>

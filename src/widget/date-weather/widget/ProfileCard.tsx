@@ -38,15 +38,7 @@ export default function ProfileCard() {
   return (
     <box class="profile-card widget-card" spacing={16} orientation={Gtk.Orientation.HORIZONTAL}>
       {/* Left: Avatar Area */}
-      <box
-        class="profile-avatar"
-        overflow={Gtk.Overflow.HIDDEN}
-        css={`
-          border-radius: 50%;
-          min-width: 64px;
-          min-height: 64px;
-        `}
-      >
+      <box class="profile-avatar" overflow={Gtk.Overflow.HIDDEN}>
         {avatar}
       </box>
 
