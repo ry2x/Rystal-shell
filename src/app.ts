@@ -32,7 +32,7 @@ app.start({
       DateWeatherPopup({ monitor: m });
       NotificationPopups({ monitor: m });
       AppLauncher({ monitor: m });
-      WallpaperSelector(m);
+      WallpaperSelector({ monitor: m });
       PowerMenu({ monitor: m });
     });
   },
