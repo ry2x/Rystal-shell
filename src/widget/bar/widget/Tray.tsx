@@ -1,68 +1,12 @@
-import { For, createBinding } from 'ags';
+import { For, createBinding, onCleanup } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
 import AstalTray from 'gi://AstalTray';
 
+import { TrayItemButton } from './TrayItemButton';
+
 function isFcitxItem(item: AstalTray.TrayItem) {
   return item.id.toLowerCase().includes('fcitx');
-}
-
-function TrayItemButton({
-  item,
-  onActivate,
-}: {
-  item: AstalTray.TrayItem;
-  onActivate: () => void;
-}) {
-  const button = (
-    <menubutton
-      class="tray-item"
-      hasFrame={false}
-      tooltipMarkup={createBinding(item, 'tooltip_markup')}
-    >
-      <image gicon={createBinding(item, 'gicon')} pixelSize={18} />
-    </menubutton>
-  ) as Gtk.MenuButton;
-
-  const menuModel = item.menu_model;
-  const menu = menuModel
-    ? Gtk.PopoverMenu.new_from_model_full(menuModel, Gtk.PopoverMenuFlags.NESTED)
-    : new Gtk.Popover({
-        child: (
-          <label
-            class="tray-menu-placeholder"
-            label="No menu available"
-            wrap
-            justify={Gtk.Justification.CENTER}
-          />
-        ) as Gtk.Widget,
-      });
-  menu.set_has_arrow(false);
-  menu.set_position(Gtk.PositionType.RIGHT);
-  menu.add_css_class('tray-item-menu');
-  button.set_popover(menu);
-
-  const updateActionGroup = () => button.insert_action_group('dbusmenu', item.action_group);
-  if (menuModel) {
-    updateActionGroup();
-    const actionGroupHook = item.connect('notify::action-group', updateActionGroup);
-    button.connect('destroy', () => item.disconnect(actionGroupHook));
-  }
-
-  const leftClick = new Gtk.GestureClick({ button: 1 });
-  leftClick.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
-  leftClick.connect('pressed', (gesture) => {
-    gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-    item.activate(0, 0);
-    onActivate();
-  });
-  button.add_controller(leftClick);
-
-  const rightClick = new Gtk.GestureClick({ button: 3 });
-  rightClick.connect('pressed', () => button.popup());
-  button.add_controller(rightClick);
-
-  return button;
 }
 
 export default function Tray() {
@@ -105,7 +49,7 @@ export default function Tray() {
   expander.add_css_class('tray-expander');
   expander.set_child(expandedItems);
   expander.set_parent(trigger);
-  trigger.connect('destroy', () => expander?.unparent());
+  onCleanup(() => expander?.unparent());
 
   return (
     <revealer
