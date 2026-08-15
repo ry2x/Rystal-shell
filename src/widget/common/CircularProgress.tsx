@@ -164,12 +164,9 @@ export default function CircularProgress<T>({
       >
         <box spacing={6} valign={Gtk.Align.CENTER} class={cssClass}>
           <LucideIcon name={icon} pixelSize={14} />
-          <label label={label} css="font-weight: 800; font-size: 14px;" />
+          <label label={label} class="circular-progress-label" />
         </box>
-        <label
-          label={sublabel}
-          css="opacity: 0.7; font-weight: 700; font-size: 11px; margin-top: 2px;"
-        />
+        <label label={sublabel} class="circular-progress-sublabel" />
       </box>
     </overlay>
   );

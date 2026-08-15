@@ -38,8 +38,7 @@ export default function BrightnessSlider() {
       />
 
       <button
-        class="icon-btn"
-        css="min-width: 40px; padding: 4px; font-weight: 700; border-radius: 10px;"
+        class="icon-btn cc-value-button"
         tooltipText="Cycle brightness presets"
         onClicked={cycleBrightnessPreset}
       >

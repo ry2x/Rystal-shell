@@ -25,7 +25,7 @@ export default function PlayerCard({ player, canSwitch, onSwitch }: PlayerCardPr
       <box heightRequest={160} hexpand>
         <CavaWidget />
       </box>
-      <box $type="overlay" spacing={16} css="padding: 16px;" hexpand>
+      <box $type="overlay" class="cc-player-content" spacing={16} hexpand>
         <PlayerArtwork artwork={artwork} />
         <PlayerControls player={player} canSwitch={canSwitch} onSwitch={onSwitch} />
       </box>

@@ -21,11 +21,7 @@ export default function ConfirmOverlay({ confirmation, clear, setError }: Confir
         halign={Gtk.Align.CENTER}
         valign={Gtk.Align.CENTER}
       >
-        <label
-          label={confirmation.title}
-          css="font-weight: 700; font-size: 1.05em;"
-          halign={Gtk.Align.START}
-        />
+        <label label={confirmation.title} class="cc-modal-title" halign={Gtk.Align.START} />
         <label label={confirmation.message} wrap halign={Gtk.Align.START} />
         <box spacing={8} halign={Gtk.Align.END}>
           <button class="power-btn" onClicked={clear} sensitive={busy.as((value) => !value)}>

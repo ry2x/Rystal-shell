@@ -66,11 +66,7 @@ export default function CavaWidget() {
   });
 
   return (
-    <box
-      class="cava-visualizer"
-      css="margin-left: 12px; margin-right: 12px; margin-bottom: 1px;"
-      canTarget={false}
-    >
+    <box class="cava-visualizer" canTarget={false}>
       {area}
     </box>
   );

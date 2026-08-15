@@ -13,8 +13,8 @@ export default function PlayerArtwork({ artwork }: PlayerArtworkProps) {
 
   return (
     <box
+      class="cc-player-artwork"
       valign={Gtk.Align.CENTER}
-      css="border-radius: 12px;"
       widthRequest={80}
       heightRequest={80}
       overflow={Gtk.Overflow.HIDDEN}

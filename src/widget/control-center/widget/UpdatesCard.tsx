@@ -14,12 +14,8 @@ export default function UpdatesCard() {
     <box class="cc-card" orientation={Gtk.Orientation.HORIZONTAL} spacing={16} hexpand>
       <LucideIcon name="package" pixelSize={24} class="icon updates-icon" />
       <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER} hexpand>
-        <label
-          label="System Updates"
-          css="font-weight: 800; font-size: 1.1em;"
-          halign={Gtk.Align.START}
-        />
-        <label label={labelText} css="opacity: 0.7; font-size: 0.9em;" halign={Gtk.Align.START} />
+        <label label="System Updates" class="cc-updates-title" halign={Gtk.Align.START} />
+        <label label={labelText} class="cc-updates-status" halign={Gtk.Align.START} />
       </box>
       <button
         class="icon-btn"

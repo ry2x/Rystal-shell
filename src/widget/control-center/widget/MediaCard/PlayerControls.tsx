@@ -17,13 +17,13 @@ export default function PlayerControls({ player, canSwitch, onSwitch }: PlayerCo
   return (
     <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER} hexpand>
       <button
-        css="background: transparent; border: none; box-shadow: none; padding: 0;"
+        class="cc-player-title-button"
         halign={Gtk.Align.START}
         onClicked={() => focusMediaPlayer(player)}
       >
         <label
           label={createBinding(player, 'title').as((title) => title || 'Unknown')}
-          css="font-weight: 800; font-size: 1.2em;"
+          class="cc-player-title"
           halign={Gtk.Align.START}
           wrap
           wrapMode={Pango.WrapMode.WORD_CHAR}
@@ -34,7 +34,7 @@ export default function PlayerControls({ player, canSwitch, onSwitch }: PlayerCo
       </button>
       <label
         label={createBinding(player, 'artist').as((artist) => artist || 'Unknown')}
-        css="opacity: 0.7; font-size: 0.9em; margin-bottom: 4px;"
+        class="cc-player-artist"
         halign={Gtk.Align.START}
         ellipsize={Pango.EllipsizeMode.END}
         maxWidthChars={20}

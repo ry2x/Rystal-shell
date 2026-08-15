@@ -63,7 +63,7 @@ export default function WifiPasswordDialog({ monitor }: WifiPasswordDialogProps)
         >
           <box spacing={8}>
             <LucideIcon name="wifi" pixelSize={18} />
-            <label label="Connect to Wi-Fi" css="font-weight: 700; font-size: 1.05em;" />
+            <label label="Connect to Wi-Fi" class="cc-modal-title" />
           </box>
           <label
             label={state.ssid}

@@ -15,7 +15,7 @@ export default function RecordingActions() {
       >
         <box spacing={8} halign={Gtk.Align.CENTER}>
           <LucideIcon name="focus" pixelSize={18} class="color-secondary" />
-          <label label="Region" css="font-size: 0.9em;" />
+          <label label="Region" class="cc-capture-action" />
         </box>
       </button>
       <button
@@ -25,7 +25,7 @@ export default function RecordingActions() {
       >
         <box spacing={8} halign={Gtk.Align.CENTER}>
           <LucideIcon name="monitor-play" pixelSize={18} class="color-tertiary" />
-          <label label="Monitor" css="font-size: 0.9em;" />
+          <label label="Monitor" class="cc-capture-action" />
         </box>
       </button>
     </box>
@@ -36,7 +36,7 @@ export default function RecordingActions() {
       <button class="power-btn active-record" onClicked={stopRecord} hexpand>
         <box spacing={8} halign={Gtk.Align.CENTER}>
           <LucideIcon name="circle-stop" pixelSize={18} />
-          <label label="Stop Recording" css="font-weight: 700; font-size: 0.9em;" />
+          <label label="Stop Recording" class="cc-capture-action cc-record-stop-label" />
         </box>
       </button>
     </box>
@@ -44,9 +44,9 @@ export default function RecordingActions() {
 
   return (
     <>
-      <box spacing={8} css="margin-top: 8px;" halign={Gtk.Align.START}>
+      <box class="cc-record-header" spacing={8} halign={Gtk.Align.START}>
         <LucideIcon name="clapperboard" pixelSize={20} class="color-primary" />
-        <label label="Screen Record" css="font-weight: 700; font-size: 1.1em;" />
+        <label label="Screen Record" class="cc-capture-title" />
       </box>
       <stack
         transitionType={Gtk.StackTransitionType.CROSSFADE}

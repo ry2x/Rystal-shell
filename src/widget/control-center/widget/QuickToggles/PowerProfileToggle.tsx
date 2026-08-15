@@ -20,29 +20,23 @@ export default function PowerProfileToggle() {
   return (
     <box
       class={activeProfile.as(
-        (profile) => `cc-toggle-btn ${profile === 'performance' ? 'active' : ''}`,
+        (profile) => `cc-toggle-btn cc-single-toggle ${profile === 'performance' ? 'active' : ''}`,
       )}
       spacing={0}
-      css="padding: 0;"
     >
       <button
         hexpand
         class="cc-split-btn-left"
-        css="padding: 16px; border-radius: 0.8em;"
         onClicked={cyclePowerProfile}
         tooltipText="Toggle Power Profile"
       >
         <box spacing={12}>
           <LucideIcon name={activeProfile.as(getPowerIcon)} class="icon" pixelSize={24} />
           <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
-            <label
-              label="Power Profile"
-              css="font-weight: 700; font-size: 1.1em;"
-              halign={Gtk.Align.START}
-            />
+            <label label="Power Profile" class="cc-toggle-title" halign={Gtk.Align.START} />
             <label
               label={activeProfile.as(getPowerLabel)}
-              css="font-size: 0.8em; opacity: 0.7;"
+              class="cc-toggle-status"
               halign={Gtk.Align.START}
               ellipsize={Pango.EllipsizeMode.END}
             />
