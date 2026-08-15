@@ -24,7 +24,7 @@ function createProfileAvatar(path: string) {
   });
 
   try {
-    avatar.set_paintable(loadTextureFromUri(`file://${path}`, 64, 64, true));
+    avatar.set_paintable(loadTextureFromUri(`file://${path}`, 64, 64));
   } catch (error) {
     console.error('Failed to load profile avatar:', error);
   }
