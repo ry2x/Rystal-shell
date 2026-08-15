@@ -25,7 +25,7 @@ export default function UpdatesCard() {
         class="icon-btn"
         valign={Gtk.Align.CENTER}
         visible={isAvailable}
-        onClicked={() => openUpdateManager()}
+        onClicked={openUpdateManager}
       >
         <LucideIcon name="download" pixelSize={20} />
       </button>
