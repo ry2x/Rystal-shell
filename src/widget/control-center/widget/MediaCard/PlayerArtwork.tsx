@@ -1,0 +1,43 @@
+import { type Accessor } from 'ags';
+import { Gtk } from 'ags/gtk4';
+
+import Gdk from 'gi://Gdk';
+
+export interface PlayerArtworkProps {
+  artwork: Accessor<Gdk.Texture | null>;
+}
+
+export default function PlayerArtwork({ artwork }: PlayerArtworkProps) {
+  // GTK accepts a null paintable, but the generated reactive prop type omits it.
+  const paintable = artwork as Accessor<Gdk.Paintable>;
+
+  return (
+    <box
+      valign={Gtk.Align.CENTER}
+      css="border-radius: 12px;"
+      widthRequest={80}
+      heightRequest={80}
+      overflow={Gtk.Overflow.HIDDEN}
+    >
+      <overlay>
+        <box widthRequest={80} heightRequest={80} />
+        <scrolledwindow
+          $type="overlay"
+          hscrollbarPolicy={Gtk.PolicyType.NEVER}
+          vscrollbarPolicy={Gtk.PolicyType.NEVER}
+          propagateNaturalWidth={false}
+          propagateNaturalHeight={false}
+          widthRequest={80}
+          heightRequest={80}
+        >
+          <Gtk.Picture
+            paintable={paintable}
+            contentFit={Gtk.ContentFit.COVER}
+            canFocus={false}
+            canShrink
+          />
+        </scrolledwindow>
+      </overlay>
+    </box>
+  );
+}
