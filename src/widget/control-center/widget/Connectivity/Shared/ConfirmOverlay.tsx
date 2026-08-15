@@ -11,9 +11,19 @@ export interface ConfirmOverlayProps {
 
 export default function ConfirmOverlay({ confirmation, clear, setError }: ConfirmOverlayProps) {
   const [busy, setBusy] = createState(false);
+  let disposed = false;
 
   return (
-    <box class="cc-modal-backdrop" hexpand vexpand halign={Gtk.Align.FILL} valign={Gtk.Align.FILL}>
+    <box
+      class="cc-modal-backdrop"
+      hexpand
+      vexpand
+      halign={Gtk.Align.FILL}
+      valign={Gtk.Align.FILL}
+      onDestroy={() => {
+        disposed = true;
+      }}
+    >
       <box
         class="cc-modal"
         orientation={Gtk.Orientation.VERTICAL}
@@ -34,11 +44,11 @@ export default function ConfirmOverlay({ confirmation, clear, setError }: Confir
               setBusy(true);
               try {
                 await confirmation.onConfirm();
-                clear();
+                if (!disposed) clear();
               } catch (error) {
-                setError(String(error));
+                if (!disposed) setError(String(error));
               } finally {
-                setBusy(false);
+                if (!disposed) setBusy(false);
               }
             }}
           >

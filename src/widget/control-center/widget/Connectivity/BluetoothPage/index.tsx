@@ -71,7 +71,10 @@ export function BluetoothPage({ page, onBack }: BluetoothPageProps) {
             items={state.availableDevices}
             idFor={(device: Bluetooth.Device) => device.address}
             renderItem={(device: Bluetooth.Device) => (
-              <AvailableDeviceRow device={device} onConnect={() => state.connectDevice(device)} />
+              <AvailableDeviceRow
+                device={device}
+                onConnect={() => void state.connectDevice(device)}
+              />
             )}
           />
           <button

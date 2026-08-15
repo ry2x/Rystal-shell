@@ -4,7 +4,80 @@ import { type Timer, timeout } from 'ags/time';
 import Bluetooth from 'gi://AstalBluetooth';
 
 const DISCOVERY_DURATION_MS = 15_000;
-const CONNECTION_REFRESH_DELAY_MS = 500;
+
+interface BluetoothDeviceSignalTracker {
+  sync: (devices: Bluetooth.Device[]) => void;
+  dispose: () => void;
+}
+
+function connectBluetoothDevice(device: Bluetooth.Device): Promise<void> {
+  return new Promise((resolve, reject) => {
+    try {
+      device.connect_device((_source, result) => {
+        try {
+          device.connect_device_finish(result);
+          resolve();
+        } catch (reason) {
+          reject(reason);
+        }
+      });
+    } catch (reason) {
+      reject(reason);
+    }
+  });
+}
+
+function disconnectBluetoothDevice(device: Bluetooth.Device): Promise<void> {
+  return new Promise((resolve, reject) => {
+    try {
+      device.disconnect_device((_source, result) => {
+        try {
+          device.disconnect_device_finish(result);
+          resolve();
+        } catch (reason) {
+          reject(reason);
+        }
+      });
+    } catch (reason) {
+      reject(reason);
+    }
+  });
+}
+
+function createBluetoothDeviceSignalTracker(
+  onDeviceChanged: () => void,
+): BluetoothDeviceSignalTracker {
+  const hooks = new Map<Bluetooth.Device, number[]>();
+
+  const disconnectHooks = (device: Bluetooth.Device, signalIds: number[]) => {
+    signalIds.forEach((signalId) => device.disconnect(signalId));
+  };
+
+  const sync = (devices: Bluetooth.Device[]) => {
+    const currentDevices = new Set(devices);
+
+    hooks.forEach((signalIds, device) => {
+      if (currentDevices.has(device)) return;
+      disconnectHooks(device, signalIds);
+      hooks.delete(device);
+    });
+
+    devices.forEach((device) => {
+      if (hooks.has(device)) return;
+      hooks.set(device, [
+        device.connect('notify::connected', onDeviceChanged),
+        device.connect('notify::paired', onDeviceChanged),
+      ]);
+    });
+  };
+
+  const dispose = () => {
+    hooks.forEach((signalIds, device) => disconnectHooks(device, signalIds));
+    hooks.clear();
+  };
+
+  return { sync, dispose };
+}
 
 export interface BluetoothConfirmation {
   title: string;
@@ -21,7 +94,7 @@ export interface BluetoothPageState {
   error: Accessor<string>;
   confirmation: Accessor<BluetoothConfirmation | null>;
   discover: () => void;
-  connectDevice: (device: Bluetooth.Device) => void;
+  connectDevice: (device: Bluetooth.Device) => Promise<void>;
   requestDisconnect: (device: Bluetooth.Device) => void;
   requestForget: (device: Bluetooth.Device) => void;
   clearConfirmation: () => void;
@@ -39,9 +112,21 @@ export function createBluetoothPageState(active: Accessor<boolean>): BluetoothPa
     list.filter((device) => device.paired && !device.connected),
   );
   let discoveryTimer: Timer | null = null;
-  let connectionRefreshTimer: Timer | null = null;
+  let disposed = false;
+  const updateError = (message: string) => {
+    if (!disposed) setError(message);
+  };
+  const refreshDeviceState = () => {
+    if (!disposed) setDevices([...(bluetooth.devices ?? [])]);
+  };
+  const deviceSignalTracker = createBluetoothDeviceSignalTracker(refreshDeviceState);
 
-  const refreshDevices = () => setDevices([...(bluetooth.devices ?? [])]);
+  const refreshDevices = () => {
+    if (disposed) return;
+    const currentDevices = [...(bluetooth.devices ?? [])];
+    deviceSignalTracker.sync(currentDevices);
+    setDevices(currentDevices);
+  };
 
   const stopDiscovery = () => {
     discoveryTimer?.cancel();
@@ -58,7 +143,7 @@ export function createBluetoothPageState(active: Accessor<boolean>): BluetoothPa
   const discover = () => {
     if (!adapter) return;
 
-    setError('');
+    updateError('');
     stopDiscovery();
     try {
       adapter.start_discovery();
@@ -67,38 +152,35 @@ export function createBluetoothPageState(active: Accessor<boolean>): BluetoothPa
         stopDiscovery();
       });
     } catch (reason) {
-      setError(String(reason));
+      updateError(String(reason));
     }
   };
 
-  const connectDevice = (device: Bluetooth.Device) => {
-    setError('');
+  const connectDevice = async (device: Bluetooth.Device) => {
+    updateError('');
     try {
-      device.connect_device(null);
-      connectionRefreshTimer?.cancel();
-      connectionRefreshTimer = timeout(CONNECTION_REFRESH_DELAY_MS, () => {
-        connectionRefreshTimer = null;
-        refreshDevices();
-      });
+      await connectBluetoothDevice(device);
+      refreshDevices();
     } catch (reason) {
-      setError(String(reason));
+      updateError(String(reason));
     }
   };
 
   const requestDisconnect = (device: Bluetooth.Device) => {
+    if (disposed) return;
     setConfirmation({
       title: 'Disconnect Bluetooth device',
       message: `Disconnect ${device.alias}?`,
       confirmLabel: 'Disconnect',
       onConfirm: async () => {
-        await device.disconnect_device(null);
+        await disconnectBluetoothDevice(device);
         refreshDevices();
       },
     });
   };
 
   const requestForget = (device: Bluetooth.Device) => {
-    if (!adapter) return;
+    if (disposed || !adapter) return;
     setConfirmation({
       title: 'Forget Bluetooth device',
       message: `Remove the pairing for ${device.alias}?`,
@@ -110,27 +192,28 @@ export function createBluetoothPageState(active: Accessor<boolean>): BluetoothPa
     });
   };
 
-  const clearConfirmation = () => setConfirmation(null);
-  const hooks = adapter
-    ? [
-        bluetooth.connect('notify::devices', refreshDevices),
-        bluetooth.connect('device-added', refreshDevices),
-        bluetooth.connect('device-removed', refreshDevices),
-      ]
-    : [];
+  const clearConfirmation = () => {
+    if (!disposed) setConfirmation(null);
+  };
+  const hooks = [
+    bluetooth.connect('notify::devices', refreshDevices),
+    bluetooth.connect('device-added', refreshDevices),
+    bluetooth.connect('device-removed', refreshDevices),
+  ];
   const unsubscribeActive = active.subscribe(() => {
     if (active.peek()) discover();
     else stopDiscovery();
   });
 
   if (active.peek()) discover();
+  refreshDevices();
 
   onCleanup(() => {
+    disposed = true;
     hooks.forEach((hook) => bluetooth.disconnect(hook));
+    deviceSignalTracker.dispose();
     unsubscribeActive();
     stopDiscovery();
-    connectionRefreshTimer?.cancel();
-    connectionRefreshTimer = null;
   });
 
   return {
@@ -145,6 +228,6 @@ export function createBluetoothPageState(active: Accessor<boolean>): BluetoothPa
     requestDisconnect,
     requestForget,
     clearConfirmation,
-    setError,
+    setError: updateError,
   };
 }
