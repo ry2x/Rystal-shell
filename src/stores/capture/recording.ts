@@ -32,7 +32,7 @@ interface ActiveRecording {
   process: ReturnType<typeof subprocess>;
   path: string;
   stopRequested: boolean;
-  lastError: string;
+  stderrLines: string[];
 }
 
 interface RecordingStartSession {
@@ -70,7 +70,8 @@ function finishRecording(recording: ActiveRecording, code: number, signaled: boo
   }
 
   const detail =
-    recording.lastError || `wf-recorder exited with ${signaled ? 'signal' : 'code'} ${code}`;
+    recording.stderrLines.slice(-5).join('\n') ||
+    `wf-recorder exited with ${signaled ? 'signal' : 'code'} ${code}`;
   console.error(`Recording failed: ${detail}`);
   notifyFailure(detail);
 }
@@ -102,7 +103,9 @@ function addAudioOptions(cmd: string[]) {
   }
 
   const speaker = Wp.get_default().audio.get_default_speaker();
-  cmd.push(speaker ? `--audio=${speaker.name?.trim()}.monitor` : '-a');
+  const speakerName = speaker?.get_pw_property('node.name')?.trim() || speaker?.name?.trim();
+  if (!speakerName) throw new Error('Default speaker has no PipeWire node name');
+  cmd.push(`--audio=${speakerName}.monitor`);
 }
 
 async function addCaptureTarget(
@@ -178,8 +181,10 @@ export async function startRecord(mode: RecordingMode): Promise<RecordingStartRe
     const process = subprocess({
       cmd,
       err: (line) => {
-        console.error(`wf-recorder: ${line}`);
-        if (activeRecording?.process === process) activeRecording.lastError = line;
+        const recording = activeRecording;
+        if (recording?.process !== process) return;
+        recording.stderrLines.push(line);
+        if (recording.stderrLines.length > 20) recording.stderrLines.shift();
       },
     });
 
@@ -187,7 +192,7 @@ export async function startRecord(mode: RecordingMode): Promise<RecordingStartRe
       process,
       path: fullPath,
       stopRequested: false,
-      lastError: '',
+      stderrLines: [],
     };
     activeRecording = recording;
     process.connect('exit', (_, code, signaled) => finishRecording(recording, code, signaled));
