@@ -73,8 +73,8 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                         orientation={Gtk.Orientation.VERTICAL}
                         spacing={24}
                       >
-                        <Workspaces gdkmonitor={gdkmonitor} />
-                        <ScrollerIndicator gdkmonitor={gdkmonitor} />
+                        <Workspaces monitor={gdkmonitor} />
+                        <ScrollerIndicator monitor={gdkmonitor} />
                       </box>
                     ) as Gtk.Widget
                   }
