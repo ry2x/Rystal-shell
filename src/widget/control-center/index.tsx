@@ -4,7 +4,7 @@ import app from 'ags/gtk4/app';
 
 import { shellMotion } from '../../lib/motion';
 import { createControlCenterState } from '../../stores/controlCenter';
-import ClickCatcher from './ClickCatcher';
+import ClickCatcher from '../common/ClickCatcher';
 import ControlCenterPages from './ControlCenterPages';
 
 export interface ControlCenterProps {

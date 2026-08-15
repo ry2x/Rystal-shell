@@ -3,7 +3,7 @@ import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import { createDateWeatherPopupState } from '../../stores/dateWeather';
-import ClickCatcher from './ClickCatcher';
+import ClickCatcher from '../common/ClickCatcher';
 import DateWeatherContent from './DateWeatherContent';
 
 export interface DateWeatherPopupProps {

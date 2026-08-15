@@ -3,7 +3,7 @@ import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import { createPowerMenuState } from '../../stores/powerMenu';
-import ClickCatcher from './ClickCatcher';
+import ClickCatcher from '../common/ClickCatcher';
 import PowerMenuConfirmationView from './widget/PowerMenuConfirmationView';
 import PowerMenuMainView from './widget/PowerMenuMainView';
 
@@ -95,7 +95,7 @@ export default function PowerMenu({ monitor }: PowerMenuProps) {
         onKeyPressed={(_controller, keyval) => state.handleKey(keyval)}
       />
       <box orientation={Gtk.Orientation.VERTICAL}>
-        <ClickCatcher onClick={state.hideAnimated} />
+        <ClickCatcher onClick={state.hideAnimated} hexpand vexpand />
         <box
           cssClasses={state.revealed.as((revealed) =>
             revealed ? ['power-menu-panel', 'revealed'] : ['power-menu-panel'],

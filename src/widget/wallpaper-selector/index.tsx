@@ -2,7 +2,7 @@ import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import { createWallpaperSelectorState } from '../../stores/wallpaperSelector';
-import ClickCatcher from './ClickCatcher';
+import ClickCatcher from '../common/ClickCatcher';
 import CoverFlowController from './widget/CoverFlow';
 
 const PANEL_HEIGHT = 390;
@@ -69,7 +69,7 @@ export default function WallpaperSelector({ monitor }: WallpaperSelectorProps) {
         }}
       />
       <box orientation={Gtk.Orientation.VERTICAL}>
-        <ClickCatcher onClick={state.hideAnimated} />
+        <ClickCatcher onClick={state.hideAnimated} hexpand vexpand />
         <box
           cssClasses={state.revealed.as((revealed) =>
             revealed ? ['wallpaper-selector-panel', 'revealed'] : ['wallpaper-selector-panel'],
