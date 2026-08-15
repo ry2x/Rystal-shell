@@ -115,7 +115,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
           );
         }}
       >
-        <PanelBackground gdkmonitor={gdkmonitor} />
+        <PanelBackground monitor={gdkmonitor} />
       </overlay>
     </window>
   );

@@ -2,6 +2,6 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "tags": ["-lintignore"],
   "entry": ["src/app.ts"],
-  "ignoreDependencies": ["gi", "system"],
+  "ignoreDependencies": ["cairo", "gi", "system"],
   "ignoreBinaries": ["ags"]
 }
