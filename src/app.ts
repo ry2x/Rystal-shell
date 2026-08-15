@@ -30,7 +30,7 @@ app.start({
       ControlCenter(m);
       WifiPasswordDialog(m);
       DateWeatherPopup(m);
-      NotificationPopups(m);
+      NotificationPopups({ monitor: m });
       AppLauncher({ monitor: m });
       WallpaperSelector(m);
       PowerMenu(m);
