@@ -1,5 +1,6 @@
 import { createState } from 'ags';
 import { execAsync } from 'ags/process';
+import { type Timer, timeout } from 'ags/time';
 
 import GLib from 'gi://GLib';
 
@@ -21,11 +22,16 @@ let backend: BrightnessBackend | null = null;
 let ddcBuses: string[] = [];
 let pendingTarget: number | null = null;
 let isSetting = false;
-let setTimer: ReturnType<typeof setTimeout> | null = null;
+let setTimer: Timer | null = null;
 let lastNonZeroBrightness: number | null = null;
 
 function rememberNonZeroBrightness(value: number) {
   if (value > 0) lastNonZeroBrightness = value;
+}
+
+function cancelSetTimer() {
+  setTimer?.cancel();
+  setTimer = null;
 }
 
 function clampPercent(value: number) {
@@ -177,11 +183,11 @@ export function setBrightness(value: number) {
   setBrightnessState(normalizedValue);
   pendingTarget = percent;
 
-  if (setTimer) clearTimeout(setTimer);
-  setTimer = setTimeout(() => {
+  cancelSetTimer();
+  setTimer = timeout(100, () => {
     setTimer = null;
     void processSet();
-  }, 100);
+  });
 }
 
 export function toggleBrightnessDim() {
@@ -205,10 +211,7 @@ export async function changeBrightness(delta: number) {
   try {
     const next = clampPercent((await getPercent()) + delta);
     pendingTarget = next;
-    if (setTimer) {
-      clearTimeout(setTimer);
-      setTimer = null;
-    }
+    cancelSetTimer();
     await processSet();
     notify(next);
     return next;

@@ -6,12 +6,14 @@ import {
 } from '../../../stores/brightness';
 import { LucideIcon } from '../../../widget/common/lucide';
 
+function getBrightnessIcon(value: number) {
+  if (value <= 0.2) return 'sun-dim';
+  if (value <= 0.8) return 'sun';
+  return 'sun-medium';
+}
+
 export default function BrightnessSlider() {
-  const icon = brightness.as((val) => {
-    if (val <= 0.2) return 'sun-dim';
-    if (val <= 0.8) return 'sun';
-    return 'sun-medium';
-  });
+  const icon = brightness.as(getBrightnessIcon);
 
   return (
     <box class="cc-card" spacing={16}>
