@@ -2,6 +2,7 @@ import { Gtk } from 'ags/gtk4';
 
 import {
   type CaffeineState,
+  caffeineBusy,
   caffeineState,
   toggleCaffeine,
 } from '../../../../stores/system/caffeine';
@@ -30,7 +31,8 @@ export default function CaffeineToggle() {
       <button
         hexpand
         class="cc-split-btn-left"
-        onClicked={toggleCaffeine}
+        sensitive={caffeineBusy.as((busy) => !busy)}
+        onClicked={() => void toggleCaffeine().catch(() => {})}
         tooltipText="Toggle Caffeine (Disabled -> Enabled -> Remote)"
       >
         <box spacing={12}>

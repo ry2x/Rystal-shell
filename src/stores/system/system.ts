@@ -1,6 +1,6 @@
-import { createState } from 'ags';
+import { createExternal } from 'ags';
 import { execAsync } from 'ags/process';
-import { interval } from 'ags/time';
+import { idle, interval } from 'ags/time';
 
 import GLib from 'gi://GLib?version=2.0';
 
@@ -16,9 +16,7 @@ export function getOsInfo(): string {
       if (success && bytes) {
         const text = new TextDecoder('utf-8').decode(bytes);
         const match = text.match(/PRETTY_NAME="([^"]+)"/);
-        if (match) {
-          osName = match[1];
-        }
+        if (match) osName = match[1];
       }
     }
   } catch (error) {
@@ -40,21 +38,19 @@ export interface RamData {
   percent: number;
 }
 
-const [cpuUsageState, setCpuUsage] = createState(0);
-const [ramUsageState, setRamUsage] = createState<RamData>({ used: 0, total: 0, percent: 0 });
-const [gpuUsageState, setGpuUsage] = createState(0);
-const [uptimeState, setUptime] = createState('0m');
-export const cpuUsage = cpuUsageState;
-export const ramUsage = ramUsageState;
-export const gpuUsage = gpuUsageState;
-export const uptime = uptimeState;
-
 interface CpuCounters {
   total: number;
   idle: number;
 }
 
-let previousCpuCounters: CpuCounters | null = null;
+interface SystemMetrics {
+  cpu: number;
+  ram: RamData;
+  gpu: number;
+}
+
+const EMPTY_RAM: RamData = { used: 0, total: 0, percent: 0 };
+const INITIAL_METRICS: SystemMetrics = { cpu: 0, ram: EMPTY_RAM, gpu: 0 };
 const textDecoder = new TextDecoder('utf-8');
 const gpuBusyPaths = Array.from(
   { length: 32 },
@@ -83,46 +79,36 @@ function readCpuCounters(): CpuCounters | null {
   };
 }
 
-function updateCpuUsage() {
-  const current = readCpuCounters();
-  if (!current) return;
-
-  const previous = previousCpuCounters;
-  previousCpuCounters = current;
-  if (!previous) return;
-
+function calculateCpuUsage(current: CpuCounters, previous: CpuCounters) {
   const totalDelta = current.total - previous.total;
   const idleDelta = current.idle - previous.idle;
-  if (totalDelta <= 0) return;
-
-  setCpuUsage(Math.max(0, Math.min(100, 100 * (1 - idleDelta / totalDelta))));
+  if (totalDelta <= 0) return 0;
+  return Math.max(0, Math.min(100, 100 * (1 - idleDelta / totalDelta)));
 }
 
-function updateRamUsage() {
+function readRamUsage(): RamData | null {
   const meminfo = readText('/proc/meminfo');
-  if (!meminfo) return;
+  if (!meminfo) return null;
 
   const total = Number(meminfo.match(/^MemTotal:\s+(\d+)/m)?.[1]);
   const available = Number(meminfo.match(/^MemAvailable:\s+(\d+)/m)?.[1]);
-  if (!Number.isFinite(total) || !Number.isFinite(available) || total <= 0) return;
+  if (!Number.isFinite(total) || !Number.isFinite(available) || total <= 0) return null;
 
   const used = total - available;
-  setRamUsage({
+  return {
     used: used / 1024 / 1024,
     total: total / 1024 / 1024,
     percent: used / total,
-  });
+  };
 }
 
-function updateGpuUsage() {
+function readGpuUsage() {
   let highestUsage = 0;
-
   for (const path of gpuBusyPaths) {
     const usage = Number(readText(path)?.trim());
     if (Number.isFinite(usage)) highestUsage = Math.max(highestUsage, usage);
   }
-
-  if (highestUsage !== gpuUsage()) setGpuUsage(highestUsage);
+  return highestUsage;
 }
 
 function formatUptime(seconds: number) {
@@ -141,19 +127,52 @@ function formatUptime(seconds: number) {
   return `up ${parts.join(', ')}`;
 }
 
-function updateUptime() {
+function readUptime() {
   const seconds = Number(readText('/proc/uptime')?.split(/\s+/)[0]);
-  if (!Number.isFinite(seconds) || seconds < 0) return;
-
-  const formatted = formatUptime(seconds);
-  if (formatted !== uptime()) setUptime(formatted);
+  return Number.isFinite(seconds) && seconds >= 0 ? formatUptime(seconds) : null;
 }
 
-function pollSystemMetrics() {
-  updateCpuUsage();
-  updateRamUsage();
-  updateGpuUsage();
-}
+const systemMetrics = createExternal(INITIAL_METRICS, (setMetrics) => {
+  let previousCpuCounters = readCpuCounters();
 
-const _systemPoll = interval(2000, pollSystemMetrics);
-const _uptimePoll = interval(60_000, updateUptime);
+  function updateMetrics() {
+    const currentCpuCounters = readCpuCounters();
+    const previousMetrics = systemMetrics.peek();
+    const cpu =
+      currentCpuCounters && previousCpuCounters
+        ? calculateCpuUsage(currentCpuCounters, previousCpuCounters)
+        : previousMetrics.cpu;
+    previousCpuCounters = currentCpuCounters ?? previousCpuCounters;
+
+    setMetrics({
+      cpu,
+      ram: readRamUsage() ?? previousMetrics.ram,
+      gpu: readGpuUsage(),
+    });
+  }
+
+  const initialUpdate = idle(updateMetrics);
+  const poll = interval(2000, updateMetrics);
+  return () => {
+    initialUpdate.cancel();
+    poll.cancel();
+  };
+});
+
+export const cpuUsage = systemMetrics.as((metrics) => metrics.cpu);
+export const ramUsage = systemMetrics.as((metrics) => metrics.ram);
+export const gpuUsage = systemMetrics.as((metrics) => metrics.gpu);
+
+export const uptime = createExternal('0m', (setUptime) => {
+  function updateUptime() {
+    const value = readUptime();
+    if (value !== null) setUptime(value);
+  }
+
+  const initialUpdate = idle(updateUptime);
+  const poll = interval(60_000, updateUptime);
+  return () => {
+    initialUpdate.cancel();
+    poll.cancel();
+  };
+});

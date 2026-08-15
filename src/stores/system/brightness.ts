@@ -5,7 +5,7 @@ import { type Timer, timeout } from 'ags/time';
 import GLib from 'gi://GLib';
 
 import { appConfig } from '../../lib/config';
-import { sendNotification } from '../../lib/notification';
+import { sendNotification } from '../notification/send';
 
 type BrightnessBackend = 'ddcutil' | 'brightnessctl';
 type ConfiguredBackend = BrightnessBackend | 'auto';
@@ -20,10 +20,23 @@ export const brightness = brightnessState;
 
 let backend: BrightnessBackend | null = null;
 let ddcBuses: string[] = [];
-let pendingTarget: number | null = null;
-let isSetting = false;
 let setTimer: Timer | null = null;
+let scheduledTarget: number | null = null;
 let lastNonZeroBrightness: number | null = null;
+
+interface BrightnessRequest {
+  resolve: (percent: number) => void;
+  reject: (error: Error) => void;
+}
+
+interface PendingBrightnessApply {
+  percent: number;
+  requests: BrightnessRequest[];
+}
+
+let pendingApply: PendingBrightnessApply | null = null;
+let applyWorker: Promise<void> | null = null;
+let changeQueue = Promise.resolve();
 
 function rememberNonZeroBrightness(value: number) {
   if (value > 0) lastNonZeroBrightness = value;
@@ -156,24 +169,57 @@ function notify(percent: number) {
   });
 }
 
-async function processSet() {
-  if (isSetting || pendingTarget === null) return;
-
-  isSetting = true;
-  const target = pendingTarget;
-  pendingTarget = null;
+async function processApplyQueue() {
+  const request = pendingApply;
+  if (!request) return;
+  pendingApply = null;
 
   try {
-    await applyPercent(target);
-    const value = target / 100;
+    await applyPercent(request.percent);
+    const value = request.percent / 100;
     rememberNonZeroBrightness(value);
     setBrightnessState(value);
+    request.requests.forEach(({ resolve }) => resolve(request.percent));
   } catch (error) {
-    console.error('Failed to set brightness:', error);
-  } finally {
-    isSetting = false;
-    if (pendingTarget !== null) void processSet();
+    const applyError = error instanceof Error ? error : new Error(String(error));
+    request.requests.forEach(({ reject }) => reject(applyError));
   }
+
+  await processApplyQueue();
+}
+
+function ensureApplyWorker() {
+  if (applyWorker) return;
+
+  applyWorker = processApplyQueue().finally(() => {
+    applyWorker = null;
+    if (pendingApply) ensureApplyWorker();
+  });
+}
+
+function requestBrightnessApply(percent: number) {
+  return new Promise<number>((resolve, reject) => {
+    const request = { resolve, reject };
+    if (pendingApply) {
+      pendingApply.percent = percent;
+      pendingApply.requests.push(request);
+    } else {
+      pendingApply = { percent, requests: [request] };
+    }
+    ensureApplyWorker();
+  });
+}
+
+async function waitForApplyQueue() {
+  if (applyWorker) await applyWorker;
+}
+
+async function flushScheduledApply() {
+  cancelSetTimer();
+  const target = scheduledTarget;
+  scheduledTarget = null;
+  if (target !== null) await requestBrightnessApply(target);
+  await waitForApplyQueue();
 }
 
 export function setBrightness(value: number) {
@@ -181,12 +227,23 @@ export function setBrightness(value: number) {
   const normalizedValue = percent / 100;
   rememberNonZeroBrightness(normalizedValue);
   setBrightnessState(normalizedValue);
-  pendingTarget = percent;
+  scheduledTarget = percent;
 
   cancelSetTimer();
   setTimer = timeout(100, () => {
     setTimer = null;
-    void processSet();
+    const target = scheduledTarget;
+    scheduledTarget = null;
+    if (target === null) return;
+
+    void requestBrightnessApply(target).catch(async (error) => {
+      console.error('Failed to set brightness:', error);
+      try {
+        await refreshBrightness();
+      } catch (refreshError) {
+        console.error('Failed to refresh brightness after apply failure:', refreshError);
+      }
+    });
   });
 }
 
@@ -207,12 +264,11 @@ export function cycleBrightnessPreset() {
   setBrightness(next);
 }
 
-export async function changeBrightness(delta: number) {
+async function performBrightnessChange(delta: number) {
   try {
+    await flushScheduledApply();
     const next = clampPercent((await getPercent()) + delta);
-    pendingTarget = next;
-    cancelSetTimer();
-    await processSet();
+    await requestBrightnessApply(next);
     notify(next);
     return next;
   } catch (error) {
@@ -221,7 +277,17 @@ export async function changeBrightness(delta: number) {
   }
 }
 
+export function changeBrightness(delta: number): Promise<number> {
+  const operation = changeQueue.then(() => performBrightnessChange(delta));
+  changeQueue = operation.then(
+    () => {},
+    () => {},
+  );
+  return operation;
+}
+
 export async function refreshBrightness() {
+  await flushScheduledApply();
   const percent = await getPercent();
   const value = percent / 100;
   rememberNonZeroBrightness(value);
