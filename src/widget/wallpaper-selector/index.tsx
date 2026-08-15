@@ -10,7 +10,7 @@ import {
   refreshWallpapers,
 } from '../../stores/wallpaper';
 import { activeSidePanel } from '../../stores/windowManager';
-import { createCoverFlow } from './widget/CoverFlow';
+import CoverFlowController from './widget/CoverFlow';
 
 const PANEL_HEIGHT = 390;
 const HIDE_DELAY_MS = 420;
@@ -39,7 +39,10 @@ export default function WallpaperSelector(gdkmonitor: Gdk.Monitor) {
   let hideAnimated = () => {};
   const monitorWidth = gdkmonitor.get_geometry().width;
   const viewportWidth = Math.max(900, monitorWidth - BAR_WIDTH - CONTENT_HORIZONTAL_PADDING);
-  const coverFlow = createCoverFlow(() => hideAnimated(), viewportWidth);
+  const coverFlow = new CoverFlowController({
+    onApplied: () => hideAnimated(),
+    viewportWidth,
+  });
 
   const animatePanelTo = (height: number) => {
     targetPanelHeight = height;
