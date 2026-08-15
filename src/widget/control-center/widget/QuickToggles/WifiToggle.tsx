@@ -4,8 +4,8 @@ import { Gtk } from 'ags/gtk4';
 import Network from 'gi://AstalNetwork';
 import Pango from 'gi://Pango';
 
-import { toggleWifi } from '../../../stores/network';
-import { LucideIcon } from '../../../widget/common/lucide';
+import { toggleWifi } from '../../../../stores/network';
+import { LucideIcon } from '../../../../widget/common/lucide';
 
 export interface WifiToggleProps {
   onOpen: () => void;

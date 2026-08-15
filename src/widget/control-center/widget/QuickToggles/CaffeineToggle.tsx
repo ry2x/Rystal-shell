@@ -1,7 +1,7 @@
 import { Gtk } from 'ags/gtk4';
 
-import { type CaffeineState, caffeineState, toggleCaffeine } from '../../../stores/caffeine';
-import { LucideIcon } from '../../../widget/common/lucide';
+import { type CaffeineState, caffeineState, toggleCaffeine } from '../../../../stores/caffeine';
+import { LucideIcon } from '../../../../widget/common/lucide';
 
 function getCaffeineIcon(state: CaffeineState) {
   if (state === 'enabled') return 'coffee';

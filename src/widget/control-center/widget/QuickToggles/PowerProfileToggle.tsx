@@ -8,8 +8,8 @@ import {
   getPowerIcon,
   getPowerLabel,
   getPowerProfile,
-} from '../../../stores/powerProfile';
-import { LucideIcon } from '../../../widget/common/lucide';
+} from '../../../../stores/powerProfile';
+import { LucideIcon } from '../../../../widget/common/lucide';
 
 export default function PowerProfileToggle() {
   const power = getPowerProfile();
