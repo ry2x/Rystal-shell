@@ -1,12 +1,15 @@
-import { Gdk } from 'ags/gtk4';
-import { Gtk } from 'ags/gtk4';
+import { Gdk, Gtk } from 'ags/gtk4';
 
 import { clockTime, shortDate, shortDay } from '../../../stores/time';
 import { toggleDateWeather } from '../../../stores/windowManager';
 
-export default function Clock({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
+export interface ClockProps {
+  monitor: Gdk.Monitor;
+}
+
+export default function Clock({ monitor }: ClockProps) {
   const toggleMenu = () => {
-    toggleDateWeather(gdkmonitor.get_connector());
+    toggleDateWeather(monitor.get_connector());
   };
 
   return (

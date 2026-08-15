@@ -1,11 +1,14 @@
-import { Gdk } from 'ags/gtk4';
-import { Gtk } from 'ags/gtk4';
+import { Gdk, Gtk } from 'ags/gtk4';
 
 import { getWeatherIcon, weatherInfo } from '../../../stores/weather';
 import { toggleDateWeather } from '../../../stores/windowManager';
 import { LucideIcon } from '../../../widget/common/lucide';
 
-export default function Weather({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
+export interface WeatherProps {
+  monitor: Gdk.Monitor;
+}
+
+export default function Weather({ monitor }: WeatherProps) {
   return (
     <revealer
       transitionType={Gtk.RevealerTransitionType.SLIDE_RIGHT}
@@ -13,7 +16,7 @@ export default function Weather({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
       revealChild={weatherInfo.as((w) => w !== null)}
     >
       <box orientation={Gtk.Orientation.VERTICAL}>
-        <button class="Weather" onClicked={() => toggleDateWeather(gdkmonitor.get_connector())}>
+        <button class="Weather" onClicked={() => toggleDateWeather(monitor.get_connector())}>
           <box spacing={0} orientation={Gtk.Orientation.VERTICAL}>
             <LucideIcon
               name={weatherInfo.as((w) => (w ? getWeatherIcon(w.code) : 'cloud'))}

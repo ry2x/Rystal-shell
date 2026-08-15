@@ -4,15 +4,19 @@ import { cpuUsage, gpuUsage, ramUsage } from '../../../stores/system';
 import { toggleControlCenter } from '../../../stores/windowManager';
 import { LucideIcon } from '../../../widget/common/lucide';
 
-export default function SysMetrics({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
-  const toggleMenu = () => {
-    toggleControlCenter(gdkmonitor.get_connector());
-  };
+export interface SysMetricsProps {
+  monitor: Gdk.Monitor;
+}
 
-  const formatPercent = (val: number) => {
-    const rounded = Math.round(val);
-    const capped = rounded >= 100 ? 99 : rounded;
-    return capped.toString().padStart(2, '0');
+function formatPercent(value: number) {
+  const rounded = Math.round(value);
+  const capped = rounded >= 100 ? 99 : rounded;
+  return capped.toString().padStart(2, '0');
+}
+
+export default function SysMetrics({ monitor }: SysMetricsProps) {
+  const toggleMenu = () => {
+    toggleControlCenter(monitor.get_connector());
   };
 
   return (
