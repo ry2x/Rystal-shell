@@ -14,26 +14,14 @@ import {
   ensureWallpaperThumbnails,
   subscribeThumbnailReady,
 } from '../../../stores/wallpaper/wallpaperThumbnail';
-import { createCoverFlowTransform, easeOutCubic, getCoverFlowOpacity } from '../coverFlowGeometry';
+import { createCoverFlowTransform, getCoverFlowOpacity } from '../coverFlowGeometry';
 import { WallpaperCardController } from './WallpaperCard';
+import { CoverFlowAnimation, type CoverFlowCardState } from './coverFlowAnimation';
 
 const VISIBLE_RADIUS = 3;
 const PREFETCH_RADIUS = 4;
-const MOVE_DURATION_US = 320_000;
-const ENTRANCE_DURATION_US = 420_000;
 const MOVE_INTERVAL_US = 83_333;
 const VIEWPORT_HEIGHT = 420;
-
-interface CardState {
-  card: WallpaperCardController;
-  currentOffset: number;
-  startOffset: number;
-  targetOffset: number;
-  currentOpacity: number;
-  startOpacity: number;
-  targetOpacity: number;
-  retained: boolean;
-}
 
 export interface CoverFlowOptions {
   onApplied: () => void;
@@ -46,17 +34,14 @@ export default class CoverFlowController {
   private readonly fixed: Gtk.Fixed;
   private readonly positionLabel: Gtk.Label;
   private readonly statusLabel: Gtk.Label;
-  private readonly cards = new Map<string, CardState>();
+  private readonly cards = new Map<string, CoverFlowCardState>();
   private readonly disposers: (() => void)[];
+  private readonly animation: CoverFlowAnimation;
   private active = false;
   private disposed = false;
   private filtered: Wallpaper[] = [];
   private selectedIndex = 0;
-  private tickId = 0;
-  private animationStartedAt = 0;
   private lastMoveAt = 0;
-  private entrance = 0;
-  private entranceStart = 0;
 
   constructor(private readonly options: CoverFlowOptions) {
     this.fixed = new Gtk.Fixed({
@@ -123,6 +108,13 @@ export default class CoverFlowController {
       </box>
     ) as Gtk.Box;
 
+    this.animation = new CoverFlowAnimation({
+      fixed: this.fixed,
+      cards: this.cards,
+      onVisualsUpdated: () => this.applyCardVisuals(),
+      onFinished: () => this.finishAnimation(),
+    });
+
     const scrollController = new Gtk.EventControllerScroll({
       flags: Gtk.EventControllerScrollFlags.VERTICAL | Gtk.EventControllerScrollFlags.DISCRETE,
     });
@@ -149,8 +141,7 @@ export default class CoverFlowController {
 
     if (active) {
       this.lastMoveAt = 0;
-      this.entrance = 0;
-      this.entranceStart = GLib.get_monotonic_time();
+      this.animation.resetEntrance();
       this.filterWallpapers();
       this.startAnimation();
       return;
@@ -208,7 +199,7 @@ export default class CoverFlowController {
     this.statusLabel.set_visible(Boolean(this.statusLabel.get_label()));
   }
 
-  private removeCard(path: string, state: CardState) {
+  private removeCard(path: string, state: CoverFlowCardState) {
     state.card.clear();
     this.fixed.remove(state.card.widget);
     this.cards.delete(path);
@@ -224,7 +215,11 @@ export default class CoverFlowController {
       state.card.widget.set_can_target(Math.abs(state.currentOffset) <= VISIBLE_RADIUS + 0.25);
       this.fixed.set_child_transform(
         state.card.widget,
-        createCoverFlowTransform(state.currentOffset, this.options.viewportWidth, this.entrance),
+        createCoverFlowTransform(
+          state.currentOffset,
+          this.options.viewportWidth,
+          this.animation.getEntrance(),
+        ),
       );
       state.card.widget.insert_before(this.fixed, null);
     }
@@ -237,7 +232,9 @@ export default class CoverFlowController {
       if (!state.retained) this.removeCard(path, state);
       else {
         state.card.widget.set_opacity(
-          getCoverFlowOpacity(state.currentOffset) * state.currentOpacity * this.entrance,
+          getCoverFlowOpacity(state.currentOffset) *
+            state.currentOpacity *
+            this.animation.getEntrance(),
         );
       }
     }
@@ -246,40 +243,11 @@ export default class CoverFlowController {
 
   private startAnimation() {
     if (!this.active) return;
-    this.animationStartedAt = GLib.get_monotonic_time();
-    if (this.tickId !== 0) return;
-
-    this.tickId = this.fixed.add_tick_callback((_widget, frameClock) => {
-      const now = frameClock.get_frame_time();
-      const moveProgress = Math.min(1, (now - this.animationStartedAt) / MOVE_DURATION_US);
-      const eased = easeOutCubic(moveProgress);
-      if (this.entrance < 1) {
-        this.entrance = easeOutCubic(
-          Math.min(1, (now - this.entranceStart) / ENTRANCE_DURATION_US),
-        );
-      }
-
-      for (const state of this.cards.values()) {
-        state.currentOffset = state.startOffset + (state.targetOffset - state.startOffset) * eased;
-        state.currentOpacity =
-          state.startOpacity + (state.targetOpacity - state.startOpacity) * eased;
-        state.card.widget.set_opacity(
-          getCoverFlowOpacity(state.currentOffset) * state.currentOpacity * this.entrance,
-        );
-      }
-      this.applyCardVisuals();
-
-      if (moveProgress < 1 || this.entrance < 1) return GLib.SOURCE_CONTINUE;
-      this.tickId = 0;
-      this.finishAnimation();
-      return GLib.SOURCE_REMOVE;
-    });
+    this.animation.start();
   }
 
   private stopAnimation() {
-    if (this.tickId === 0) return;
-    this.fixed.remove_tick_callback(this.tickId);
-    this.tickId = 0;
+    this.animation.stop();
   }
 
   private reconcileCards(direction = 0) {
