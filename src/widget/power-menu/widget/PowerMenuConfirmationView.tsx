@@ -1,8 +1,8 @@
 import { type Accessor } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
+import type { PowerItem } from '../../../stores/powerMenu';
 import { LucideIcon } from '../../common/lucide';
-import type { PowerItem } from '../items';
 
 export interface PowerMenuConfirmationViewProps {
   confirmation: Accessor<PowerItem | null>;
@@ -72,5 +72,5 @@ export default function PowerMenuConfirmationView({
         </box>
       </box>
     </box>
-  );
+  ) as Gtk.Box;
 }

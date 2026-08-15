@@ -4,9 +4,8 @@ import app from 'ags/gtk4/app';
 
 import GLib from 'gi://GLib';
 
-import { executePowerAction } from '../../stores/powerMenu';
+import { POWER_ITEMS, type PowerItem, executePowerAction } from '../../stores/powerMenu';
 import { activeSidePanel } from '../../stores/windowManager';
-import { POWER_ITEMS, type PowerItem } from './items';
 import createPowerMenuConfirmationView from './widget/PowerMenuConfirmationView';
 import createPowerMenuMainView from './widget/PowerMenuMainView';
 

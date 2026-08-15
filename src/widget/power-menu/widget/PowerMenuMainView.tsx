@@ -1,7 +1,7 @@
 import { type Accessor } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
-import { POWER_ITEMS, type PowerItem } from '../items';
+import { POWER_ITEMS, type PowerItem } from '../../../stores/powerMenu';
 import PowerMenuItemButton from './PowerMenuItemButton';
 
 export interface PowerMenuMainViewProps {
@@ -56,5 +56,5 @@ export default function PowerMenuMainView({
         ellipsize={3}
       />
     </box>
-  );
+  ) as Gtk.Box;
 }
