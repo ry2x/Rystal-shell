@@ -57,7 +57,8 @@ function reloadCss(cssInput: string) {
 function sassCommand() {
   return [
     'sass',
-    '--style=compressed',
+    '--style=expanded',
+    '--no-source-map',
     '--load-path',
     rystalShellConfigDir,
     '--load-path',

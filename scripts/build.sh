@@ -8,4 +8,4 @@ cd "$repo_dir"
 mkdir -p dist
 node scripts/build-js.mjs
 install -Dm755 scripts/start-ags.sh dist/start-ags
-sass --style=compressed --load-path styles/default styles/style.scss dist/default.css
+sass --style=expanded --no-source-map --load-path styles/default styles/style.scss dist/default.css
