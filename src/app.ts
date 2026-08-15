@@ -29,7 +29,7 @@ app.start({
       Bar({ monitor: m });
       ControlCenter(m);
       WifiPasswordDialog(m);
-      DateWeatherPopup(m);
+      DateWeatherPopup({ monitor: m });
       NotificationPopups({ monitor: m });
       AppLauncher({ monitor: m });
       WallpaperSelector(m);
