@@ -1,18 +1,24 @@
-import { createState } from 'ags';
+import { createExternal } from 'ags';
+import { type Timer, timeout } from 'ags/time';
 
 const MINUTE_MS = 60_000;
-const [now, setNow] = createState(Temporal.Now.zonedDateTimeISO());
+const now = createExternal(Temporal.Now.zonedDateTimeISO(), (setNow) => {
+  let updateTimer: Timer | null = null;
 
-function scheduleNextMinute() {
-  const delay = MINUTE_MS - (Date.now() % MINUTE_MS);
+  const scheduleNextMinute = () => {
+    const delay = MINUTE_MS - (Date.now() % MINUTE_MS);
+    updateTimer = timeout(delay, () => {
+      setNow(Temporal.Now.zonedDateTimeISO());
+      scheduleNextMinute();
+    });
+  };
 
-  setTimeout(() => {
-    setNow(Temporal.Now.zonedDateTimeISO());
-    scheduleNextMinute();
-  }, delay);
-}
-
-scheduleNextMinute();
+  scheduleNextMinute();
+  return () => {
+    updateTimer?.cancel();
+    updateTimer = null;
+  };
+});
 
 export const clockTime = now.as(
   (t) => `${String(t.hour).padStart(2, '0')}:${String(t.minute).padStart(2, '0')}`,
