@@ -1,9 +1,9 @@
 import { createEffect } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
-import { isRecording, stopRecord } from '../../../stores/recording';
-import { beginRecording } from '../../../stores/screenCapture';
-import { LucideIcon } from '../../../widget/common/lucide';
+import { isRecording, stopRecord } from '../../../../stores/recording';
+import { beginRecording } from '../../../../stores/screenCapture';
+import { LucideIcon } from '../../../common/lucide';
 
 export default function RecordingActions() {
   const idleBox = (
