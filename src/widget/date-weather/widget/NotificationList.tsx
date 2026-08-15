@@ -70,14 +70,12 @@ export default function NotificationList() {
           idFor={(notification: Notifd.Notification) => String(notification.id)}
           className="notif-list"
           spacing={12}
-          renderItem={(notification: Notifd.Notification) =>
-            (
-              <NotificationCard
-                notif={notification}
-                onDismiss={() => dismissNotification(notification)}
-              />
-            ) as unknown as Gtk.Widget
-          }
+          renderItem={(notification: Notifd.Notification) => (
+            <NotificationCard
+              notif={notification}
+              onDismiss={() => dismissNotification(notification)}
+            />
+          )}
         />
       </scrolledwindow>
     </box>
