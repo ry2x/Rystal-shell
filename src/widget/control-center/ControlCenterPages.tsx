@@ -1,4 +1,4 @@
-import { For } from 'ags';
+import { For, onCleanup } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
 import { shellMotion } from '../../lib/motion';
@@ -66,17 +66,24 @@ export default function ControlCenterPages({ state, monitorConnector }: ControlC
     />
   ) as Gtk.Widget;
 
-  return (
+  let unsubscribePage: (() => void) | null = null;
+  const stack = (
     <stack
       transitionType={Gtk.StackTransitionType.SLIDE_LEFT_RIGHT}
       transitionDuration={shellMotion.pageDuration}
-      visibleChildName={state.page}
       $={(self: Gtk.Stack) => {
         self.add_named(main, 'main');
         self.add_named(wifi, 'wifi');
         self.add_named(bluetooth, 'bluetooth');
         self.add_named(sound, 'sound');
+        self.set_visible_child_name(state.page.peek());
+        unsubscribePage = state.page.subscribe(() => {
+          self.set_visible_child_name(state.page.peek());
+        });
       }}
     />
-  );
+  ) as Gtk.Stack;
+
+  onCleanup(() => unsubscribePage?.());
+  return stack;
 }
