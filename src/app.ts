@@ -27,7 +27,7 @@ app.start({
 
     app.get_monitors().forEach((m) => {
       Bar({ monitor: m });
-      ControlCenter(m);
+      ControlCenter({ monitor: m });
       WifiPasswordDialog({ monitor: m });
       DateWeatherPopup({ monitor: m });
       NotificationPopups({ monitor: m });
