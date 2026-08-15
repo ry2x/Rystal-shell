@@ -1,4 +1,3 @@
-import { createBinding as bind } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
 import Notifd from 'gi://AstalNotifd';
@@ -6,15 +5,15 @@ import Notifd from 'gi://AstalNotifd';
 import {
   clearNotifications,
   dismissNotification,
+  doNotDisturb,
   notifications,
+  toggleDoNotDisturb,
 } from '../../../stores/notification';
 import { LucideIcon } from '../../../widget/common/lucide';
 import AnimatedList from '../../common/AnimatedList';
 import NotificationCard from '../../common/NotificationCard';
 
 export default function NotificationList() {
-  const notifd = Notifd.get_default();
-
   return (
     <box orientation={Gtk.Orientation.VERTICAL} spacing={16} class="right-column">
       <box class="notif-header" spacing={8}>
@@ -23,17 +22,15 @@ export default function NotificationList() {
 
         {/* DND Toggle */}
         <button
-          class={bind(notifd, 'dontDisturb').as((d) =>
-            d ? 'notif-header-btn dnd active' : 'notif-header-btn dnd',
+          class={doNotDisturb.as((enabled) =>
+            enabled ? 'notif-header-btn dnd active' : 'notif-header-btn dnd',
           )}
-          onClicked={() => {
-            notifd.dontDisturb = !notifd.dontDisturb;
-          }}
+          onClicked={toggleDoNotDisturb}
           tooltipText="Toggle Do Not Disturb"
         >
           <box spacing={6}>
             <LucideIcon
-              name={bind(notifd, 'dontDisturb').as((d) => (d ? 'bell-off' : 'bell'))}
+              name={doNotDisturb.as((enabled) => (enabled ? 'bell-off' : 'bell'))}
               pixelSize={14}
             />
             <label label="DND" css="font-size: 0.8em; font-weight: 600;" />

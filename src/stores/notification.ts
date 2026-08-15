@@ -1,10 +1,11 @@
-import { createState } from 'ags';
+import { createBinding, createState } from 'ags';
 
 import Notifd from 'gi://AstalNotifd';
 
 import { appConfig } from '../lib/config';
 
 const notifd = Notifd.get_default();
+export const doNotDisturb = createBinding(notifd, 'dontDisturb');
 const DEFAULT_MAX_NOTIFICATIONS = 30;
 const configuredMaxNotifications = appConfig.notifications?.maxCount;
 const MAX_NOTIFICATIONS =
@@ -54,4 +55,9 @@ export function clearNotifications() {
   const current = notifications.peek();
   setNotifications([]);
   current.forEach((notification) => notification.dismiss());
+}
+
+export function toggleDoNotDisturb() {
+  notifd.dontDisturb = !notifd.dontDisturb;
+  return notifd.dontDisturb;
 }

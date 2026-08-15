@@ -1,7 +1,6 @@
 import app from 'ags/gtk4/app';
 
 import Hyprland from 'gi://AstalHyprland';
-import Notifd from 'gi://AstalNotifd';
 
 import { compileAndReloadCss } from './lib/css';
 import {
@@ -11,7 +10,7 @@ import {
   refreshBrightness,
   refreshBrightnessBackend,
 } from './stores/brightness';
-import { clearNotifications } from './stores/notification';
+import { clearNotifications, toggleDoNotDisturb } from './stores/notification';
 import { getPowerProfile, setPowerProfile } from './stores/powerProfile';
 import { isRecording, startRecord, stopRecord } from './stores/recording';
 import {
@@ -97,9 +96,7 @@ export function requestHandler(request: string[], res: ResponseCallback) {
       break;
 
     case 'toggle-dnd': {
-      const notifd = Notifd.get_default();
-      notifd.dontDisturb = !notifd.dontDisturb;
-      res(`DND toggled to ${notifd.dontDisturb}`);
+      res(`DND toggled to ${toggleDoNotDisturb()}`);
       break;
     }
 
