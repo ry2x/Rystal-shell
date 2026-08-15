@@ -1,81 +1,181 @@
-import { createState } from 'ags';
+import { createExternal } from 'ags';
+import { type Timer, timeout } from 'ags/time';
 
 import GLib from 'gi://GLib?version=2.0';
+import Gio from 'gi://Gio';
 import Soup from 'gi://Soup?version=3.0';
 
 import { appConfig } from '../lib/config';
 
 export const LOCATION = appConfig.weather.location;
 
-const [weatherJson, setWeatherJson] = createState('{}');
-
 const NORMAL_INTERVAL_MS = 30 * 60_000;
 const RETRY_INTERVAL_MS = 60_000;
 const weatherSession = new Soup.Session();
 const textDecoder = new TextDecoder('utf-8');
 
-let refreshTimer: ReturnType<typeof setTimeout> | null = null;
-let refreshPromise: Promise<void> | null = null;
+interface WeatherDescription {
+  value: string;
+}
 
-function sendAndRead(message: Soup.Message): Promise<GLib.Bytes> {
+interface CurrentCondition {
+  temp_C: string;
+  FeelsLikeC: string;
+  weatherDesc: WeatherDescription[];
+  weatherCode: string;
+  humidity: string;
+  windspeedKmph: string;
+}
+
+interface WeatherDay {
+  date: string;
+  maxtempC: string;
+  mintempC: string;
+  hourly: { weatherCode: string }[];
+}
+
+interface WeatherResponse {
+  current_condition?: CurrentCondition[];
+  nearest_area?: { region?: WeatherDescription[] }[];
+  weather?: WeatherDay[];
+}
+
+export interface WeatherForecast {
+  date: string;
+  max: string;
+  min: string;
+  code: string;
+}
+
+export interface WeatherInfo {
+  temp: string;
+  feelsLike: string;
+  desc: string;
+  code: string;
+  humidity: string;
+  wind: string;
+  region: string;
+  todayMax: string;
+  todayMin: string;
+  forecast: WeatherForecast[];
+}
+
+function sendAndRead(message: Soup.Message, cancellable: Gio.Cancellable): Promise<GLib.Bytes> {
   return new Promise((resolve, reject) => {
-    weatherSession.send_and_read_async(message, GLib.PRIORITY_DEFAULT, null, (_session, result) => {
-      try {
-        resolve(weatherSession.send_and_read_finish(result));
-      } catch (error) {
-        reject(error);
-      }
-    });
+    weatherSession.send_and_read_async(
+      message,
+      GLib.PRIORITY_DEFAULT,
+      cancellable,
+      (_session, result) => {
+        try {
+          resolve(weatherSession.send_and_read_finish(result));
+        } catch (error) {
+          reject(error);
+        }
+      },
+    );
   });
 }
 
-function clearRefreshTimer() {
-  if (refreshTimer === null) return;
-  clearTimeout(refreshTimer);
-  refreshTimer = null;
-}
+const weatherJson = createExternal('{}', (setWeatherJson) => {
+  let refreshTimer: Timer | null = null;
+  let refreshPromise: Promise<void> | null = null;
+  let requestCancellable: Gio.Cancellable | null = null;
+  let disposed = false;
 
-function scheduleRefresh(delay: number) {
-  clearRefreshTimer();
-  refreshTimer = setTimeout(() => {
+  function clearRefreshTimer() {
+    refreshTimer?.cancel();
     refreshTimer = null;
-    void refreshWeather();
-  }, delay);
-}
+  }
 
-async function runRefresh() {
-  const url =
-    LOCATION === '' ? 'https://wttr.in/?format=j1' : `https://wttr.in/${LOCATION}?format=j1`;
-  try {
-    const message = Soup.Message.new('GET', url);
-    const bytes = await sendAndRead(message);
-    if (message.status_code < 200 || message.status_code >= 300) {
-      throw new Error(`Weather fetch failed: ${message.status_code}`);
+  function scheduleRefresh(delay: number) {
+    if (disposed) return;
+    clearRefreshTimer();
+    refreshTimer = timeout(delay, () => {
+      refreshTimer = null;
+      void refreshWeather();
+    });
+  }
+
+  async function runRefresh() {
+    const url =
+      LOCATION === '' ? 'https://wttr.in/?format=j1' : `https://wttr.in/${LOCATION}?format=j1`;
+    requestCancellable = new Gio.Cancellable();
+
+    try {
+      const message = Soup.Message.new('GET', url);
+      const bytes = await sendAndRead(message, requestCancellable);
+      if (disposed) return;
+      if (message.status_code < 200 || message.status_code >= 300) {
+        throw new Error(`Weather fetch failed: ${message.status_code}`);
+      }
+
+      const data = bytes.get_data();
+      const output = data ? textDecoder.decode(data) : '';
+      if (!output.trim()) throw new Error('Empty weather response');
+      JSON.parse(output);
+      setWeatherJson(output);
+      scheduleRefresh(NORMAL_INTERVAL_MS);
+    } catch (error) {
+      if (disposed) return;
+      console.error('Weather fetch failed:', error);
+      scheduleRefresh(RETRY_INTERVAL_MS);
+    } finally {
+      requestCancellable = null;
     }
+  }
 
-    const data = bytes.get_data();
-    const out = data ? textDecoder.decode(data) : '';
-    if (!out || out.trim() === '') throw new Error('Empty weather response');
-    JSON.parse(out);
-    if (out !== weatherJson.peek()) setWeatherJson(out);
-    scheduleRefresh(NORMAL_INTERVAL_MS);
-  } catch (error) {
-    console.error('Weather fetch failed:', error);
-    scheduleRefresh(RETRY_INTERVAL_MS);
+  function refreshWeather() {
+    if (refreshPromise) return refreshPromise;
+
+    clearRefreshTimer();
+    refreshPromise = runRefresh().finally(() => {
+      refreshPromise = null;
+    });
+    return refreshPromise;
+  }
+
+  void refreshWeather();
+  return () => {
+    disposed = true;
+    clearRefreshTimer();
+    requestCancellable?.cancel();
+    requestCancellable = null;
+  };
+});
+
+function parseWeatherInfo(json: string): WeatherInfo | null {
+  try {
+    const data = JSON.parse(json) as WeatherResponse;
+    const current = data.current_condition?.[0];
+    const today = data.weather?.[0];
+    if (!current || !today) return null;
+
+    const rawRegion = data.nearest_area?.[0]?.region?.[0]?.value ?? LOCATION;
+    // eslint-disable-next-line no-control-regex
+    const region = rawRegion.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+
+    return {
+      temp: current.temp_C,
+      feelsLike: current.FeelsLikeC,
+      desc: current.weatherDesc[0]?.value ?? '',
+      code: current.weatherCode,
+      humidity: current.humidity,
+      wind: current.windspeedKmph,
+      region,
+      todayMax: today.maxtempC,
+      todayMin: today.mintempC,
+      forecast: (data.weather ?? []).slice(1, 3).map((day) => ({
+        date: day.date,
+        max: day.maxtempC,
+        min: day.mintempC,
+        code: day.hourly[4]?.weatherCode ?? '119',
+      })),
+    };
+  } catch {
+    return null;
   }
 }
-
-function refreshWeather(): Promise<void> {
-  if (refreshPromise) return refreshPromise;
-
-  clearRefreshTimer();
-  refreshPromise = runRefresh().finally(() => {
-    refreshPromise = null;
-  });
-  return refreshPromise;
-}
-
-void refreshWeather();
 
 // eslint-disable-next-line complexity
 export function getWeatherIcon(code: string) {
@@ -145,44 +245,4 @@ export function getWeatherIcon(code: string) {
   }
 }
 
-export const weatherInfo = weatherJson.as((str) => {
-  try {
-    const data = JSON.parse(str);
-    if (!data.current_condition || data.current_condition.length === 0) return null;
-
-    const current = data.current_condition[0];
-    const today = data.weather[0];
-    const rawRegion = data.nearest_area?.[0]?.region?.[0]?.value || LOCATION;
-    // eslint-disable-next-line no-control-regex
-    const region = rawRegion.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
-
-    return {
-      temp: current.temp_C,
-      feelsLike: current.FeelsLikeC,
-      desc: current.weatherDesc[0].value,
-      code: current.weatherCode,
-      humidity: current.humidity,
-      wind: current.windspeedKmph,
-      region: region,
-      todayMax: today.maxtempC,
-      todayMin: today.mintempC,
-      forecast: data.weather
-        .slice(1, 3)
-        .map(
-          (w: {
-            date: string;
-            maxtempC: string;
-            mintempC: string;
-            hourly: { weatherCode: string }[];
-          }) => ({
-            date: w.date,
-            max: w.maxtempC,
-            min: w.mintempC,
-            code: w.hourly[4].weatherCode,
-          }),
-        ),
-    };
-  } catch {
-    return null;
-  }
-});
+export const weatherInfo = weatherJson.as(parseWeatherInfo);

@@ -3,6 +3,60 @@ import { Gtk } from 'ags/gtk4';
 import { LOCATION, getWeatherIcon, weatherInfo } from '../../../stores/weather';
 import { LucideIcon } from '../../../widget/common/lucide';
 
+export interface ForecastItemProps {
+  index: number;
+}
+
+function formatForecastDay(date: string) {
+  return new Date(date).toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+}
+
+function ForecastItem({ index }: ForecastItemProps) {
+  return (
+    <box
+      orientation={Gtk.Orientation.HORIZONTAL}
+      spacing={12}
+      valign={Gtk.Align.CENTER}
+      halign={Gtk.Align.CENTER}
+    >
+      <label
+        label={weatherInfo.as((weather) => {
+          const forecast = weather?.forecast[index];
+          return forecast ? formatForecastDay(forecast.date) : '';
+        })}
+        class="forecast-day"
+        halign={Gtk.Align.START}
+      />
+      <LucideIcon
+        name={weatherInfo.as((weather) => {
+          const forecast = weather?.forecast[index];
+          return forecast ? getWeatherIcon(forecast.code) : 'cloud';
+        })}
+        pixelSize={24}
+        class="forecast-icon"
+      />
+      <box orientation={Gtk.Orientation.VERTICAL} spacing={2} valign={Gtk.Align.CENTER}>
+        <label
+          label={weatherInfo.as((weather) => {
+            const forecast = weather?.forecast[index];
+            return forecast ? `${forecast.max}°C` : '';
+          })}
+          class="forecast-max"
+          halign={Gtk.Align.START}
+        />
+        <label
+          label={weatherInfo.as((weather) => {
+            const forecast = weather?.forecast[index];
+            return forecast ? `${forecast.min}°C` : '';
+          })}
+          class="forecast-min"
+          halign={Gtk.Align.START}
+        />
+      </box>
+    </box>
+  );
+}
+
 export default function WeatherCard() {
   return (
     <box
@@ -59,45 +113,8 @@ export default function WeatherCard() {
 
       {/* 2-Day Forecast */}
       <box orientation={Gtk.Orientation.HORIZONTAL} spacing={16} homogeneous css="margin-top: 4px;">
-        {[0, 1].map((i) => (
-          <box
-            orientation={Gtk.Orientation.HORIZONTAL}
-            spacing={12}
-            valign={Gtk.Align.CENTER}
-            halign={Gtk.Align.CENTER}
-          >
-            <label
-              label={weatherInfo.as((w) =>
-                w && w.forecast[i]
-                  ? new Date(w.forecast[i].date)
-                      .toLocaleDateString('en-US', { weekday: 'short' })
-                      .toUpperCase()
-                  : '',
-              )}
-              class="forecast-day"
-              halign={Gtk.Align.START}
-            />
-            <LucideIcon
-              name={weatherInfo.as((w) =>
-                w && w.forecast[i] ? getWeatherIcon(w.forecast[i].code) : 'cloud',
-              )}
-              pixelSize={24}
-              class="forecast-icon"
-            />
-            <box orientation={Gtk.Orientation.VERTICAL} spacing={2} valign={Gtk.Align.CENTER}>
-              <label
-                label={weatherInfo.as((w) => (w && w.forecast[i] ? `${w.forecast[i].max}°C` : ''))}
-                class="forecast-max"
-                halign={Gtk.Align.START}
-              />
-              <label
-                label={weatherInfo.as((w) => (w && w.forecast[i] ? `${w.forecast[i].min}°C` : ''))}
-                class="forecast-min"
-                halign={Gtk.Align.START}
-              />
-            </box>
-          </box>
-        ))}
+        <ForecastItem index={0} />
+        <ForecastItem index={1} />
       </box>
     </box>
   );
