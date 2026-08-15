@@ -14,7 +14,7 @@ import {
   wallpapers,
   wallpapersLoading,
 } from '../../../stores/wallpaper';
-import { WallpaperCardController, createWallpaperCard } from './WallpaperCard';
+import { WallpaperCardController } from './WallpaperCard';
 
 const CARD_WIDTH = 384;
 const CARD_HEIGHT = 252;
@@ -266,7 +266,7 @@ export function createCoverFlow(onApplied: () => void, viewportWidth: number): C
 
       let state = cards.get(wallpaper.path);
       if (!state) {
-        const card = createWallpaperCard(handleCardClicked);
+        const card = new WallpaperCardController(handleCardClicked);
         card.bind(wallpaper);
         fixed.put(card.widget, 0, 0);
         const spawnOffset = offset + Math.sign(offset || direction || 1) * 0.35;
