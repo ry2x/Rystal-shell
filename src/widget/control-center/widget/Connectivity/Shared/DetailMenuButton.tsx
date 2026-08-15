@@ -23,10 +23,13 @@ export default function DetailMenuButton({
       <LucideIcon name="settings" pixelSize={16} />
     </button>
   ) as Gtk.Button;
-  const popover = new Gtk.Popover();
+
+  const popover = new Gtk.Popover({
+    hasArrow: false,
+    cssClasses: ['cc-detail-menu'],
+  });
+
   popover.set_parent(button);
-  popover.set_has_arrow(false);
-  popover.add_css_class('cc-detail-menu');
   popover.set_child(
     (
       <box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
@@ -57,10 +60,12 @@ export default function DetailMenuButton({
       </box>
     ) as Gtk.Widget,
   );
+
   button.connect('clicked', () => popover.popup());
   button.connect('destroy', () => {
     popover.popdown();
     if (popover.get_parent()) popover.unparent();
   });
+
   return button;
 }

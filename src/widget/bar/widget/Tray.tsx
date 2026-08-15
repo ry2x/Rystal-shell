@@ -43,12 +43,15 @@ export default function Tray() {
     </box>
   ) as Gtk.Box;
 
-  expander = new Gtk.Popover();
-  expander.set_has_arrow(false);
-  expander.set_position(Gtk.PositionType.RIGHT);
-  expander.add_css_class('tray-expander');
-  expander.set_child(expandedItems);
+  expander = new Gtk.Popover({
+    hasArrow: false,
+    position: Gtk.PositionType.RIGHT,
+    cssClasses: ['tray-expander'],
+  });
+
   expander.set_parent(trigger);
+  expander.set_child(expandedItems);
+
   onCleanup(() => expander?.unparent());
 
   return (

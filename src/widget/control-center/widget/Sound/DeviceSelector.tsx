@@ -50,10 +50,12 @@ export default function DeviceSelector({
     </button>
   ) as Gtk.Button;
 
-  const popover = new Gtk.Popover();
+  const popover = new Gtk.Popover({
+    hasArrow: false,
+    cssClasses: ['cc-sound-device-menu'],
+  });
+
   popover.set_parent(button);
-  popover.set_has_arrow(false);
-  popover.add_css_class('cc-sound-device-menu');
   popover.set_child(
     (
       <box orientation={Gtk.Orientation.VERTICAL} spacing={2}>

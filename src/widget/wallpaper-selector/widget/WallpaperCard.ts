@@ -19,16 +19,19 @@ export class WallpaperCardController {
       canShrink: true,
       hexpand: true,
       vexpand: true,
+      widthRequest: CARD_WIDTH,
+      heightRequest: CARD_HEIGHT,
     });
-    this.picture.set_size_request(CARD_WIDTH, CARD_HEIGHT);
 
     this.widget = new Gtk.Button({
       cssClasses: ['wallpaper-card'],
       canFocus: false,
       overflow: Gtk.Overflow.HIDDEN,
       child: this.picture,
+      widthRequest: CARD_WIDTH,
+      heightRequest: CARD_HEIGHT,
     });
-    this.widget.set_size_request(CARD_WIDTH, CARD_HEIGHT);
+
     this.widget.connect('clicked', () => onClicked(this));
   }
 

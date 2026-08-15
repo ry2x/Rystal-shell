@@ -59,21 +59,25 @@ export default class CoverFlowController {
   private entranceStart = 0;
 
   constructor(private readonly options: CoverFlowOptions) {
-    this.fixed = new Gtk.Fixed({ hexpand: false, vexpand: false });
-    this.fixed.set_size_request(options.viewportWidth, VIEWPORT_HEIGHT);
-    this.fixed.set_overflow(Gtk.Overflow.VISIBLE);
+    this.fixed = new Gtk.Fixed({
+      hexpand: false,
+      vexpand: false,
+      widthRequest: options.viewportWidth,
+      heightRequest: VIEWPORT_HEIGHT,
+      overflow: Gtk.Overflow.VISIBLE,
+    });
 
-    const viewport = Object.assign(new Gtk.ScrolledWindow(), {
+    const viewport = new Gtk.ScrolledWindow({
       hscrollbarPolicy: Gtk.PolicyType.NEVER,
       vscrollbarPolicy: Gtk.PolicyType.NEVER,
       propagateNaturalWidth: false,
       propagateNaturalHeight: false,
       widthRequest: options.viewportWidth,
       heightRequest: VIEWPORT_HEIGHT,
+      halign: Gtk.Align.FILL,
+      valign: Gtk.Align.FILL,
       child: this.fixed,
-    }) as Gtk.ScrolledWindow;
-    viewport.set_halign(Gtk.Align.FILL);
-    viewport.set_valign(Gtk.Align.FILL);
+    });
 
     this.positionLabel = new Gtk.Label({
       cssClasses: ['wallpaper-path'],
@@ -84,6 +88,7 @@ export default class CoverFlowController {
       marginBottom: 48,
       xalign: 0.5,
     });
+
     this.statusLabel = new Gtk.Label({ cssClasses: ['wallpaper-status'], xalign: 0.5 });
 
     const coverFlowLayer = new Gtk.Overlay({

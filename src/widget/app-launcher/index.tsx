@@ -13,13 +13,13 @@ function createLauncherBackground() {
     contentFit: Gtk.ContentFit.COVER,
     canTarget: false,
     canShrink: true,
+    hexpand: true,
+    vexpand: true,
+    halign: Gtk.Align.FILL,
+    valign: Gtk.Align.FILL,
+    widthRequest: 1,
+    heightRequest: 1,
   });
-
-  picture.set_hexpand(true);
-  picture.set_vexpand(true);
-  picture.set_halign(Gtk.Align.FILL);
-  picture.set_valign(Gtk.Align.FILL);
-  picture.set_size_request(1, 1);
 
   const unregister = registerLauncherBackground(picture);
   picture.connect('destroy', unregister);

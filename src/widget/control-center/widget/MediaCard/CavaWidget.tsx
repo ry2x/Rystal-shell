@@ -5,10 +5,12 @@ import { acquireCava, isCavaAvailable } from '../../../../stores/cava';
 export default function CavaWidget() {
   if (!isCavaAvailable()) return <box visible={false} />;
 
-  const area = new Gtk.DrawingArea();
-  area.set_size_request(-1, 160);
-  area.set_hexpand(true);
-  area.set_valign(Gtk.Align.END);
+  const area = new Gtk.DrawingArea({
+    hexpand: true,
+    valign: Gtk.Align.END,
+    widthRequest: -1,
+    heightRequest: 160,
+  });
 
   let session: ReturnType<typeof acquireCava> = null;
 
