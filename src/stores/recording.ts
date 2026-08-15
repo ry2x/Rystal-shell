@@ -11,6 +11,8 @@ import { sendNotification } from '../lib/notification';
 const [isRecordingState, setIsRecording] = createState(false);
 export const isRecording = isRecordingState;
 
+export type RecordingMode = 'monitor' | 'slurp';
+
 const SIGINT = 2;
 
 interface ActiveRecording {
@@ -83,7 +85,7 @@ function addAudioOptions(cmd: string[]) {
   cmd.push(speaker ? `--audio=${speaker.name?.trim()}.monitor` : '-a');
 }
 
-async function addCaptureTarget(cmd: string[], mode: 'monitor' | 'slurp') {
+async function addCaptureTarget(cmd: string[], mode: RecordingMode) {
   if (mode === 'monitor') {
     const monitor = Hyprland.get_default().get_focused_monitor();
     if (monitor) {
@@ -109,7 +111,7 @@ async function addCaptureTarget(cmd: string[], mode: 'monitor' | 'slurp') {
   }
 }
 
-export async function startRecord(mode: 'monitor' | 'slurp') {
+export async function startRecord(mode: RecordingMode) {
   if (activeRecording || isStarting) return;
   isStarting = true;
 
