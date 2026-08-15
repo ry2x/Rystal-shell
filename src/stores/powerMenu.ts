@@ -8,7 +8,7 @@ import GLib from 'gi://GLib';
 import { shellMotion } from '../lib/motion';
 import { activeSidePanel } from './windowManager';
 
-export type PowerAction = 'shutdown' | 'reboot' | 'logout' | 'sleep' | 'lock';
+type PowerAction = 'shutdown' | 'reboot' | 'logout' | 'sleep' | 'lock';
 
 export interface PowerItem {
   action: PowerAction;
@@ -52,7 +52,7 @@ const CONFIRM_MOVE_MS = 300;
 const CONFIRM_FADE_MS = 180;
 const MOVE_INTERVAL_US = 83_333;
 
-export async function executePowerAction(action: PowerAction) {
+async function executePowerAction(action: PowerAction) {
   switch (action) {
     case 'shutdown':
       await execAsync(['systemctl', 'poweroff']);

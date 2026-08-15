@@ -33,7 +33,7 @@ app.start({
       NotificationPopups({ monitor: m });
       AppLauncher({ monitor: m });
       WallpaperSelector(m);
-      PowerMenu(m);
+      PowerMenu({ monitor: m });
     });
   },
 });
