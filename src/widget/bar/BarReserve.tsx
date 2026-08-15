@@ -4,15 +4,19 @@ import app from 'ags/gtk4/app';
 const BORDER_WIDTH = 3;
 const BAR_WIDTH = 47;
 
-export default function BarReserve(gdkmonitor: Gdk.Monitor) {
+export interface BarReserveProps {
+  monitor: Gdk.Monitor;
+}
+
+export default function BarReserve({ monitor }: BarReserveProps) {
   const { TOP, BOTTOM, LEFT } = Astal.WindowAnchor;
 
   return (
     <window
       visible
-      name={`bar-reserve-${gdkmonitor.get_connector()}`}
+      name={`bar-reserve-${monitor.get_connector()}`}
       cssClasses={['BarReserve']}
-      gdkmonitor={gdkmonitor}
+      gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.EXCLUSIVE}
       layer={Astal.Layer.BOTTOM}
       anchor={TOP | BOTTOM | LEFT}
