@@ -3,6 +3,7 @@ import app from 'ags/gtk4/app';
 
 import { requestHandler } from './ipc';
 import { rystalShellDataDir, rystalShellInstance } from './lib/paths';
+import { cleanupRecording } from './stores/capture/recording';
 import { initCss } from './stores/shell/style';
 import AppLauncher from './widget/app-launcher';
 import Bar from './widget/bar';
@@ -17,6 +18,9 @@ app.start({
   instanceName: rystalShellInstance,
   requestHandler,
   main() {
+    app.connect('shutdown', () => {
+      cleanupRecording();
+    });
     initCss();
 
     // Add lucide symbolic icons to GTK Icon Theme search path

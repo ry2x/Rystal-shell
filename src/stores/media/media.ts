@@ -2,6 +2,7 @@ import { type Accessor, createState, onCleanup } from 'ags';
 
 import Mpris from 'gi://AstalMpris';
 import Gdk from 'gi://Gdk';
+import Gio from 'gi://Gio';
 
 import { loadTextureFromUri } from '../../lib/image';
 import { closeAllControlCenters, focusWindow } from '../shell/windowManager';
@@ -57,6 +58,7 @@ export function createPlayerArtwork(player: Mpris.Player): Accessor<Gdk.Texture 
   let disposed = false;
   let updateGeneration = 0;
   let lastYouTubeArt: string | null = null;
+  let thumbnailCancellable: Gio.Cancellable | null = null;
 
   const setArtworkFromPath = (path: string | null) => {
     const uri = path ? artworkUri(path) : null;
@@ -75,6 +77,8 @@ export function createPlayerArtwork(player: Mpris.Player): Accessor<Gdk.Texture 
 
   const updateArtwork = async () => {
     const generation = ++updateGeneration;
+    thumbnailCancellable?.cancel();
+    thumbnailCancellable = null;
     const coverArt = player.cover_art;
     if (coverArt) {
       lastYouTubeArt = null;
@@ -83,7 +87,9 @@ export function createPlayerArtwork(player: Mpris.Player): Accessor<Gdk.Texture 
     }
 
     try {
-      const youtubeArt = await fetchYouTubeThumbnail(player);
+      const cancellable = new Gio.Cancellable();
+      thumbnailCancellable = cancellable;
+      const youtubeArt = await fetchYouTubeThumbnail(player, cancellable);
       if (disposed || generation !== updateGeneration) return;
       if (youtubeArt && youtubeArt === lastYouTubeArt) return;
       lastYouTubeArt = youtubeArt;
@@ -92,16 +98,22 @@ export function createPlayerArtwork(player: Mpris.Player): Accessor<Gdk.Texture 
       if (disposed || generation !== updateGeneration) return;
       console.error(error);
       setArtwork(null);
+    } finally {
+      if (generation === updateGeneration) thumbnailCancellable = null;
     }
   };
 
-  const hook = player.connect('notify::cover-art', () => void updateArtwork());
+  const coverArtHook = player.connect('notify::cover-art', () => void updateArtwork());
+  const metadataHook = player.connect('notify::metadata', () => void updateArtwork());
   void updateArtwork();
 
   onCleanup(() => {
     disposed = true;
     updateGeneration++;
-    player.disconnect(hook);
+    thumbnailCancellable?.cancel();
+    thumbnailCancellable = null;
+    player.disconnect(coverArtHook);
+    player.disconnect(metadataHook);
     setArtwork(null);
   });
 

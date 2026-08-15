@@ -1,19 +1,32 @@
 import { createState } from 'ags';
-import { execAsync, subprocess } from 'ags/process';
+import { type Process, subprocess } from 'ags/process';
 
 import Hyprland from 'gi://AstalHyprland';
 import Wp from 'gi://AstalWp';
 import GLib from 'gi://GLib';
 
 import { appConfig } from '../../lib/config';
-import { sendNotification } from '../../lib/notification';
+import { sendNotification } from '../notification/send';
 
 const [isRecordingState, setIsRecording] = createState(false);
 export const isRecording = isRecordingState;
 
 export type RecordingMode = 'monitor' | 'slurp';
 
+export type RecordingStartResult =
+  | { status: 'started'; path: string }
+  | { status: 'already-active' }
+  | { status: 'cancelled' }
+  | { status: 'failed'; error: string };
+
+export type RecordingStopResult =
+  | { status: 'stopping' }
+  | { status: 'not-recording' }
+  | { status: 'already-stopping' }
+  | { status: 'failed'; error: string };
+
 const SIGINT = 2;
+const SIGKILL = 9;
 
 interface ActiveRecording {
   process: ReturnType<typeof subprocess>;
@@ -22,8 +35,14 @@ interface ActiveRecording {
   lastError: string;
 }
 
+interface RecordingStartSession {
+  process: Process | null;
+  cancelled: boolean;
+}
+
 let activeRecording: ActiveRecording | null = null;
-let isStarting = false;
+let activeStartSession: RecordingStartSession | null = null;
+let shuttingDown = false;
 
 function notifyFailure(body: string) {
   sendNotification({
@@ -39,7 +58,8 @@ function finishRecording(recording: ActiveRecording, code: number, signaled: boo
   setIsRecording(false);
 
   const stoppedNormally =
-    (!signaled && code === 0) || (recording.stopRequested && signaled && code === SIGINT);
+    (!signaled && code === 0) ||
+    (recording.stopRequested && signaled && (code === SIGINT || code === SIGKILL));
 
   if (stoppedNormally) {
     sendNotification({
@@ -85,41 +105,75 @@ function addAudioOptions(cmd: string[]) {
   cmd.push(speaker ? `--audio=${speaker.name?.trim()}.monitor` : '-a');
 }
 
-async function addCaptureTarget(cmd: string[], mode: RecordingMode) {
+async function addCaptureTarget(
+  cmd: string[],
+  mode: RecordingMode,
+  session: RecordingStartSession,
+): Promise<RecordingStartResult | null> {
   if (mode === 'monitor') {
     const monitor = Hyprland.get_default().get_focused_monitor();
-    if (monitor) {
-      cmd.push('-o', monitor.name);
-    } else {
-      console.error('No focused monitor found for recording');
+    if (!monitor) {
+      const error = 'No focused monitor found for recording';
+      console.error(error);
+      notifyFailure(error);
+      return { status: 'failed', error };
     }
-    return true;
+    cmd.push('-o', monitor.name);
+    return null;
   }
 
-  try {
-    const region = await execAsync('slurp');
-    cmd.push('--geometry', region.trim());
-    return true;
-  } catch (error) {
-    console.warn('Cancelled Slurp [This is not an error. Emitted by user operation]', error);
+  const output: string[] = [];
+  const errors: string[] = [];
+  const process = subprocess({
+    cmd: ['slurp'],
+    out: (line) => output.push(line),
+    err: (line) => errors.push(line),
+  });
+  session.process = process;
+
+  const result = await new Promise<RecordingStartResult | null>((resolve) => {
+    process.connect('exit', (_, code, signaled) => {
+      if (session.process === process) session.process = null;
+      if (session.cancelled || signaled || code !== 0) {
+        resolve({ status: 'cancelled' });
+        return;
+      }
+
+      const region = output.join('\n').trim();
+      if (!region) {
+        resolve({ status: 'cancelled' });
+        return;
+      }
+      cmd.push('--geometry', region);
+      resolve(null);
+    });
+  });
+
+  if (result?.status === 'cancelled' && !session.cancelled) {
+    if (errors.length > 0) console.warn(`Slurp cancelled: ${errors.join('\n')}`);
     sendNotification({
       summary: 'Recording cancelled',
       body: 'Selection was cancelled',
       transient: true,
     });
-    return false;
   }
+  return result;
 }
 
-export async function startRecord(mode: RecordingMode) {
-  if (activeRecording || isStarting) return;
-  isStarting = true;
+export async function startRecord(mode: RecordingMode): Promise<RecordingStartResult> {
+  if (shuttingDown) return { status: 'failed', error: 'Application is shutting down' };
+  if (activeRecording || activeStartSession) return { status: 'already-active' };
+
+  const session: RecordingStartSession = { process: null, cancelled: false };
+  activeStartSession = session;
 
   try {
     const fullPath = getRecordingPath();
     const cmd = ['wf-recorder', '--pixel-format', 'yuv420p', '-f', fullPath];
     addAudioOptions(cmd);
-    if (!(await addCaptureTarget(cmd, mode))) return;
+    const targetResult = await addCaptureTarget(cmd, mode, session);
+    if (targetResult) return targetResult;
+    if (session.cancelled || shuttingDown) return { status: 'cancelled' };
 
     const process = subprocess({
       cmd,
@@ -144,24 +198,57 @@ export async function startRecord(mode: RecordingMode) {
       transient: true,
     });
     setIsRecording(true);
+    return { status: 'started', path: fullPath };
   } catch (e) {
     console.error('Failed to start recording', e);
-    notifyFailure(e instanceof Error ? e.message : String(e));
+    const error = e instanceof Error ? e.message : String(e);
+    notifyFailure(error);
+    return { status: 'failed', error };
   } finally {
-    isStarting = false;
+    if (activeStartSession === session) activeStartSession = null;
   }
 }
 
-export function stopRecord() {
+export function stopRecord(): RecordingStopResult {
   const recording = activeRecording;
-  if (!recording || recording.stopRequested) return;
+  if (!recording) return { status: 'not-recording' };
+  if (recording.stopRequested) return { status: 'already-stopping' };
 
   recording.stopRequested = true;
   try {
     recording.process.signal(SIGINT);
+    return { status: 'stopping' };
   } catch (error) {
     recording.stopRequested = false;
     console.error('Failed to stop recording', error);
-    notifyFailure(error instanceof Error ? error.message : String(error));
+    const detail = error instanceof Error ? error.message : String(error);
+    notifyFailure(detail);
+    return { status: 'failed', error: detail };
+  }
+}
+
+export function cleanupRecording(): RecordingStopResult {
+  shuttingDown = true;
+  const startSession = activeStartSession;
+  if (startSession) {
+    startSession.cancelled = true;
+    try {
+      startSession.process?.kill();
+    } catch (error) {
+      console.error('Failed to cancel recording selection', error);
+    }
+  }
+
+  const recording = activeRecording;
+  if (!recording) return { status: 'not-recording' };
+
+  recording.stopRequested = true;
+  try {
+    recording.process.kill();
+    return { status: 'stopping' };
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    console.error('Failed to terminate recording process', error);
+    return { status: 'failed', error: detail };
   }
 }
