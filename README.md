@@ -120,12 +120,23 @@ pnpm check
 pnpm build
 ```
 
-Running `pnpm run tsc` will throw errors in the following 2 files:
+The minimum checks to run before creating a commit are:
+
+```sh
+pnpm check
+pnpm build
+git diff --check
+```
+
+`pnpm check` runs Prettier's check mode, ESLint, Knip, and the project type check.
+Use `pnpm format` to apply formatting before running the checks again.
+
+`pnpm check` ignores the following 2 known upstream type errors:
 
 > `../../../usr/share/ags/js/lib/gtk4/app.ts:288`
 > `../../../usr/share/ags/js/node_modules/gnim/dist/jsx/state.ts:715`
 
-You can safely ignore these errors.
+Use `pnpm run tsc` when you need the raw TypeScript output, including those upstream errors.
 
 ## Why AGS was chosen and its memory consumption
 

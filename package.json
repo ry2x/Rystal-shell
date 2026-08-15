@@ -19,14 +19,17 @@
     "generate-type": "ags types -d .",
     "lint": "eslint .",
     "format": "prettier --write \"./**/*.{js,ts,tsx,json,css,scss,md,html}\" \"./*.{js,ts,tsx,json}\"",
+    "format:check": "prettier --check \"./**/*.{js,ts,tsx,json,css,scss,md,html}\" \"./*.{js,ts,tsx,json}\"",
     "tsc": "tsc --noEmit",
+    "typecheck": "bash scripts/typecheck.sh",
     "knip": "knip",
-    "check": "pnpm lint && pnpm knip && pnpm tsc",
+    "check": "pnpm format:check && pnpm lint && pnpm knip && pnpm typecheck",
     "build": "./scripts/build.sh",
     "dev": "./scripts/dev.sh",
     "deploy:user": "./scripts/deploy-user.sh"
   },
   "name": "rystal-shell",
+  "packageManager": "pnpm@11.9.0",
   "license": "GPL-3.0-or-later",
   "private": true
 }
