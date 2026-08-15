@@ -104,7 +104,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                         <RecordIndicator />
                         <Updates gdkmonitor={gdkmonitor} />
                         <SysMetrics gdkmonitor={gdkmonitor} />
-                        <Volume gdkmonitor={gdkmonitor} />
+                        <Volume monitor={gdkmonitor} />
                         <Tray />
                       </box>
                     ) as Gtk.Widget
