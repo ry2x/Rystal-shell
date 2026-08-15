@@ -1,4 +1,4 @@
-export type ControlCenterPage = 'main' | 'wifi' | 'bluetooth' | 'sound';
+export type { ControlCenterPage } from '../../../../../stores/controlCenter';
 
 export interface Confirmation {
   title: string;
