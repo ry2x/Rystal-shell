@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "tags": ["-lintignore"],
-  "entry": ["src/app.ts"],
+  "entry": ["src/app.ts", "scripts/build-js.mjs"],
   "ignoreDependencies": ["cairo", "gi", "system"],
   "ignoreBinaries": ["ags"]
 }
