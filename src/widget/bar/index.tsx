@@ -87,8 +87,8 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                         orientation={Gtk.Orientation.VERTICAL}
                         spacing={8}
                       >
-                        <Weather gdkmonitor={gdkmonitor} />
-                        <Clock gdkmonitor={gdkmonitor} />
+                        <Weather monitor={gdkmonitor} />
+                        <Clock monitor={gdkmonitor} />
                       </box>
                     ) as Gtk.Widget
                   }
@@ -102,8 +102,8 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                         spacing={8}
                       >
                         <RecordIndicator />
-                        <Updates gdkmonitor={gdkmonitor} />
-                        <SysMetrics gdkmonitor={gdkmonitor} />
+                        <Updates monitor={gdkmonitor} />
+                        <SysMetrics monitor={gdkmonitor} />
                         <Volume monitor={gdkmonitor} />
                         <Tray />
                       </box>
