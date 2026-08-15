@@ -3,7 +3,6 @@ import { exec, execAsync } from 'ags/process';
 
 import GLib from 'gi://GLib';
 
-import { reloadLauncherBackground } from '../stores/application/launcherImage';
 import { forceRedrawBar } from '../widget/bar';
 import { ryprlandRuntimeDir, rystalShellConfigDir, rystalShellDataDir } from './paths';
 
@@ -53,7 +52,6 @@ function reloadCss(cssInput: string) {
   );
 
   globalCssProvider = nextProvider;
-  reloadLauncherBackground();
   forceRedrawBar();
 }
 
@@ -70,15 +68,16 @@ function sassCommand() {
   ];
 }
 
-export function compileAndReloadCss(): Promise<void> {
+export function compileAndReloadCss(): Promise<boolean> {
   ensureRuntimeDir();
   return execAsync(sassCommand())
     .then(() => {
       const css = readCss(cssPath);
-      if (css === lastCompiledCss) return;
+      if (css === lastCompiledCss) return false;
 
       reloadCss(css);
       lastCompiledCss = css;
+      return true;
     })
     .catch((err) => {
       console.error(`Error compiling CSS; keeping the active stylesheet: ${err}`);

@@ -7,7 +7,7 @@ import { createAppLauncherState } from '../../stores/application/appLauncher';
 import {
   ensureLauncherBackground,
   registerLauncherBackground,
-} from '../../stores/application/launcherImage';
+} from '../../stores/application/launcherBackground';
 import { AppList } from './widget/AppList';
 import { SearchInput } from './widget/SearchInput';
 
