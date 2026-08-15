@@ -108,27 +108,27 @@ export function WifiPage({ monitorConnector, onBack }: WifiPageProps) {
     </box>
   ) as Gtk.Widget;
 
-  const dialogs = (
-    <box
-      canTarget={state.confirmation.as(Boolean)}
-      hexpand
-      vexpand
-      halign={Gtk.Align.FILL}
-      valign={Gtk.Align.FILL}
-    >
-      <For each={state.confirmation.as((value) => (value ? [value] : []))}>
-        {(confirmation: WifiConfirmation) => (
-          <ConfirmOverlay
-            confirmation={confirmation}
-            clear={state.clearConfirmation}
-            setError={state.setError}
-          />
-        )}
-      </For>
-    </box>
-  ) as Gtk.Widget;
-  const overlay = new Gtk.Overlay();
-  overlay.set_child(content);
-  overlay.add_overlay(dialogs);
-  return overlay;
+  return (
+    <overlay>
+      {content}
+      <box
+        $type="overlay"
+        canTarget={state.confirmation.as(Boolean)}
+        hexpand
+        vexpand
+        halign={Gtk.Align.FILL}
+        valign={Gtk.Align.FILL}
+      >
+        <For each={state.confirmation.as((value) => (value ? [value] : []))}>
+          {(confirmation: WifiConfirmation) => (
+            <ConfirmOverlay
+              confirmation={confirmation}
+              clear={state.clearConfirmation}
+              setError={state.setError}
+            />
+          )}
+        </For>
+      </box>
+    </overlay>
+  );
 }
