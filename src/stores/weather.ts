@@ -40,7 +40,7 @@ interface WeatherResponse {
   weather?: WeatherDay[];
 }
 
-export interface WeatherForecast {
+interface WeatherForecast {
   date: string;
   max: string;
   min: string;
