@@ -1,216 +1,120 @@
+import Cairo from 'cairo';
+
+import { createEffect } from 'ags';
 import { Gdk, Gtk } from 'ags/gtk4';
 
-import GLib from 'gi://GLib';
-import Cairo from 'gi://cairo';
+import {
+  type BarBackgroundGeometry,
+  type BarColors,
+  barColors,
+  createBarBackgroundGeometry,
+} from '../../stores/shell/barBackground';
 
-import { rystalShellConfigDir, rystalShellDataDir } from '../../lib/paths';
-import { activeSidePanel, setAnimBottomHeight, setAnimDx } from '../../stores/windowManager';
+export interface PanelBackgroundProps {
+  monitor: Gdk.Monitor;
+}
 
 const BORDER_WIDTH = 3;
-const BAR_WIDTH = 47;
-const WALLPAPER_PANEL_HEIGHT = 390;
-const POWER_MENU_PANEL_HEIGHT = 350;
-const configuredThemePath = `${rystalShellConfigDir}/theme.scss`;
-const defaultThemePath = `${rystalShellDataDir}/styles/default/theme.scss`;
+const BORDER_RADIUS = 16;
 
-// --- Color parsing ---
 function hexToRgba(hex: string): [number, number, number, number] {
-  hex = hex.replace('#', '');
-  if (hex.length === 6) {
-    return [
-      parseInt(hex.slice(0, 2), 16) / 255,
-      parseInt(hex.slice(2, 4), 16) / 255,
-      parseInt(hex.slice(4, 6), 16) / 255,
-      1,
-    ];
-  }
-  if (hex.length === 8) {
-    return [
-      parseInt(hex.slice(0, 2), 16) / 255,
-      parseInt(hex.slice(2, 4), 16) / 255,
-      parseInt(hex.slice(4, 6), 16) / 255,
-      parseInt(hex.slice(6, 8), 16) / 255,
-    ];
-  }
-  return [0.1, 0.07, 0.08, 1];
+  const value = hex.replace('#', '');
+  if (value.length !== 6 && value.length !== 8) return [0.1, 0.07, 0.08, 1];
+
+  return [
+    parseInt(value.slice(0, 2), 16) / 255,
+    parseInt(value.slice(2, 4), 16) / 255,
+    parseInt(value.slice(4, 6), 16) / 255,
+    parseInt(value.slice(6, 8) || 'ff', 16) / 255,
+  ];
 }
 
-function readMatugenColors(): { surface: string; primary: string } {
-  try {
-    const themePath = GLib.file_test(configuredThemePath, GLib.FileTest.EXISTS)
-      ? configuredThemePath
-      : defaultThemePath;
-    const [ok, bytes] = GLib.file_get_contents(themePath);
-    if (!ok || !bytes) throw new Error('read failed');
-    const contents = new TextDecoder().decode(bytes);
+function drawBackground(
+  context: Cairo.Context,
+  width: number,
+  height: number,
+  geometry: BarBackgroundGeometry,
+  colors: BarColors,
+) {
+  const [backgroundRed, backgroundGreen, backgroundBlue] = hexToRgba(colors.surface);
+  const [accentRed, accentGreen, accentBlue, accentAlpha] = hexToRgba(colors.primary);
+  const halfBorderWidth = BORDER_WIDTH / 2;
+  const desktopX = geometry.dx + halfBorderWidth;
+  const desktopY = halfBorderWidth;
+  const desktopWidth = width - geometry.dx - BORDER_WIDTH;
+  const desktopHeight = height - geometry.bottomHeight - BORDER_WIDTH;
 
-    let surface = '#191114';
-    let primary = '#ffb0ce';
+  context.setAntialias(Cairo.Antialias.BEST);
+  context.setOperator(Cairo.Operator.OVER);
+  context.setSourceRGBA(backgroundRed, backgroundGreen, backgroundBlue, 0.75);
+  context.rectangle(0, 0, width, height);
+  context.fill();
 
-    for (const line of contents.split('\n')) {
-      const trimmed = line.trim();
-      const sm = trimmed.match(/^\$surface:\s*(#[0-9a-fA-F]{6})/);
-      if (sm) surface = sm[1];
-      const pm = trimmed.match(/^\$primary:\s*(#[0-9a-fA-F]{6})/);
-      if (pm) primary = pm[1];
-    }
-    return { surface, primary };
-  } catch (e) {
-    console.error(`[Bar] Failed to read matugen.scss: ${e}`);
-    return { surface: '#191114', primary: '#ffb0ce' };
-  }
+  context.newPath();
+  context.arc(
+    desktopX + desktopWidth - BORDER_RADIUS,
+    desktopY + BORDER_RADIUS,
+    BORDER_RADIUS,
+    -Math.PI / 2,
+    0,
+  );
+  context.arc(
+    desktopX + desktopWidth - BORDER_RADIUS,
+    desktopY + desktopHeight - BORDER_RADIUS,
+    BORDER_RADIUS,
+    0,
+    Math.PI / 2,
+  );
+  context.arc(
+    desktopX + BORDER_RADIUS,
+    desktopY + desktopHeight - BORDER_RADIUS,
+    BORDER_RADIUS,
+    Math.PI / 2,
+    Math.PI,
+  );
+  context.arc(
+    desktopX + BORDER_RADIUS,
+    desktopY + BORDER_RADIUS,
+    BORDER_RADIUS,
+    Math.PI,
+    (3 * Math.PI) / 2,
+  );
+  context.closePath();
+
+  context.setOperator(Cairo.Operator.CLEAR);
+  context.fillPreserve();
+  context.setOperator(Cairo.Operator.OVER);
+  context.setSourceRGBA(accentRed, accentGreen, accentBlue, accentAlpha);
+  context.setLineWidth(BORDER_WIDTH);
+  context.stroke();
+  context.$dispose();
 }
 
-// --- Module-level state (survives GC) ---
-let currentColors = readMatugenColors();
-const drawingAreas: Gtk.DrawingArea[] = [];
+export default function PanelBackground({ monitor }: PanelBackgroundProps) {
+  const geometry = createBarBackgroundGeometry(monitor.get_connector());
+  let drawingArea!: Gtk.DrawingArea;
 
-export function forceRedrawBar() {
-  currentColors = readMatugenColors();
-  for (const da of drawingAreas) {
-    da.queue_draw();
-  }
-}
-
-function getBgRgba(): [number, number, number, number] {
-  const [r, g, b] = hexToRgba(currentColors.surface);
-  return [r, g, b, 0.75];
-}
-
-function getAccentRgba(): [number, number, number, number] {
-  return hexToRgba(currentColors.primary);
-}
-
-export default function PanelBackground({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
-  const monitorConnector = gdkmonitor.get_connector();
-  let targetDx = BAR_WIDTH;
-  let currentDx = BAR_WIDTH;
-  let targetBottomHeight = 0;
-  let currentBottomHeight = 0;
-  let animTickId = 0;
-
-  const publishPanelSize = (dx: number, bottomHeight: number) => {
-    const activeMonitor = activeSidePanel.get().monitor;
-    // Popup windows consume these shared values. During a monitor switch, the
-    // old monitor still animates closed but must not overwrite the new popup's
-    // opening animation.
-    if (activeMonitor === monitorConnector || activeMonitor === '') {
-      setAnimDx(dx);
-      setAnimBottomHeight(bottomHeight);
-    }
-  };
-
-  const unsubscribePanel = activeSidePanel.subscribe(({ panel, monitor }) => {
-    const isTargetMonitor = monitor === monitorConnector;
-    if (isTargetMonitor) {
-      if (panel === 'control-center') {
-        targetDx = BAR_WIDTH + 490;
-      } else if (panel === 'date-weather') {
-        targetDx = BAR_WIDTH + 900;
-      } else {
-        targetDx = BAR_WIDTH;
-      }
-      if (panel === 'wallpaper-selector') {
-        targetBottomHeight = WALLPAPER_PANEL_HEIGHT;
-      } else if (panel === 'power-menu') {
-        targetBottomHeight = POWER_MENU_PANEL_HEIGHT;
-      } else {
-        targetBottomHeight = 0;
-      }
-    } else {
-      // A panel opened on another monitor must also collapse this monitor's
-      // previously expanded bar background.
-      targetDx = BAR_WIDTH;
-      targetBottomHeight = 0;
-    }
-
-    if (animTickId === 0) {
-      animTickId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000 / 60, () => {
-        const horizontalDiff = targetDx - currentDx;
-        const bottomDiff = targetBottomHeight - currentBottomHeight;
-        if (Math.abs(horizontalDiff) < 1.0 && Math.abs(bottomDiff) < 1.0) {
-          currentDx = targetDx;
-          currentBottomHeight = targetBottomHeight;
-          publishPanelSize(targetDx, targetBottomHeight);
-          animTickId = 0;
-          for (const da of drawingAreas) da.queue_draw();
-          return GLib.SOURCE_REMOVE;
-        }
-        // Simple ease-out
-        const speed = 0.22;
-
-        currentDx += horizontalDiff * speed;
-        currentBottomHeight += bottomDiff * speed;
-        publishPanelSize(currentDx, currentBottomHeight);
-        for (const da of drawingAreas) da.queue_draw();
-        return GLib.SOURCE_CONTINUE;
-      });
-    }
-  });
-
-  return (
+  const widget = (
     <drawingarea
       hexpand
       vexpand
       canTarget={false}
       canFocus={false}
       sensitive={false}
-      onDestroy={(da) => {
-        unsubscribePanel();
-        if (animTickId !== 0) {
-          GLib.source_remove(animTickId);
-          animTickId = 0;
-        }
-        const idx = drawingAreas.indexOf(da as Gtk.DrawingArea);
-        if (idx !== -1) drawingAreas.splice(idx, 1);
-      }}
-      $={(da: Gtk.DrawingArea) => {
-        drawingAreas.push(da);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        da.set_draw_func((_area, ctx: any, w: number, h: number) => {
-          const [bgR, bgG, bgB, bgA] = getBgRgba();
-          const [bR, bG, bB, bA] = getAccentRgba();
-
-          ctx.setAntialias(Cairo.Antialias.BEST);
-
-          const bw = BORDER_WIDTH;
-          const halfBw = bw / 2.0;
-          const r = 16; // border radius
-
-          // Desktop area rectangle (inset by half border width so stroke is fully visible)
-          const dx = currentDx + halfBw;
-          const dy = halfBw;
-          const dw = w - currentDx - bw;
-          const dh = h - currentBottomHeight - bw;
-
-          // 1. Fill entire screen with background color
-          ctx.setOperator(Cairo.Operator.OVER);
-          ctx.setSourceRGBA(bgR, bgG, bgB, bgA);
-          ctx.rectangle(0, 0, w, h);
-          ctx.fill();
-
-          // Path for desktop hole
-          ctx.newPath();
-          ctx.arc(dx + dw - r, dy + r, r, -Math.PI / 2, 0); // Top-right corner
-          ctx.arc(dx + dw - r, dy + dh - r, r, 0, Math.PI / 2); // Bottom-right corner
-          ctx.arc(dx + r, dy + dh - r, r, Math.PI / 2, Math.PI); // Bottom-left corner
-          ctx.arc(dx + r, dy + r, r, Math.PI, (3 * Math.PI) / 2); // Top-left corner
-          ctx.closePath();
-
-          // 2. Clear the desktop hole to show wallpaper/windows underneath
-          ctx.setOperator(Cairo.Operator.CLEAR);
-          ctx.fillPreserve();
-
-          // 3. Draw the accent border along the path
-          ctx.setOperator(Cairo.Operator.OVER);
-          ctx.setSourceRGBA(bR, bG, bB, bA);
-          ctx.setLineWidth(bw);
-          ctx.stroke();
-
-          // 4. Dispose of the Cairo context to prevent GJS memory leak
-          ctx.$dispose();
+      $={(self) => {
+        drawingArea = self;
+        self.set_draw_func((_area, context, width, height) => {
+          drawBackground(context, width, height, geometry.peek(), barColors.peek());
         });
       }}
     />
-  );
+  ) as Gtk.DrawingArea;
+
+  createEffect(() => {
+    geometry();
+    barColors();
+    drawingArea.queue_draw();
+  });
+
+  return widget;
 }

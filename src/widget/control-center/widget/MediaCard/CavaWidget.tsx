@@ -1,49 +1,28 @@
 import { Gtk } from 'ags/gtk4';
 
-import AstalCava from 'gi://AstalCava';
-
-let cavaInstance: AstalCava.Cava | null = null;
-let mappedWidgetCount = 0;
-
-function getCava() {
-  if (cavaInstance) return cavaInstance;
-
-  cavaInstance = AstalCava.get_default();
-  return cavaInstance;
-}
+import { acquireCava, isCavaAvailable } from '../../../../stores/media/cava';
 
 export default function CavaWidget() {
-  const cava = getCava();
-  if (!cava) return <box visible={false} />;
+  if (!isCavaAvailable()) return <box visible={false} />;
 
-  const area = new Gtk.DrawingArea();
-  area.set_size_request(-1, 160);
-  area.set_hexpand(true);
-  area.set_valign(Gtk.Align.END);
+  const area = new Gtk.DrawingArea({
+    hexpand: true,
+    valign: Gtk.Align.END,
+    widthRequest: -1,
+    heightRequest: 160,
+  });
 
-  let valuesSignalId = 0;
-  let isMapped = false;
+  let session: ReturnType<typeof acquireCava> = null;
 
   const activate = () => {
-    if (isMapped) return;
-
-    isMapped = true;
-    mappedWidgetCount++;
-    if (mappedWidgetCount === 1) cava.active = true;
-    valuesSignalId = cava.connect('notify::values', () => area.queue_draw());
+    if (session) return;
+    session = acquireCava(() => area.queue_draw());
     area.queue_draw();
   };
 
   const deactivate = () => {
-    if (!isMapped) return;
-
-    if (valuesSignalId !== 0) {
-      cava.disconnect(valuesSignalId);
-      valuesSignalId = 0;
-    }
-    isMapped = false;
-    mappedWidgetCount = Math.max(0, mappedWidgetCount - 1);
-    if (mappedWidgetCount === 0) cava.active = false;
+    session?.release();
+    session = null;
   };
 
   const mapSignalId = area.connect('map', activate);
@@ -52,13 +31,14 @@ export default function CavaWidget() {
     deactivate();
     area.disconnect(mapSignalId);
     area.disconnect(unmapSignalId);
+    area.set_draw_func(null);
   });
 
   let cachedColor = { r: 1, g: 1, b: 1, a: 0.15 };
   let frameCount = 0;
 
   area.set_draw_func((_area, cr, width, height) => {
-    const vals = cava.values.slice(0, 30);
+    const vals = session?.cava.values.slice(0, 30) ?? [];
     if (vals.length === 0) return;
 
     const SENSITIVITY = 1.5;
@@ -86,11 +66,7 @@ export default function CavaWidget() {
   });
 
   return (
-    <box
-      class="cava-visualizer"
-      css="margin-left: 12px; margin-right: 12px; margin-bottom: 1px;"
-      canTarget={false}
-    >
+    <box class="cava-visualizer" canTarget={false}>
       {area}
     </box>
   );

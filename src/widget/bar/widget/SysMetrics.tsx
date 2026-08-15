@@ -1,37 +1,41 @@
 import { Gdk, Gtk } from 'ags/gtk4';
 
-import { cpuUsage, gpuUsage, ramUsage } from '../../../stores/system';
-import { toggleControlCenter } from '../../../stores/windowManager';
+import { toggleControlCenter } from '../../../stores/shell/windowManager';
+import { cpuUsage, gpuUsage, ramUsage } from '../../../stores/system/system';
 import { LucideIcon } from '../../../widget/common/lucide';
 
-export default function SysMetrics({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
-  const toggleMenu = () => {
-    toggleControlCenter(gdkmonitor.get_connector());
-  };
+export interface SysMetricsProps {
+  monitor: Gdk.Monitor;
+}
 
-  const formatPercent = (val: number) => {
-    const rounded = Math.round(val);
-    const capped = rounded >= 100 ? 99 : rounded;
-    return capped.toString().padStart(2, '0');
+function formatPercent(value: number) {
+  const rounded = Math.round(value);
+  const capped = rounded >= 100 ? 99 : rounded;
+  return capped.toString().padStart(2, '0');
+}
+
+export default function SysMetrics({ monitor }: SysMetricsProps) {
+  const toggleMenu = () => {
+    toggleControlCenter(monitor.get_connector());
   };
 
   return (
     <button class="SysMetrics" onClicked={toggleMenu}>
       <box spacing={10} orientation={Gtk.Orientation.VERTICAL}>
         <box spacing={0} orientation={Gtk.Orientation.VERTICAL}>
-          <LucideIcon name="cpu" class="icon" css="margin-bottom: 4px;" />
-          <label label={cpuUsage.as(formatPercent)} css="font-size: 0.9em;" />
-          <label label="%" css="font-size: 0.75em;" />
+          <LucideIcon name="cpu" class="icon metric-icon" />
+          <label label={cpuUsage.as(formatPercent)} class="metric-value" />
+          <label label="%" class="metric-unit" />
         </box>
         <box spacing={0} orientation={Gtk.Orientation.VERTICAL}>
-          <LucideIcon name="memory-stick" class="icon" css="margin-bottom: 4px;" />
-          <label label={ramUsage.as((r) => r.used.toFixed(1))} css="font-size: 0.9em;" />
-          <label label="GB" css="font-size: 0.75em;" />
+          <LucideIcon name="memory-stick" class="icon metric-icon" />
+          <label label={ramUsage.as((r) => r.used.toFixed(1))} class="metric-value" />
+          <label label="GB" class="metric-unit" />
         </box>
         <box spacing={0} orientation={Gtk.Orientation.VERTICAL}>
-          <LucideIcon name="gpu" class="icon" css="margin-bottom: 4px;" />
-          <label label={gpuUsage.as(formatPercent)} css="font-size: 0.9em;" />
-          <label label="%" css="font-size: 0.75em;" />
+          <LucideIcon name="gpu" class="icon metric-icon" />
+          <label label={gpuUsage.as(formatPercent)} class="metric-value" />
+          <label label="%" class="metric-unit" />
         </box>
       </box>
     </button>

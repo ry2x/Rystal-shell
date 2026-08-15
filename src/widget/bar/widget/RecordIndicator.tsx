@@ -1,6 +1,6 @@
 import { Gtk } from 'ags/gtk4';
 
-import { isRecording, stopRecord } from '../../../stores/recording';
+import { isRecording, stopRecord } from '../../../stores/capture/recording';
 import { LucideIcon } from '../../../widget/common/lucide';
 
 export default function RecordIndicator() {
@@ -11,7 +11,7 @@ export default function RecordIndicator() {
       revealChild={isRecording}
     >
       <button class="RecordIndicator" onClicked={() => stopRecord()} tooltipText="Stop Recording">
-        <box css="padding: 2px 4px;">
+        <box class="record-indicator-content">
           <LucideIcon name="circle-stop" pixelSize={18} />
         </box>
       </button>

@@ -1,7 +1,8 @@
 import { Gtk } from 'ags/gtk4';
 
-import { LOCATION, getWeatherIcon, weatherInfo } from '../../../stores/weather';
+import { LOCATION, getWeatherIcon, weatherInfo } from '../../../stores/system/weather';
 import { LucideIcon } from '../../../widget/common/lucide';
+import ForecastItem from './ForecastItem';
 
 export default function WeatherCard() {
   return (
@@ -39,7 +40,7 @@ export default function WeatherCard() {
         </box>
         <label
           label={weatherInfo.as((w) => (w ? w.region : LOCATION))}
-          css="font-size: 1.1em; font-weight: 700; color: alpha(currentColor, 0.7);"
+          class="weather-region"
           halign={Gtk.Align.END}
           valign={Gtk.Align.CENTER}
         />
@@ -58,46 +59,14 @@ export default function WeatherCard() {
       </box>
 
       {/* 2-Day Forecast */}
-      <box orientation={Gtk.Orientation.HORIZONTAL} spacing={16} homogeneous css="margin-top: 4px;">
-        {[0, 1].map((i) => (
-          <box
-            orientation={Gtk.Orientation.HORIZONTAL}
-            spacing={12}
-            valign={Gtk.Align.CENTER}
-            halign={Gtk.Align.CENTER}
-          >
-            <label
-              label={weatherInfo.as((w) =>
-                w && w.forecast[i]
-                  ? new Date(w.forecast[i].date)
-                      .toLocaleDateString('en-US', { weekday: 'short' })
-                      .toUpperCase()
-                  : '',
-              )}
-              class="forecast-day"
-              halign={Gtk.Align.START}
-            />
-            <LucideIcon
-              name={weatherInfo.as((w) =>
-                w && w.forecast[i] ? getWeatherIcon(w.forecast[i].code) : 'cloud',
-              )}
-              pixelSize={24}
-              class="forecast-icon"
-            />
-            <box orientation={Gtk.Orientation.VERTICAL} spacing={2} valign={Gtk.Align.CENTER}>
-              <label
-                label={weatherInfo.as((w) => (w && w.forecast[i] ? `${w.forecast[i].max}°C` : ''))}
-                class="forecast-max"
-                halign={Gtk.Align.START}
-              />
-              <label
-                label={weatherInfo.as((w) => (w && w.forecast[i] ? `${w.forecast[i].min}°C` : ''))}
-                class="forecast-min"
-                halign={Gtk.Align.START}
-              />
-            </box>
-          </box>
-        ))}
+      <box
+        class="weather-forecast"
+        orientation={Gtk.Orientation.HORIZONTAL}
+        spacing={16}
+        homogeneous
+      >
+        <ForecastItem index={0} />
+        <ForecastItem index={1} />
       </box>
     </box>
   );

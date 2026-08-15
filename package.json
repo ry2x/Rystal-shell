@@ -7,6 +7,7 @@
     "@eslint/js": "^10.0.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/node": "^26.2.0",
+    "esbuild": "0.25.10",
     "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.8",
     "knip": "^6.32.0",
@@ -18,14 +19,17 @@
     "generate-type": "ags types -d .",
     "lint": "eslint .",
     "format": "prettier --write \"./**/*.{js,ts,tsx,json,css,scss,md,html}\" \"./*.{js,ts,tsx,json}\"",
+    "format:check": "prettier --check \"./**/*.{js,ts,tsx,json,css,scss,md,html}\" \"./*.{js,ts,tsx,json}\"",
     "tsc": "tsc --noEmit",
+    "typecheck": "bash scripts/typecheck.sh",
     "knip": "knip",
-    "check": "pnpm lint && pnpm knip && pnpm tsc",
+    "check": "pnpm format:check && pnpm lint && pnpm knip && pnpm typecheck",
     "build": "./scripts/build.sh",
     "dev": "./scripts/dev.sh",
     "deploy:user": "./scripts/deploy-user.sh"
   },
   "name": "rystal-shell",
+  "packageManager": "pnpm@11.9.0",
   "license": "GPL-3.0-or-later",
   "private": true
 }

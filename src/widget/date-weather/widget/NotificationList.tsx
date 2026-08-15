@@ -1,4 +1,3 @@
-import { createBinding as bind } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
 import Notifd from 'gi://AstalNotifd';
@@ -6,15 +5,15 @@ import Notifd from 'gi://AstalNotifd';
 import {
   clearNotifications,
   dismissNotification,
+  doNotDisturb,
   notifications,
-} from '../../../stores/notification';
+  toggleDoNotDisturb,
+} from '../../../stores/notification/notification';
 import { LucideIcon } from '../../../widget/common/lucide';
 import AnimatedList from '../../common/AnimatedList';
 import NotificationCard from '../../common/NotificationCard';
 
 export default function NotificationList() {
-  const notifd = Notifd.get_default();
-
   return (
     <box orientation={Gtk.Orientation.VERTICAL} spacing={16} class="right-column">
       <box class="notif-header" spacing={8}>
@@ -23,20 +22,18 @@ export default function NotificationList() {
 
         {/* DND Toggle */}
         <button
-          class={bind(notifd, 'dontDisturb').as((d) =>
-            d ? 'notif-header-btn dnd active' : 'notif-header-btn dnd',
+          class={doNotDisturb.as((enabled) =>
+            enabled ? 'notif-header-btn dnd active' : 'notif-header-btn dnd',
           )}
-          onClicked={() => {
-            notifd.dontDisturb = !notifd.dontDisturb;
-          }}
+          onClicked={toggleDoNotDisturb}
           tooltipText="Toggle Do Not Disturb"
         >
           <box spacing={6}>
             <LucideIcon
-              name={bind(notifd, 'dontDisturb').as((d) => (d ? 'bell-off' : 'bell'))}
+              name={doNotDisturb.as((enabled) => (enabled ? 'bell-off' : 'bell'))}
               pixelSize={14}
             />
-            <label label="DND" css="font-size: 0.8em; font-weight: 600;" />
+            <label label="DND" />
           </box>
         </button>
 
@@ -44,20 +41,20 @@ export default function NotificationList() {
         <button class="notif-header-btn clear-all" onClicked={clearNotifications}>
           <box spacing={6}>
             <LucideIcon name="trash-2" pixelSize={14} />
-            <label label="Clear All" css="font-size: 0.8em; font-weight: 600;" />
+            <label label="Clear All" />
           </box>
         </button>
       </box>
 
       {/* Notification List */}
       <box
+        class="notif-empty"
         visible={notifications.as((items) => items.length === 0)}
         halign={Gtk.Align.CENTER}
         valign={Gtk.Align.CENTER}
-        css="min-height: 160px; color: alpha(currentColor, 0.5);"
       >
-        <LucideIcon name="bell-check" pixelSize={25} css="margin-right: 8px;" />
-        <label label="No Notifications" css="font-weight: 700;" />
+        <LucideIcon name="bell-check" pixelSize={25} class="notif-empty-icon" />
+        <label label="No Notifications" class="notif-empty-label" />
       </box>
       <scrolledwindow
         cssClasses={['notif-scroll']}
@@ -70,14 +67,12 @@ export default function NotificationList() {
           idFor={(notification: Notifd.Notification) => String(notification.id)}
           className="notif-list"
           spacing={12}
-          renderItem={(notification: Notifd.Notification) =>
-            (
-              <NotificationCard
-                notif={notification}
-                onDismiss={() => dismissNotification(notification)}
-              />
-            ) as unknown as Gtk.Widget
-          }
+          renderItem={(notification: Notifd.Notification) => (
+            <NotificationCard
+              notif={notification}
+              onDismiss={() => dismissNotification(notification)}
+            />
+          )}
         />
       </scrolledwindow>
     </box>

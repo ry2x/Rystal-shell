@@ -117,11 +117,53 @@ window.Bar {
     .time {
       font-weight: 800;
       color: $on-surface;
-      font-size: 0.95em;
-      margin-left: 4px;
+      font-size: 1.2em;
+      margin: 0 -22px;
+      transform: rotate(90deg);
     }
     .date {
       color: $accent;
+      font-size: 1.1em;
+      font-weight: 700;
+      margin: 0 -18px;
+      transform: rotate(90deg);
+    }
+    .day {
+      color: rgba($text, 0.7);
+      font-size: 0.95em;
+      font-weight: 600;
+      margin: 0 -12px;
+      text-transform: uppercase;
+      transform: rotate(90deg);
+    }
+  }
+
+  .Volume .volume-unit {
+    font-size: 0.85em;
+  }
+
+  .SysMetrics {
+    .metric-icon {
+      margin-bottom: 4px;
+    }
+    .metric-value {
+      font-size: 0.9em;
+    }
+    .metric-unit {
+      font-size: 0.75em;
+    }
+  }
+
+  .Weather {
+    .bar-weather-icon {
+      margin-bottom: 4px;
+    }
+    .bar-weather-value {
+      font-weight: 800;
+    }
+    .bar-weather-unit {
+      font-size: 0.85em;
+      font-weight: 800;
     }
   }
 
@@ -133,6 +175,10 @@ window.Bar {
 
     &:hover {
       background: rgba($error, 0.25);
+    }
+
+    .record-indicator-content {
+      padding: 2px 4px;
     }
   }
 
@@ -149,8 +195,18 @@ window.Bar {
   }
 
   .ScrollerIndicator {
+    .scroller-icon {
+      margin-bottom: 4px;
+    }
+    .scroller-count {
+      font-weight: 800;
+    }
     .separator {
       background-color: $accent;
+      border-radius: 2px;
+      margin: 2px 0;
+      min-height: 3px;
+      min-width: 12px;
     }
   }
 

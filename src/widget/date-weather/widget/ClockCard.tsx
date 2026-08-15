@@ -1,6 +1,6 @@
 import { Gtk } from 'ags/gtk4';
 
-import { clockDate, clockDay, clockTime, clockTz } from '../../../stores/time';
+import { clockDate, clockDay, clockTime, clockTz } from '../../../stores/system/time';
 
 export default function ClockCard() {
   return (
@@ -15,7 +15,7 @@ export default function ClockCard() {
         <box hexpand />
         <label label={clockTime} class="clock-time" />
         <box hexpand valign={Gtk.Align.END} halign={Gtk.Align.START}>
-          <label label={clockTz} class="clock-tz" css="margin-left: 8px;" />
+          <label label={clockTz} class="clock-tz" />
         </box>
       </box>
       <box spacing={8} halign={Gtk.Align.CENTER}>

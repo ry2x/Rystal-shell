@@ -1,11 +1,12 @@
+import Cairo from 'cairo';
+
+import { onCleanup } from 'ags';
 import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
-
-import GLib from 'gi://GLib';
-import Cairo from 'gi://cairo';
+import { timeout } from 'ags/time';
 
 import BarReserve from './BarReserve';
-import PanelBackground, { forceRedrawBar } from './PanelBackground';
+import PanelBackground from './PanelBackground';
 import Clock from './widget/Clock';
 import RecordIndicator from './widget/RecordIndicator';
 import ScrollerIndicator from './widget/ScrollerIndicator';
@@ -16,107 +17,91 @@ import Volume from './widget/Volume';
 import Weather from './widget/Weather';
 import Workspaces from './widget/Workspaces';
 
-export { forceRedrawBar };
+export interface BarProps {
+  monitor: Gdk.Monitor;
+}
 
 const BORDER_WIDTH = 3;
 const BAR_WIDTH = 47;
+const INPUT_REGION_DELAY_MS = 500;
 
-export default function Bar(gdkmonitor: Gdk.Monitor) {
-  BarReserve(gdkmonitor);
+function setBarInputRegion(window: Astal.Window) {
+  const surface = window.get_native()?.get_surface();
+  if (!surface) return;
+
+  const region = new Cairo.Region();
+  region.unionRectangle({
+    x: 0,
+    y: 0,
+    width: BAR_WIDTH + BORDER_WIDTH,
+    height: 9999,
+  });
+  surface.set_input_region(region);
+}
+
+export default function Bar({ monitor }: BarProps) {
+  BarReserve({ monitor });
 
   const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
-
-  return (
+  const window = (
     <window
       visible
-      name={`bar-${gdkmonitor.get_connector()}`}
+      name={`bar-${monitor.get_connector()}`}
       cssClasses={['Bar']}
-      gdkmonitor={gdkmonitor}
+      gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.TOP}
       anchor={TOP | BOTTOM | LEFT | RIGHT}
       application={app}
-      $={(self) => {
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 500, () => {
-          const surf = self.get_native()?.get_surface();
-          if (surf) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const Region = (Cairo as any).Region;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const RectangleInt = (Cairo as any).RectangleInt;
-            const region = new Region();
-            region.unionRectangle(
-              new RectangleInt({ x: 0, y: 0, width: BAR_WIDTH + BORDER_WIDTH, height: 9999 }),
-            );
-            surf.set_input_region(region);
-          }
-          return GLib.SOURCE_REMOVE;
-        });
-      }}
     >
-      <overlay
-        hexpand
-        vexpand
-        $={(overlay) => {
-          overlay.add_overlay(
-            (
-              <box halign={Gtk.Align.START}>
-                <centerbox
-                  class="panel"
-                  orientation={Gtk.Orientation.VERTICAL}
-                  startWidget={
-                    (
-                      <box
-                        halign={Gtk.Align.FILL}
-                        valign={Gtk.Align.START}
-                        class="panel-start"
-                        orientation={Gtk.Orientation.VERTICAL}
-                        spacing={24}
-                      >
-                        <Workspaces gdkmonitor={gdkmonitor} />
-                        <ScrollerIndicator gdkmonitor={gdkmonitor} />
-                      </box>
-                    ) as Gtk.Widget
-                  }
-                  centerWidget={
-                    (
-                      <box
-                        halign={Gtk.Align.FILL}
-                        valign={Gtk.Align.CENTER}
-                        class="panel-center"
-                        orientation={Gtk.Orientation.VERTICAL}
-                        spacing={8}
-                      >
-                        <Weather gdkmonitor={gdkmonitor} />
-                        <Clock gdkmonitor={gdkmonitor} />
-                      </box>
-                    ) as Gtk.Widget
-                  }
-                  endWidget={
-                    (
-                      <box
-                        halign={Gtk.Align.FILL}
-                        valign={Gtk.Align.END}
-                        class="panel-end"
-                        orientation={Gtk.Orientation.VERTICAL}
-                        spacing={8}
-                      >
-                        <RecordIndicator />
-                        <Updates gdkmonitor={gdkmonitor} />
-                        <SysMetrics gdkmonitor={gdkmonitor} />
-                        <Volume gdkmonitor={gdkmonitor} />
-                        <Tray />
-                      </box>
-                    ) as Gtk.Widget
-                  }
-                />
-              </box>
-            ) as Gtk.Widget,
-          );
-        }}
-      >
-        <PanelBackground gdkmonitor={gdkmonitor} />
+      <overlay hexpand vexpand>
+        <PanelBackground monitor={monitor} />
+        <box $type="overlay" halign={Gtk.Align.START}>
+          <centerbox class="panel" orientation={Gtk.Orientation.VERTICAL}>
+            <box
+              $type="start"
+              halign={Gtk.Align.FILL}
+              valign={Gtk.Align.START}
+              class="panel-start"
+              orientation={Gtk.Orientation.VERTICAL}
+              spacing={24}
+            >
+              <Workspaces monitor={monitor} />
+              <ScrollerIndicator monitor={monitor} />
+            </box>
+            <box
+              $type="center"
+              halign={Gtk.Align.FILL}
+              valign={Gtk.Align.CENTER}
+              class="panel-center"
+              orientation={Gtk.Orientation.VERTICAL}
+              spacing={8}
+            >
+              <Weather monitor={monitor} />
+              <Clock monitor={monitor} />
+            </box>
+            <box
+              $type="end"
+              halign={Gtk.Align.FILL}
+              valign={Gtk.Align.END}
+              class="panel-end"
+              orientation={Gtk.Orientation.VERTICAL}
+              spacing={8}
+            >
+              <RecordIndicator />
+              <Updates monitor={monitor} />
+              <SysMetrics monitor={monitor} />
+              <Volume monitor={monitor} />
+              <Tray />
+            </box>
+          </centerbox>
+        </box>
       </overlay>
     </window>
-  );
+  ) as Astal.Window;
+
+  const inputRegionTimer = timeout(INPUT_REGION_DELAY_MS, () => setBarInputRegion(window));
+  onCleanup(() => inputRegionTimer.cancel());
+
+  return window;
 }

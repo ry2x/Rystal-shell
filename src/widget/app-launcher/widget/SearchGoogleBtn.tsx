@@ -1,23 +1,17 @@
+import type { Accessor } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
-import { getDirectUrl, openQuery } from '../../../stores/application';
-import { toggleAppLauncher } from '../../../stores/windowManager';
+import { getDirectUrl, openQuery } from '../../../stores/application/query';
+import { toggleAppLauncher } from '../../../stores/shell/windowManager';
 
-interface TextState {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  as: (cb: (t: string) => boolean | string) => any;
-  peek: () => string | undefined;
+export interface SearchGoogleBtnProps {
+  textState: Accessor<string>;
+  monitorConnector: string | null;
 }
 
-export function SearchGoogleBtn({
-  textState,
-  monitorConnector,
-}: {
-  textState: TextState;
-  monitorConnector: string | null;
-}) {
+export function SearchGoogleBtn({ textState, monitorConnector }: SearchGoogleBtnProps): Gtk.Button {
   return (
     <button
       class="applauncher-item"

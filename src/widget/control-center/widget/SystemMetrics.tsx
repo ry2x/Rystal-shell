@@ -1,16 +1,14 @@
 import { Gtk } from 'ags/gtk4';
 
-import { RamData, cpuUsage, gpuUsage, openSystemMonitor, ramUsage } from '../../../stores/system';
+import { cpuUsage, gpuUsage, openSystemMonitor, ramUsage } from '../../../stores/system/system';
+import type { RamData } from '../../../stores/system/system';
 import CircularProgress from '../../common/CircularProgress';
 
 export default function SystemMetrics() {
   return (
     <box class="cc-card" orientation={Gtk.Orientation.HORIZONTAL} spacing={16} homogeneous hexpand>
       <box halign={Gtk.Align.CENTER}>
-        <button
-          css="background: transparent; border: none; box-shadow: none; padding: 0; border-radius: 50%;"
-          onClicked={() => openSystemMonitor()}
-        >
+        <button class="cc-metric-button" onClicked={openSystemMonitor}>
           <CircularProgress
             variable={cpuUsage}
             transformer={(c: number) => c / 100}
@@ -23,10 +21,7 @@ export default function SystemMetrics() {
       </box>
 
       <box halign={Gtk.Align.CENTER}>
-        <button
-          css="background: transparent; border: none; box-shadow: none; padding: 0; border-radius: 50%;"
-          onClicked={() => openSystemMonitor()}
-        >
+        <button class="cc-metric-button" onClicked={openSystemMonitor}>
           <CircularProgress
             variable={ramUsage}
             transformer={(r: RamData) => r.percent}
@@ -39,10 +34,7 @@ export default function SystemMetrics() {
       </box>
 
       <box halign={Gtk.Align.CENTER}>
-        <button
-          css="background: transparent; border: none; box-shadow: none; padding: 0; border-radius: 50%;"
-          onClicked={() => openSystemMonitor()}
-        >
+        <button class="cc-metric-button" onClicked={openSystemMonitor}>
           <CircularProgress
             variable={gpuUsage}
             transformer={(g: number) => g / 100}

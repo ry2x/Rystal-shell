@@ -1,125 +1,117 @@
-import { onCleanup } from 'gnim';
 import system from 'system';
 
+import { onCleanup } from 'ags';
 import { Gtk } from 'ags/gtk4';
+import { type Timer, timeout } from 'ags/time';
 
 import Notifd from 'gi://AstalNotifd';
-import Gdk from 'gi://Gdk';
 import Pango from 'gi://Pango';
 
 import { loadTextureFromUri } from '../../lib/image';
-import { LucideIcon } from '../../widget/common/lucide';
+import { LucideIcon } from './lucide';
 
-function resolveImage(img: string | null) {
-  if (!img) return null;
-  if (img.startsWith('file://')) return img;
-  if (img.startsWith('/')) return `file://${img}`;
+export interface NotificationCardProps {
+  notif: Notifd.Notification;
+  onDismiss?: () => void;
+}
+
+const IMAGE_RELEASE_DELAY_MS = 300;
+
+function resolveImage(image: string | null) {
+  if (!image) return null;
+  if (image.startsWith('file://')) return image;
+  if (image.startsWith('/')) return `file://${image}`;
   return null;
 }
 
-export default function NotificationCard({
-  notif,
-  onDismiss,
-}: {
-  notif: Notifd.Notification;
-  onDismiss?: () => void;
-}) {
+function collectGarbage() {
+  try {
+    system.gc();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+class NotificationImageResources {
+  appIconPicture: Gtk.Picture | null = null;
+  imagePicture: Gtk.Picture | null = null;
+
+  private releaseTimer: Timer | null = null;
+  private disposed = false;
+  private readonly resolvedHook: number;
+
+  constructor(private readonly notification: Notifd.Notification) {
+    this.resolvedHook = notification.connect('resolved', () => this.scheduleRelease());
+  }
+
+  private scheduleRelease() {
+    this.releaseTimer?.cancel();
+    this.releaseTimer = timeout(IMAGE_RELEASE_DELAY_MS, () => {
+      this.releaseTimer = null;
+      this.releaseImages();
+      collectGarbage();
+    });
+  }
+
+  private releaseImages() {
+    this.appIconPicture?.set_paintable(null);
+    this.imagePicture?.set_paintable(null);
+    this.appIconPicture = null;
+    this.imagePicture = null;
+  }
+
+  dispose() {
+    if (this.disposed) return;
+    this.disposed = true;
+    this.releaseTimer?.cancel();
+    this.releaseTimer = null;
+    this.releaseImages();
+    this.notification.disconnect(this.resolvedHook);
+    collectGarbage();
+  }
+}
+
+export default function NotificationCard({ notif, onDismiss }: NotificationCardProps) {
   const appIcon = notif.app_icon || notif.desktop_entry || notif.image;
   const appIconPath = resolveImage(appIcon);
   const imageToDisplay = resolveImage(notif.image);
-
-  const timeStr = new Date(notif.time * 1000).toLocaleTimeString([], {
+  const time = new Date(notif.time * 1000).toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
   });
+  const resources = new NotificationImageResources(notif);
 
-  let appIconPic: Gtk.Picture | null = null;
-  let imagePic: Gtk.Picture | null = null;
-  let releaseTimeout: ReturnType<typeof setTimeout> | null = null;
-  let isDestroyed = false;
-
-  const releaseImages = () => {
-    if (appIconPic) {
-      appIconPic.set_paintable(null as unknown as Gdk.Paintable);
-      appIconPic = null;
-    }
-    if (imagePic) {
-      imagePic.set_paintable(null as unknown as Gdk.Paintable);
-      imagePic = null;
-    }
-  };
-
-  const collectGarbage = () => {
-    try {
-      system.gc();
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const resolvedHook = notif.connect('resolved', () => {
-    if (releaseTimeout) clearTimeout(releaseTimeout);
-    releaseTimeout = setTimeout(() => {
-      releaseImages();
-      releaseTimeout = null;
-      collectGarbage();
-    }, 300);
-  });
-
-  const cleanup = () => {
-    if (isDestroyed) return;
-    isDestroyed = true;
-    if (releaseTimeout) {
-      clearTimeout(releaseTimeout);
-      releaseTimeout = null;
-    }
-    releaseImages();
-    notif.disconnect(resolvedHook);
-    collectGarbage();
-  };
-
-  const onDestroy = () => {
-    cleanup();
-  };
-
-  onCleanup(cleanup);
+  onCleanup(() => resources.dispose());
 
   return (
     <box
-      onDestroy={onDestroy}
+      onDestroy={() => resources.dispose()}
       class={`notif-card urgency-${notif.urgency}`}
       orientation={Gtk.Orientation.VERTICAL}
       spacing={8}
       widthRequest={380}
     >
       <box spacing={12}>
-        {/* ICON */}
         <box class="notif-icon-container" valign={Gtk.Align.START}>
           {appIconPath ? (
-            <box
-              css="min-width: 32px; min-height: 32px;"
-              overflow={Gtk.Overflow.HIDDEN}
-              valign={Gtk.Align.CENTER}
-            >
-              <overlay
-                $={(self: Gtk.Overlay) => {
-                  const dummyBox = (<box widthRequest={32} heightRequest={32} />) as Gtk.Widget;
-                  self.set_child(dummyBox);
-
-                  const pic = new Gtk.Picture({
-                    canFocus: false,
-                    canShrink: true,
-                    contentFit: Gtk.ContentFit.CONTAIN,
-                  });
-                  appIconPic = pic;
-                  try {
-                    pic.set_paintable(loadTextureFromUri(appIconPath, 64, 64));
-                  } catch (e) {
-                    console.error(e);
-                  }
-                  self.add_overlay(pic);
-                }}
-              />
+            <box class="notif-app-icon" overflow={Gtk.Overflow.HIDDEN} valign={Gtk.Align.CENTER}>
+              <overlay>
+                <box widthRequest={32} heightRequest={32} />
+                <Gtk.Picture
+                  $type="overlay"
+                  canFocus={false}
+                  canShrink
+                  contentFit={Gtk.ContentFit.CONTAIN}
+                  $={(picture) => {
+                    resources.appIconPicture = picture;
+                    try {
+                      picture.set_paintable(loadTextureFromUri(appIconPath, 64, 64));
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  }}
+                />
+              </overlay>
             </box>
           ) : appIcon ? (
             <image iconName={appIcon} pixelSize={32} valign={Gtk.Align.CENTER} />
@@ -128,7 +120,6 @@ export default function NotificationCard({
           )}
         </box>
 
-        {/* SUMMARY & APP NAME & TIME */}
         <box orientation={Gtk.Orientation.VERTICAL} hexpand>
           <box orientation={Gtk.Orientation.HORIZONTAL}>
             <label
@@ -140,8 +131,7 @@ export default function NotificationCard({
               maxWidthChars={18}
             />
             <box hexpand />
-            <label label={timeStr} class="notif-time" xalign={1} />
-            {/* CLOSE BUTTON */}
+            <label label={time} class="notif-time" xalign={1} />
             <button
               class="notif-close"
               onClicked={() => {
@@ -164,14 +154,13 @@ export default function NotificationCard({
         </box>
       </box>
 
-      {/* BODY */}
       {notif.body && (
         <label
           label={notif.body}
           class="notif-body"
-          useMarkup={true}
+          useMarkup
           xalign={0}
-          wrap={true}
+          wrap
           wrapMode={Pango.WrapMode.WORD_CHAR}
           maxWidthChars={36}
           lines={3}
@@ -179,36 +168,28 @@ export default function NotificationCard({
         />
       )}
 
-      {/* IMAGE */}
       {imageToDisplay && (
-        <box
-          class="notif-image"
-          css="border-radius: 8px; min-height: 140px; margin-top: 4px;"
-          overflow={Gtk.Overflow.HIDDEN}
-        >
-          <overlay
-            $={(self: Gtk.Overlay) => {
-              const dummyBox = (<box hexpand={true} heightRequest={140} />) as Gtk.Widget;
-              self.set_child(dummyBox);
-
-              const pic = new Gtk.Picture({
-                canFocus: false,
-                canShrink: true,
-                contentFit: Gtk.ContentFit.COVER,
-              });
-              imagePic = pic;
-              try {
-                pic.set_paintable(loadTextureFromUri(imageToDisplay, 760, 280));
-              } catch (e) {
-                console.error(e);
-              }
-              self.add_overlay(pic);
-            }}
-          />
+        <box class="notif-image" overflow={Gtk.Overflow.HIDDEN}>
+          <overlay>
+            <box hexpand heightRequest={140} />
+            <Gtk.Picture
+              $type="overlay"
+              canFocus={false}
+              canShrink
+              contentFit={Gtk.ContentFit.COVER}
+              $={(picture) => {
+                resources.imagePicture = picture;
+                try {
+                  picture.set_paintable(loadTextureFromUri(imageToDisplay, 760, 280));
+                } catch (error) {
+                  console.error(error);
+                }
+              }}
+            />
+          </overlay>
         </box>
       )}
 
-      {/* ACTIONS */}
       {notif.get_actions().length > 0 && (
         <box spacing={8} class="notif-actions" marginTop={4}>
           {notif.get_actions().map((action) => (

@@ -1,237 +1,51 @@
-import { createBinding as bind } from 'ags';
-import { Gdk, Gtk } from 'ags/gtk4';
+import { type Accessor } from 'ags';
+import { Gtk } from 'ags/gtk4';
 
-import Apps from 'gi://AstalApps';
 import Mpris from 'gi://AstalMpris';
 import Pango from 'gi://Pango';
 
-import { loadTextureFromUri } from '../../../../lib/image';
-import { fetchYouTubeThumbnail } from '../../../../stores/mprisThumbnail';
-import { closeAllControlCenters, focusWindow } from '../../../../stores/windowManager';
-import { LucideIcon } from '../../../../widget/common/lucide';
+import { createPlayerArtwork } from '../../../../stores/media/media';
 import CavaWidget from './CavaWidget';
+import PlayerArtwork from './PlayerArtwork';
+import PlayerControls from './PlayerControls';
+import { getMediaSource } from './utils';
 
-const apps = new Apps.Apps();
-
-function getMediaSource(player: Mpris.Player) {
-  const entry = player.entry || '';
-  const normalizedEntry = entry.replace(/\.desktop$/, '');
-  const app = apps.get_list().find((candidate) => {
-    const candidateEntry = candidate.entry.replace(/\.desktop$/, '');
-    return candidateEntry === normalizedEntry;
-  });
-
-  return {
-    iconName: app?.iconName || 'multimedia-player-symbolic',
-    name: app?.name || player.identity || entry || 'Media Player',
-  };
-}
-
-function updatePicture(pic: Gtk.Picture, artUrl: string | null) {
-  if (!pic) return;
-  if (!artUrl) {
-    pic.set_paintable(null as unknown as Gdk.Paintable);
-    return;
-  }
-
-  const uri = artUrl.startsWith('file://')
-    ? artUrl
-    : artUrl.startsWith('/')
-      ? `file://${artUrl}`
-      : '';
-  if (!uri) {
-    pic.set_paintable(null as unknown as Gdk.Paintable);
-    return;
-  }
-
-  try {
-    pic.set_paintable(loadTextureFromUri(uri, 160, 160));
-  } catch (e) {
-    pic.set_paintable(null as unknown as Gdk.Paintable);
-    console.error(e);
-  }
-}
-
-export default function PlayerCard({
-  player,
-  onSwitch,
-  name,
-}: {
+export interface PlayerCardProps {
   player: Mpris.Player;
+  canSwitch: Accessor<boolean>;
   onSwitch: () => void;
-  name: string;
-}) {
+}
+
+export default function PlayerCard({ player, canSwitch, onSwitch }: PlayerCardProps) {
+  const artwork = createPlayerArtwork(player);
   const mediaSource = getMediaSource(player);
-  const pic = new Gtk.Picture({
-    contentFit: Gtk.ContentFit.COVER,
-    canFocus: false,
-    canShrink: true,
-  });
-  const picRef = pic;
-  let disposed = false;
-  let updateGeneration = 0;
-  let lastYouTubeArt: string | null = null;
-
-  const updateImg = async () => {
-    const generation = ++updateGeneration;
-    const coverArt = player.cover_art;
-
-    // AstalMpris caches art_url as a local file path. Prefer it to avoid an
-    // unnecessary YouTube thumbnail request whenever the player provides art.
-    if (coverArt) {
-      lastYouTubeArt = null;
-      updatePicture(picRef, coverArt);
-      return;
-    }
-
-    try {
-      const ytArt = await fetchYouTubeThumbnail(player);
-      if (disposed || generation !== updateGeneration) return;
-      if (ytArt && ytArt === lastYouTubeArt) return;
-      lastYouTubeArt = ytArt;
-      updatePicture(picRef, ytArt);
-    } catch (e) {
-      if (disposed || generation !== updateGeneration) return;
-      console.error(e);
-      updatePicture(picRef, null);
-    }
-  };
-
-  const hook = player.connect('notify::cover-art', updateImg);
-  updateImg();
 
   return (
-    <overlay
-      name={name}
-      cssClasses={['cc-media-card']}
-      onDestroy={() => {
-        disposed = true;
-        updateGeneration++;
-        player.disconnect(hook);
-        picRef.set_paintable(null as unknown as Gdk.Paintable);
-      }}
-      $={(self: Gtk.Overlay) => {
-        const cavaContainer = (
-          <box heightRequest={160} hexpand={true}>
-            <CavaWidget />
-          </box>
-        ) as Gtk.Widget;
-        self.set_child(cavaContainer);
-
-        const controlsBox = (
-          <box spacing={16} css="padding: 16px;" hexpand={true}>
-            <box
-              valign={Gtk.Align.CENTER}
-              css="border-radius: 12px;"
-              widthRequest={80}
-              heightRequest={80}
-              overflow={Gtk.Overflow.HIDDEN}
-            >
-              <overlay
-                $={(artOverlay: Gtk.Overlay) => {
-                  const dummyBox = (<box widthRequest={80} heightRequest={80} />) as Gtk.Widget;
-                  artOverlay.set_child(dummyBox);
-
-                  const artScroll = (
-                    <scrolledwindow
-                      hscrollbarPolicy={Gtk.PolicyType.NEVER}
-                      vscrollbarPolicy={Gtk.PolicyType.NEVER}
-                      propagateNaturalWidth={false}
-                      propagateNaturalHeight={false}
-                      widthRequest={80}
-                      heightRequest={80}
-                    >
-                      {pic}
-                    </scrolledwindow>
-                  ) as Gtk.Widget;
-                  artOverlay.add_overlay(artScroll);
-                }}
-              />
-            </box>
-            <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER} hexpand>
-              <button
-                css="background: transparent; border: none; box-shadow: none; padding: 0;"
-                halign={Gtk.Align.START}
-                onClicked={async () => {
-                  try {
-                    player.raise();
-                  } catch (e) {
-                    console.error(e);
-                  }
-                  if (player.entry) {
-                    focusWindow(player.entry);
-                    closeAllControlCenters();
-                  }
-                }}
-              >
-                <label
-                  label={bind(player, 'title').as((t) => t || 'Unknown')}
-                  css="font-weight: 800; font-size: 1.2em;"
-                  halign={Gtk.Align.START}
-                  wrap={true}
-                  wrapMode={Pango.WrapMode.WORD_CHAR}
-                  maxWidthChars={18}
-                  lines={2}
-                  ellipsize={Pango.EllipsizeMode.END}
-                />
-              </button>
-              <label
-                label={bind(player, 'artist').as((a) => a || 'Unknown')}
-                css="opacity: 0.7; font-size: 0.9em; margin-bottom: 4px;"
-                halign={Gtk.Align.START}
-                ellipsize={Pango.EllipsizeMode.END}
-                maxWidthChars={20}
-                lines={1}
-              />
-              <box spacing={16} halign={Gtk.Align.START}>
-                <button class="icon-btn" onClicked={() => player.previous()}>
-                  <LucideIcon name="skip-back" pixelSize={20} />
-                </button>
-                <button class="icon-btn" onClicked={() => player.play_pause()}>
-                  <LucideIcon
-                    name={bind(player, 'playback_status').as((s) =>
-                      s === Mpris.PlaybackStatus.PLAYING ? 'pause' : 'play',
-                    )}
-                    pixelSize={20}
-                  />
-                </button>
-                <button class="icon-btn" onClicked={() => player.next()}>
-                  <LucideIcon name="skip-forward" pixelSize={20} />
-                </button>
-                <revealer
-                  transitionType={Gtk.RevealerTransitionType.SLIDE_RIGHT}
-                  revealChild={bind(Mpris.get_default(), 'players').as((p) => p.length > 1)}
-                >
-                  <button class="icon-btn" onClicked={onSwitch} tooltipText="Switch Player">
-                    <LucideIcon name="arrow-right-left" pixelSize={18} />
-                  </button>
-                </revealer>
-              </box>
-            </box>
-          </box>
-        ) as Gtk.Widget;
-        self.add_overlay(controlsBox);
-
-        const sourceBadge = (
-          <box
-            class="cc-media-source"
-            spacing={5}
-            halign={Gtk.Align.END}
-            valign={Gtk.Align.END}
-            marginBottom={10}
-            marginEnd={12}
-          >
-            <image iconName={mediaSource.iconName} pixelSize={14} />
-            <label
-              label={mediaSource.name}
-              ellipsize={Pango.EllipsizeMode.END}
-              maxWidthChars={16}
-              lines={1}
-            />
-          </box>
-        ) as Gtk.Widget;
-        self.add_overlay(sourceBadge);
-      }}
-    />
+    <overlay name={player.bus_name} cssClasses={['cc-media-card']}>
+      <box heightRequest={160} hexpand>
+        <CavaWidget />
+      </box>
+      <box $type="overlay" class="cc-player-content" spacing={16} hexpand>
+        <PlayerArtwork artwork={artwork} />
+        <PlayerControls player={player} canSwitch={canSwitch} onSwitch={onSwitch} />
+      </box>
+      <box
+        $type="overlay"
+        class="cc-media-source"
+        spacing={5}
+        halign={Gtk.Align.END}
+        valign={Gtk.Align.END}
+        marginBottom={10}
+        marginEnd={12}
+      >
+        <image iconName={mediaSource.iconName} pixelSize={14} />
+        <label
+          label={mediaSource.name}
+          ellipsize={Pango.EllipsizeMode.END}
+          maxWidthChars={16}
+          lines={1}
+        />
+      </box>
+    </overlay>
   );
 }

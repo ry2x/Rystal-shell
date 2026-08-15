@@ -3,15 +3,17 @@ import {
   cycleBrightnessPreset,
   setBrightness,
   toggleBrightnessDim,
-} from '../../../stores/brightness';
+} from '../../../stores/system/brightness';
 import { LucideIcon } from '../../../widget/common/lucide';
 
+function getBrightnessIcon(value: number) {
+  if (value <= 0.2) return 'sun-dim';
+  if (value <= 0.8) return 'sun';
+  return 'sun-medium';
+}
+
 export default function BrightnessSlider() {
-  const icon = brightness.as((val) => {
-    if (val <= 0.2) return 'sun-dim';
-    if (val <= 0.8) return 'sun';
-    return 'sun-medium';
-  });
+  const icon = brightness.as(getBrightnessIcon);
 
   return (
     <box class="cc-card" spacing={16}>
@@ -36,8 +38,7 @@ export default function BrightnessSlider() {
       />
 
       <button
-        class="icon-btn"
-        css="min-width: 40px; padding: 4px; font-weight: 700; border-radius: 10px;"
+        class="icon-btn cc-value-button"
         tooltipText="Cycle brightness presets"
         onClicked={cycleBrightnessPreset}
       >

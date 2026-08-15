@@ -1,39 +1,81 @@
-import { createState } from 'ags';
+import { onCleanup } from 'ags';
 import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
+import { type Timer, idle } from 'ags/time';
 
-import Apps from 'gi://AstalApps';
-import GLib from 'gi://GLib';
-
-import { ensureLauncherBackground, registerLauncherBackground } from '../../stores/launcherImage';
+import { createAppLauncherState } from '../../stores/application/appLauncher';
+import {
+  ensureLauncherBackground,
+  registerLauncherBackground,
+} from '../../stores/application/launcherBackground';
 import { AppList } from './widget/AppList';
 import { SearchInput } from './widget/SearchInput';
 
-export default function AppLauncher(gdkmonitor: Gdk.Monitor) {
-  const [text, setText] = createState('');
-  const [selectedIndex, setSelectedIndex] = createState(0);
-  const monitorConnector = gdkmonitor.get_connector();
-
-  let currentResults: Apps.Application[] = [];
-  const launcherBackground = new Gtk.Picture({
+function createLauncherBackground() {
+  const picture = new Gtk.Picture({
     contentFit: Gtk.ContentFit.COVER,
     canTarget: false,
     canShrink: true,
+    hexpand: true,
+    vexpand: true,
+    halign: Gtk.Align.FILL,
+    valign: Gtk.Align.FILL,
+    widthRequest: 1,
+    heightRequest: 1,
   });
-  launcherBackground.set_hexpand(true);
-  launcherBackground.set_vexpand(true);
-  launcherBackground.set_halign(Gtk.Align.FILL);
-  launcherBackground.set_valign(Gtk.Align.FILL);
-  launcherBackground.set_size_request(1, 1);
-  const unregisterLauncherBackground = registerLauncherBackground(launcherBackground);
-  launcherBackground.connect('destroy', unregisterLauncherBackground);
+
+  const unregister = registerLauncherBackground(picture);
+  picture.connect('destroy', unregister);
+
+  return picture;
+}
+
+function resetLauncherState(
+  searchInput: Gtk.Entry,
+  setText: (text: string) => void,
+  setSelectedIndex: (index: number) => void,
+) {
+  searchInput.set_text('');
+  setText('');
+  setSelectedIndex(0);
+}
+
+function focusLauncher(searchInput: Gtk.Entry, appList: Gtk.ScrolledWindow) {
+  ensureLauncherBackground();
+  return idle(() => {
+    searchInput.grab_focus();
+    appList.get_vadjustment()?.set_value(0);
+  });
+}
+
+function addEscapeHandler(window: Astal.Window) {
+  const controller = new Gtk.EventControllerKey();
+  controller.connect('key-pressed', (_, keyval) => {
+    if (keyval !== Gdk.KEY_Escape) return false;
+
+    window.set_visible(false);
+    return true;
+  });
+  window.add_controller(controller);
+}
+
+export interface AppLauncherProps {
+  monitor: Gdk.Monitor;
+}
+
+export default function AppLauncher({ monitor }: AppLauncherProps) {
+  const { text, setText, selectedIndex, setSelectedIndex, results } = createAppLauncherState();
+  const monitorConnector = monitor.get_connector();
+  let focusTimer: Timer | null = null;
+
+  const launcherBackground = createLauncherBackground();
 
   const searchInput = SearchInput({
     text,
     setText,
     selectedIndex,
     setSelectedIndex,
-    getResults: () => currentResults,
+    results,
     monitorConnector,
   });
 
@@ -49,34 +91,28 @@ export default function AppLauncher(gdkmonitor: Gdk.Monitor) {
   const appList = AppList({
     text,
     selectedIndex,
+    results,
     monitorConnector,
-    onResultsChanged: (results) => {
-      currentResults = results;
-    },
   });
 
   const win = (
     <window
       name={`applauncher-${monitorConnector}`}
       class="AppLauncher"
-      gdkmonitor={gdkmonitor}
+      gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.OVERLAY}
       keymode={Astal.Keymode.EXCLUSIVE}
       application={app}
       visible={false}
       onNotifyVisible={(self) => {
+        focusTimer?.cancel();
+        focusTimer = null;
+
         if (!self.visible) {
-          (searchInput as Gtk.Entry).set_text('');
-          setText('');
-          setSelectedIndex(0);
+          resetLauncherState(searchInput, setText, setSelectedIndex);
         } else {
-          ensureLauncherBackground();
-          GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
-            searchInput.grab_focus();
-            appList.get_vadjustment()?.set_value(0);
-            return GLib.SOURCE_REMOVE;
-          });
+          focusTimer = focusLauncher(searchInput, appList);
         }
       }}
     >
@@ -112,15 +148,11 @@ export default function AppLauncher(gdkmonitor: Gdk.Monitor) {
     </window>
   ) as Astal.Window;
 
-  const winKeyCtrl = new Gtk.EventControllerKey();
-  winKeyCtrl.connect('key-pressed', (_, keyval) => {
-    if (keyval === Gdk.KEY_Escape) {
-      win.set_visible(false);
-      return true;
-    }
-    return false;
+  addEscapeHandler(win);
+  onCleanup(() => {
+    focusTimer?.cancel();
+    focusTimer = null;
   });
-  win.add_controller(winKeyCtrl);
 
   return win;
 }

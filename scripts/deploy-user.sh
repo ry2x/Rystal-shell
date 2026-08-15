@@ -23,6 +23,7 @@ stage="$(mktemp -d "$data_home/.rystal-shell.stage.XXXXXX")"
 trap 'rm -rf -- "$stage"' EXIT
 
 install -Dm755 dist/start-ags "$stage/start-ags"
+install -Dm644 dist/app.js "$stage/app.js"
 install -Dm644 dist/default.css "$stage/styles/default.css"
 cp -a assets "$stage/assets"
 cp -a styles/. "$stage/styles/"
