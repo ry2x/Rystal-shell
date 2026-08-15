@@ -2,7 +2,7 @@ import { type Accessor } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
 import { shellMotion } from '../../lib/motion';
-import { animDx } from '../../stores/shell/windowManager';
+import { createBarBackgroundGeometry } from '../../stores/shell/barBackground';
 import ClockCard from './widget/ClockCard';
 import NotificationList from './widget/NotificationList';
 import ProfileCard from './widget/ProfileCard';
@@ -11,9 +11,15 @@ import WorldClockCard from './widget/WorldClockCard';
 
 export interface DateWeatherContentProps {
   revealed: Accessor<boolean>;
+  monitorConnector: string | null;
 }
 
-export default function DateWeatherContent({ revealed }: DateWeatherContentProps) {
+export default function DateWeatherContent({
+  revealed,
+  monitorConnector,
+}: DateWeatherContentProps) {
+  const geometry = createBarBackgroundGeometry(monitorConnector);
+
   return (
     <revealer
       transitionType={Gtk.RevealerTransitionType.CROSSFADE}
@@ -25,7 +31,7 @@ export default function DateWeatherContent({ revealed }: DateWeatherContentProps
           cssClasses={revealed.as((isRevealed) =>
             isRevealed ? ['dw-container', 'revealed'] : ['dw-container'],
           )}
-          css={animDx((dx) => {
+          css={geometry(({ dx }) => {
             const marginLeft = Math.max(-900, dx - 947);
             const opacity = Math.max(0, Math.min(1, (dx - 47) / 900));
             return `transform: translateX(${marginLeft}px); opacity: ${opacity};`;

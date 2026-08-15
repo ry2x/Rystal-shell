@@ -4,7 +4,7 @@ import { type Timer, interval } from 'ags/time';
 import GLib from 'gi://GLib';
 
 import { rystalShellConfigDir, rystalShellDataDir } from '../../lib/paths';
-import { activeSidePanel, setAnimBottomHeight, setAnimDx } from './windowManager';
+import { activeSidePanel } from './windowManager';
 
 export interface BarColors {
   surface: string;
@@ -78,9 +78,9 @@ export function reloadBarColors() {
   setBarColors(readBarColors());
 }
 
-export function createBarBackgroundGeometry(
-  monitorConnector: string | null,
-): Accessor<BarBackgroundGeometry> {
+const monitorGeometries = new Map<string, Accessor<BarBackgroundGeometry>>();
+
+function createMonitorGeometry(monitorConnector: string | null): Accessor<BarBackgroundGeometry> {
   const initialGeometry = { dx: BAR_WIDTH, bottomHeight: 0 };
 
   return createExternal(initialGeometry, (setGeometry) => {
@@ -88,22 +88,13 @@ export function createBarBackgroundGeometry(
     let targetGeometry = initialGeometry;
     let animationTimer: Timer | null = null;
 
-    const publishGeometry = (geometry: BarBackgroundGeometry) => {
-      const activeMonitor = activeSidePanel.get().monitor;
-      if (activeMonitor === monitorConnector || activeMonitor === '') {
-        setAnimDx(geometry.dx);
-        setAnimBottomHeight(geometry.bottomHeight);
-      }
-      setGeometry(geometry);
-    };
-
     const animate = () => {
       const horizontalDiff = targetGeometry.dx - currentGeometry.dx;
       const bottomDiff = targetGeometry.bottomHeight - currentGeometry.bottomHeight;
 
       if (Math.abs(horizontalDiff) < 1 && Math.abs(bottomDiff) < 1) {
         currentGeometry = targetGeometry;
-        publishGeometry(currentGeometry);
+        setGeometry(currentGeometry);
         animationTimer?.cancel();
         animationTimer = null;
         return;
@@ -113,7 +104,7 @@ export function createBarBackgroundGeometry(
         dx: currentGeometry.dx + horizontalDiff * ANIMATION_SPEED,
         bottomHeight: currentGeometry.bottomHeight + bottomDiff * ANIMATION_SPEED,
       };
-      publishGeometry(currentGeometry);
+      setGeometry(currentGeometry);
     };
 
     const unsubscribePanel = activeSidePanel.subscribe(({ panel, monitor }) => {
@@ -127,4 +118,16 @@ export function createBarBackgroundGeometry(
       animationTimer = null;
     };
   });
+}
+
+export function createBarBackgroundGeometry(
+  monitorConnector: string | null,
+): Accessor<BarBackgroundGeometry> {
+  const key = monitorConnector ?? '';
+  const existing = monitorGeometries.get(key);
+  if (existing) return existing;
+
+  const geometry = createMonitorGeometry(monitorConnector);
+  monitorGeometries.set(key, geometry);
+  return geometry;
 }

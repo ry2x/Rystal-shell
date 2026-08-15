@@ -46,7 +46,7 @@ export default function DateWeatherPopup({ monitor }: DateWeatherPopupProps) {
         <box orientation={Gtk.Orientation.HORIZONTAL} vexpand>
           <box hexpand={false} vexpand={false}>
             <For each={loaded.as((isLoaded) => (isLoaded ? [true] : []))}>
-              {() => <DateWeatherContent revealed={revealed} />}
+              {() => <DateWeatherContent revealed={revealed} monitorConnector={connector} />}
             </For>
           </box>
           <ClickCatcher onClick={hideAnimated} hexpand />

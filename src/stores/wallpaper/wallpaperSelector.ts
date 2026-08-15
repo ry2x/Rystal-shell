@@ -1,7 +1,7 @@
 import { type Accessor, createState, onCleanup } from 'ags';
 import { type Timer, interval, timeout } from 'ags/time';
 
-import { activeSidePanel } from '../shell/windowManager';
+import { deactivateSidePanel } from '../shell/windowManager';
 import { cancelWallpaperWork, clearWallpaperError, refreshWallpapers } from './wallpaper';
 
 const PANEL_HEIGHT = 390;
@@ -62,10 +62,7 @@ export function createWallpaperSelectorState({
     setRevealed(false);
     animatePanelTo(0);
 
-    const activePanel = activeSidePanel.get();
-    if (activePanel.panel === 'wallpaper-selector' && activePanel.monitor === monitorConnector) {
-      activeSidePanel.set('', '');
-    }
+    deactivateSidePanel('wallpaper-selector', monitorConnector);
 
     cancelHideTimer();
     hideTimer = timeout(HIDE_DELAY_MS, () => {
@@ -92,6 +89,7 @@ export function createWallpaperSelectorState({
     animationTimer = null;
     setCoverFlowActive(false);
     cancelWallpaperWork();
+    deactivateSidePanel('wallpaper-selector', monitorConnector);
   });
 
   return { visible, revealed, panelHeight, showAnimated, hideAnimated };

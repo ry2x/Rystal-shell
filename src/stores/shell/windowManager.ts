@@ -1,31 +1,47 @@
-import { createState } from 'ags';
 import { Astal } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import Hyprland from 'gi://AstalHyprland';
 
+export type SidePanel = 'control-center' | 'date-weather' | 'wallpaper-selector' | 'power-menu';
+
+export interface ActiveSidePanel {
+  panel: SidePanel | '';
+  monitor: string;
+}
+
+const activeSidePanelCallbacks: ((value: ActiveSidePanel) => void)[] = [];
+let activeSidePanelValue: ActiveSidePanel = { panel: '', monitor: '' };
+
+function setActiveSidePanel(value: ActiveSidePanel) {
+  activeSidePanelValue = value;
+  activeSidePanelCallbacks.forEach((callback) => callback(value));
+}
+
 export const activeSidePanel = {
-  value: { panel: '', monitor: '' },
-  callbacks: [] as ((val: { panel: string; monitor: string }) => void)[],
   get() {
-    return this.value;
+    return activeSidePanelValue;
   },
-  set(panel: string, monitor: string) {
-    this.value = { panel, monitor };
-    this.callbacks.forEach((cb) => cb(this.value));
-  },
-  subscribe(cb: (val: { panel: string; monitor: string }) => void) {
-    this.callbacks.push(cb);
-    cb(this.value);
+  subscribe(callback: (value: ActiveSidePanel) => void) {
+    activeSidePanelCallbacks.push(callback);
+    callback(activeSidePanelValue);
     return () => {
-      const index = this.callbacks.indexOf(cb);
-      if (index !== -1) this.callbacks.splice(index, 1);
+      const index = activeSidePanelCallbacks.indexOf(callback);
+      if (index !== -1) activeSidePanelCallbacks.splice(index, 1);
     };
   },
 };
 
-export const [animDx, setAnimDx] = createState<number>(47);
-export const setAnimBottomHeight = createState<number>(0)[1];
+export function activateSidePanel(panel: SidePanel, monitor: string) {
+  setActiveSidePanel({ panel, monitor });
+}
+
+export function deactivateSidePanel(panel: SidePanel, monitor?: string | null) {
+  const active = activeSidePanel.get();
+  if (active.panel !== panel) return;
+  if (monitor !== undefined && monitor !== null && active.monitor !== monitor) return;
+  setActiveSidePanel({ panel: '', monitor: '' });
+}
 
 type AnimatedWindow = Astal.Window & {
   hide_animated?: () => void;
@@ -44,7 +60,7 @@ export function closeAllControlCenters() {
       else cc.set_visible(false);
     }
   });
-  if (activeSidePanel.get().panel === 'control-center') activeSidePanel.set('', '');
+  deactivateSidePanel('control-center');
 }
 
 function closeAllDateWeathers() {
@@ -55,7 +71,7 @@ function closeAllDateWeathers() {
       else dw.set_visible(false);
     }
   });
-  if (activeSidePanel.get().panel === 'date-weather') activeSidePanel.set('', '');
+  deactivateSidePanel('date-weather');
 }
 
 function closeAllAppLaunchers() {
@@ -73,7 +89,7 @@ function closeAllWallpaperSelectors() {
       else selector.set_visible(false);
     }
   });
-  if (activeSidePanel.get().panel === 'wallpaper-selector') activeSidePanel.set('', '');
+  deactivateSidePanel('wallpaper-selector');
 }
 
 function closeAllPowerMenus() {
@@ -84,7 +100,7 @@ function closeAllPowerMenus() {
       else menu.set_visible(false);
     }
   });
-  if (activeSidePanel.get().panel === 'power-menu') activeSidePanel.set('', '');
+  deactivateSidePanel('power-menu');
 }
 
 export function toggleControlCenter(monitorName?: string | null) {
@@ -106,7 +122,7 @@ export function toggleControlCenter(monitorName?: string | null) {
           closeAllAppLaunchers();
           if (dw && dw.get_visible()) dw.hide_animated?.();
           cc.show_animated?.();
-          activeSidePanel.set('control-center', connector ?? '');
+          activateSidePanel('control-center', connector ?? '');
         }
       } else {
         if (cc.get_visible()) cc.hide_animated?.();
@@ -134,7 +150,7 @@ export function toggleDateWeather(monitorName?: string | null) {
           closeAllAppLaunchers();
           if (cc && cc.get_visible()) cc.hide_animated?.();
           dw.show_animated?.();
-          activeSidePanel.set('date-weather', connector ?? '');
+          activateSidePanel('date-weather', connector ?? '');
         }
       } else {
         if (dw.get_visible()) dw.hide_animated?.();
@@ -183,7 +199,7 @@ export function toggleWallpaperSelector(monitorName?: string | null) {
         closeAllAppLaunchers();
         closeAllPowerMenus();
         selector.show_animated?.();
-        activeSidePanel.set('wallpaper-selector', connector ?? '');
+        activateSidePanel('wallpaper-selector', connector ?? '');
       }
     } else if (selector.get_visible()) {
       selector.hide_animated?.();
@@ -209,7 +225,7 @@ export function togglePowerMenu(monitorName?: string | null) {
         closeAllWallpaperSelectors();
         closeAllAppLaunchers();
         menu.show_animated?.();
-        activeSidePanel.set('power-menu', connector ?? '');
+        activateSidePanel('power-menu', connector ?? '');
       }
     } else if (menu.get_visible()) {
       menu.hide_animated?.();

@@ -2,7 +2,7 @@ import { type Accessor, createState, onCleanup } from 'ags';
 import { type Timer, timeout } from 'ags/time';
 
 import { shellMotion } from '../../lib/motion';
-import { activeSidePanel } from '../shell/windowManager';
+import { deactivateSidePanel } from '../shell/windowManager';
 
 export interface DateWeatherPopupState {
   visible: Accessor<boolean>;
@@ -27,10 +27,7 @@ export function createDateWeatherPopupState(
 
   const hideAnimated = () => {
     setRevealed(false);
-    const activePanel = activeSidePanel.get();
-    if (activePanel.panel === 'date-weather' && activePanel.monitor === monitorConnector) {
-      activeSidePanel.set('', '');
-    }
+    deactivateSidePanel('date-weather', monitorConnector);
 
     cancelHideTimer();
     hideTimer = timeout(shellMotion.panelDuration, () => {
@@ -46,7 +43,10 @@ export function createDateWeatherPopupState(
     setRevealed(true);
   };
 
-  onCleanup(cancelHideTimer);
+  onCleanup(() => {
+    cancelHideTimer();
+    deactivateSidePanel('date-weather', monitorConnector);
+  });
 
   return { visible, revealed, loaded, showAnimated, hideAnimated };
 }

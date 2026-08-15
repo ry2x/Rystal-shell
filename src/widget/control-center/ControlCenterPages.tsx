@@ -3,6 +3,7 @@ import { Gtk } from 'ags/gtk4';
 
 import { shellMotion } from '../../lib/motion';
 import { type ControlCenterState } from '../../stores/panel/controlCenter';
+import { createBarBackgroundGeometry } from '../../stores/shell/barBackground';
 import ControlCenterContent from './ControlCenterContent';
 import PageContainer from './PageContainer';
 import { BluetoothPage, WifiPage } from './widget/Connectivity';
@@ -14,11 +15,15 @@ export interface ControlCenterPagesProps {
 }
 
 export default function ControlCenterPages({ state, monitorConnector }: ControlCenterPagesProps) {
+  const geometry = createBarBackgroundGeometry(monitorConnector);
   const mainContent = (<ControlCenterContent onOpenPage={state.openPage} />) as Gtk.Widget;
-  const main = (<PageContainer revealed={state.revealed} child={mainContent} />) as Gtk.Widget;
+  const main = (
+    <PageContainer revealed={state.revealed} geometry={geometry} child={mainContent} />
+  ) as Gtk.Widget;
   const wifi = (
     <PageContainer
       revealed={state.revealed}
+      geometry={geometry}
       child={
         (
           <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
@@ -33,6 +38,7 @@ export default function ControlCenterPages({ state, monitorConnector }: ControlC
   const bluetooth = (
     <PageContainer
       revealed={state.revealed}
+      geometry={geometry}
       child={
         (
           <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
@@ -47,6 +53,7 @@ export default function ControlCenterPages({ state, monitorConnector }: ControlC
   const sound = (
     <PageContainer
       revealed={state.revealed}
+      geometry={geometry}
       child={
         (
           <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>

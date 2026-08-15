@@ -6,7 +6,7 @@ import { type Timer, idle, timeout } from 'ags/time';
 import GLib from 'gi://GLib';
 
 import { shellMotion } from '../../lib/motion';
-import { activeSidePanel } from '../shell/windowManager';
+import { activateSidePanel, activeSidePanel, deactivateSidePanel } from '../shell/windowManager';
 
 type PowerAction = 'shutdown' | 'reboot' | 'logout' | 'sleep' | 'lock';
 
@@ -91,6 +91,7 @@ export function createPowerMenuState({
   let hideTimer: Timer | null = null;
   let focusTimer: Timer | null = null;
   let executing = false;
+  let disposed = false;
   let transitioning = false;
   let lastMoveAt = 0;
   let confirmationSelectedIndex = 0;
@@ -160,10 +161,7 @@ export function createPowerMenuState({
     setErrorMessage('');
     confirmationSelectedIndex = 0;
 
-    const activePanel = activeSidePanel.get();
-    if (activePanel.panel === 'power-menu' && activePanel.monitor === monitorConnector) {
-      activeSidePanel.set('', '');
-    }
+    deactivateSidePanel('power-menu', monitorConnector);
 
     cancelHideTimer();
     hideTimer = timeout(shellMotion.panelDuration, () => {
@@ -193,16 +191,20 @@ export function createPowerMenuState({
 
     try {
       await executePowerAction(item.action);
+      if (disposed) return;
       setVisible(false);
-      if (activeSidePanel.get().panel === 'power-menu') activeSidePanel.set('', '');
+      deactivateSidePanel('power-menu', monitorConnector);
     } catch (error) {
+      if (disposed) return;
       const message = error instanceof Error ? error.message : String(error);
       console.error(`[PowerMenu] ${item.label} failed: ${message}`);
+      const active = activeSidePanel.get();
+      if (active.panel !== 'power-menu' || active.monitor !== monitorConnector) return;
       setConfirmation(null);
       setErrorMessage(`${item.label} failed: ${message}`);
       setVisible(true);
       setRevealed(true);
-      activeSidePanel.set('power-menu', monitorConnector ?? '');
+      activateSidePanel('power-menu', monitorConnector ?? '');
       scheduleFocus(() => focusItem(POWER_ITEMS.indexOf(item)));
     } finally {
       executing = false;
@@ -290,9 +292,11 @@ export function createPowerMenuState({
   }
 
   onCleanup(() => {
+    disposed = true;
     cancelHideTimer();
     cancelFocusTimer();
     clearConfirmationTransition();
+    deactivateSidePanel('power-menu', monitorConnector);
   });
 
   return {

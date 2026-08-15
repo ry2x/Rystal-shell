@@ -2,7 +2,7 @@ import { type Accessor, createState, onCleanup } from 'ags';
 import { type Timer, timeout } from 'ags/time';
 
 import { shellMotion } from '../../lib/motion';
-import { activeSidePanel } from '../shell/windowManager';
+import { deactivateSidePanel } from '../shell/windowManager';
 
 export type ControlCenterPage = 'main' | 'wifi' | 'bluetooth' | 'sound';
 export type ControlCenterDetailPage = Exclude<ControlCenterPage, 'main'>;
@@ -48,10 +48,7 @@ export function createControlCenterState(monitorConnector: string): ControlCente
   const hideAnimated = () => {
     setRevealed(false);
     showMainPage();
-    const activePanel = activeSidePanel.get();
-    if (activePanel.panel === 'control-center' && activePanel.monitor === monitorConnector) {
-      activeSidePanel.set('', '');
-    }
+    deactivateSidePanel('control-center', monitorConnector);
 
     cancelHideTimer();
     hideTimer = timeout(shellMotion.panelDuration, () => {
@@ -67,7 +64,10 @@ export function createControlCenterState(monitorConnector: string): ControlCente
     setRevealed(true);
   };
 
-  onCleanup(cancelHideTimer);
+  onCleanup(() => {
+    cancelHideTimer();
+    deactivateSidePanel('control-center', monitorConnector);
+  });
 
   return {
     visible,
