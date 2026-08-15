@@ -2,8 +2,8 @@ import { Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import { requestHandler } from './ipc';
-import { initCss } from './lib/css';
 import { rystalShellDataDir, rystalShellInstance } from './lib/paths';
+import { initCss } from './stores/shell/style';
 import AppLauncher from './widget/app-launcher';
 import Bar from './widget/bar';
 import ControlCenter from './widget/control-center';

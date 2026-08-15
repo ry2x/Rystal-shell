@@ -1,5 +1,5 @@
-import { compileAndReloadCss } from '../lib/css';
 import { reloadLauncherBackground } from '../stores/application/launcherBackground';
+import { compileAndReloadCss } from '../stores/shell/style';
 import { type IpcCommandHandler } from './types';
 
 export const handleReloadCss: IpcCommandHandler = (_args, response) => {

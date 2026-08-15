@@ -3,11 +3,12 @@ import { exec, execAsync } from 'ags/process';
 
 import GLib from 'gi://GLib';
 
-import { forceRedrawBar } from '../widget/bar';
-import { ryprlandRuntimeDir, rystalShellConfigDir, rystalShellDataDir } from './paths';
+import { ryprlandRuntimeDir, rystalShellConfigDir, rystalShellDataDir } from '../../lib/paths';
+import { reloadBarColors } from './barBackground';
 
-let globalCssProvider: Gtk.CssProvider | null = null;
+let cssProvider: Gtk.CssProvider | null = null;
 let lastCompiledCss: string | null = null;
+
 const styleEntry = `${rystalShellDataDir}/styles/style.scss`;
 const defaultThemeDir = `${rystalShellDataDir}/styles/default`;
 const defaultCssPath = `${rystalShellDataDir}/styles/default.css`;
@@ -32,12 +33,6 @@ function reloadCss(cssInput: string) {
     throw new Error('Cannot reload CSS without a default display');
   }
 
-  if (globalCssProvider) {
-    Gtk.StyleContext.remove_provider_for_display(display, globalCssProvider);
-    globalCssProvider.run_dispose();
-    globalCssProvider = null;
-  }
-
   const nextProvider = new Gtk.CssProvider();
   if (GLib.file_test(cssInput, GLib.FileTest.EXISTS)) {
     nextProvider.load_from_path(cssInput);
@@ -51,8 +46,12 @@ function reloadCss(cssInput: string) {
     Gtk.STYLE_PROVIDER_PRIORITY_USER,
   );
 
-  globalCssProvider = nextProvider;
-  forceRedrawBar();
+  if (cssProvider) {
+    Gtk.StyleContext.remove_provider_for_display(display, cssProvider);
+    cssProvider.run_dispose();
+  }
+  cssProvider = nextProvider;
+  reloadBarColors();
 }
 
 function sassCommand() {
@@ -79,9 +78,9 @@ export function compileAndReloadCss(): Promise<boolean> {
       lastCompiledCss = css;
       return true;
     })
-    .catch((err) => {
-      console.error(`Error compiling CSS; keeping the active stylesheet: ${err}`);
-      throw err;
+    .catch((error) => {
+      console.error(`Error compiling CSS; keeping the active stylesheet: ${error}`);
+      throw error;
     });
 }
 

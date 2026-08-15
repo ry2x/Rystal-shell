@@ -8,7 +8,6 @@ import {
   type BarColors,
   barColors,
   createBarBackgroundGeometry,
-  reloadBarColors,
 } from '../../stores/shell/barBackground';
 
 export interface PanelBackgroundProps {
@@ -17,8 +16,6 @@ export interface PanelBackgroundProps {
 
 const BORDER_WIDTH = 3;
 const BORDER_RADIUS = 16;
-
-export { reloadBarColors as forceRedrawBar };
 
 function hexToRgba(hex: string): [number, number, number, number] {
   const value = hex.replace('#', '');

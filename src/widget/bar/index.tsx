@@ -6,7 +6,7 @@ import app from 'ags/gtk4/app';
 import { timeout } from 'ags/time';
 
 import BarReserve from './BarReserve';
-import PanelBackground, { forceRedrawBar } from './PanelBackground';
+import PanelBackground from './PanelBackground';
 import Clock from './widget/Clock';
 import RecordIndicator from './widget/RecordIndicator';
 import ScrollerIndicator from './widget/ScrollerIndicator';
@@ -20,8 +20,6 @@ import Workspaces from './widget/Workspaces';
 export interface BarProps {
   monitor: Gdk.Monitor;
 }
-
-export { forceRedrawBar };
 
 const BORDER_WIDTH = 3;
 const BAR_WIDTH = 47;
