@@ -5,7 +5,8 @@ import { shellMotion } from '../../lib/motion';
 
 export interface AnimatedListEntry<T> {
   id: string;
-  item: T;
+  item: Accessor<T>;
+  setItem: Setter<T>;
   revealed: Accessor<boolean>;
   setRevealed: Setter<boolean>;
 }
@@ -13,6 +14,16 @@ export interface AnimatedListEntry<T> {
 function cancelTimer(timers: Map<string, Timer>, id: string) {
   timers.get(id)?.cancel();
   timers.delete(id);
+}
+
+function uniqueItemsById<T>(items: T[], idFor: (item: T) => string) {
+  const seenIds = new Set<string>();
+  return items.filter((item) => {
+    const id = idFor(item);
+    if (seenIds.has(id)) return false;
+    seenIds.add(id);
+    return true;
+  });
 }
 
 export function createAnimatedListEntries<T>(
@@ -24,6 +35,7 @@ export function createAnimatedListEntries<T>(
   const removeTimers = new Map<string, Timer>();
 
   const createEntry = (item: T): AnimatedListEntry<T> => {
+    const [itemState, setItem] = createState(item, { equals: () => false });
     const [revealed, setRevealed] = createState(false);
     const id = idFor(item);
     const timer = timeout(shellMotion.listRevealDelay, () => {
@@ -31,7 +43,7 @@ export function createAnimatedListEntries<T>(
       revealTimers.delete(id);
     });
     revealTimers.set(id, timer);
-    return { id, item, revealed, setRevealed };
+    return { id, item: itemState, setItem, revealed, setRevealed };
   };
 
   const scheduleRemoval = (entry: AnimatedListEntry<T>) => {
@@ -45,7 +57,7 @@ export function createAnimatedListEntries<T>(
   };
 
   const updateEntries = () => {
-    const nextItems = items.peek();
+    const nextItems = uniqueItemsById(items.peek(), idFor);
     const previousEntries = entries.peek();
     const previousById = new Map(previousEntries.map((entry) => [entry.id, entry]));
     const nextIds = new Set(nextItems.map(idFor));
@@ -55,7 +67,7 @@ export function createAnimatedListEntries<T>(
       const previousEntry = previousById.get(id);
       if (!previousEntry) return createEntry(item);
 
-      previousEntry.item = item;
+      previousEntry.setItem(item);
       if (removeTimers.has(id)) {
         cancelTimer(removeTimers, id);
         previousEntry.setRevealed(true);

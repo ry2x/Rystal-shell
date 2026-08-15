@@ -11,6 +11,11 @@ export interface NotificationPopupState {
   visible: Accessor<boolean>;
 }
 
+interface PendingTransientRelease {
+  notification: Notifd.Notification;
+  timer: Timer;
+}
+
 const POPUP_TIMEOUT_MS = 5000;
 const hyprland = Hyprland.get_default();
 const notifd = Notifd.get_default();
@@ -21,12 +26,17 @@ export function createNotificationPopupState(
   const [popups, setPopups] = createState<Notifd.Notification[]>([]);
   const [visible, setVisible] = createState(false);
   const expiryTimers = new Map<number, Timer>();
-  const releaseTimers = new Map<number, Timer>();
+  const pendingTransientReleases = new Map<number, PendingTransientRelease>();
   let hideTimer: Timer | null = null;
 
   const cancelTimer = (timers: Map<number, Timer>, id: number) => {
     timers.get(id)?.cancel();
     timers.delete(id);
+  };
+
+  const cancelPendingTransientRelease = (id: number) => {
+    pendingTransientReleases.get(id)?.timer.cancel();
+    pendingTransientReleases.delete(id);
   };
 
   const removePopup = (id: number, releaseTransient: boolean) => {
@@ -46,14 +56,12 @@ export function createNotificationPopupState(
     }
     if (!releaseTransient || !notification.transient) return;
 
-    cancelTimer(releaseTimers, id);
-    releaseTimers.set(
-      id,
-      timeout(shellMotion.listDuration, () => {
-        releaseTimers.delete(id);
-        notification.dismiss();
-      }),
-    );
+    cancelPendingTransientRelease(id);
+    const timer = timeout(shellMotion.listDuration, () => {
+      pendingTransientReleases.delete(id);
+      notification.dismiss();
+    });
+    pendingTransientReleases.set(id, { notification, timer });
   };
 
   const scheduleExpiry = (id: number) => {
@@ -73,27 +81,31 @@ export function createNotificationPopupState(
     const notification = notifd.get_notification(id);
     if (!notification) return;
 
-    cancelTimer(releaseTimers, id);
+    cancelPendingTransientRelease(id);
     hideTimer?.cancel();
     hideTimer = null;
     setVisible(true);
-    if (!popups.peek().some((popup) => popup.id === id)) {
-      setPopups([notification, ...popups.peek()]);
-    }
+    setPopups([notification, ...popups.peek().filter((popup) => popup.id !== id)]);
     scheduleExpiry(id);
   });
 
-  const resolvedHook = notifd.connect('resolved', (_, id) => removePopup(id, false));
+  const resolvedHook = notifd.connect('resolved', (_, id) => {
+    cancelPendingTransientRelease(id);
+    removePopup(id, false);
+  });
 
   onCleanup(() => {
     notifd.disconnect(notifiedHook);
     notifd.disconnect(resolvedHook);
     for (const timer of expiryTimers.values()) timer.cancel();
-    for (const timer of releaseTimers.values()) timer.cancel();
+    for (const { notification, timer } of pendingTransientReleases.values()) {
+      timer.cancel();
+      notification.dismiss();
+    }
     hideTimer?.cancel();
     hideTimer = null;
     expiryTimers.clear();
-    releaseTimers.clear();
+    pendingTransientReleases.clear();
   });
 
   return { popups, visible };

@@ -35,7 +35,7 @@ export default function AnimatedList<T>({
               transitionDuration={shellMotion.listDuration}
               revealChild={entry.revealed}
             >
-              {renderItem(entry.item)}
+              <For each={entry.item.as((item) => [item])}>{renderItem}</For>
             </revealer>
           </revealer>
         )}
