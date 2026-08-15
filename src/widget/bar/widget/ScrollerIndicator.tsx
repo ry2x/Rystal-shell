@@ -27,14 +27,10 @@ export default function ScrollerIndicator({ monitor }: ScrollerIndicatorProps) {
             valign={Gtk.Align.CENTER}
             halign={Gtk.Align.CENTER}
           >
-            <LucideIcon name="app-window-mac" class="icon" css="margin-bottom: 4px;" />
-            <label label={info.as(({ current }) => String(current))} css="font-weight: 800;" />
-            <box
-              class="separator"
-              halign={Gtk.Align.CENTER}
-              css="min-height: 3px; min-width: 12px; margin: 2px 0; border-radius: 2px;"
-            />
-            <label label={info.as(({ total }) => String(total))} css="font-weight: 800;" />
+            <LucideIcon name="app-window-mac" class="icon scroller-icon" />
+            <label label={info.as(({ current }) => String(current))} class="scroller-count" />
+            <box class="separator" halign={Gtk.Align.CENTER} />
+            <label label={info.as(({ total }) => String(total))} class="scroller-count" />
           </box>
         </button>
       </box>

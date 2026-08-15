@@ -20,14 +20,13 @@ export default function Weather({ monitor }: WeatherProps) {
           <box spacing={0} orientation={Gtk.Orientation.VERTICAL}>
             <LucideIcon
               name={weatherInfo.as((w) => (w ? getWeatherIcon(w.code) : 'cloud'))}
-              class="icon"
-              css="margin-bottom: 4px;"
+              class="icon bar-weather-icon"
             />
-            <label label={weatherInfo.as((w) => (w ? `${w.temp}` : ''))} css="font-weight: 800;" />
             <label
-              label={weatherInfo.as((w) => (w ? '°C' : ''))}
-              css="font-size: 0.85em; font-weight: 800;"
+              label={weatherInfo.as((w) => (w ? `${w.temp}` : ''))}
+              class="bar-weather-value"
             />
+            <label label={weatherInfo.as((w) => (w ? '°C' : ''))} class="bar-weather-unit" />
           </box>
         </button>
       </box>

@@ -32,7 +32,7 @@ export function VolumeButton({ speaker, monitor }: VolumeButtonProps) {
           <label
             label={createBinding(speaker, 'volume').as((volume) => `${Math.round(volume * 100)}`)}
           />
-          <label label="%" css="font-size: 0.85em;" />
+          <label label="%" class="volume-unit" />
         </box>
       </box>
     </button>
