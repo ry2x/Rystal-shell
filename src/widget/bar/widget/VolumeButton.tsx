@@ -3,6 +3,7 @@ import { Gdk, Gtk } from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
+import { getVolumeIcon } from '../../../lib/audio';
 import { adjustVolume } from '../../../stores/audio';
 import { toggleControlCenter } from '../../../stores/windowManager';
 import { LucideIcon } from '../../../widget/common/lucide';
@@ -10,14 +11,6 @@ import { LucideIcon } from '../../../widget/common/lucide';
 export interface VolumeButtonProps {
   speaker: Wp.Endpoint;
   monitor: Gdk.Monitor;
-}
-
-function getVolumeIcon(icon: string) {
-  if (icon.includes('muted')) return 'volume-x';
-  if (icon.includes('high')) return 'volume-2';
-  if (icon.includes('medium')) return 'volume-1';
-  if (icon.includes('low')) return 'volume';
-  return 'volume-x';
 }
 
 export function VolumeButton({ speaker, monitor }: VolumeButtonProps) {

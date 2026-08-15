@@ -29,14 +29,21 @@ export function playVolumeSound() {
   }
 }
 
-export function adjustVolume(endpoint: Wp.Endpoint, delta: number) {
-  endpoint.volume = Math.max(0, Math.min(1, endpoint.volume + delta));
-
+function playVolumeFeedback() {
   const now = Date.now();
   if (now - lastVolumeSoundAt <= 100) return;
 
   lastVolumeSoundAt = now;
   playVolumeSound();
+}
+
+export function setEndpointVolume(endpoint: Wp.Endpoint, volume: number) {
+  endpoint.volume = Math.max(0, Math.min(1, volume));
+  playVolumeFeedback();
+}
+
+export function adjustVolume(endpoint: Wp.Endpoint, delta: number) {
+  setEndpointVolume(endpoint, endpoint.volume + delta);
 }
 
 export async function setDefaultAudioEndpoint(nodeId: number) {

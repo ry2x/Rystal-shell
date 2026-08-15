@@ -3,6 +3,7 @@ import { Gtk } from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
+import { getVolumeIcon } from '../../../../lib/audio';
 import {
   openAudioControl,
   playVolumeSound,
@@ -12,13 +13,7 @@ import { LucideIcon } from '../../../../widget/common/lucide';
 import { DeviceSelector } from './DeviceSelector';
 
 function volumeIcon(endpoint: Wp.Endpoint) {
-  return bind(endpoint, 'volume_icon').as((icon) => {
-    if (icon.includes('muted')) return 'volume-x';
-    if (icon.includes('high')) return 'volume-2';
-    if (icon.includes('medium')) return 'volume-1';
-    if (icon.includes('low')) return 'volume';
-    return 'volume-x';
-  });
+  return bind(endpoint, 'volume_icon').as(getVolumeIcon);
 }
 
 function VolumeControls({ endpoint, kind }: { endpoint: Wp.Endpoint; kind: 'output' | 'input' }) {
