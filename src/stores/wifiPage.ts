@@ -13,8 +13,6 @@ import {
 } from './wifi';
 import { openWifiPasswordDialog } from './wifiPasswordDialog';
 
-type NetworkService = ReturnType<typeof Network.get_default>;
-
 export interface WifiConfirmation {
   title: string;
   message: string;
