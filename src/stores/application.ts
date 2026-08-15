@@ -24,6 +24,26 @@ function getAppHistoryKey(app: Apps.Application) {
   return app.entry || app.executable || app.name;
 }
 
+function getAppResultKey(app: Apps.Application) {
+  return app.name + (app.description || '') + (app.iconName || '');
+}
+
+function getUniqueAppResults(appList: Apps.Application[]) {
+  const results: Apps.Application[] = [];
+  const seen = new Set<string>();
+
+  for (const app of appList) {
+    const key = getAppResultKey(app);
+    if (seen.has(key)) continue;
+
+    seen.add(key);
+    results.push(app);
+    if (results.length === MAX_APP_RESULTS) break;
+  }
+
+  return results;
+}
+
 function getRawAppList() {
   return apps.get_list();
 }
@@ -123,7 +143,7 @@ function getAppList() {
 
 export function searchApps(q: string) {
   const allApps = getAppList();
-  if (q === '') return allApps.slice(0, MAX_APP_RESULTS);
+  if (q === '') return getUniqueAppResults(allApps);
   const keywords = q.split(/\s+/);
 
   const results = allApps
@@ -153,7 +173,7 @@ export function searchApps(q: string) {
     .filter((x) => x.score > 0);
 
   results.sort((a, b) => b.score - a.score);
-  return results.map((x) => x.app).slice(0, MAX_APP_RESULTS);
+  return getUniqueAppResults(results.map((x) => x.app));
 }
 
 function searchWeb(query: string) {

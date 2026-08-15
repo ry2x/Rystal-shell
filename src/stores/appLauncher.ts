@@ -12,29 +12,10 @@ export interface AppLauncherState {
   results: Accessor<Apps.Application[]>;
 }
 
-function getAppKey(appInstance: Apps.Application) {
-  return appInstance.name + (appInstance.description || '') + (appInstance.iconName || '');
-}
-
-function getUniqueResults(query: string) {
-  const uniqueResults: Apps.Application[] = [];
-  const seen = new Set<string>();
-
-  for (const appInstance of searchApps(query)) {
-    const key = getAppKey(appInstance);
-    if (seen.has(key)) continue;
-
-    seen.add(key);
-    uniqueResults.push(appInstance);
-  }
-
-  return uniqueResults;
-}
-
 export function createAppLauncherState(): AppLauncherState {
   const [text, setText] = createState('');
   const [selectedIndex, setSelectedIndex] = createState(0);
-  const results = createComputed(() => getUniqueResults(text().trim().toLowerCase()));
+  const results = createComputed(() => searchApps(text().trim().toLowerCase()));
 
   return {
     text,
