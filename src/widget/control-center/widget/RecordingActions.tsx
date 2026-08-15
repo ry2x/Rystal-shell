@@ -1,3 +1,4 @@
+import { createEffect } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
 import { isRecording, stopRecord } from '../../../stores/recording';
@@ -50,10 +51,12 @@ export default function RecordingActions() {
       <stack
         transitionType={Gtk.StackTransitionType.CROSSFADE}
         transitionDuration={250}
-        visibleChildName={isRecording.as((recording) => (recording ? 'recording' : 'idle'))}
         $={(self: Gtk.Stack) => {
           self.add_named(idleBox, 'idle');
           self.add_named(recordingBox, 'recording');
+          createEffect(() => {
+            self.set_visible_child_name(isRecording() ? 'recording' : 'idle');
+          });
         }}
       />
     </>

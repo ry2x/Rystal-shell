@@ -1,3 +1,4 @@
+import { createEffect } from 'ags';
 import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
@@ -62,7 +63,6 @@ export default function PowerMenu({ monitor }: PowerMenuProps) {
     <stack
       transitionType={Gtk.StackTransitionType.CROSSFADE}
       transitionDuration={CONFIRM_FADE_MS}
-      visibleChildName={state.confirmation.as((item) => (item ? 'confirmation' : 'main'))}
       hexpand
       vexpand
       halign={Gtk.Align.FILL}
@@ -70,7 +70,9 @@ export default function PowerMenu({ monitor }: PowerMenuProps) {
       $={(self) => {
         self.add_named(mainView, 'main');
         self.add_named(confirmationView, 'confirmation');
-        self.set_visible_child_name(state.confirmation() ? 'confirmation' : 'main');
+        createEffect(() => {
+          self.set_visible_child_name(state.confirmation() ? 'confirmation' : 'main');
+        });
       }}
     />
   ) as Gtk.Stack;
