@@ -17,7 +17,8 @@ import {
 import { openWifiPasswordDialog } from '../../../../stores/wifiPasswordDialog';
 import { LucideIcon } from '../../../../widget/common/lucide';
 import AnimatedList from '../../../common/AnimatedList';
-import { ConfirmOverlay, Confirmation, DetailMenuButton, ErrorLabel, PageHeader } from './Shared';
+import { ConfirmOverlay, DetailMenuButton, ErrorLabel, PageHeader } from './Shared';
+import { type Confirmation } from './Shared';
 
 export function WifiPage({
   monitorConnector,

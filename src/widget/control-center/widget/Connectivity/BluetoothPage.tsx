@@ -1,4 +1,4 @@
-import { For, createBinding as bind, createState } from 'ags';
+import { type Accessor, For, createBinding as bind, createState } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
 import Bluetooth from 'gi://AstalBluetooth';
@@ -7,16 +7,15 @@ import Pango from 'gi://Pango';
 import { toggleBluetooth } from '../../../../stores/network';
 import { LucideIcon } from '../../../../widget/common/lucide';
 import AnimatedList from '../../../common/AnimatedList';
-import {
-  ConfirmOverlay,
-  Confirmation,
-  DetailMenuButton,
-  ErrorLabel,
-  PageHeader,
-  PageState,
-} from './Shared';
+import { ConfirmOverlay, DetailMenuButton, ErrorLabel, PageHeader } from './Shared';
+import { type Confirmation, type ControlCenterPage } from './Shared';
 
-export function BluetoothPage({ page, onBack }: { page: PageState; onBack: () => void }) {
+export interface BluetoothPageProps {
+  page: Accessor<ControlCenterPage>;
+  onBack: () => void;
+}
+
+export function BluetoothPage({ page, onBack }: BluetoothPageProps) {
   const bluetooth = Bluetooth.get_default();
   const adapter = bluetooth.adapter;
   const [devices, setDevices] = createState<Bluetooth.Device[]>(bluetooth.devices ?? []);
