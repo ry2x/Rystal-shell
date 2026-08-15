@@ -3,7 +3,7 @@ import app from 'ags/gtk4/app';
 
 import Notifd from 'gi://AstalNotifd';
 
-import { createNotificationPopupState } from '../../stores/notificationPopup';
+import { createNotificationPopupState } from '../../stores/notification/notificationPopup';
 import AnimatedList from '../common/AnimatedList';
 import NotificationCard from '../common/NotificationCard';
 

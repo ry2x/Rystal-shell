@@ -8,7 +8,7 @@ import {
   setEndpointVolume,
   setMicrophoneVolume,
   toggleEndpointMute,
-} from '../../../../stores/audio';
+} from '../../../../stores/system/audio';
 import { LucideIcon } from '../../../../widget/common/lucide';
 import { type SoundDeviceKind } from './types';
 

@@ -2,7 +2,7 @@ import { For } from 'ags';
 import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import { createDateWeatherPopupState } from '../../stores/dateWeather';
+import { createDateWeatherPopupState } from '../../stores/panel/dateWeather';
 import ClickCatcher from '../common/ClickCatcher';
 import DateWeatherContent from './DateWeatherContent';
 

@@ -1,7 +1,7 @@
 import { Gdk, Gtk } from 'ags/gtk4';
 
-import { cpuUsage, gpuUsage, ramUsage } from '../../../stores/system';
-import { toggleControlCenter } from '../../../stores/windowManager';
+import { toggleControlCenter } from '../../../stores/shell/windowManager';
+import { cpuUsage, gpuUsage, ramUsage } from '../../../stores/system/system';
 import { LucideIcon } from '../../../widget/common/lucide';
 
 export interface SysMetricsProps {

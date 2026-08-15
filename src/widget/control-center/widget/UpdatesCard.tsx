@@ -1,6 +1,6 @@
 import { Gtk } from 'ags/gtk4';
 
-import { openUpdateManager, updatesPoll } from '../../../stores/update';
+import { openUpdateManager, updatesPoll } from '../../../stores/system/update';
 import { LucideIcon } from '../../../widget/common/lucide';
 
 export default function UpdatesCard() {

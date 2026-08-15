@@ -4,7 +4,7 @@ import { execAsync } from 'ags/process';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-import { ryprlandWallpaperDir } from '../lib/paths';
+import { ryprlandWallpaperDir } from '../../lib/paths';
 import {
   cancelWallpaperThumbnailWork,
   ensureWallpaperThumbnails,

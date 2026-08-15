@@ -3,7 +3,7 @@ import { exec, execAsync } from 'ags/process';
 
 import GLib from 'gi://GLib';
 
-import { reloadLauncherBackground } from '../stores/launcherImage';
+import { reloadLauncherBackground } from '../stores/application/launcherImage';
 import { forceRedrawBar } from '../widget/bar';
 import { ryprlandRuntimeDir, rystalShellConfigDir, rystalShellDataDir } from './paths';
 

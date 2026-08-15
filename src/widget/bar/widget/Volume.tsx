@@ -3,7 +3,7 @@ import { Gdk, Gtk } from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
-import { defaultSpeaker } from '../../../stores/audio';
+import { defaultSpeaker } from '../../../stores/system/audio';
 import { VolumeButton } from './VolumeButton';
 
 export interface VolumeProps {

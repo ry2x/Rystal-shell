@@ -1,6 +1,10 @@
 import { Gtk } from 'ags/gtk4';
 
-import { type CaffeineState, caffeineState, toggleCaffeine } from '../../../../stores/caffeine';
+import {
+  type CaffeineState,
+  caffeineState,
+  toggleCaffeine,
+} from '../../../../stores/system/caffeine';
 import { LucideIcon } from '../../../../widget/common/lucide';
 
 function getCaffeineIcon(state: CaffeineState) {

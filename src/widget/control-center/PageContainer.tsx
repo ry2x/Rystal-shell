@@ -1,7 +1,7 @@
 import { type Accessor } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
-import { animDx } from '../../stores/windowManager';
+import { animDx } from '../../stores/shell/windowManager';
 
 export interface PageContainerProps {
   revealed: Accessor<boolean>;

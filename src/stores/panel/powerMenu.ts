@@ -5,8 +5,8 @@ import { type Timer, idle, timeout } from 'ags/time';
 
 import GLib from 'gi://GLib';
 
-import { shellMotion } from '../lib/motion';
-import { activeSidePanel } from './windowManager';
+import { shellMotion } from '../../lib/motion';
+import { activeSidePanel } from '../shell/windowManager';
 
 type PowerAction = 'shutdown' | 'reboot' | 'logout' | 'sleep' | 'lock';
 

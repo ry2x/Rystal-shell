@@ -4,7 +4,7 @@ import Apps from 'gi://AstalApps';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-import { ryprlandStateDir } from '../lib/paths';
+import { ryprlandStateDir } from '../../lib/paths';
 
 const STATE_DIR = `${ryprlandStateDir}/rystal-shell`;
 const HISTORY_FILE = `${STATE_DIR}/app-history.json`;

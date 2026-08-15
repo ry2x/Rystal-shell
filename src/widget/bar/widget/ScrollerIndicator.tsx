@@ -3,7 +3,7 @@ import { Gdk, Gtk } from 'ags/gtk4';
 import {
   createScrollingLayoutInfo,
   toggleScrollingOverview,
-} from '../../../stores/scrollingLayout';
+} from '../../../stores/shell/scrollingLayout';
 import { LucideIcon } from '../../../widget/common/lucide';
 
 export interface ScrollerIndicatorProps {

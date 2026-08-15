@@ -2,7 +2,7 @@ import { For } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
 import { shellMotion } from '../../lib/motion';
-import { type ControlCenterState } from '../../stores/controlCenter';
+import { type ControlCenterState } from '../../stores/panel/controlCenter';
 import ControlCenterContent from './ControlCenterContent';
 import PageContainer from './PageContainer';
 import { BluetoothPage, WifiPage } from './widget/Connectivity';

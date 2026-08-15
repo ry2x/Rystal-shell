@@ -6,8 +6,8 @@ import Bluetooth from 'gi://AstalBluetooth';
 import {
   type BluetoothConfirmation,
   createBluetoothPageState,
-} from '../../../../../stores/bluetooth';
-import { toggleBluetooth } from '../../../../../stores/network';
+} from '../../../../../stores/connectivity/bluetooth';
+import { toggleBluetooth } from '../../../../../stores/connectivity/network';
 import { LucideIcon } from '../../../../../widget/common/lucide';
 import AnimatedList from '../../../../common/AnimatedList';
 import { ConfirmOverlay, ErrorLabel, PageHeader } from '../Shared';

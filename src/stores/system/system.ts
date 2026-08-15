@@ -4,7 +4,7 @@ import { interval } from 'ags/time';
 
 import GLib from 'gi://GLib?version=2.0';
 
-import { closeAllControlCenters } from './windowManager';
+import { closeAllControlCenters } from '../shell/windowManager';
 
 export const userName = '@' + GLib.get_user_name();
 

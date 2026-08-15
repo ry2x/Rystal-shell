@@ -2,7 +2,7 @@ import { createExternal } from 'ags';
 import { execAsync } from 'ags/process';
 import { type Timer, timeout } from 'ags/time';
 
-import { closeAllControlCenters } from './windowManager';
+import { closeAllControlCenters } from '../shell/windowManager';
 
 const NORMAL_INTERVAL_MS = 30 * 60_000;
 const RETRY_INTERVAL_MS = 60_000;

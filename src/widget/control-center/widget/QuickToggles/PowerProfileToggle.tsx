@@ -8,7 +8,7 @@ import {
   getPowerIcon,
   getPowerLabel,
   getPowerProfile,
-} from '../../../../stores/powerProfile';
+} from '../../../../stores/system/powerProfile';
 import { LucideIcon } from '../../../../widget/common/lucide';
 
 export default function PowerProfileToggle() {

@@ -4,7 +4,7 @@ import {
   getBrightnessBackend,
   refreshBrightness,
   refreshBrightnessBackend,
-} from '../stores/brightness';
+} from '../stores/system/brightness';
 import { type IpcCommandHandler } from './types';
 
 export const handleBrightness: IpcCommandHandler = (args, response) => {

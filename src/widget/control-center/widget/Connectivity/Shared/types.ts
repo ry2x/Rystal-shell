@@ -1,4 +1,4 @@
-export type { ControlCenterPage } from '../../../../../stores/controlCenter';
+export type { ControlCenterPage } from '../../../../../stores/panel/controlCenter';
 
 export interface Confirmation {
   title: string;

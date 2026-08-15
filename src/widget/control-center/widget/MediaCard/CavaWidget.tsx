@@ -1,6 +1,6 @@
 import { Gtk } from 'ags/gtk4';
 
-import { acquireCava, isCavaAvailable } from '../../../../stores/cava';
+import { acquireCava, isCavaAvailable } from '../../../../stores/media/cava';
 
 export default function CavaWidget() {
   if (!isCavaAvailable()) return <box visible={false} />;

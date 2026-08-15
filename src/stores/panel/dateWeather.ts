@@ -1,8 +1,8 @@
 import { type Accessor, createState, onCleanup } from 'ags';
 import { type Timer, timeout } from 'ags/time';
 
-import { shellMotion } from '../lib/motion';
-import { activeSidePanel } from './windowManager';
+import { shellMotion } from '../../lib/motion';
+import { activeSidePanel } from '../shell/windowManager';
 
 export interface DateWeatherPopupState {
   visible: Accessor<boolean>;

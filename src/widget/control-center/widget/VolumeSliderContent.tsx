@@ -3,7 +3,7 @@ import { createBinding } from 'ags';
 import Wp from 'gi://AstalWp';
 
 import { getVolumeIcon } from '../../../lib/audio';
-import { setEndpointVolume } from '../../../stores/audio';
+import { setEndpointVolume } from '../../../stores/system/audio';
 import { LucideIcon } from '../../../widget/common/lucide';
 
 export interface VolumeSliderContentProps {

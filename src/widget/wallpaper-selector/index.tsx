@@ -1,7 +1,7 @@
 import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import { createWallpaperSelectorState } from '../../stores/wallpaperSelector';
+import { createWallpaperSelectorState } from '../../stores/wallpaper/wallpaperSelector';
 import ClickCatcher from '../common/ClickCatcher';
 import CoverFlowController from './widget/CoverFlow';
 

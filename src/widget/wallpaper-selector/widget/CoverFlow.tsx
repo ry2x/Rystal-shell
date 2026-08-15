@@ -9,11 +9,11 @@ import {
   wallpaperError,
   wallpapers,
   wallpapersLoading,
-} from '../../../stores/wallpaper';
+} from '../../../stores/wallpaper/wallpaper';
 import {
   ensureWallpaperThumbnails,
   subscribeThumbnailReady,
-} from '../../../stores/wallpaperThumbnail';
+} from '../../../stores/wallpaper/wallpaperThumbnail';
 import { createCoverFlowTransform, easeOutCubic, getCoverFlowOpacity } from '../coverFlowGeometry';
 import { WallpaperCardController } from './WallpaperCard';
 

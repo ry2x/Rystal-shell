@@ -8,7 +8,7 @@ import {
   toggleDateWeather,
   togglePowerMenu,
   toggleWallpaperSelector,
-} from '../stores/windowManager';
+} from '../stores/shell/windowManager';
 import { type IpcCommandHandler } from './types';
 
 export const panelCommandHandlers: ReadonlyMap<string, IpcCommandHandler> = new Map<

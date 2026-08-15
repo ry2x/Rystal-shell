@@ -1,4 +1,4 @@
-import { getPowerProfile, setPowerProfile } from '../stores/powerProfile';
+import { getPowerProfile, setPowerProfile } from '../stores/system/powerProfile';
 import { type IpcCommandHandler } from './types';
 
 export const handlePowerProfile: IpcCommandHandler = (args, response) => {

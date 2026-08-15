@@ -3,9 +3,9 @@ import { type Accessor, createState, onCleanup } from 'ags';
 import Mpris from 'gi://AstalMpris';
 import Gdk from 'gi://Gdk';
 
-import { loadTextureFromUri } from '../lib/image';
+import { loadTextureFromUri } from '../../lib/image';
+import { closeAllControlCenters, focusWindow } from '../shell/windowManager';
 import { fetchYouTubeThumbnail } from './mprisThumbnail';
-import { closeAllControlCenters, focusWindow } from './windowManager';
 
 export interface MediaCardState {
   activePlayer: Accessor<Mpris.Player | null>;

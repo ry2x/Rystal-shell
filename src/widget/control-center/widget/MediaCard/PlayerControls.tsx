@@ -4,7 +4,12 @@ import { Gtk } from 'ags/gtk4';
 import Mpris from 'gi://AstalMpris';
 import Pango from 'gi://Pango';
 
-import { focusMediaPlayer, playNext, playPrevious, togglePlayback } from '../../../../stores/media';
+import {
+  focusMediaPlayer,
+  playNext,
+  playPrevious,
+  togglePlayback,
+} from '../../../../stores/media/media';
 import { LucideIcon } from '../../../../widget/common/lucide';
 
 export interface PlayerControlsProps {

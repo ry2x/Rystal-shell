@@ -1,6 +1,6 @@
 import { Gtk } from 'ags/gtk4';
 
-import { LOCATION, getWeatherIcon, weatherInfo } from '../../../stores/weather';
+import { LOCATION, getWeatherIcon, weatherInfo } from '../../../stores/system/weather';
 import { LucideIcon } from '../../../widget/common/lucide';
 import ForecastItem from './ForecastItem';
 

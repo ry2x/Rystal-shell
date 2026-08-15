@@ -2,7 +2,7 @@ import Mpris from 'gi://AstalMpris';
 import GLib from 'gi://GLib?version=2.0';
 import Soup from 'gi://Soup?version=3.0';
 
-import { ryprlandCacheDir } from '../lib/paths';
+import { ryprlandCacheDir } from '../../lib/paths';
 
 const thumbnailSession = new Soup.Session();
 const thumbnailDownloads = new Map<string, Promise<string | null>>();

@@ -1,6 +1,6 @@
 import { Gtk } from 'ags/gtk4';
 
-import { clockTime } from '../../../stores/time';
+import { clockTime } from '../../../stores/system/time';
 import { formatWorldClockDetails, formatWorldClockTime } from '../utils';
 
 export interface WorldClockRowProps {

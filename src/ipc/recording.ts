@@ -1,4 +1,4 @@
-import { isRecording, startRecord, stopRecord } from '../stores/recording';
+import { isRecording, startRecord, stopRecord } from '../stores/capture/recording';
 import { type IpcCommandHandler, type ResponseCallback } from './types';
 
 function start(mode: 'monitor' | 'slurp', response: ResponseCallback) {

@@ -4,7 +4,7 @@ import { type Timer, idle } from 'ags/time';
 
 import Pango from 'gi://Pango';
 
-import { createWifiPasswordDialogState } from '../../../../stores/wifiPasswordDialog';
+import { createWifiPasswordDialogState } from '../../../../stores/connectivity/wifiPasswordDialog';
 import { LucideIcon } from '../../../../widget/common/lucide';
 
 export interface WifiPasswordDialogProps {

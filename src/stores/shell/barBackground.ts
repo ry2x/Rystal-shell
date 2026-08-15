@@ -3,7 +3,7 @@ import { type Timer, interval } from 'ags/time';
 
 import GLib from 'gi://GLib';
 
-import { rystalShellConfigDir, rystalShellDataDir } from '../lib/paths';
+import { rystalShellConfigDir, rystalShellDataDir } from '../../lib/paths';
 import { activeSidePanel, setAnimBottomHeight, setAnimDx } from './windowManager';
 
 export interface BarColors {

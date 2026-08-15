@@ -8,7 +8,7 @@ import {
   doNotDisturb,
   notifications,
   toggleDoNotDisturb,
-} from '../../../stores/notification';
+} from '../../../stores/notification/notification';
 import { LucideIcon } from '../../../widget/common/lucide';
 import AnimatedList from '../../common/AnimatedList';
 import NotificationCard from '../../common/NotificationCard';

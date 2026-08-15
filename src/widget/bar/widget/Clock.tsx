@@ -1,7 +1,7 @@
 import { Gdk, Gtk } from 'ags/gtk4';
 
-import { clockTime, shortDate, shortDay } from '../../../stores/time';
-import { toggleDateWeather } from '../../../stores/windowManager';
+import { toggleDateWeather } from '../../../stores/shell/windowManager';
+import { clockTime, shortDate, shortDay } from '../../../stores/system/time';
 
 export interface ClockProps {
   monitor: Gdk.Monitor;

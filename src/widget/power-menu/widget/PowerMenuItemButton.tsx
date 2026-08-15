@@ -1,7 +1,7 @@
 import { type Accessor } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
-import type { PowerItem } from '../../../stores/powerMenu';
+import type { PowerItem } from '../../../stores/panel/powerMenu';
 import { LucideIcon } from '../../common/lucide';
 
 const CARD_OUTER_WIDTH = 260;

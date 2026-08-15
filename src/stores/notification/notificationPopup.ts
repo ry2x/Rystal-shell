@@ -4,7 +4,7 @@ import { type Timer, timeout } from 'ags/time';
 import Hyprland from 'gi://AstalHyprland';
 import Notifd from 'gi://AstalNotifd';
 
-import { shellMotion } from '../lib/motion';
+import { shellMotion } from '../../lib/motion';
 
 export interface NotificationPopupState {
   popups: Accessor<Notifd.Notification[]>;

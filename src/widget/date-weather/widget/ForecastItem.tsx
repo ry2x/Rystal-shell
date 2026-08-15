@@ -1,6 +1,6 @@
 import { Gtk } from 'ags/gtk4';
 
-import { getWeatherIcon, weatherInfo } from '../../../stores/weather';
+import { getWeatherIcon, weatherInfo } from '../../../stores/system/weather';
 import { LucideIcon } from '../../common/lucide';
 
 export interface ForecastItemProps {

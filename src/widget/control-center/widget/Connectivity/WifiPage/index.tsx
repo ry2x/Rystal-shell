@@ -3,8 +3,11 @@ import { Gtk } from 'ags/gtk4';
 
 import Network from 'gi://AstalNetwork';
 
-import { toggleWifi } from '../../../../../stores/network';
-import { type WifiConfirmation, createWifiPageState } from '../../../../../stores/wifiPage';
+import { toggleWifi } from '../../../../../stores/connectivity/network';
+import {
+  type WifiConfirmation,
+  createWifiPageState,
+} from '../../../../../stores/connectivity/wifiPage';
 import { LucideIcon } from '../../../../../widget/common/lucide';
 import AnimatedList from '../../../../common/AnimatedList';
 import { ConfirmOverlay, ErrorLabel, PageHeader } from '../Shared';

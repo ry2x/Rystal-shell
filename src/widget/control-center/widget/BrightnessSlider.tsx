@@ -3,7 +3,7 @@ import {
   cycleBrightnessPreset,
   setBrightness,
   toggleBrightnessDim,
-} from '../../../stores/brightness';
+} from '../../../stores/system/brightness';
 import { LucideIcon } from '../../../widget/common/lucide';
 
 function getBrightnessIcon(value: number) {

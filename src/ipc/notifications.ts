@@ -1,4 +1,4 @@
-import { clearNotifications, toggleDoNotDisturb } from '../stores/notification';
+import { clearNotifications, toggleDoNotDisturb } from '../stores/notification/notification';
 import { type IpcCommandHandler } from './types';
 
 export const notificationCommandHandlers: ReadonlyMap<string, IpcCommandHandler> = new Map<

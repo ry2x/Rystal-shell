@@ -3,7 +3,7 @@ import { execAsync } from 'ags/process';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-import { ryprlandCacheDir } from '../lib/paths';
+import { ryprlandCacheDir } from '../../lib/paths';
 import type { Wallpaper } from './wallpaper';
 
 const THUMBNAIL_WIDTH = 384;

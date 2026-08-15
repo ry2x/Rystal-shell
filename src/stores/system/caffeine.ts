@@ -3,7 +3,7 @@ import { execAsync } from 'ags/process';
 
 import GLib from 'gi://GLib?version=2.0';
 
-import { ryprlandRuntimeDir } from '../lib/paths';
+import { ryprlandRuntimeDir } from '../../lib/paths';
 
 const RUNTIME_DIR = `${ryprlandRuntimeDir}/rystal-shell`;
 const CAFFEINE_REMOTE_FILE = `${RUNTIME_DIR}/caffeine-remote`;

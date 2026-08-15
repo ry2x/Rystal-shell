@@ -2,7 +2,7 @@ import { createEffect } from 'ags';
 import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import { createPowerMenuState } from '../../stores/powerMenu';
+import { createPowerMenuState } from '../../stores/panel/powerMenu';
 import ClickCatcher from '../common/ClickCatcher';
 import PowerMenuConfirmationView from './widget/PowerMenuConfirmationView';
 import PowerMenuMainView from './widget/PowerMenuMainView';

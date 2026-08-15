@@ -1,6 +1,6 @@
 import { Gtk } from 'ags/gtk4';
 
-import { type ControlCenterDetailPage } from '../../stores/controlCenter';
+import { type ControlCenterDetailPage } from '../../stores/panel/controlCenter';
 import { LucideIcon } from '../../widget/common/lucide';
 import BrightnessSlider from './widget/BrightnessSlider';
 import MediaCard from './widget/MediaCard';

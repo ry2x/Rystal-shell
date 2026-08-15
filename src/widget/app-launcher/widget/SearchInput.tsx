@@ -3,8 +3,8 @@ import { Gdk, Gtk } from 'ags/gtk4';
 
 import Apps from 'gi://AstalApps';
 
-import { openQuery, recordAppLaunch } from '../../../stores/application';
-import { toggleAppLauncher } from '../../../stores/windowManager';
+import { openQuery, recordAppLaunch } from '../../../stores/application/application';
+import { toggleAppLauncher } from '../../../stores/shell/windowManager';
 
 export interface SearchInputProps {
   text: Accessor<string>;

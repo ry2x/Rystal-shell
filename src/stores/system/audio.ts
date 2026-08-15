@@ -5,7 +5,7 @@ import { type Timer, timeout } from 'ags/time';
 import Wp from 'gi://AstalWp';
 import GSound from 'gi://GSound';
 
-import { closeAllControlCenters } from './windowManager';
+import { closeAllControlCenters } from '../shell/windowManager';
 
 let volumeContext: GSound.Context | null = null;
 let lastVolumeSoundAt = 0;

@@ -4,8 +4,8 @@ import { type Timer, timeout } from 'ags/time';
 
 import GLib from 'gi://GLib';
 
-import { appConfig } from '../lib/config';
-import { sendNotification } from '../lib/notification';
+import { appConfig } from '../../lib/config';
+import { sendNotification } from '../../lib/notification';
 
 type BrightnessBackend = 'ddcutil' | 'brightnessctl';
 type ConfiguredBackend = BrightnessBackend | 'auto';

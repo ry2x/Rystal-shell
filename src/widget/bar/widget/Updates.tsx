@@ -1,7 +1,7 @@
 import { Gdk, Gtk } from 'ags/gtk4';
 
-import { updatesPoll } from '../../../stores/update';
-import { toggleControlCenter } from '../../../stores/windowManager';
+import { toggleControlCenter } from '../../../stores/shell/windowManager';
+import { updatesPoll } from '../../../stores/system/update';
 import { LucideIcon } from '../../../widget/common/lucide';
 
 export interface UpdatesProps {

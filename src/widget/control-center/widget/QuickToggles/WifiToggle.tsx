@@ -4,7 +4,7 @@ import { Gtk } from 'ags/gtk4';
 import Network from 'gi://AstalNetwork';
 import Pango from 'gi://Pango';
 
-import { toggleWifi } from '../../../../stores/network';
+import { toggleWifi } from '../../../../stores/connectivity/network';
 import { LucideIcon } from '../../../../widget/common/lucide';
 
 export interface WifiToggleProps {

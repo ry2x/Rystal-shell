@@ -2,7 +2,7 @@ import { type Accessor } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
 import { shellMotion } from '../../lib/motion';
-import { animDx } from '../../stores/windowManager';
+import { animDx } from '../../stores/shell/windowManager';
 import ClockCard from './widget/ClockCard';
 import NotificationList from './widget/NotificationList';
 import ProfileCard from './widget/ProfileCard';

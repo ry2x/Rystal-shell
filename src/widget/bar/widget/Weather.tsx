@@ -1,7 +1,7 @@
 import { Gdk, Gtk } from 'ags/gtk4';
 
-import { getWeatherIcon, weatherInfo } from '../../../stores/weather';
-import { toggleDateWeather } from '../../../stores/windowManager';
+import { toggleDateWeather } from '../../../stores/shell/windowManager';
+import { getWeatherIcon, weatherInfo } from '../../../stores/system/weather';
 import { LucideIcon } from '../../../widget/common/lucide';
 
 export interface WeatherProps {

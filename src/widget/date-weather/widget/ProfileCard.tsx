@@ -4,7 +4,7 @@ import GLib from 'gi://GLib?version=2.0';
 
 import { appConfig } from '../../../lib/config';
 import { loadTextureFromUri } from '../../../lib/image';
-import { getOsInfo, uptime, userName } from '../../../stores/system';
+import { getOsInfo, uptime, userName } from '../../../stores/system/system';
 
 const DEFAULT_AVATAR_PATH = `${GLib.get_home_dir()}/Profile/Profile.png`;
 const osInfoCache = getOsInfo();

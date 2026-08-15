@@ -1,7 +1,7 @@
 import { Gtk } from 'ags/gtk4';
 
-import { cpuUsage, gpuUsage, openSystemMonitor, ramUsage } from '../../../stores/system';
-import type { RamData } from '../../../stores/system';
+import { cpuUsage, gpuUsage, openSystemMonitor, ramUsage } from '../../../stores/system/system';
+import type { RamData } from '../../../stores/system/system';
 import CircularProgress from '../../common/CircularProgress';
 
 export default function SystemMetrics() {

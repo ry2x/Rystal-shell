@@ -1,6 +1,6 @@
 import { Gtk } from 'ags/gtk4';
 
-import { isRecording, stopRecord } from '../../../stores/recording';
+import { isRecording, stopRecord } from '../../../stores/capture/recording';
 import { LucideIcon } from '../../../widget/common/lucide';
 
 export default function RecordIndicator() {

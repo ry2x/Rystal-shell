@@ -1,6 +1,6 @@
 import { Gtk } from 'ags/gtk4';
 
-import { captureScreenshot } from '../../../../stores/screenCapture';
+import { captureScreenshot } from '../../../../stores/capture/screenCapture';
 import { LucideIcon } from '../../../common/lucide';
 
 export default function ScreenshotActions() {

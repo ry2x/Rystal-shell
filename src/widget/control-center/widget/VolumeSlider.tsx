@@ -2,7 +2,7 @@ import { For } from 'ags';
 
 import Wp from 'gi://AstalWp';
 
-import { defaultSpeaker } from '../../../stores/audio';
+import { defaultSpeaker } from '../../../stores/system/audio';
 import VolumeSliderContent from './VolumeSliderContent';
 
 export interface VolumeSliderProps {

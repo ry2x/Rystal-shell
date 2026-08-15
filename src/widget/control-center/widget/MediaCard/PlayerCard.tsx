@@ -4,7 +4,7 @@ import { Gtk } from 'ags/gtk4';
 import Mpris from 'gi://AstalMpris';
 import Pango from 'gi://Pango';
 
-import { createPlayerArtwork } from '../../../../stores/media';
+import { createPlayerArtwork } from '../../../../stores/media/media';
 import CavaWidget from './CavaWidget';
 import PlayerArtwork from './PlayerArtwork';
 import PlayerControls from './PlayerControls';

@@ -3,8 +3,8 @@ import { Gtk } from 'ags/gtk4';
 import Apps from 'gi://AstalApps';
 import Pango from 'gi://Pango';
 
-import { recordAppLaunch } from '../../../stores/application';
-import { toggleAppLauncher } from '../../../stores/windowManager';
+import { recordAppLaunch } from '../../../stores/application/application';
+import { toggleAppLauncher } from '../../../stores/shell/windowManager';
 
 export interface AppItemProps {
   res: Apps.Application;

@@ -3,8 +3,11 @@ import { Astal, Gdk, Gtk } from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import { type Timer, idle } from 'ags/time';
 
-import { createAppLauncherState } from '../../stores/appLauncher';
-import { ensureLauncherBackground, registerLauncherBackground } from '../../stores/launcherImage';
+import { createAppLauncherState } from '../../stores/application/appLauncher';
+import {
+  ensureLauncherBackground,
+  registerLauncherBackground,
+} from '../../stores/application/launcherImage';
 import { AppList } from './widget/AppList';
 import { SearchInput } from './widget/SearchInput';
 

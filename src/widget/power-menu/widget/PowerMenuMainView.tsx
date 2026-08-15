@@ -1,7 +1,7 @@
 import { type Accessor } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
-import { POWER_ITEMS, type PowerItem } from '../../../stores/powerMenu';
+import { POWER_ITEMS, type PowerItem } from '../../../stores/panel/powerMenu';
 import PowerMenuItemButton from './PowerMenuItemButton';
 
 export interface PowerMenuMainViewProps {
