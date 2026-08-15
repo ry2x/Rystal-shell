@@ -4,28 +4,24 @@ import { execAsync } from 'ags/process';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-import { ryprlandCacheDir, ryprlandWallpaperDir } from '../lib/paths';
+import { ryprlandWallpaperDir } from '../lib/paths';
+import {
+  cancelWallpaperThumbnailWork,
+  ensureWallpaperThumbnails,
+  getWallpaperThumbnailPath,
+} from './wallpaperThumbnail';
 
-export type Wallpaper = {
+export interface Wallpaper {
   path: string;
   relativePath: string;
   searchText: string;
   thumbnailPath: string;
   size: number;
   modified: number;
-};
+}
 
-const THUMBNAIL_WIDTH = 384;
-const THUMBNAIL_HEIGHT = 252;
-const THUMBNAIL_VERSION = `v7-${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}`;
-const MAX_THUMBNAIL_WORKERS = 4;
 const SUPPORTED_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'webp', 'gif']);
-const thumbnailSubscribers = new Set<(path: string, thumbnailPath: string) => void>();
-const textEncoder = new TextEncoder();
-
 const wallpaperRoot = GLib.canonicalize_filename(ryprlandWallpaperDir, GLib.get_home_dir());
-
-const cacheRoot = `${ryprlandCacheDir}/wallpapers/thumbnails`;
 
 const [wallpapersState, setWallpapers] = createState<Wallpaper[]>([]);
 const [wallpapersLoadingState, setWallpapersLoading] = createState(false);
@@ -36,16 +32,8 @@ export const wallpapersLoading = wallpapersLoadingState;
 export const wallpaperApplying = wallpaperApplyingState;
 export const wallpaperError = wallpaperErrorState;
 
-type ThumbnailJob = {
-  wallpaper: Wallpaper;
-  generation: number;
-  priority: number;
-};
-
-let generation = 0;
-let activeWorkers = 0;
-let thumbnailQueue: ThumbnailJob[] = [];
-const queuedThumbnails = new Map<string, ThumbnailJob>();
+let refreshGeneration = 0;
+let refreshCancellable: Gio.Cancellable | null = null;
 
 function queryInfo(
   file: Gio.File,
@@ -118,18 +106,12 @@ function isSupported(name: string) {
   return SUPPORTED_EXTENSIONS.has(extension);
 }
 
-function thumbnailKey(path: string, size: number, modified: number) {
-  const payload = textEncoder.encode(`${path}\0${size}:${modified}\0${THUMBNAIL_VERSION}`);
-  return GLib.compute_checksum_for_data(GLib.ChecksumType.SHA256, payload);
-}
-
 function createWallpaper(path: string, relativePath: string, size: number, modified: number) {
-  const cacheKey = thumbnailKey(path, size, modified);
   return {
     path,
     relativePath,
     searchText: relativePath.toLocaleLowerCase(),
-    thumbnailPath: `${cacheRoot}/${cacheKey}.png`,
+    thumbnailPath: getWallpaperThumbnailPath(path, size, modified),
     size,
     modified,
   } satisfies Wallpaper;
@@ -139,11 +121,10 @@ async function enumerateDirectory(
   directory: Gio.File,
   relativeDirectory: string,
   cancellable: Gio.Cancellable,
-  refreshGeneration: number,
+  generation: number,
   output: Wallpaper[],
 ): Promise<void> {
-  if (refreshGeneration !== generation) return;
-
+  if (generation !== refreshGeneration) return;
   const enumerator = await enumerateChildren(
     directory,
     'standard::name,standard::type,standard::size,time::modified',
@@ -153,7 +134,7 @@ async function enumerateDirectory(
   try {
     // Gio's asynchronous enumerator advances independently of these generation guards.
     // eslint-disable-next-line no-unmodified-loop-condition
-    while (refreshGeneration === generation) {
+    while (generation === refreshGeneration) {
       // Sequential batches keep directory enumeration ordered and bounded.
       // eslint-disable-next-line no-await-in-loop
       const infos = await nextFiles(enumerator, cancellable);
@@ -167,7 +148,7 @@ async function enumerateDirectory(
         if (info.get_file_type() === Gio.FileType.DIRECTORY) {
           // Recurse sequentially so one refresh cannot open unbounded enumerators.
           // eslint-disable-next-line no-await-in-loop
-          await enumerateDirectory(child, relativePath, cancellable, refreshGeneration, output);
+          await enumerateDirectory(child, relativePath, cancellable, generation, output);
         } else if (info.get_file_type() === Gio.FileType.REGULAR && isSupported(name)) {
           const path = child.get_path();
           if (!path) continue;
@@ -181,101 +162,16 @@ async function enumerateDirectory(
   }
 }
 
-function notifyThumbnailReady(path: string, thumbnailPath: string) {
-  for (const subscriber of thumbnailSubscribers) subscriber(path, thumbnailPath);
-}
-
-async function generateThumbnail(job: ThumbnailJob) {
-  const { wallpaper, generation: jobGeneration } = job;
-  if (GLib.file_test(wallpaper.thumbnailPath, GLib.FileTest.IS_REGULAR)) {
-    if (jobGeneration === generation) notifyThumbnailReady(wallpaper.path, wallpaper.thumbnailPath);
-    return;
-  }
-
-  GLib.mkdir_with_parents(cacheRoot, 0o755);
-  const temporaryPath = `${wallpaper.thumbnailPath}.tmp-${GLib.uuid_string_random()}`;
-
-  try {
-    await execAsync([
-      'magick',
-      `${wallpaper.path}[0]`,
-      '-strip',
-      '-thumbnail',
-      `${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}^`,
-      '-gravity',
-      'center',
-      '-extent',
-      `${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}`,
-      `png:${temporaryPath}`,
-    ]);
-    Gio.File.new_for_path(temporaryPath).move(
-      Gio.File.new_for_path(wallpaper.thumbnailPath),
-      Gio.FileCopyFlags.OVERWRITE,
-      null,
-      null,
-    );
-    if (jobGeneration === generation) notifyThumbnailReady(wallpaper.path, wallpaper.thumbnailPath);
-  } catch (error) {
-    console.error(`Failed to generate wallpaper thumbnail for ${wallpaper.path}:`, error);
-    try {
-      Gio.File.new_for_path(temporaryPath).delete(null);
-    } catch {
-      // The failed command may not have created a temporary file.
-    }
-  }
-}
-
-function finishThumbnailJob() {
-  activeWorkers--;
-  pumpThumbnailQueue();
-}
-
-function startThumbnailJob(job: ThumbnailJob) {
-  activeWorkers++;
-  void generateThumbnail(job).finally(finishThumbnailJob);
-}
-
-function pumpThumbnailQueue() {
-  if (activeWorkers >= MAX_THUMBNAIL_WORKERS) return;
-  const job = thumbnailQueue.shift();
-  if (!job) return;
-  queuedThumbnails.delete(job.wallpaper.path);
-  if (job.generation === generation) startThumbnailJob(job);
-  pumpThumbnailQueue();
-}
-
-export function ensureWallpaperThumbnails(items: Wallpaper[], priority = true) {
-  for (const wallpaper of items) {
-    if (GLib.file_test(wallpaper.thumbnailPath, GLib.FileTest.IS_REGULAR)) continue;
-
-    const existing = queuedThumbnails.get(wallpaper.path);
-    if (existing) {
-      if (priority) existing.priority = 1;
-      continue;
-    }
-
-    const job = { wallpaper, generation, priority: priority ? 1 : 0 };
-    thumbnailQueue.push(job);
-    queuedThumbnails.set(wallpaper.path, job);
-  }
-  thumbnailQueue.sort((a, b) => b.priority - a.priority);
-  pumpThumbnailQueue();
-}
-
-export function subscribeThumbnailReady(subscriber: (path: string, thumbnailPath: string) => void) {
-  thumbnailSubscribers.add(subscriber);
-  return () => thumbnailSubscribers.delete(subscriber);
-}
-
 export async function refreshWallpapers() {
-  const refreshGeneration = ++generation;
-  thumbnailQueue = [];
-  queuedThumbnails.clear();
+  const generation = ++refreshGeneration;
+  refreshCancellable?.cancel();
+  cancelWallpaperThumbnailWork();
+  const cancellable = new Gio.Cancellable();
+  refreshCancellable = cancellable;
   setWallpapersLoading(true);
   setWallpaperError('');
 
   const root = Gio.File.new_for_path(wallpaperRoot);
-  const cancellable = new Gio.Cancellable();
   const found: Wallpaper[] = [];
 
   try {
@@ -287,8 +183,8 @@ export async function refreshWallpapers() {
     );
     if (info.get_file_type() !== Gio.FileType.DIRECTORY) throw new Error('Not a directory');
 
-    await enumerateDirectory(root, '', cancellable, refreshGeneration, found);
-    if (refreshGeneration !== generation) return;
+    await enumerateDirectory(root, '', cancellable, generation, found);
+    if (generation !== refreshGeneration) return;
 
     found.sort((a, b) =>
       a.relativePath.localeCompare(b.relativePath, undefined, {
@@ -299,19 +195,23 @@ export async function refreshWallpapers() {
     setWallpapers(found);
     ensureWallpaperThumbnails(found, false);
   } catch (error) {
-    if (refreshGeneration !== generation) return;
+    if (generation !== refreshGeneration) return;
     console.error(`Failed to scan wallpaper directory ${wallpaperRoot}:`, error);
     setWallpapers([]);
     setWallpaperError(`Wallpaper directory is unavailable: ${wallpaperRoot}`);
   } finally {
-    if (refreshGeneration === generation) setWallpapersLoading(false);
+    if (generation === refreshGeneration) {
+      refreshCancellable = null;
+      setWallpapersLoading(false);
+    }
   }
 }
 
 export function cancelWallpaperWork() {
-  generation++;
-  thumbnailQueue = [];
-  queuedThumbnails.clear();
+  refreshGeneration++;
+  refreshCancellable?.cancel();
+  refreshCancellable = null;
+  cancelWallpaperThumbnailWork();
   setWallpapersLoading(false);
 }
 
@@ -326,8 +226,9 @@ export async function applyWallpaper(wallpaper: Wallpaper) {
 
   try {
     const rootPrefix = wallpaperRoot.endsWith('/') ? wallpaperRoot : `${wallpaperRoot}/`;
-    if (!wallpaper.path.startsWith(rootPrefix))
+    if (!wallpaper.path.startsWith(rootPrefix)) {
       throw new Error('Wallpaper is outside the configured root');
+    }
 
     const info = await queryInfo(
       Gio.File.new_for_path(wallpaper.path),
@@ -335,8 +236,9 @@ export async function applyWallpaper(wallpaper: Wallpaper) {
       Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS,
       null,
     );
-    if (info.get_file_type() !== Gio.FileType.REGULAR)
+    if (info.get_file_type() !== Gio.FileType.REGULAR) {
       throw new Error('Wallpaper no longer exists');
+    }
 
     await execAsync(['theme-switch.sh', 'set', '--', wallpaper.path]);
     return true;

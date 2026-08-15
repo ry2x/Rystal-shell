@@ -5,13 +5,15 @@ import GLib from 'gi://GLib';
 import {
   type Wallpaper,
   applyWallpaper,
-  ensureWallpaperThumbnails,
-  subscribeThumbnailReady,
   wallpaperApplying,
   wallpaperError,
   wallpapers,
   wallpapersLoading,
 } from '../../../stores/wallpaper';
+import {
+  ensureWallpaperThumbnails,
+  subscribeThumbnailReady,
+} from '../../../stores/wallpaperThumbnail';
 import { createCoverFlowTransform, easeOutCubic, getCoverFlowOpacity } from '../coverFlowGeometry';
 import { WallpaperCardController } from './WallpaperCard';
 
