@@ -7,7 +7,8 @@ import GLib from 'gi://GLib';
 import { executePowerAction } from '../../stores/powerMenu';
 import { activeSidePanel } from '../../stores/windowManager';
 import { POWER_ITEMS, type PowerItem } from './items';
-import { createPowerMenuConfirmationView, createPowerMenuMainView } from './widget/PowerMenuViews';
+import createPowerMenuConfirmationView from './widget/PowerMenuConfirmationView';
+import createPowerMenuMainView from './widget/PowerMenuMainView';
 
 const BAR_WIDTH = 47;
 const PANEL_HEIGHT = 350;

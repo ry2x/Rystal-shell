@@ -1,15 +1,11 @@
-import { createState } from 'ags';
+import { type Accessor } from 'ags';
 import { Gtk } from 'ags/gtk4';
 
 import { LucideIcon } from '../../common/lucide';
 import type { PowerItem } from '../items';
 
-export { default as createPowerMenuMainView } from './PowerMenuMainView';
-
-type State<T> = ReturnType<typeof createState<T>>[0];
-
-interface ConfirmationViewProps {
-  confirmation: State<PowerItem | null>;
+export interface PowerMenuConfirmationViewProps {
+  confirmation: Accessor<PowerItem | null>;
   onCancel: () => void;
   onConfirm: () => void;
   onSelectionChanged: (index: number) => void;
@@ -17,25 +13,14 @@ interface ConfirmationViewProps {
   onConfirmButtonCreated: (button: Gtk.Button) => void;
 }
 
-export function createPowerMenuConfirmationView({
+export default function PowerMenuConfirmationView({
   confirmation,
   onCancel,
   onConfirm,
   onSelectionChanged,
   onCancelButtonCreated,
   onConfirmButtonCreated,
-}: ConfirmationViewProps) {
-  const registerButton = (
-    button: Gtk.Button,
-    index: number,
-    callback: (button: Gtk.Button) => void,
-  ) => {
-    callback(button);
-    const focusController = new Gtk.EventControllerFocus();
-    focusController.connect('enter', () => onSelectionChanged(index));
-    button.add_controller(focusController);
-  };
-
+}: PowerMenuConfirmationViewProps) {
   return (
     <box
       class="power-menu-confirmation"
@@ -71,18 +56,12 @@ export function createPowerMenuConfirmationView({
           />
         </box>
         <box class="power-menu-confirmation-actions" valign={Gtk.Align.CENTER} spacing={14}>
-          <button
-            class="power-menu-cancel"
-            onClicked={onCancel}
-            $={(self) => registerButton(self, 0, onCancelButtonCreated)}
-          >
+          <button class="power-menu-cancel" onClicked={onCancel} $={onCancelButtonCreated}>
+            <Gtk.EventControllerFocus onEnter={() => onSelectionChanged(0)} />
             <label label="Cancel (<u>ESC</u>)" useMarkup />
           </button>
-          <button
-            class="power-menu-confirm"
-            onClicked={onConfirm}
-            $={(self) => registerButton(self, 1, onConfirmButtonCreated)}
-          >
+          <button class="power-menu-confirm" onClicked={onConfirm} $={onConfirmButtonCreated}>
+            <Gtk.EventControllerFocus onEnter={() => onSelectionChanged(1)} />
             <label
               label={confirmation.as((item) =>
                 item ? `${item.label} (<u>${item.shortcut.toUpperCase()}</u>)` : 'Confirm',
@@ -93,5 +72,5 @@ export function createPowerMenuConfirmationView({
         </box>
       </box>
     </box>
-  ) as Gtk.Box;
+  );
 }
