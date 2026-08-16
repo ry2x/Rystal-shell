@@ -26,7 +26,7 @@ function getTextureKey(file: Gio.File, uri: string, maxWidth: number, maxHeight:
 export function acquireNotificationTexture(
   uri: string,
   maxWidth: number,
-  maxHeight: number,
+  maxHeight: number
 ): SharedTexture {
   const file = Gio.File.new_for_uri(uri);
   const path = file.get_path();
@@ -37,7 +37,7 @@ export function acquireNotificationTexture(
 
   if (!cached) {
     const pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, maxWidth, maxHeight, true);
-    cached = { texture: Gdk.Texture.new_for_pixbuf(pixbuf), references: 0 };
+    cached = {texture: Gdk.Texture.new_for_pixbuf(pixbuf), references: 0};
     textures.set(key, cached);
   }
 

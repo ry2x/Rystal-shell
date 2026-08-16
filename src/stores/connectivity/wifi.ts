@@ -17,14 +17,14 @@ function ssidForConnection(connection: WifiProfileDuplicate['connection']) {
 }
 
 function matchingConnections(network: NetworkService, ssid: string) {
-  return network.client.connections.filter((connection) => ssidForConnection(connection) === ssid);
+  return network.client.connections.filter(connection => ssidForConnection(connection) === ssid);
 }
 
 function preferredConnection(network: NetworkService, ssid: string) {
   const connections = matchingConnections(network, ssid);
   return (
-    connections.find((connection) => connection.get_id() === ssid) ??
-    connections.find((connection) => !/\s\d+$/.test(connection.get_id() ?? '')) ??
+    connections.find(connection => connection.get_id() === ssid) ??
+    connections.find(connection => !/\s\d+$/.test(connection.get_id() ?? '')) ??
     connections[0]
   );
 }
@@ -50,7 +50,7 @@ function activate(
   network: NetworkService,
   wifi: Wifi,
   connection: WifiProfileDuplicate['connection'],
-  ap: AccessPoint,
+  ap: AccessPoint
 ) {
   return new Promise<void>((resolve, reject) => {
     try {
@@ -66,7 +66,7 @@ function activate(
           } catch (reason) {
             reject(reason);
           }
-        },
+        }
       );
     } catch (reason) {
       reject(reason);
@@ -84,12 +84,12 @@ async function saveBssid(connection: Connection, ap: AccessPoint) {
 function waitForProfile(
   network: NetworkService,
   ssid: string,
-  attempt = 0,
+  attempt = 0
 ): Promise<Connection | undefined> {
   const connection = preferredConnection(network, ssid);
   if (connection) return Promise.resolve(connection);
   if (attempt >= 9) return Promise.resolve(undefined);
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     setTimeout(() => {
       resolve(waitForProfile(network, ssid, attempt + 1));
     }, 100);
@@ -107,13 +107,13 @@ export function listWifiAccessPoints(wifi: Wifi) {
 
 export function getWifiProfileDuplicates(
   network: NetworkService,
-  ap: AccessPoint,
+  ap: AccessPoint
 ): WifiProfileDuplicate[] {
   if (!ap.ssid) return [];
   const preferred = preferredConnection(network, ap.ssid);
   return matchingConnections(network, ap.ssid)
-    .filter((connection) => connection !== preferred)
-    .map((connection) => ({ id: connection.get_id() || 'Unnamed connection', connection }));
+    .filter(connection => connection !== preferred)
+    .map(connection => ({id: connection.get_id() || 'Unnamed connection', connection}));
 }
 
 export function hasWifiProfile(network: NetworkService, ap: AccessPoint) {
@@ -123,7 +123,7 @@ export function hasWifiProfile(network: NetworkService, ap: AccessPoint) {
 export async function deleteWifiProfiles(duplicates: WifiProfileDuplicate[]) {
   await Promise.all(
     duplicates.map(
-      (duplicate) =>
+      duplicate =>
         new Promise<void>((resolve, reject) => {
           try {
             duplicate.connection.delete_async(null, (_source, result) => {
@@ -137,8 +137,8 @@ export async function deleteWifiProfiles(duplicates: WifiProfileDuplicate[]) {
           } catch (reason) {
             reject(reason);
           }
-        }),
-    ),
+        })
+    )
   );
 }
 
@@ -146,7 +146,7 @@ export async function connectWifi(
   network: NetworkService,
   wifi: Wifi,
   ap: AccessPoint,
-  password?: string,
+  password?: string
 ) {
   const connection = ap.ssid ? preferredConnection(network, ap.ssid) : undefined;
   if (!connection) {

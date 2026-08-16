@@ -1,8 +1,8 @@
-import { execAsync } from 'ags/process';
-import { type Timer, idle } from 'ags/time';
+import {execAsync} from 'ags/process';
+import {type Timer, idle} from 'ags/time';
 
-import { closeAllControlCentersImmediately } from '../shell/windowManager';
-import { type RecordingMode, startRecord } from './recording';
+import {closeAllControlCentersImmediately} from '../shell/windowManager';
+import {type RecordingMode, startRecord} from './recording';
 
 export type ScreenshotMode = 'crop' | 'freeze' | 'monitor';
 

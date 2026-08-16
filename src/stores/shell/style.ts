@@ -1,10 +1,10 @@
-import { Gdk, Gtk } from 'ags/gtk4';
-import { exec, execAsync } from 'ags/process';
+import {Gdk, Gtk} from 'ags/gtk4';
+import {exec, execAsync} from 'ags/process';
 
 import GLib from 'gi://GLib';
 
-import { ryprlandRuntimeDir, rystalShellConfigDir, rystalShellDataDir } from '../../lib/paths';
-import { reloadBarColors } from './barBackground';
+import {ryprlandRuntimeDir, rystalShellConfigDir, rystalShellDataDir} from '../../lib/paths';
+import {reloadBarColors} from './barBackground';
 
 let cssProvider: Gtk.CssProvider | null = null;
 let lastCompiledCssHash: string | null = null;
@@ -45,7 +45,7 @@ function reloadCss(path: string) {
   Gtk.StyleContext.add_provider_for_display(
     display,
     nextProvider,
-    Gtk.STYLE_PROVIDER_PRIORITY_USER,
+    Gtk.STYLE_PROVIDER_PRIORITY_USER
   );
 
   if (cssProvider) {
@@ -81,7 +81,7 @@ export function compileAndReloadCss(): Promise<boolean> {
       lastCompiledCssHash = currentHash;
       return true;
     })
-    .catch((error) => {
+    .catch(error => {
       console.error(`Error compiling CSS; keeping the active stylesheet: ${error}`);
       throw error;
     });

@@ -1,12 +1,12 @@
-import { createExternal } from 'ags';
-import { type Process, execAsync, subprocess } from 'ags/process';
-import { type Timer, timeout } from 'ags/time';
+import {createExternal} from 'ags';
+import {type Process, execAsync, subprocess} from 'ags/process';
+import {type Timer, timeout} from 'ags/time';
 
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 import Soup from 'gi://Soup?version=3.0';
 
-import { closeAllControlCenters } from '../shell/windowManager';
+import {closeAllControlCenters} from '../shell/windowManager';
 
 const NORMAL_INTERVAL_MS = 30 * 60_000;
 const RETRY_INTERVAL_MS = 60_000;
@@ -17,7 +17,7 @@ const CONNECTIVITY_CHECK_URLS = [
   'https://connectivitycheck.gstatic.com/generate_204',
   'http://captive.apple.com/hotspot-detect.html',
 ];
-const connectivitySession = new Soup.Session({ timeout: 5 });
+const connectivitySession = new Soup.Session({timeout: 5});
 
 function sendAndRead(message: Soup.Message, cancellable: Gio.Cancellable): Promise<GLib.Bytes> {
   return new Promise((resolve, reject) => {
@@ -31,7 +31,7 @@ function sendAndRead(message: Soup.Message, cancellable: Gio.Cancellable): Promi
         } catch (error) {
           reject(error);
         }
-      },
+      }
     );
   });
 }
@@ -53,7 +53,7 @@ async function hasConnectivity(cancellable: Gio.Cancellable, index = 0): Promise
 }
 
 function countOutputLines(output: string) {
-  return output.split('\n').filter((line) => line.trim().length > 0).length;
+  return output.split('\n').filter(line => line.trim().length > 0).length;
 }
 
 let requestRefresh: (() => Promise<void>) | null = null;
@@ -65,7 +65,7 @@ export function openUpdateManager() {
     .catch(console.error);
 }
 
-export const updatesPoll = createExternal('0', (setUpdates) => {
+export const updatesPoll = createExternal('0', setUpdates => {
   const updateProcesses = new Set<Process>();
   let refreshTimer: Timer | null = null;
   let refreshPromise: Promise<void> | null = null;
@@ -87,14 +87,14 @@ export const updatesPoll = createExternal('0', (setUpdates) => {
   }
 
   function countCommandUpdates(command: string[]): Promise<number> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       let count = 0;
       const process = subprocess(
         ['timeout', UPDATE_TIMEOUT_SECONDS, ...command],
-        (output) => {
+        output => {
           count += countOutputLines(output);
         },
-        (error) => console.warn(`${command.join(' ')}: ${error}`),
+        error => console.warn(`${command.join(' ')}: ${error}`)
       );
       updateProcesses.add(process);
       process.connect('exit', () => {

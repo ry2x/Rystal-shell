@@ -1,12 +1,12 @@
-import { type Accessor, For, createBinding } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor, For, createBinding} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 import Pango from 'gi://Pango';
 
-import { LucideIcon } from '../../../../widget/common/lucide';
-import { type SoundDeviceKind } from './types';
-import { getEndpointLabel, getRouteLabel } from './utils';
+import {LucideIcon} from '../../../../widget/common/lucide';
+import {type SoundDeviceKind} from './types';
+import {getEndpointLabel, getRouteLabel} from './utils';
 
 export interface DeviceSelectorProps {
   endpoint: Wp.Endpoint;
@@ -15,12 +15,7 @@ export interface DeviceSelectorProps {
   onSelect: (endpoint: Wp.Endpoint) => void | Promise<void>;
 }
 
-export default function DeviceSelector({
-  endpoint,
-  endpoints,
-  kind,
-  onSelect,
-}: DeviceSelectorProps) {
+export default function DeviceSelector({endpoint, endpoints, kind, onSelect}: DeviceSelectorProps) {
   const route = createBinding(endpoint, 'route').as(() => getRouteLabel(endpoint));
   const button = (
     <button class="cc-sound-device-card" hexpand halign={Gtk.Align.FILL}>
@@ -62,8 +57,8 @@ export default function DeviceSelector({
         <For each={endpoints}>
           {(candidate: Wp.Endpoint) => (
             <button
-              class={createBinding(candidate, 'is_default').as((active) =>
-                active ? 'cc-sound-device-option active' : 'cc-sound-device-option',
+              class={createBinding(candidate, 'is_default').as(active =>
+                active ? 'cc-sound-device-option active' : 'cc-sound-device-option'
               )}
               tooltipText={candidate.name || undefined}
               onClicked={() => {
@@ -102,7 +97,7 @@ export default function DeviceSelector({
           )}
         </For>
       </box>
-    ) as Gtk.Widget,
+    ) as Gtk.Widget
   );
 
   button.connect('clicked', () => popover.popup());

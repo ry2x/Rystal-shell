@@ -1,5 +1,5 @@
-import { type Accessor } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Gdk from 'gi://Gdk';
 
@@ -7,7 +7,7 @@ export interface PlayerArtworkProps {
   artwork: Accessor<Gdk.Texture | null>;
 }
 
-export default function PlayerArtwork({ artwork }: PlayerArtworkProps) {
+export default function PlayerArtwork({artwork}: PlayerArtworkProps) {
   // GTK accepts a null paintable, but the generated reactive prop type omits it.
   const paintable = artwork as Accessor<Gdk.Paintable>;
 

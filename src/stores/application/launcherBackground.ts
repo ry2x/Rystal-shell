@@ -1,9 +1,9 @@
-import { Gdk, Gtk } from 'ags/gtk4';
+import {Gdk, Gtk} from 'ags/gtk4';
 
 import GLib from 'gi://GLib';
 
-import { loadTextureFromUri } from '../../lib/image';
-import { rystalShellConfigDir, rystalShellDataDir } from '../../lib/paths';
+import {loadTextureFromUri} from '../../lib/image';
+import {rystalShellConfigDir, rystalShellDataDir} from '../../lib/paths';
 
 const configuredBackgroundPath = `${rystalShellConfigDir}/assets/launcher_bg.png`;
 const defaultBackgroundPath = `${rystalShellDataDir}/assets/icon.png`;
@@ -39,7 +39,7 @@ function replaceBackground() {
 }
 
 export function reloadLauncherBackground() {
-  const hasVisibleLauncher = [...pictures].some((picture) => picture.get_mapped());
+  const hasVisibleLauncher = [...pictures].some(picture => picture.get_mapped());
   if (!hasVisibleLauncher) {
     backgroundDirty = true;
     return;

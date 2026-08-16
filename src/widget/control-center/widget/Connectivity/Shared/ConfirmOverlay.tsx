@@ -1,7 +1,7 @@
-import { createState } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {createState} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
-import { type Confirmation } from './types';
+import {type Confirmation} from './types';
 
 export interface ConfirmOverlayProps {
   confirmation: Confirmation;
@@ -9,7 +9,7 @@ export interface ConfirmOverlayProps {
   setError: (message: string) => void;
 }
 
-export default function ConfirmOverlay({ confirmation, clear, setError }: ConfirmOverlayProps) {
+export default function ConfirmOverlay({confirmation, clear, setError}: ConfirmOverlayProps) {
   const [busy, setBusy] = createState(false);
   let disposed = false;
 
@@ -34,12 +34,12 @@ export default function ConfirmOverlay({ confirmation, clear, setError }: Confir
         <label label={confirmation.title} class="cc-modal-title" halign={Gtk.Align.START} />
         <label label={confirmation.message} wrap halign={Gtk.Align.START} />
         <box spacing={8} halign={Gtk.Align.END}>
-          <button class="power-btn" onClicked={clear} sensitive={busy.as((value) => !value)}>
+          <button class="power-btn" onClicked={clear} sensitive={busy.as(value => !value)}>
             <label label="Cancel" />
           </button>
           <button
             class="power-btn cc-danger-btn"
-            sensitive={busy.as((value) => !value)}
+            sensitive={busy.as(value => !value)}
             onClicked={async () => {
               setBusy(true);
               try {

@@ -1,7 +1,7 @@
-import { Astal, Gdk, Gtk } from 'ags/gtk4';
+import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import { createWallpaperSelectorState } from '../../stores/wallpaper/wallpaperSelector';
+import {createWallpaperSelectorState} from '../../stores/wallpaper/wallpaperSelector';
 import ClickCatcher from '../common/ClickCatcher';
 import CoverFlowController from './widget/CoverFlow';
 
@@ -18,15 +18,15 @@ type WallpaperSelectorWindow = Astal.Window & {
   show_animated: () => void;
 };
 
-export default function WallpaperSelector({ monitor }: WallpaperSelectorProps) {
-  const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
+export default function WallpaperSelector({monitor}: WallpaperSelectorProps) {
+  const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
   const monitorWidth = monitor.get_geometry().width;
   const viewportWidth = Math.max(900, monitorWidth - BAR_WIDTH - CONTENT_HORIZONTAL_PADDING);
   let coverFlow: CoverFlowController | null = null;
 
   const state = createWallpaperSelectorState({
     monitorConnector: monitor.get_connector(),
-    setCoverFlowActive: (active) => coverFlow?.setActive(active),
+    setCoverFlowActive: active => coverFlow?.setActive(active),
   });
   coverFlow = new CoverFlowController({
     onApplied: state.hideAnimated,
@@ -71,10 +71,10 @@ export default function WallpaperSelector({ monitor }: WallpaperSelectorProps) {
       <box orientation={Gtk.Orientation.VERTICAL}>
         <ClickCatcher onClick={state.hideAnimated} hexpand vexpand />
         <box
-          cssClasses={state.revealed.as((revealed) =>
-            revealed ? ['wallpaper-selector-panel', 'revealed'] : ['wallpaper-selector-panel'],
+          cssClasses={state.revealed.as(revealed =>
+            revealed ? ['wallpaper-selector-panel', 'revealed'] : ['wallpaper-selector-panel']
           )}
-          css={state.panelHeight.as((height) => {
+          css={state.panelHeight.as(height => {
             const progress = Math.max(0, Math.min(1, height / PANEL_HEIGHT));
             return `transform: translateY(${PANEL_HEIGHT - height}px); opacity: ${progress};`;
           })}

@@ -1,9 +1,9 @@
-import { createState } from 'ags';
+import {createState} from 'ags';
 
 import GLib from 'gi://GLib?version=2.0';
 
-import { ryprlandRuntimeDir } from '../../lib/paths';
-import { type IdleDaemon, idleDaemonAdapter } from './idleDaemon';
+import {ryprlandRuntimeDir} from '../../lib/paths';
+import {type IdleDaemon, idleDaemonAdapter} from './idleDaemon';
 
 const RUNTIME_DIR = `${ryprlandRuntimeDir}/rystal-shell`;
 const CAFFEINE_REMOTE_FILE = `${RUNTIME_DIR}/caffeine-remote`;
@@ -72,7 +72,7 @@ async function performToggle() {
 }
 
 let operationQueue = initializeCaffeine()
-  .catch((error) => {
+  .catch(error => {
     initializationFailed = true;
     console.error('Failed to initialize caffeine:', error);
   })
@@ -88,7 +88,7 @@ export function toggleCaffeine(): Promise<void> {
   pendingOperations += 1;
   setCaffeineBusy(true);
 
-  const operation = operationQueue.then(performToggle).catch(async (error) => {
+  const operation = operationQueue.then(performToggle).catch(async error => {
     console.error('Failed to toggle caffeine:', error);
     try {
       updateCaffeineState(await readCaffeineState());

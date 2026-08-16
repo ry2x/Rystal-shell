@@ -1,9 +1,9 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
 import GLib from 'gi://GLib';
 
-import { easeOutCubic, getCoverFlowOpacity } from '../coverFlowGeometry';
-import { WallpaperCardController } from './WallpaperCard';
+import {easeOutCubic, getCoverFlowOpacity} from '../coverFlowGeometry';
+import {WallpaperCardController} from './WallpaperCard';
 
 export interface CoverFlowCardState {
   card: WallpaperCardController;
@@ -53,7 +53,7 @@ export class CoverFlowAnimation {
       const eased = easeOutCubic(moveProgress);
       if (this.entrance < 1) {
         this.entrance = easeOutCubic(
-          Math.min(1, (now - this.entranceStart) / ENTRANCE_DURATION_US),
+          Math.min(1, (now - this.entranceStart) / ENTRANCE_DURATION_US)
         );
       }
 
@@ -62,7 +62,7 @@ export class CoverFlowAnimation {
         state.currentOpacity =
           state.startOpacity + (state.targetOpacity - state.startOpacity) * eased;
         state.card.widget.set_opacity(
-          getCoverFlowOpacity(state.currentOffset) * state.currentOpacity * this.entrance,
+          getCoverFlowOpacity(state.currentOffset) * state.currentOpacity * this.entrance
         );
       }
       this.options.onVisualsUpdated();

@@ -1,8 +1,8 @@
-import { execAsync } from 'ags/process';
+import {execAsync} from 'ags/process';
 
 import GLib from 'gi://GLib';
 
-import { appConfig } from '../../lib/config';
+import {appConfig} from '../../lib/config';
 
 export type BrightnessBackend = 'ddcutil' | 'brightnessctl';
 type ConfiguredBackend = BrightnessBackend | 'auto';
@@ -67,10 +67,10 @@ export class BrightnessBackendController {
     const backend = await this.resolve();
     if (backend === 'ddcutil') {
       const displays = await Promise.all(
-        this.ddcBuses.map(async (bus) => ({ bus, ...(await this.getDdcBrightnessDetails(bus)) })),
+        this.ddcBuses.map(async bus => ({bus, ...(await this.getDdcBrightnessDetails(bus))}))
       );
       await Promise.all(
-        displays.map(({ bus, maximum }) =>
+        displays.map(({bus, maximum}) =>
           execAsync([
             'ddcutil',
             '--bus',
@@ -78,8 +78,8 @@ export class BrightnessBackendController {
             'setvcp',
             DDC_VCP_BRIGHTNESS,
             String(Math.round((percent / 100) * maximum)),
-          ]),
-        ),
+          ])
+        )
       );
       return;
     }
@@ -97,7 +97,7 @@ export class BrightnessBackendController {
 
     try {
       const output = await execAsync(['ddcutil', 'detect']);
-      return [...output.matchAll(/I2C bus:\s*\/dev\/i2c-(\d+)/g)].map((match) => match[1]);
+      return [...output.matchAll(/I2C bus:\s*\/dev\/i2c-(\d+)/g)].map(match => match[1]);
     } catch (error) {
       console.warn('DDC/CI detection failed:', error);
       return [];
@@ -119,13 +119,13 @@ export class BrightnessBackendController {
     if (!Number.isFinite(current) || !Number.isFinite(maximum) || maximum <= 0) {
       throw new Error(`Unable to parse DDC/CI brightness: ${output.trim()}`);
     }
-    return { current, maximum };
+    return {current, maximum};
   }
 
   private async getDdcBrightness() {
     const bus = this.ddcBuses[0];
     if (!bus) throw new Error('No DDC/CI bus is available');
-    const { current, maximum } = await this.getDdcBrightnessDetails(bus);
+    const {current, maximum} = await this.getDdcBrightnessDetails(bus);
     return clampPercent((current / maximum) * 100);
   }
 

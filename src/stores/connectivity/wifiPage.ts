@@ -1,4 +1,4 @@
-import { type Accessor, createState, onCleanup } from 'ags';
+import {type Accessor, createState, onCleanup} from 'ags';
 
 import Network from 'gi://AstalNetwork';
 import GObject from 'gi://GObject';
@@ -11,7 +11,7 @@ import {
   hasWifiProfile,
   listWifiAccessPoints,
 } from './wifi';
-import { openWifiPasswordDialog } from './wifiPasswordDialog';
+import {openWifiPasswordDialog} from './wifiPasswordDialog';
 
 export interface WifiConfirmation {
   title: string;
@@ -39,7 +39,7 @@ export function createWifiPageState(monitorConnector: string): WifiPageState {
   const network = Network.get_default();
   const wifi = network.wifi;
   const [accessPoints, setAccessPoints] = createState<Network.AccessPoint[]>(
-    wifi?.access_points ?? [],
+    wifi?.access_points ?? []
   );
   const [error, setError] = createState('');
   const [confirmation, setConfirmation] = createState<WifiConfirmation | null>(null);
@@ -47,8 +47,8 @@ export function createWifiPageState(monitorConnector: string): WifiPageState {
   let pendingAccessPoint: Network.AccessPoint | null = null;
 
   const activeAccessPoint = accessPoints.as(() => wifi?.active_access_point ?? null);
-  const availableAccessPoints = accessPoints.as((list) =>
-    list.filter((accessPoint) => accessPoint !== wifi?.active_access_point),
+  const availableAccessPoints = accessPoints.as(list =>
+    list.filter(accessPoint => accessPoint !== wifi?.active_access_point)
   );
 
   const refreshAccessPoints = () => {
@@ -102,7 +102,7 @@ export function createWifiPageState(monitorConnector: string): WifiPageState {
     openWifiPasswordDialog({
       monitor: monitorConnector,
       ssid: accessPoint.ssid || 'network',
-      submit: (password) => connect(accessPoint, password),
+      submit: password => connect(accessPoint, password),
     });
   };
 
@@ -112,7 +112,7 @@ export function createWifiPageState(monitorConnector: string): WifiPageState {
       if (duplicates.length) {
         setConfirmation({
           title: 'Clean up duplicate Wi-Fi profiles',
-          message: `Keep ${accessPoint.ssid || 'this network'} and remove: ${duplicates.map((item) => item.id).join(', ')}?`,
+          message: `Keep ${accessPoint.ssid || 'this network'} and remove: ${duplicates.map(item => item.id).join(', ')}?`,
           confirmLabel: 'Remove and connect',
           onConfirm: async () => {
             await deleteWifiProfiles(duplicates);
@@ -190,7 +190,7 @@ export function createWifiPageState(monitorConnector: string): WifiPageState {
           pendingAccessPoint = null;
           retryAccessPoint = pending;
           setError(
-            `Could not connect to ${pending.ssid || 'this network'}. Enter the password and retry.`,
+            `Could not connect to ${pending.ssid || 'this network'}. Enter the password and retry.`
           );
         }
       })
@@ -200,7 +200,7 @@ export function createWifiPageState(monitorConnector: string): WifiPageState {
 
   onCleanup(() => {
     if (!wifi) return;
-    hooks.forEach((hook) => wifi.disconnect(hook));
+    hooks.forEach(hook => wifi.disconnect(hook));
     if (deviceHook !== null) {
       GObject.Object.prototype.disconnect.call(wifi.device, deviceHook);
     }

@@ -4,7 +4,7 @@ import {
   setBrightness,
   toggleBrightnessDim,
 } from '../../../stores/system/brightness';
-import { LucideIcon } from '../../../widget/common/lucide';
+import {LucideIcon} from '../../../widget/common/lucide';
 
 function getBrightnessIcon(value: number) {
   if (value <= 0.2) return 'sun-dim';
@@ -42,7 +42,7 @@ export default function BrightnessSlider() {
         tooltipText="Cycle brightness presets"
         onClicked={cycleBrightnessPreset}
       >
-        <label label={brightness.as((v) => `${Math.round(v * 100)}%`)} />
+        <label label={brightness.as(v => `${Math.round(v * 100)}%`)} />
       </button>
     </box>
   );

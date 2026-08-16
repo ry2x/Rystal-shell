@@ -9,7 +9,7 @@ import {
   togglePowerMenu,
   toggleWallpaperSelector,
 } from '../stores/shell/windowManager';
-import { type IpcCommandHandler } from './types';
+import {type IpcCommandHandler} from './types';
 
 export const panelCommandHandlers: ReadonlyMap<string, IpcCommandHandler> = new Map<
   string,
@@ -57,10 +57,10 @@ export const panelCommandHandlers: ReadonlyMap<string, IpcCommandHandler> = new 
       const dateWeather = app.get_window(`date-weather-popup-${focusedMonitor}`);
       const windows = app
         .get_windows()
-        .map((window) => window.name)
+        .map(window => window.name)
         .join(', ');
       response(
-        `Focused: ${focusedMonitor} | dw visible: ${dateWeather?.get_visible()} | Windows: ${windows}`,
+        `Focused: ${focusedMonitor} | dw visible: ${dateWeather?.get_visible()} | Windows: ${windows}`
       );
     },
   ],

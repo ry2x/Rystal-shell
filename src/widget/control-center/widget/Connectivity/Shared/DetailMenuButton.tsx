@@ -1,6 +1,6 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
-import { LucideIcon } from '../../../../../widget/common/lucide';
+import {LucideIcon} from '../../../../../widget/common/lucide';
 
 export interface DetailMenuButtonProps {
   onDisconnect: () => void;
@@ -58,7 +58,7 @@ export default function DetailMenuButton({
           </box>
         </button>
       </box>
-    ) as Gtk.Widget,
+    ) as Gtk.Widget
   );
 
   button.connect('clicked', () => popover.popup());

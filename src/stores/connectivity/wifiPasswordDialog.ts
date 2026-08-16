@@ -1,4 +1,4 @@
-import { type Accessor, createState, onCleanup } from 'ags';
+import {type Accessor, createState, onCleanup} from 'ags';
 
 export interface WifiPasswordRequest {
   monitor: string;
@@ -18,7 +18,7 @@ export interface WifiPasswordDialogState {
 }
 
 const [wifiPasswordRequestState, setWifiPasswordRequest] = createState<WifiPasswordRequest | null>(
-  null,
+  null
 );
 const wifiPasswordRequest = wifiPasswordRequestState;
 
@@ -35,10 +35,10 @@ export function createWifiPasswordDialogState(monitorConnector: string): WifiPas
   const [busy, setBusy] = createState(false);
   const [error, setError] = createState('');
   const [activation, setActivation] = createState(0);
-  const visible = wifiPasswordRequest.as((request) => request?.monitor === monitorConnector);
-  const ssid = wifiPasswordRequest.as((request) => request?.ssid ?? '');
-  const connectLabel = wifiPasswordRequest.as((request) =>
-    request ? `Connect to ${request.ssid}` : 'Connect',
+  const visible = wifiPasswordRequest.as(request => request?.monitor === monitorConnector);
+  const ssid = wifiPasswordRequest.as(request => request?.ssid ?? '');
+  const connectLabel = wifiPasswordRequest.as(request =>
+    request ? `Connect to ${request.ssid}` : 'Connect'
   );
 
   const unsubscribe = wifiPasswordRequest.subscribe(() => {
@@ -47,7 +47,7 @@ export function createWifiPasswordDialogState(monitorConnector: string): WifiPas
 
     setBusy(false);
     setError('');
-    setActivation((value) => value + 1);
+    setActivation(value => value + 1);
   });
 
   const submit = async (password: string) => {
@@ -70,5 +70,5 @@ export function createWifiPasswordDialogState(monitorConnector: string): WifiPas
 
   onCleanup(unsubscribe);
 
-  return { visible, ssid, connectLabel, busy, error, activation, submit, close };
+  return {visible, ssid, connectLabel, busy, error, activation, submit, close};
 }

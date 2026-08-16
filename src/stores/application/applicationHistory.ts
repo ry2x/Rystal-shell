@@ -2,7 +2,7 @@ import Apps from 'gi://AstalApps';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-import { ryprlandStateDir } from '../../lib/paths';
+import {ryprlandStateDir} from '../../lib/paths';
 
 const STATE_DIR = `${ryprlandStateDir}/rystal-shell`;
 const HISTORY_FILE = `${STATE_DIR}/app-history.json`;
@@ -55,7 +55,7 @@ export class ApplicationHistory {
       const matches = this.applications
         .get_list()
         .filter(
-          (application) => application.executable === legacyKey || application.name === legacyKey,
+          application => application.executable === legacyKey || application.name === legacyKey
         );
       if (matches.length === 1 && Number.isFinite(score)) {
         const key = getApplicationKey(matches[0]);
@@ -107,7 +107,7 @@ export class ApplicationHistory {
         parent.make_directory_with_parents(null);
       }
       const contents = new TextEncoder().encode(
-        JSON.stringify({ version: 2, scores: this.scores } satisfies HistoryStore),
+        JSON.stringify({version: 2, scores: this.scores} satisfies HistoryStore)
       );
       file.replace_contents(contents, null, false, Gio.FileCreateFlags.NONE, null);
     } catch (error) {

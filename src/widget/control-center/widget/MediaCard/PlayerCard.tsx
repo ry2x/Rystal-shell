@@ -1,14 +1,14 @@
-import { type Accessor } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Mpris from 'gi://AstalMpris';
 import Pango from 'gi://Pango';
 
-import { createPlayerArtwork } from '../../../../stores/media/media';
+import {createPlayerArtwork} from '../../../../stores/media/media';
 import CavaWidget from './CavaWidget';
 import PlayerArtwork from './PlayerArtwork';
 import PlayerControls from './PlayerControls';
-import { getMediaSource } from './utils';
+import {getMediaSource} from './utils';
 
 export interface PlayerCardProps {
   player: Mpris.Player;
@@ -16,7 +16,7 @@ export interface PlayerCardProps {
   onSwitch: () => void;
 }
 
-export default function PlayerCard({ player, canSwitch, onSwitch }: PlayerCardProps) {
+export default function PlayerCard({player, canSwitch, onSwitch}: PlayerCardProps) {
   const artwork = createPlayerArtwork(player);
   const mediaSource = getMediaSource(player);
 

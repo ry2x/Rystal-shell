@@ -11,7 +11,7 @@ export interface MediaSource {
 export function getMediaSource(player: Mpris.Player): MediaSource {
   const entry = player.entry || '';
   const normalizedEntry = entry.replace(/\.desktop$/, '');
-  const app = apps.get_list().find((candidate) => {
+  const app = apps.get_list().find(candidate => {
     const candidateEntry = candidate.entry.replace(/\.desktop$/, '');
     return candidateEntry === normalizedEntry;
   });

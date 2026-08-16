@@ -1,8 +1,8 @@
-import { type Accessor, createState, onCleanup } from 'ags';
-import { type Timer, timeout } from 'ags/time';
+import {type Accessor, createState, onCleanup} from 'ags';
+import {type Timer, timeout} from 'ags/time';
 
-import { shellMotion } from '../../lib/motion';
-import { deactivateSidePanel } from '../shell/windowManager';
+import {shellMotion} from '../../lib/motion';
+import {deactivateSidePanel} from '../shell/windowManager';
 
 export interface DateWeatherPopupState {
   visible: Accessor<boolean>;
@@ -13,7 +13,7 @@ export interface DateWeatherPopupState {
 }
 
 export function createDateWeatherPopupState(
-  monitorConnector: string | null,
+  monitorConnector: string | null
 ): DateWeatherPopupState {
   const [visible, setVisible] = createState(false);
   const [revealed, setRevealed] = createState(false);
@@ -48,5 +48,5 @@ export function createDateWeatherPopupState(
     deactivateSidePanel('date-weather', monitorConnector);
   });
 
-  return { visible, revealed, loaded, showAnimated, hideAnimated };
+  return {visible, revealed, loaded, showAnimated, hideAnimated};
 }

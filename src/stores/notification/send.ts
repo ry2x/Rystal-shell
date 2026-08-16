@@ -1,6 +1,6 @@
 import Notifd from 'gi://AstalNotifd';
 
-import { rystalShellDataDir } from '../../lib/paths';
+import {rystalShellDataDir} from '../../lib/paths';
 
 const APP_NAME = 'Rystal Shell';
 const APP_ICON = `${rystalShellDataDir}/assets/icon.png`;

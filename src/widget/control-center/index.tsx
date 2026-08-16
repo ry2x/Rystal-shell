@@ -1,9 +1,9 @@
-import { For } from 'ags';
-import { Astal, Gdk, Gtk } from 'ags/gtk4';
+import {For} from 'ags';
+import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import { shellMotion } from '../../lib/motion';
-import { createControlCenterState } from '../../stores/panel/controlCenter';
+import {shellMotion} from '../../lib/motion';
+import {createControlCenterState} from '../../stores/panel/controlCenter';
 import ClickCatcher from '../common/ClickCatcher';
 import ControlCenterPages from './ControlCenterPages';
 
@@ -17,10 +17,10 @@ interface ControlCenterWindow extends Astal.Window {
   show_animated: () => void;
 }
 
-export default function ControlCenter({ monitor }: ControlCenterProps) {
+export default function ControlCenter({monitor}: ControlCenterProps) {
   const connector = monitor.get_connector() ?? '';
   const state = createControlCenterState(connector);
-  const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
+  const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
 
   const window = (
     <window
@@ -46,7 +46,7 @@ export default function ControlCenter({ monitor }: ControlCenterProps) {
       <box orientation={Gtk.Orientation.VERTICAL}>
         <box orientation={Gtk.Orientation.HORIZONTAL} vexpand>
           <box hexpand={false} vexpand={false}>
-            <For each={state.contentLoaded.as((loaded) => (loaded ? [true] : []))}>
+            <For each={state.contentLoaded.as(loaded => (loaded ? [true] : []))}>
               {() => (
                 <revealer
                   transitionType={Gtk.RevealerTransitionType.CROSSFADE}

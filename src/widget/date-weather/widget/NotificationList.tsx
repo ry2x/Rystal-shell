@@ -1,4 +1,4 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
 import Notifd from 'gi://AstalNotifd';
 
@@ -9,7 +9,7 @@ import {
   notifications,
   toggleDoNotDisturb,
 } from '../../../stores/notification/notification';
-import { LucideIcon } from '../../../widget/common/lucide';
+import {LucideIcon} from '../../../widget/common/lucide';
 import AnimatedList from '../../common/AnimatedList';
 import NotificationCard from '../../common/NotificationCard';
 
@@ -22,15 +22,15 @@ export default function NotificationList() {
 
         {/* DND Toggle */}
         <button
-          class={doNotDisturb.as((enabled) =>
-            enabled ? 'notif-header-btn dnd active' : 'notif-header-btn dnd',
+          class={doNotDisturb.as(enabled =>
+            enabled ? 'notif-header-btn dnd active' : 'notif-header-btn dnd'
           )}
           onClicked={toggleDoNotDisturb}
           tooltipText="Toggle Do Not Disturb"
         >
           <box spacing={6}>
             <LucideIcon
-              name={doNotDisturb.as((enabled) => (enabled ? 'bell-off' : 'bell'))}
+              name={doNotDisturb.as(enabled => (enabled ? 'bell-off' : 'bell'))}
               pixelSize={14}
             />
             <label label="DND" />
@@ -70,7 +70,7 @@ export default function NotificationList() {
         <box
           $type="overlay"
           class="notif-empty"
-          visible={notifications.as((items) => items.length === 0)}
+          visible={notifications.as(items => items.length === 0)}
           halign={Gtk.Align.CENTER}
           valign={Gtk.Align.CENTER}
         >

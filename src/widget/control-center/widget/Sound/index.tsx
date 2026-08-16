@@ -1,1 +1,1 @@
-export { SoundPage } from './SoundPage';
+export {SoundPage} from './SoundPage';

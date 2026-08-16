@@ -1,29 +1,29 @@
-import { createBinding } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {createBinding} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
-import { getVolumeIcon } from '../../../../lib/audio';
+import {getVolumeIcon} from '../../../../lib/audio';
 import {
   setEndpointVolume,
   setMicrophoneVolume,
   toggleEndpointMute,
 } from '../../../../stores/system/audio';
-import { LucideIcon } from '../../../../widget/common/lucide';
-import { type SoundDeviceKind } from './types';
+import {LucideIcon} from '../../../../widget/common/lucide';
+import {type SoundDeviceKind} from './types';
 
 export interface VolumeControlsProps {
   endpoint: Wp.Endpoint;
   kind: SoundDeviceKind;
 }
 
-export default function VolumeControls({ endpoint, kind }: VolumeControlsProps) {
+export default function VolumeControls({endpoint, kind}: VolumeControlsProps) {
   const volume = createBinding(endpoint, 'volume');
   const muted = createBinding(endpoint, 'mute');
   const icon =
     kind === 'output'
       ? createBinding(endpoint, 'volume_icon').as(getVolumeIcon)
-      : muted.as((value) => (value ? 'mic-off' : 'mic'));
+      : muted.as(value => (value ? 'mic-off' : 'mic'));
 
   const setVolume = (value: number) => {
     if (kind === 'output') setEndpointVolume(endpoint, value);
@@ -54,17 +54,17 @@ export default function VolumeControls({ endpoint, kind }: VolumeControlsProps) 
           onChangeValue={(_self, _scroll, value: number) => setVolume(value)}
         />
         <label
-          label={volume.as((value) => `${Math.round(value * 100)}%`)}
+          label={volume.as(value => `${Math.round(value * 100)}%`)}
           class="cc-sound-volume-value"
           widthChars={4}
         />
         <button
-          class={muted.as((value) => (value ? 'cc-sound-mute-btn muted' : 'cc-sound-mute-btn'))}
-          tooltipText={muted.as((value) => (value ? 'Unmute' : 'Mute'))}
+          class={muted.as(value => (value ? 'cc-sound-mute-btn muted' : 'cc-sound-mute-btn'))}
+          tooltipText={muted.as(value => (value ? 'Unmute' : 'Mute'))}
           onClicked={() => toggleEndpointMute(endpoint)}
         >
           <LucideIcon
-            name={kind === 'output' ? muted.as((value) => (value ? 'volume-x' : 'volume-2')) : icon}
+            name={kind === 'output' ? muted.as(value => (value ? 'volume-x' : 'volume-2')) : icon}
             pixelSize={19}
           />
         </button>

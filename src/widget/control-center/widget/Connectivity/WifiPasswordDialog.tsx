@@ -1,17 +1,17 @@
-import { Astal, Gdk, Gtk } from 'ags/gtk4';
+import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
-import { type Timer, idle } from 'ags/time';
+import {type Timer, idle} from 'ags/time';
 
 import Pango from 'gi://Pango';
 
-import { createWifiPasswordDialogState } from '../../../../stores/connectivity/wifiPasswordDialog';
-import { LucideIcon } from '../../../../widget/common/lucide';
+import {createWifiPasswordDialogState} from '../../../../stores/connectivity/wifiPasswordDialog';
+import {LucideIcon} from '../../../../widget/common/lucide';
 
 export interface WifiPasswordDialogProps {
   monitor: Gdk.Monitor;
 }
 
-export default function WifiPasswordDialog({ monitor }: WifiPasswordDialogProps) {
+export default function WifiPasswordDialog({monitor}: WifiPasswordDialogProps) {
   const connector = monitor.get_connector() ?? '';
   const state = createWifiPasswordDialogState(connector);
   let entry: Gtk.Entry | null = null;
@@ -91,16 +91,12 @@ export default function WifiPasswordDialog({ monitor }: WifiPasswordDialogProps)
           <box spacing={8} halign={Gtk.Align.END}>
             <button
               class="power-btn"
-              sensitive={state.busy.as((value) => !value)}
+              sensitive={state.busy.as(value => !value)}
               onClicked={state.close}
             >
               <label label="Cancel" />
             </button>
-            <button
-              class="power-btn"
-              sensitive={state.busy.as((value) => !value)}
-              onClicked={submit}
-            >
+            <button class="power-btn" sensitive={state.busy.as(value => !value)} onClicked={submit}>
               <label
                 label={state.connectLabel}
                 ellipsize={Pango.EllipsizeMode.END}

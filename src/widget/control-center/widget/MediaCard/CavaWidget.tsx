@@ -1,6 +1,6 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
-import { acquireCava, isCavaAvailable } from '../../../../stores/media/cava';
+import {acquireCava, isCavaAvailable} from '../../../../stores/media/cava';
 
 export default function CavaWidget() {
   if (!isCavaAvailable()) return <box visible={false} />;
@@ -34,7 +34,7 @@ export default function CavaWidget() {
     area.set_draw_func(null);
   });
 
-  let cachedColor = { r: 1, g: 1, b: 1, a: 0.15 };
+  let cachedColor = {r: 1, g: 1, b: 1, a: 0.15};
   let frameCount = 0;
 
   area.set_draw_func((_area, cr, width, height) => {
@@ -47,7 +47,7 @@ export default function CavaWidget() {
 
     if (frameCount % 60 === 0) {
       const c = _area.get_style_context().get_color();
-      cachedColor = { r: c.red, g: c.green, b: c.blue, a: 0.15 };
+      cachedColor = {r: c.red, g: c.green, b: c.blue, a: 0.15};
     }
     frameCount++;
 
@@ -60,8 +60,8 @@ export default function CavaWidget() {
       cr.fill();
     }
 
-    if (typeof (cr as { $dispose?: () => void }).$dispose === 'function') {
-      (cr as { $dispose: () => void }).$dispose();
+    if (typeof (cr as {$dispose?: () => void}).$dispose === 'function') {
+      (cr as {$dispose: () => void}).$dispose();
     }
   });
 

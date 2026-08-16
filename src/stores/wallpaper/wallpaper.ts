@@ -1,10 +1,10 @@
-import { createState } from 'ags';
-import { execAsync } from 'ags/process';
+import {createState} from 'ags';
+import {execAsync} from 'ags/process';
 
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-import { ryprlandWallpaperDir } from '../../lib/paths';
+import {ryprlandWallpaperDir} from '../../lib/paths';
 import {
   cancelWallpaperThumbnailWork,
   ensureWallpaperThumbnails,
@@ -39,7 +39,7 @@ function queryInfo(
   file: Gio.File,
   attributes: string,
   flags: Gio.FileQueryInfoFlags,
-  cancellable: Gio.Cancellable | null,
+  cancellable: Gio.Cancellable | null
 ) {
   return new Promise<Gio.FileInfo>((resolve, reject) => {
     file.query_info_async(
@@ -53,7 +53,7 @@ function queryInfo(
         } catch (error) {
           reject(error);
         }
-      },
+      }
     );
   });
 }
@@ -71,7 +71,7 @@ function enumerateChildren(file: Gio.File, attributes: string, cancellable: Gio.
         } catch (error) {
           reject(error);
         }
-      },
+      }
     );
   });
 }
@@ -89,7 +89,7 @@ function nextFiles(enumerator: Gio.FileEnumerator, cancellable: Gio.Cancellable)
 }
 
 function closeEnumerator(enumerator: Gio.FileEnumerator) {
-  return new Promise<void>((resolve) => {
+  return new Promise<void>(resolve => {
     enumerator.close_async(GLib.PRIORITY_DEFAULT, null, (source, result) => {
       try {
         source!.close_finish(result);
@@ -122,13 +122,13 @@ async function enumerateDirectory(
   relativeDirectory: string,
   cancellable: Gio.Cancellable,
   generation: number,
-  output: Wallpaper[],
+  output: Wallpaper[]
 ): Promise<void> {
   if (generation !== refreshGeneration) return;
   const enumerator = await enumerateChildren(
     directory,
     'standard::name,standard::type,standard::size,time::modified',
-    cancellable,
+    cancellable
   );
 
   try {
@@ -179,7 +179,7 @@ export async function refreshWallpapers() {
       root,
       'standard::type',
       Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS,
-      cancellable,
+      cancellable
     );
     if (info.get_file_type() !== Gio.FileType.DIRECTORY) throw new Error('Not a directory');
 
@@ -190,7 +190,7 @@ export async function refreshWallpapers() {
       a.relativePath.localeCompare(b.relativePath, undefined, {
         numeric: true,
         sensitivity: 'base',
-      }),
+      })
     );
     setWallpapers(found);
     ensureWallpaperThumbnails(found, false);
@@ -234,7 +234,7 @@ export async function applyWallpaper(wallpaper: Wallpaper) {
       Gio.File.new_for_path(wallpaper.path),
       'standard::type',
       Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS,
-      null,
+      null
     );
     if (info.get_file_type() !== Gio.FileType.REGULAR) {
       throw new Error('Wallpaper no longer exists');

@@ -1,4 +1,4 @@
-import { type Accessor, createExternal } from 'ags';
+import {type Accessor, createExternal} from 'ags';
 
 import Hyprland from 'gi://AstalHyprland';
 
@@ -16,9 +16,9 @@ const UPDATE_DELAY_MS = 10;
 const hyprland = Hyprland.get_default();
 
 export function createScrollingLayoutInfo(connector: string | null): Accessor<ScrollingLayoutInfo> {
-  const initialInfo: ScrollingLayoutInfo = { visible: false, current: 0, total: 0 };
+  const initialInfo: ScrollingLayoutInfo = {visible: false, current: 0, total: 0};
 
-  return createExternal(initialInfo, (setInfo) => {
+  return createExternal(initialInfo, setInfo => {
     let currentLayout = 'scrolling';
     let updateTimer: ReturnType<typeof setTimeout> | null = null;
     let disposed = false;
@@ -39,7 +39,7 @@ export function createScrollingLayoutInfo(connector: string | null): Accessor<Sc
 
           const option = JSON.parse(output) as HyprlandLayoutOption;
           currentLayout = option.str ?? '';
-          setInfo((info) => ({
+          setInfo(info => ({
             ...info,
             visible: currentLayout === 'scrolling' && info.total > 0,
           }));
@@ -56,7 +56,7 @@ export function createScrollingLayoutInfo(connector: string | null): Accessor<Sc
         updateTimer = null;
         if (disposed) return;
 
-        const monitor = hyprland.monitors.find((candidate) => candidate.name === connector);
+        const monitor = hyprland.monitors.find(candidate => candidate.name === connector);
         const workspace = monitor?.active_workspace;
         if (!workspace) {
           publishInfo(0, 0);
@@ -64,7 +64,7 @@ export function createScrollingLayoutInfo(connector: string | null): Accessor<Sc
         }
 
         const clients = workspace.clients
-          .filter((client) => !client.floating)
+          .filter(client => !client.floating)
           .sort((clientA, clientB) => clientA.x - clientB.x);
         if (clients.length === 0) {
           publishInfo(0, 0);
@@ -75,7 +75,7 @@ export function createScrollingLayoutInfo(connector: string | null): Accessor<Sc
         const activeClient =
           focusedClient?.workspace?.id === workspace.id ? focusedClient : workspace.last_client;
         const index = activeClient
-          ? clients.findIndex((client) => client.address === activeClient.address)
+          ? clients.findIndex(client => client.address === activeClient.address)
           : -1;
         publishInfo(index >= 0 ? index + 1 : 0, clients.length);
       }, UPDATE_DELAY_MS);
@@ -98,7 +98,7 @@ export function createScrollingLayoutInfo(connector: string | null): Accessor<Sc
     return () => {
       disposed = true;
       if (updateTimer !== null) clearTimeout(updateTimer);
-      hooks.forEach((hook) => hyprland.disconnect(hook));
+      hooks.forEach(hook => hyprland.disconnect(hook));
     };
   });
 }

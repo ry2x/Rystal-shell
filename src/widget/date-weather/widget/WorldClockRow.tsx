@@ -1,14 +1,14 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
-import { clockTime } from '../../../stores/system/time';
-import { formatWorldClockDetails, formatWorldClockTime } from '../utils';
+import {clockTime} from '../../../stores/system/time';
+import {formatWorldClockDetails, formatWorldClockTime} from '../utils';
 
 export interface WorldClockRowProps {
   label: string;
   timeZone: string;
 }
 
-export default function WorldClockRow({ label, timeZone }: WorldClockRowProps) {
+export default function WorldClockRow({label, timeZone}: WorldClockRowProps) {
   return (
     <box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.FILL} spacing={2}>
       <box orientation={Gtk.Orientation.HORIZONTAL} halign={Gtk.Align.FILL}>

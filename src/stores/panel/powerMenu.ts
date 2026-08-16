@@ -1,12 +1,12 @@
-import { type Accessor, createState, onCleanup } from 'ags';
-import { Gdk } from 'ags/gtk4';
-import { execAsync } from 'ags/process';
-import { type Timer, idle, timeout } from 'ags/time';
+import {type Accessor, createState, onCleanup} from 'ags';
+import {Gdk} from 'ags/gtk4';
+import {execAsync} from 'ags/process';
+import {type Timer, idle, timeout} from 'ags/time';
 
 import GLib from 'gi://GLib';
 
-import { shellMotion } from '../../lib/motion';
-import { activateSidePanel, activeSidePanel, deactivateSidePanel } from '../shell/windowManager';
+import {shellMotion} from '../../lib/motion';
+import {activateSidePanel, activeSidePanel, deactivateSidePanel} from '../shell/windowManager';
 
 type PowerAction = 'shutdown' | 'reboot' | 'logout' | 'sleep' | 'lock';
 
@@ -19,11 +19,11 @@ export interface PowerItem {
 }
 
 export const POWER_ITEMS: PowerItem[] = [
-  { action: 'shutdown', label: 'Shutdown', shortcut: 'u', icon: 'power', dangerous: true },
-  { action: 'reboot', label: 'Reboot', shortcut: 'r', icon: 'rotate-ccw', dangerous: true },
-  { action: 'logout', label: 'Logout', shortcut: 'e', icon: 'log-out', dangerous: true },
-  { action: 'sleep', label: 'Sleep', shortcut: 's', icon: 'moon' },
-  { action: 'lock', label: 'Lock', shortcut: 'l', icon: 'lock' },
+  {action: 'shutdown', label: 'Shutdown', shortcut: 'u', icon: 'power', dangerous: true},
+  {action: 'reboot', label: 'Reboot', shortcut: 'r', icon: 'rotate-ccw', dangerous: true},
+  {action: 'logout', label: 'Logout', shortcut: 'e', icon: 'log-out', dangerous: true},
+  {action: 'sleep', label: 'Sleep', shortcut: 's', icon: 'moon'},
+  {action: 'lock', label: 'Lock', shortcut: 'l', icon: 'lock'},
 ];
 
 export interface PowerMenuStateOptions {
@@ -283,7 +283,7 @@ export function createPowerMenuState({
     const typed = Gdk.keyval_to_unicode(keyval);
     if (typed <= 0) return false;
     const shortcut = String.fromCodePoint(typed).toLowerCase();
-    const item = POWER_ITEMS.find((candidate) => candidate.shortcut === shortcut);
+    const item = POWER_ITEMS.find(candidate => candidate.shortcut === shortcut);
     if (!item) return false;
 
     focusItem(POWER_ITEMS.indexOf(item));

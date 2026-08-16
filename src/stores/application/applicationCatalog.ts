@@ -1,6 +1,6 @@
 import Apps from 'gi://AstalApps';
 
-import { ApplicationHistory } from './applicationHistory';
+import {ApplicationHistory} from './applicationHistory';
 
 const MAX_APP_RESULTS = 30;
 const applications = new Apps.Apps();
@@ -45,7 +45,7 @@ export function searchApps(query: string) {
   const keywords = query.split(/\s+/);
 
   const results = allApplications
-    .map((application) => {
+    .map(application => {
       const name = (application.name || '').toLowerCase();
       const description = (application.description || '').toLowerCase();
       const executable = (application.executable || '').toLowerCase();
@@ -57,13 +57,13 @@ export function searchApps(query: string) {
       else if (executable.includes(query)) score += 30;
       else if (description.includes(query)) score += 10;
 
-      if (!keywords.every((keyword) => searchString.includes(keyword))) score = 0;
+      if (!keywords.every(keyword => searchString.includes(keyword))) score = 0;
       if (score > 0) score += history.getScore(application) * 10;
 
-      return { application, score };
+      return {application, score};
     })
-    .filter(({ score }) => score > 0);
+    .filter(({score}) => score > 0);
 
   results.sort((resultA, resultB) => resultB.score - resultA.score);
-  return getUniqueResults(results.map(({ application }) => application));
+  return getUniqueResults(results.map(({application}) => application));
 }

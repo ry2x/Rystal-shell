@@ -1,7 +1,7 @@
-import { type Accessor } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
-import { POWER_ITEMS, type PowerItem } from '../../../stores/panel/powerMenu';
+import {POWER_ITEMS, type PowerItem} from '../../../stores/panel/powerMenu';
 import PowerMenuItemButton from './PowerMenuItemButton';
 
 export interface PowerMenuMainViewProps {
@@ -49,8 +49,8 @@ export default function PowerMenuMainView({
         ))}
       </box>
       <label
-        cssClasses={errorMessage.as((message) =>
-          message ? ['power-menu-error', 'visible'] : ['power-menu-error'],
+        cssClasses={errorMessage.as(message =>
+          message ? ['power-menu-error', 'visible'] : ['power-menu-error']
         )}
         label={errorMessage}
         ellipsize={3}

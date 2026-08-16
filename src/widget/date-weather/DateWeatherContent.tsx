@@ -1,8 +1,8 @@
-import { type Accessor } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
-import { shellMotion } from '../../lib/motion';
-import { createBarBackgroundGeometry } from '../../stores/shell/barBackground';
+import {shellMotion} from '../../lib/motion';
+import {createBarBackgroundGeometry} from '../../stores/shell/barBackground';
 import ClockCard from './widget/ClockCard';
 import NotificationList from './widget/NotificationList';
 import ProfileCard from './widget/ProfileCard';
@@ -14,10 +14,7 @@ export interface DateWeatherContentProps {
   monitorConnector: string | null;
 }
 
-export default function DateWeatherContent({
-  revealed,
-  monitorConnector,
-}: DateWeatherContentProps) {
+export default function DateWeatherContent({revealed, monitorConnector}: DateWeatherContentProps) {
   const geometry = createBarBackgroundGeometry(monitorConnector);
 
   return (
@@ -28,10 +25,10 @@ export default function DateWeatherContent({
     >
       <box orientation={Gtk.Orientation.HORIZONTAL}>
         <box
-          cssClasses={revealed.as((isRevealed) =>
-            isRevealed ? ['dw-container', 'revealed'] : ['dw-container'],
+          cssClasses={revealed.as(isRevealed =>
+            isRevealed ? ['dw-container', 'revealed'] : ['dw-container']
           )}
-          css={geometry(({ dx }) => {
+          css={geometry(({dx}) => {
             const marginLeft = Math.max(-900, dx - 947);
             const opacity = Math.max(0, Math.min(1, (dx - 47) / 900));
             return `transform: translateX(${marginLeft}px); opacity: ${opacity};`;

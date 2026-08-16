@@ -1,17 +1,17 @@
-import type { Accessor } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import type {Accessor} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
-import { getDirectUrl, openQuery } from '../../../stores/application/query';
-import { toggleAppLauncher } from '../../../stores/shell/windowManager';
+import {getDirectUrl, openQuery} from '../../../stores/application/query';
+import {toggleAppLauncher} from '../../../stores/shell/windowManager';
 
 export interface SearchGoogleBtnProps {
   textState: Accessor<string>;
   monitorConnector: string | null;
 }
 
-export function SearchGoogleBtn({ textState, monitorConnector }: SearchGoogleBtnProps): Gtk.Button {
+export function SearchGoogleBtn({textState, monitorConnector}: SearchGoogleBtnProps): Gtk.Button {
   return (
     <button
       class="applauncher-item"
@@ -28,7 +28,7 @@ export function SearchGoogleBtn({ textState, monitorConnector }: SearchGoogleBtn
         <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
           <label
             label={textState.as((t: string) =>
-              getDirectUrl(t || '') ? `Open "${t || ''}"` : `Search "${t || ''}"`,
+              getDirectUrl(t || '') ? `Open "${t || ''}"` : `Search "${t || ''}"`
             )}
             halign={Gtk.Align.START}
             class="applauncher-item-name"
@@ -36,7 +36,7 @@ export function SearchGoogleBtn({ textState, monitorConnector }: SearchGoogleBtn
           />
           <label
             label={textState.as((t: string) =>
-              getDirectUrl(t || '') ? 'Open URL' : 'Search on Google',
+              getDirectUrl(t || '') ? 'Open URL' : 'Search on Google'
             )}
             halign={Gtk.Align.START}
             class="applauncher-item-desc"

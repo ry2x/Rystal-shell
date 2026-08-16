@@ -1,28 +1,28 @@
-import { For, createBinding } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {For, createBinding} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Network from 'gi://AstalNetwork';
 
-import { toggleWifi } from '../../../../../stores/connectivity/network';
+import {toggleWifi} from '../../../../../stores/connectivity/network';
 import {
   type WifiConfirmation,
   createWifiPageState,
 } from '../../../../../stores/connectivity/wifiPage';
-import { LucideIcon } from '../../../../../widget/common/lucide';
+import {LucideIcon} from '../../../../../widget/common/lucide';
 import AnimatedList from '../../../../common/AnimatedList';
-import { ConfirmOverlay, ErrorLabel, PageHeader } from '../Shared';
+import {ConfirmOverlay, ErrorLabel, PageHeader} from '../Shared';
 import AvailableNetworkRow from './AvailableNetworkRow';
 import ConnectedNetworkRow from './ConnectedNetworkRow';
-import { getAccessPointId } from './utils';
+import {getAccessPointId} from './utils';
 
 export interface WifiPageProps {
   monitorConnector: string;
   onBack: () => void;
 }
 
-export function WifiPage({ monitorConnector, onBack }: WifiPageProps) {
+export function WifiPage({monitorConnector, onBack}: WifiPageProps) {
   const state = createWifiPageState(monitorConnector);
-  const { wifi } = state;
+  const {wifi} = state;
 
   if (!wifi) return <label label="No Wi-Fi adapter available" class="cc-card" />;
 
@@ -53,7 +53,7 @@ export function WifiPage({ monitorConnector, onBack }: WifiPageProps) {
           </box>
           <AnimatedList
             className="cc-connectivity-list cc-wifi-connected-list"
-            items={state.activeAccessPoint.as((accessPoint) => (accessPoint ? [accessPoint] : []))}
+            items={state.activeAccessPoint.as(accessPoint => (accessPoint ? [accessPoint] : []))}
             idFor={(accessPoint: Network.AccessPoint) => getAccessPointId(accessPoint, 'active')}
             renderItem={(accessPoint: Network.AccessPoint) => (
               <ConnectedNetworkRow
@@ -66,7 +66,7 @@ export function WifiPage({ monitorConnector, onBack }: WifiPageProps) {
           <label
             label="Not connected"
             class="cc-row-subtitle"
-            visible={state.activeAccessPoint.as((accessPoint) => !accessPoint)}
+            visible={state.activeAccessPoint.as(accessPoint => !accessPoint)}
             halign={Gtk.Align.START}
           />
           <box class="cc-wifi-section-header" spacing={8}>
@@ -85,17 +85,17 @@ export function WifiPage({ monitorConnector, onBack }: WifiPageProps) {
             )}
           />
           <button
-            class={createBinding(wifi, 'scanning').as((scanning) =>
-              scanning ? 'cc-wifi-scan-btn scanning' : 'cc-wifi-scan-btn',
+            class={createBinding(wifi, 'scanning').as(scanning =>
+              scanning ? 'cc-wifi-scan-btn scanning' : 'cc-wifi-scan-btn'
             )}
             onClicked={state.scan}
-            sensitive={createBinding(wifi, 'scanning').as((scanning) => !scanning)}
+            sensitive={createBinding(wifi, 'scanning').as(scanning => !scanning)}
           >
             <box spacing={8} halign={Gtk.Align.CENTER}>
               <LucideIcon name="refresh-cw" class="cc-wifi-scan-icon" pixelSize={16} />
               <label
-                label={createBinding(wifi, 'scanning').as((scanning) =>
-                  scanning ? 'Scanning…' : 'Scan networks',
+                label={createBinding(wifi, 'scanning').as(scanning =>
+                  scanning ? 'Scanning…' : 'Scan networks'
                 )}
               />
             </box>
@@ -104,7 +104,7 @@ export function WifiPage({ monitorConnector, onBack }: WifiPageProps) {
       </revealer>
       <label
         label="Wi-Fi is turned off"
-        visible={createBinding(wifi, 'enabled').as((value) => !value)}
+        visible={createBinding(wifi, 'enabled').as(value => !value)}
         class="cc-card"
         halign={Gtk.Align.CENTER}
       />
@@ -122,7 +122,7 @@ export function WifiPage({ monitorConnector, onBack }: WifiPageProps) {
         halign={Gtk.Align.FILL}
         valign={Gtk.Align.FILL}
       >
-        <For each={state.confirmation.as((value) => (value ? [value] : []))}>
+        <For each={state.confirmation.as(value => (value ? [value] : []))}>
           {(confirmation: WifiConfirmation) => (
             <ConfirmOverlay
               confirmation={confirmation}

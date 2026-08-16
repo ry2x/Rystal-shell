@@ -1,4 +1,4 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
 import RecordingActions from './RecordingActions';
 import ScreenshotActions from './ScreenshotActions';

@@ -1,5 +1,5 @@
-import { type Accessor, createState, onCleanup } from 'ags';
-import { type Timer, timeout } from 'ags/time';
+import {type Accessor, createState, onCleanup} from 'ags';
+import {type Timer, timeout} from 'ags/time';
 
 import Bluetooth from 'gi://AstalBluetooth';
 
@@ -45,12 +45,12 @@ function disconnectBluetoothDevice(device: Bluetooth.Device): Promise<void> {
 }
 
 function createBluetoothDeviceSignalTracker(
-  onDeviceChanged: () => void,
+  onDeviceChanged: () => void
 ): BluetoothDeviceSignalTracker {
   const hooks = new Map<Bluetooth.Device, number[]>();
 
   const disconnectHooks = (device: Bluetooth.Device, signalIds: number[]) => {
-    signalIds.forEach((signalId) => device.disconnect(signalId));
+    signalIds.forEach(signalId => device.disconnect(signalId));
   };
 
   const sync = (devices: Bluetooth.Device[]) => {
@@ -62,7 +62,7 @@ function createBluetoothDeviceSignalTracker(
       hooks.delete(device);
     });
 
-    devices.forEach((device) => {
+    devices.forEach(device => {
       if (hooks.has(device)) return;
       hooks.set(device, [
         device.connect('notify::connected', onDeviceChanged),
@@ -76,7 +76,7 @@ function createBluetoothDeviceSignalTracker(
     hooks.clear();
   };
 
-  return { sync, dispose };
+  return {sync, dispose};
 }
 
 export interface BluetoothConfirmation {
@@ -107,9 +107,9 @@ export function createBluetoothPageState(active: Accessor<boolean>): BluetoothPa
   const [devices, setDevices] = createState<Bluetooth.Device[]>(bluetooth.devices ?? []);
   const [error, setError] = createState('');
   const [confirmation, setConfirmation] = createState<BluetoothConfirmation | null>(null);
-  const connectedDevices = devices.as((list) => list.filter((device) => device.connected));
-  const availableDevices = devices.as((list) =>
-    list.filter((device) => device.paired && !device.connected),
+  const connectedDevices = devices.as(list => list.filter(device => device.connected));
+  const availableDevices = devices.as(list =>
+    list.filter(device => device.paired && !device.connected)
   );
   let discoveryTimer: Timer | null = null;
   let disposed = false;
@@ -210,7 +210,7 @@ export function createBluetoothPageState(active: Accessor<boolean>): BluetoothPa
 
   onCleanup(() => {
     disposed = true;
-    hooks.forEach((hook) => bluetooth.disconnect(hook));
+    hooks.forEach(hook => bluetooth.disconnect(hook));
     deviceSignalTracker.dispose();
     unsubscribeActive();
     stopDiscovery();

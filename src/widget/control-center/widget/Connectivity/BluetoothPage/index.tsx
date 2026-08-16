@@ -1,5 +1,5 @@
-import { type Accessor, For, createBinding } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor, For, createBinding} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Bluetooth from 'gi://AstalBluetooth';
 
@@ -7,11 +7,11 @@ import {
   type BluetoothConfirmation,
   createBluetoothPageState,
 } from '../../../../../stores/connectivity/bluetooth';
-import { toggleBluetooth } from '../../../../../stores/connectivity/network';
-import { LucideIcon } from '../../../../../widget/common/lucide';
+import {toggleBluetooth} from '../../../../../stores/connectivity/network';
+import {LucideIcon} from '../../../../../widget/common/lucide';
 import AnimatedList from '../../../../common/AnimatedList';
-import { ConfirmOverlay, ErrorLabel, PageHeader } from '../Shared';
-import { type ControlCenterPage } from '../Shared';
+import {ConfirmOverlay, ErrorLabel, PageHeader} from '../Shared';
+import {type ControlCenterPage} from '../Shared';
 import AvailableDeviceRow from './AvailableDeviceRow';
 import ConnectedDeviceRow from './ConnectedDeviceRow';
 
@@ -20,9 +20,9 @@ export interface BluetoothPageProps {
   onBack: () => void;
 }
 
-export function BluetoothPage({ page, onBack }: BluetoothPageProps) {
-  const state = createBluetoothPageState(page.as((value) => value === 'bluetooth'));
-  const { bluetooth, adapter } = state;
+export function BluetoothPage({page, onBack}: BluetoothPageProps) {
+  const state = createBluetoothPageState(page.as(value => value === 'bluetooth'));
+  const {bluetooth, adapter} = state;
 
   if (!adapter) return <label label="No Bluetooth adapter available" class="cc-card" />;
 
@@ -78,17 +78,17 @@ export function BluetoothPage({ page, onBack }: BluetoothPageProps) {
             )}
           />
           <button
-            class={createBinding(adapter, 'discovering').as((discovering) =>
-              discovering ? 'cc-bt-scan-btn scanning' : 'cc-bt-scan-btn',
+            class={createBinding(adapter, 'discovering').as(discovering =>
+              discovering ? 'cc-bt-scan-btn scanning' : 'cc-bt-scan-btn'
             )}
             onClicked={state.discover}
-            sensitive={createBinding(adapter, 'discovering').as((discovering) => !discovering)}
+            sensitive={createBinding(adapter, 'discovering').as(discovering => !discovering)}
           >
             <box spacing={8} halign={Gtk.Align.CENTER}>
               <LucideIcon name="refresh-cw" class="cc-bt-scan-icon" pixelSize={16} />
               <label
-                label={createBinding(adapter, 'discovering').as((discovering) =>
-                  discovering ? 'Scanning…' : 'Refresh',
+                label={createBinding(adapter, 'discovering').as(discovering =>
+                  discovering ? 'Scanning…' : 'Refresh'
                 )}
               />
             </box>
@@ -97,7 +97,7 @@ export function BluetoothPage({ page, onBack }: BluetoothPageProps) {
       </revealer>
       <label
         label="Bluetooth is turned off"
-        visible={createBinding(bluetooth, 'is_powered').as((value) => !value)}
+        visible={createBinding(bluetooth, 'is_powered').as(value => !value)}
         class="cc-card"
         halign={Gtk.Align.CENTER}
       />
@@ -115,7 +115,7 @@ export function BluetoothPage({ page, onBack }: BluetoothPageProps) {
         halign={Gtk.Align.FILL}
         valign={Gtk.Align.FILL}
       >
-        <For each={state.confirmation.as((value) => (value ? [value] : []))}>
+        <For each={state.confirmation.as(value => (value ? [value] : []))}>
           {(confirmation: BluetoothConfirmation) => (
             <ConfirmOverlay
               confirmation={confirmation}

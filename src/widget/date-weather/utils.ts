@@ -9,9 +9,9 @@ export function formatWorldClockTime(date: Date, timeZone: string) {
 
 function getTimeZoneName(date: Date, timeZone: string, format: 'short' | 'shortOffset') {
   return (
-    new Intl.DateTimeFormat('en-US', { timeZone, timeZoneName: format })
+    new Intl.DateTimeFormat('en-US', {timeZone, timeZoneName: format})
       .formatToParts(date)
-      .find((part) => part.type === 'timeZoneName')?.value ?? ''
+      .find(part => part.type === 'timeZoneName')?.value ?? ''
   );
 }
 

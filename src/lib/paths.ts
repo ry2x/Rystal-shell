@@ -8,24 +8,24 @@ function configuredDirectory(name: string, fallback: string) {
 
 export const rystalShellConfigDir = configuredDirectory(
   'RYSTAL_SHELL_CONFIG_DIR',
-  `${GLib.get_user_config_dir()}/rystal-shell`,
+  `${GLib.get_user_config_dir()}/rystal-shell`
 );
 
 export const rystalShellDataDir = configuredDirectory(
   'RYSTAL_SHELL_DATA_DIR',
-  `${GLib.get_user_data_dir()}/rystal-shell`,
+  `${GLib.get_user_data_dir()}/rystal-shell`
 );
 
 export const rystalShellInstance = configuredDirectory('RYSTAL_SHELL_INSTANCE', 'rystal-shell');
 
 export const ryprlandCacheDir = configuredDirectory(
   'RYPRLAND_CACHE_DIR',
-  `${GLib.get_user_cache_dir()}/${IDENTIFIER}`,
+  `${GLib.get_user_cache_dir()}/${IDENTIFIER}`
 );
 
 export const ryprlandStateDir = configuredDirectory(
   'RYPRLAND_STATE_DIR',
-  `${GLib.get_user_state_dir()}/${IDENTIFIER}`,
+  `${GLib.get_user_state_dir()}/${IDENTIFIER}`
 );
 
 const runtimeBase = GLib.get_user_runtime_dir();
@@ -37,5 +37,5 @@ export const ryprlandRuntimeDir = configuredDirectory('RYPRLAND_RUNTIME_DIR', ru
 
 export const ryprlandWallpaperDir = configuredDirectory(
   'RYPRLAND_WALLPAPER_DIR',
-  `${GLib.get_home_dir()}/Pictures/Wallpapers`,
+  `${GLib.get_home_dir()}/Pictures/Wallpapers`
 );

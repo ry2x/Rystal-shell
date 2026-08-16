@@ -1,10 +1,10 @@
-import { type Accessor, createState, onCleanup } from 'ags';
-import { type Timer, timeout } from 'ags/time';
+import {type Accessor, createState, onCleanup} from 'ags';
+import {type Timer, timeout} from 'ags/time';
 
 import Hyprland from 'gi://AstalHyprland';
 import Notifd from 'gi://AstalNotifd';
 
-import { shellMotion } from '../../lib/motion';
+import {shellMotion} from '../../lib/motion';
 
 export interface NotificationPopupState {
   popups: Accessor<Notifd.Notification[]>;
@@ -21,7 +21,7 @@ const hyprland = Hyprland.get_default();
 const notifd = Notifd.get_default();
 
 export function createNotificationPopupState(
-  monitorConnector: string | null,
+  monitorConnector: string | null
 ): NotificationPopupState {
   const [popups, setPopups] = createState<Notifd.Notification[]>([]);
   const [visible, setVisible] = createState(false);
@@ -42,10 +42,10 @@ export function createNotificationPopupState(
   const removePopup = (id: number, releaseTransient: boolean) => {
     cancelTimer(expiryTimers, id);
 
-    const notification = popups.peek().find((popup) => popup.id === id);
+    const notification = popups.peek().find(popup => popup.id === id);
     if (!notification) return;
 
-    const remainingPopups = popups.peek().filter((popup) => popup.id !== id);
+    const remainingPopups = popups.peek().filter(popup => popup.id !== id);
     setPopups(remainingPopups);
     if (remainingPopups.length === 0) {
       hideTimer?.cancel();
@@ -61,7 +61,7 @@ export function createNotificationPopupState(
       pendingTransientReleases.delete(id);
       notification.dismiss();
     });
-    pendingTransientReleases.set(id, { notification, timer });
+    pendingTransientReleases.set(id, {notification, timer});
   };
 
   const scheduleExpiry = (id: number) => {
@@ -71,7 +71,7 @@ export function createNotificationPopupState(
       timeout(POPUP_TIMEOUT_MS, () => {
         expiryTimers.delete(id);
         removePopup(id, true);
-      }),
+      })
     );
   };
 
@@ -85,7 +85,7 @@ export function createNotificationPopupState(
     hideTimer?.cancel();
     hideTimer = null;
     setVisible(true);
-    setPopups([notification, ...popups.peek().filter((popup) => popup.id !== id)]);
+    setPopups([notification, ...popups.peek().filter(popup => popup.id !== id)]);
     scheduleExpiry(id);
   });
 
@@ -98,7 +98,7 @@ export function createNotificationPopupState(
     notifd.disconnect(notifiedHook);
     notifd.disconnect(resolvedHook);
     for (const timer of expiryTimers.values()) timer.cancel();
-    for (const { notification, timer } of pendingTransientReleases.values()) {
+    for (const {notification, timer} of pendingTransientReleases.values()) {
       timer.cancel();
       notification.dismiss();
     }
@@ -108,5 +108,5 @@ export function createNotificationPopupState(
     pendingTransientReleases.clear();
   });
 
-  return { popups, visible };
+  return {popups, visible};
 }

@@ -1,8 +1,8 @@
-import { type Accessor } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
-import type { PowerItem } from '../../../stores/panel/powerMenu';
-import { LucideIcon } from '../../common/lucide';
+import type {PowerItem} from '../../../stores/panel/powerMenu';
+import {LucideIcon} from '../../common/lucide';
 
 const CARD_OUTER_WIDTH = 260;
 const CARD_GAP = 18;
@@ -29,10 +29,10 @@ export default function PowerMenuItemButton({
 }: PowerMenuItemButtonProps) {
   return (
     <button
-      cssClasses={selectedIndex.as((selected) =>
-        selected === index ? ['power-menu-item', 'selected'] : ['power-menu-item'],
+      cssClasses={selectedIndex.as(selected =>
+        selected === index ? ['power-menu-item', 'selected'] : ['power-menu-item']
       )}
-      css={confirmationMotion.as((moving) => {
+      css={confirmationMotion.as(moving => {
         if (!moving) return '';
         if (selectedIndex() === index) {
           const offset = CONFIRMATION_FIRST_CARD_OFFSET - index * (CARD_OUTER_WIDTH + CARD_GAP);
@@ -41,7 +41,7 @@ export default function PowerMenuItemButton({
         return 'opacity: 0; transform: scale(0.92);';
       })}
       onClicked={() => onRequestAction(item)}
-      $={(self) => onButtonCreated(index, self)}
+      $={self => onButtonCreated(index, self)}
     >
       <Gtk.EventControllerFocus onEnter={() => onItemFocused(index)} />
       <box orientation={Gtk.Orientation.VERTICAL} vexpand>

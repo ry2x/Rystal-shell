@@ -1,17 +1,17 @@
-import { createBinding } from 'ags';
+import {createBinding} from 'ags';
 
 import Wp from 'gi://AstalWp';
 
-import { getVolumeIcon } from '../../../lib/audio';
-import { setEndpointVolume } from '../../../stores/system/audio';
-import { LucideIcon } from '../../../widget/common/lucide';
+import {getVolumeIcon} from '../../../lib/audio';
+import {setEndpointVolume} from '../../../stores/system/audio';
+import {LucideIcon} from '../../../widget/common/lucide';
 
 export interface VolumeSliderContentProps {
   speaker: Wp.Endpoint;
   onOpenSound: () => void;
 }
 
-export default function VolumeSliderContent({ speaker, onOpenSound }: VolumeSliderContentProps) {
+export default function VolumeSliderContent({speaker, onOpenSound}: VolumeSliderContentProps) {
   const volume = createBinding(speaker, 'volume');
   const volumeIcon = createBinding(speaker, 'volume_icon').as(getVolumeIcon);
 
@@ -40,7 +40,7 @@ export default function VolumeSliderContent({ speaker, onOpenSound }: VolumeSlid
         onClicked={onOpenSound}
         tooltipText="Open Sound Controls"
       >
-        <label label={volume.as((value) => `${Math.round(value * 100)}%`)} />
+        <label label={volume.as(value => `${Math.round(value * 100)}%`)} />
       </button>
     </box>
   );

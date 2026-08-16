@@ -1,7 +1,7 @@
-import { type Accessor, type Setter, createState, onCleanup } from 'ags';
-import { type Timer, timeout } from 'ags/time';
+import {type Accessor, type Setter, createState, onCleanup} from 'ags';
+import {type Timer, timeout} from 'ags/time';
 
-import { shellMotion } from '../../lib/motion';
+import {shellMotion} from '../../lib/motion';
 
 export interface AnimatedListEntry<T> {
   id: string;
@@ -18,7 +18,7 @@ function cancelTimer(timers: Map<string, Timer>, id: string) {
 
 function uniqueItemsById<T>(items: T[], idFor: (item: T) => string) {
   const seenIds = new Set<string>();
-  return items.filter((item) => {
+  return items.filter(item => {
     const id = idFor(item);
     if (seenIds.has(id)) return false;
     seenIds.add(id);
@@ -29,7 +29,7 @@ function uniqueItemsById<T>(items: T[], idFor: (item: T) => string) {
 function preserveExitingEntryPositions<T>(
   nextEntries: AnimatedListEntry<T>[],
   previousEntries: AnimatedListEntry<T>[],
-  nextIds: Set<string>,
+  nextIds: Set<string>
 ) {
   const exitingBefore = new Map<string, AnimatedListEntry<T>[]>();
   let pendingExits: AnimatedListEntry<T>[] = [];
@@ -46,14 +46,14 @@ function preserveExitingEntryPositions<T>(
   }
 
   return [
-    ...nextEntries.flatMap((entry) => [...(exitingBefore.get(entry.id) ?? []), entry]),
+    ...nextEntries.flatMap(entry => [...(exitingBefore.get(entry.id) ?? []), entry]),
     ...pendingExits,
   ];
 }
 
 function entriesChanged<T>(
   previousEntries: AnimatedListEntry<T>[],
-  nextEntries: AnimatedListEntry<T>[],
+  nextEntries: AnimatedListEntry<T>[]
 ) {
   return (
     previousEntries.length !== nextEntries.length ||
@@ -63,14 +63,14 @@ function entriesChanged<T>(
 
 export function createAnimatedListEntries<T>(
   items: Accessor<T[]>,
-  idFor: (item: T) => string,
+  idFor: (item: T) => string
 ): Accessor<AnimatedListEntry<T>[]> {
   const [entries, setEntries] = createState<AnimatedListEntry<T>[]>([]);
   const revealTimers = new Map<string, Timer>();
   const removeTimers = new Map<string, Timer>();
 
   const createEntry = (item: T): AnimatedListEntry<T> => {
-    const [itemState, setItem] = createState(item, { equals: () => false });
+    const [itemState, setItem] = createState(item, {equals: () => false});
     const [revealed, setRevealed] = createState(false);
     const id = idFor(item);
     const timer = timeout(shellMotion.listRevealDelay, () => {
@@ -78,14 +78,14 @@ export function createAnimatedListEntries<T>(
       revealTimers.delete(id);
     });
     revealTimers.set(id, timer);
-    return { id, item: itemState, setItem, revealed, setRevealed };
+    return {id, item: itemState, setItem, revealed, setRevealed};
   };
 
   const scheduleRemoval = (entry: AnimatedListEntry<T>) => {
     cancelTimer(revealTimers, entry.id);
     entry.setRevealed(false);
     const timer = timeout(shellMotion.listDuration, () => {
-      setEntries(entries.peek().filter((candidate) => candidate.id !== entry.id));
+      setEntries(entries.peek().filter(candidate => candidate.id !== entry.id));
       removeTimers.delete(entry.id);
     });
     removeTimers.set(entry.id, timer);
@@ -94,10 +94,10 @@ export function createAnimatedListEntries<T>(
   const updateEntries = () => {
     const nextItems = uniqueItemsById(items.peek(), idFor);
     const previousEntries = entries.peek();
-    const previousById = new Map(previousEntries.map((entry) => [entry.id, entry]));
+    const previousById = new Map(previousEntries.map(entry => [entry.id, entry]));
     const nextIds = new Set(nextItems.map(idFor));
 
-    const nextEntries = nextItems.map((item) => {
+    const nextEntries = nextItems.map(item => {
       const id = idFor(item);
       const previousEntry = previousById.get(id);
       if (!previousEntry) return createEntry(item);

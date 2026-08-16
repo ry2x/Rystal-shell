@@ -1,11 +1,11 @@
-import { type Accessor, createBinding, createState, onCleanup } from 'ags';
-import { execAsync } from 'ags/process';
-import { type Timer, timeout } from 'ags/time';
+import {type Accessor, createBinding, createState, onCleanup} from 'ags';
+import {execAsync} from 'ags/process';
+import {type Timer, timeout} from 'ags/time';
 
 import Wp from 'gi://AstalWp';
 import GSound from 'gi://GSound';
 
-import { closeAllControlCenters } from '../shell/windowManager';
+import {closeAllControlCenters} from '../shell/windowManager';
 
 let volumeContext: GSound.Context | null = null;
 let lastVolumeSoundAt = 0;
@@ -33,7 +33,7 @@ function getVolumeContext() {
 
 function playVolumeSound() {
   try {
-    getVolumeContext().play_simple({ 'event.id': 'audio-volume-change' }, null);
+    getVolumeContext().play_simple({'event.id': 'audio-volume-change'}, null);
   } catch (err) {
     volumeContext = null;
     console.error('Failed to play volume sound', err);
@@ -72,7 +72,7 @@ async function setDefaultAudioEndpoint(nodeId: number) {
 export function createSoundPageState(): SoundPageState {
   const [speaker, setSpeaker] = createState<Wp.Endpoint | null>(audio.default_speaker ?? null);
   const [microphone, setMicrophone] = createState<Wp.Endpoint | null>(
-    audio.default_microphone ?? null,
+    audio.default_microphone ?? null
   );
   const [speakers, setSpeakers] = createState<Wp.Endpoint[]>([...(audio.speakers ?? [])]);
   const [microphones, setMicrophones] = createState<Wp.Endpoint[]>([...(audio.microphones ?? [])]);
@@ -119,14 +119,14 @@ export function createSoundPageState(): SoundPageState {
   ];
 
   onCleanup(() => {
-    hooks.forEach((hook) => audio.disconnect(hook));
+    hooks.forEach(hook => audio.disconnect(hook));
     speakerRefreshTimer?.cancel();
     microphoneRefreshTimer?.cancel();
     speakerRefreshTimer = null;
     microphoneRefreshTimer = null;
   });
 
-  return { speaker, microphone, speakers, microphones, selectSpeaker, selectMicrophone };
+  return {speaker, microphone, speakers, microphones, selectSpeaker, selectMicrophone};
 }
 
 export function openAudioControl() {

@@ -1,11 +1,11 @@
-import { createBinding } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {createBinding} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Bluetooth from 'gi://AstalBluetooth';
 import Pango from 'gi://Pango';
 
-import { DetailMenuButton } from '../Shared';
-import { getBluetoothDeviceDetail } from './utils';
+import {DetailMenuButton} from '../Shared';
+import {getBluetoothDeviceDetail} from './utils';
 
 export interface ConnectedDeviceRowProps {
   device: Bluetooth.Device;
@@ -29,8 +29,8 @@ export default function ConnectedDeviceRow({
           ellipsize={Pango.EllipsizeMode.END}
         />
         <label
-          label={createBinding(device, 'battery_percentage').as((value) =>
-            getBluetoothDeviceDetail(value, 'Connected'),
+          label={createBinding(device, 'battery_percentage').as(value =>
+            getBluetoothDeviceDetail(value, 'Connected')
           )}
           class="cc-row-subtitle cc-bt-device-detail"
           halign={Gtk.Align.START}

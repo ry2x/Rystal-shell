@@ -14,7 +14,7 @@ export function getPowerProfile() {
 export function cyclePowerProfile() {
   if (!power) return;
   const current = power.activeProfile;
-  const profiles = power.get_profiles().map((p) => p.profile);
+  const profiles = power.get_profiles().map(p => p.profile);
   const idx = profiles.indexOf(current);
   if (idx !== -1 && profiles.length > 0) {
     power.activeProfile = profiles[(idx + 1) % profiles.length];
@@ -37,7 +37,7 @@ export function setPowerProfile(mode: string): string {
   if (!power) return 'Error: AstalPowerProfiles not available';
 
   const current = power.activeProfile;
-  const profiles = power.get_profiles().map((p) => p.profile);
+  const profiles = power.get_profiles().map(p => p.profile);
 
   if (!profiles.includes(mode)) {
     return `Error: Invalid profile '${mode}'. Available: ${profiles.join(', ')}`;

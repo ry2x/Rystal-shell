@@ -1,8 +1,8 @@
-import { createEffect } from 'ags';
-import { Astal, Gdk, Gtk } from 'ags/gtk4';
+import {createEffect} from 'ags';
+import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import { createPowerMenuState } from '../../stores/panel/powerMenu';
+import {createPowerMenuState} from '../../stores/panel/powerMenu';
 import ClickCatcher from '../common/ClickCatcher';
 import PowerMenuConfirmationView from './widget/PowerMenuConfirmationView';
 import PowerMenuMainView from './widget/PowerMenuMainView';
@@ -20,16 +20,16 @@ type PowerMenuWindow = Astal.Window & {
   show_animated: () => void;
 };
 
-export default function PowerMenu({ monitor }: PowerMenuProps) {
-  const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
+export default function PowerMenu({monitor}: PowerMenuProps) {
+  const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
   const itemButtons: Gtk.Button[] = [];
   let cancelButton: Gtk.Button | null = null;
   let confirmButton: Gtk.Button | null = null;
 
   const state = createPowerMenuState({
     monitorConnector: monitor.get_connector(),
-    focusItem: (index) => itemButtons[index]?.grab_focus(),
-    focusConfirmation: (index) => {
+    focusItem: index => itemButtons[index]?.grab_focus(),
+    focusConfirmation: index => {
       if (index === 0) cancelButton?.grab_focus();
       else confirmButton?.grab_focus();
     },
@@ -51,10 +51,10 @@ export default function PowerMenu({ monitor }: PowerMenuProps) {
     onCancel: state.hideAnimated,
     onConfirm: state.confirmAction,
     onSelectionChanged: state.selectConfirmation,
-    onCancelButtonCreated: (button) => {
+    onCancelButtonCreated: button => {
       cancelButton = button;
     },
-    onConfirmButtonCreated: (button) => {
+    onConfirmButtonCreated: button => {
       confirmButton = button;
     },
   });
@@ -67,7 +67,7 @@ export default function PowerMenu({ monitor }: PowerMenuProps) {
       vexpand
       halign={Gtk.Align.FILL}
       valign={Gtk.Align.FILL}
-      $={(self) => {
+      $={self => {
         self.add_named(mainView, 'main');
         self.add_named(confirmationView, 'confirmation');
         createEffect(() => {
@@ -97,8 +97,8 @@ export default function PowerMenu({ monitor }: PowerMenuProps) {
       <box orientation={Gtk.Orientation.VERTICAL}>
         <ClickCatcher onClick={state.hideAnimated} hexpand vexpand />
         <box
-          cssClasses={state.revealed.as((revealed) =>
-            revealed ? ['power-menu-panel', 'revealed'] : ['power-menu-panel'],
+          cssClasses={state.revealed.as(revealed =>
+            revealed ? ['power-menu-panel', 'revealed'] : ['power-menu-panel']
           )}
           heightRequest={PANEL_HEIGHT}
           vexpand={false}

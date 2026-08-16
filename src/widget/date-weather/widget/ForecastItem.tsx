@@ -1,17 +1,17 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
-import { getWeatherIcon, weatherInfo } from '../../../stores/system/weather';
-import { LucideIcon } from '../../common/lucide';
+import {getWeatherIcon, weatherInfo} from '../../../stores/system/weather';
+import {LucideIcon} from '../../common/lucide';
 
 export interface ForecastItemProps {
   index: number;
 }
 
 function formatForecastDay(date: string) {
-  return new Date(date).toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+  return new Date(date).toLocaleDateString('en-US', {weekday: 'short'}).toUpperCase();
 }
 
-export default function ForecastItem({ index }: ForecastItemProps) {
+export default function ForecastItem({index}: ForecastItemProps) {
   return (
     <box
       orientation={Gtk.Orientation.HORIZONTAL}
@@ -20,7 +20,7 @@ export default function ForecastItem({ index }: ForecastItemProps) {
       halign={Gtk.Align.CENTER}
     >
       <label
-        label={weatherInfo.as((weather) => {
+        label={weatherInfo.as(weather => {
           const forecast = weather?.forecast[index];
           return forecast ? formatForecastDay(forecast.date) : '';
         })}
@@ -28,7 +28,7 @@ export default function ForecastItem({ index }: ForecastItemProps) {
         halign={Gtk.Align.START}
       />
       <LucideIcon
-        name={weatherInfo.as((weather) => {
+        name={weatherInfo.as(weather => {
           const forecast = weather?.forecast[index];
           return forecast ? getWeatherIcon(forecast.code) : 'cloud';
         })}
@@ -37,7 +37,7 @@ export default function ForecastItem({ index }: ForecastItemProps) {
       />
       <box orientation={Gtk.Orientation.VERTICAL} spacing={2} valign={Gtk.Align.CENTER}>
         <label
-          label={weatherInfo.as((weather) => {
+          label={weatherInfo.as(weather => {
             const forecast = weather?.forecast[index];
             return forecast ? `${forecast.max}°C` : '';
           })}
@@ -45,7 +45,7 @@ export default function ForecastItem({ index }: ForecastItemProps) {
           halign={Gtk.Align.START}
         />
         <label
-          label={weatherInfo.as((weather) => {
+          label={weatherInfo.as(weather => {
             const forecast = weather?.forecast[index];
             return forecast ? `${forecast.min}°C` : '';
           })}

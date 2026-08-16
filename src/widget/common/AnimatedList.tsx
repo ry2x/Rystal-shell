@@ -1,8 +1,8 @@
-import { type Accessor, For } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor, For} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
-import { shellMotion } from '../../lib/motion';
-import { createAnimatedListEntries } from '../../stores/common/animatedList';
+import {shellMotion} from '../../lib/motion';
+import {createAnimatedListEntries} from '../../stores/common/animatedList';
 
 export interface AnimatedListProps<T> {
   items: Accessor<T[]>;
@@ -23,8 +23,8 @@ export default function AnimatedList<T>({
 
   return (
     <box class={className} orientation={Gtk.Orientation.VERTICAL}>
-      <For each={entries} id={(entry) => entry.id}>
-        {(entry) => (
+      <For each={entries} id={entry => entry.id}>
+        {entry => (
           <revealer
             transitionType={Gtk.RevealerTransitionType.SLIDE_UP}
             transitionDuration={shellMotion.listDuration}
@@ -36,7 +36,7 @@ export default function AnimatedList<T>({
                 transitionDuration={shellMotion.listDuration}
                 revealChild={entry.revealed}
               >
-                <For each={entry.item.as((item) => [item])}>{renderItem}</For>
+                <For each={entry.item.as(item => [item])}>{renderItem}</For>
               </revealer>
               {spacing > 0 && <box heightRequest={spacing} />}
             </box>

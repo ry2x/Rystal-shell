@@ -1,10 +1,10 @@
-import { handleBrightness } from './brightness';
-import { handleReloadCss } from './css';
-import { notificationCommandHandlers } from './notifications';
-import { panelCommandHandlers } from './panels';
-import { handlePowerProfile } from './powerProfile';
-import { handleRecord } from './recording';
-import { type IpcCommandHandler, type ResponseCallback } from './types';
+import {handleBrightness} from './brightness';
+import {handleReloadCss} from './css';
+import {notificationCommandHandlers} from './notifications';
+import {panelCommandHandlers} from './panels';
+import {handlePowerProfile} from './powerProfile';
+import {handleRecord} from './recording';
+import {type IpcCommandHandler, type ResponseCallback} from './types';
 
 const commandHandlers: ReadonlyMap<string, IpcCommandHandler> = new Map<string, IpcCommandHandler>([
   ...panelCommandHandlers,

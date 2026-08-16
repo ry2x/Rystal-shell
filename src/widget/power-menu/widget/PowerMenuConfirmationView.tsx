@@ -1,8 +1,8 @@
-import { type Accessor } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
-import type { PowerItem } from '../../../stores/panel/powerMenu';
-import { LucideIcon } from '../../common/lucide';
+import type {PowerItem} from '../../../stores/panel/powerMenu';
+import {LucideIcon} from '../../common/lucide';
 
 export interface PowerMenuConfirmationViewProps {
   confirmation: Accessor<PowerItem | null>;
@@ -31,12 +31,12 @@ export default function PowerMenuConfirmationView({
       <box class="power-menu-confirmation-card">
         <box orientation={Gtk.Orientation.VERTICAL} hexpand vexpand>
           <box vexpand valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}>
-            <LucideIcon name={confirmation.as((item) => item?.icon ?? 'power')} pixelSize={54} />
+            <LucideIcon name={confirmation.as(item => item?.icon ?? 'power')} pixelSize={54} />
           </box>
           <label
             class="power-menu-label"
-            label={confirmation.as((item) =>
-              item ? `${item.label} (<u>${item.shortcut.toUpperCase()}</u>)` : '',
+            label={confirmation.as(item =>
+              item ? `${item.label} (<u>${item.shortcut.toUpperCase()}</u>)` : ''
             )}
             useMarkup
           />
@@ -46,7 +46,7 @@ export default function PowerMenuConfirmationView({
         <box orientation={Gtk.Orientation.VERTICAL} spacing={8} hexpand valign={Gtk.Align.CENTER}>
           <label
             class="power-menu-confirmation-title"
-            label={confirmation.as((item) => (item ? `${item.label}?` : 'Confirm action'))}
+            label={confirmation.as(item => (item ? `${item.label}?` : 'Confirm action'))}
             halign={Gtk.Align.START}
           />
           <label
@@ -63,8 +63,8 @@ export default function PowerMenuConfirmationView({
           <button class="power-menu-confirm" onClicked={onConfirm} $={onConfirmButtonCreated}>
             <Gtk.EventControllerFocus onEnter={() => onSelectionChanged(1)} />
             <label
-              label={confirmation.as((item) =>
-                item ? `${item.label} (<u>${item.shortcut.toUpperCase()}</u>)` : 'Confirm',
+              label={confirmation.as(item =>
+                item ? `${item.label} (<u>${item.shortcut.toUpperCase()}</u>)` : 'Confirm'
               )}
               useMarkup
             />

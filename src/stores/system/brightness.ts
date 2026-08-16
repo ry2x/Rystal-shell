@@ -1,8 +1,8 @@
-import { createState } from 'ags';
-import { type Timer, timeout } from 'ags/time';
+import {createState} from 'ags';
+import {type Timer, timeout} from 'ags/time';
 
-import { sendNotification } from '../notification/send';
-import { BrightnessBackendController, clampBrightnessPercent } from './brightnessBackend';
+import {sendNotification} from '../notification/send';
+import {BrightnessBackendController, clampBrightnessPercent} from './brightnessBackend';
 
 const KEYBOARD_STEP = 10;
 const DEFAULT_RESTORE_BRIGHTNESS = 0.25;
@@ -61,10 +61,10 @@ async function processApplyQueue() {
     const value = request.percent / 100;
     rememberNonZeroBrightness(value);
     setBrightnessState(value);
-    request.requests.forEach(({ resolve }) => resolve(request.percent));
+    request.requests.forEach(({resolve}) => resolve(request.percent));
   } catch (error) {
     const applyError = error instanceof Error ? error : new Error(String(error));
-    request.requests.forEach(({ reject }) => reject(applyError));
+    request.requests.forEach(({reject}) => reject(applyError));
   }
 
   await processApplyQueue();
@@ -81,12 +81,12 @@ function ensureApplyWorker() {
 
 function requestBrightnessApply(percent: number) {
   return new Promise<number>((resolve, reject) => {
-    const request = { resolve, reject };
+    const request = {resolve, reject};
     if (pendingApply) {
       pendingApply.percent = percent;
       pendingApply.requests.push(request);
     } else {
-      pendingApply = { percent, requests: [request] };
+      pendingApply = {percent, requests: [request]};
     }
     ensureApplyWorker();
   });
@@ -118,7 +118,7 @@ export function setBrightness(value: number) {
     scheduledTarget = null;
     if (target === null) return;
 
-    void requestBrightnessApply(target).catch(async (error) => {
+    void requestBrightnessApply(target).catch(async error => {
       console.error('Failed to set brightness:', error);
       try {
         await refreshBrightness();
@@ -142,7 +142,7 @@ export function toggleBrightnessDim() {
 
 export function cycleBrightnessPreset() {
   const current = brightness();
-  const next = BRIGHTNESS_PRESETS.find((preset) => preset > current) ?? BRIGHTNESS_PRESETS[0];
+  const next = BRIGHTNESS_PRESETS.find(preset => preset > current) ?? BRIGHTNESS_PRESETS[0];
   setBrightness(next);
 }
 
@@ -163,7 +163,7 @@ export function changeBrightness(delta: number): Promise<number> {
   const operation = changeQueue.then(() => performBrightnessChange(delta));
   changeQueue = operation.then(
     () => {},
-    () => {},
+    () => {}
   );
   return operation;
 }
@@ -188,6 +188,6 @@ export async function getBrightnessBackend() {
 
 export const brightnessStep = KEYBOARD_STEP;
 
-void refreshBrightness().catch((error) =>
-  console.error('Failed to fetch initial brightness:', error),
+void refreshBrightness().catch(error =>
+  console.error('Failed to fetch initial brightness:', error)
 );

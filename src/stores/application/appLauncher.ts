@@ -1,8 +1,8 @@
-import { type Accessor, type Setter, createComputed, createState } from 'ags';
+import {type Accessor, type Setter, createComputed, createState} from 'ags';
 
 import Apps from 'gi://AstalApps';
 
-import { searchApps } from './applicationCatalog';
+import {searchApps} from './applicationCatalog';
 
 export interface AppLauncherState {
   text: Accessor<string>;

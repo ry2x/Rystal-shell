@@ -1,6 +1,6 @@
 import GLib from 'gi://GLib?version=2.0';
 
-import { rystalShellConfigDir } from './paths';
+import {rystalShellConfigDir} from './paths';
 
 export interface AppConfig {
   brightness?: {
@@ -40,10 +40,10 @@ const DEFAULT_CONFIG: AppConfig = {
     maxCount: 30,
   },
   worldClocks: [
-    { label: 'London', tz: 'Europe/London' },
-    { label: 'Brisbane', tz: 'Australia/Brisbane' },
-    { label: 'New York', tz: 'America/New_York' },
-    { label: 'Los Angeles', tz: 'America/Los_Angeles' },
+    {label: 'London', tz: 'Europe/London'},
+    {label: 'Brisbane', tz: 'Australia/Brisbane'},
+    {label: 'New York', tz: 'America/New_York'},
+    {label: 'Los Angeles', tz: 'America/Los_Angeles'},
   ],
   recorder: {
     savePath: '~/Videos',
@@ -63,7 +63,7 @@ function loadConfig(): AppConfig {
       const [success, bytes] = GLib.file_get_contents(configPath);
       if (success && bytes) {
         const jsonString = new TextDecoder('utf-8').decode(bytes);
-        return { ...DEFAULT_CONFIG, ...JSON.parse(jsonString) };
+        return {...DEFAULT_CONFIG, ...JSON.parse(jsonString)};
       }
     }
   } catch (error) {

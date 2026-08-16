@@ -1,2 +1,2 @@
-export { BluetoothPage } from './BluetoothPage';
-export { WifiPage } from './WifiPage';
+export {BluetoothPage} from './BluetoothPage';
+export {WifiPage} from './WifiPage';

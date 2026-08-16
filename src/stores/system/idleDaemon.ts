@@ -1,5 +1,5 @@
-import { type Process, execAsync, subprocess } from 'ags/process';
-import { timeout } from 'ags/time';
+import {type Process, execAsync, subprocess} from 'ags/process';
+import {timeout} from 'ags/time';
 
 const IDLE_DAEMONS = ['hypridle', 'swayidle'] as const;
 const SIGTERM = 15;
@@ -15,7 +15,7 @@ export interface IdleDaemonAdapter {
 }
 
 function delay(milliseconds: number) {
-  return new Promise<void>((resolve) => {
+  return new Promise<void>(resolve => {
     timeout(milliseconds, resolve);
   });
 }
@@ -27,7 +27,7 @@ async function getProcessIds(daemon: IdleDaemon) {
       .trim()
       .split(/\s+/)
       .map(Number)
-      .filter((pid) => Number.isInteger(pid) && pid > 0);
+      .filter(pid => Number.isInteger(pid) && pid > 0);
   } catch {
     return [];
   }
@@ -67,7 +67,7 @@ class ExecOnceIdleDaemonAdapter implements IdleDaemonAdapter {
     const process = subprocess({
       cmd: [daemon],
       out: () => {},
-      err: (line) => console.error(`${daemon}: ${line}`),
+      err: line => console.error(`${daemon}: ${line}`),
     });
     this.ownedProcesses.set(daemon, process);
     process.connect('exit', () => {
@@ -113,7 +113,7 @@ class ExecOnceIdleDaemonAdapter implements IdleDaemonAdapter {
       throw new Error(`Refusing to stop unowned ${daemon} process`);
     }
 
-    const targets = currentProcessIds.filter((pid) => managedProcessIds.has(pid));
+    const targets = currentProcessIds.filter(pid => managedProcessIds.has(pid));
     if (targets.length === 0) {
       throw new Error(`The managed ${daemon} process has changed`);
     }

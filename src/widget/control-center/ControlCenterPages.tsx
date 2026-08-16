@@ -1,20 +1,20 @@
-import { For, onCleanup } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {For, onCleanup} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
-import { shellMotion } from '../../lib/motion';
-import { type ControlCenterState } from '../../stores/panel/controlCenter';
-import { createBarBackgroundGeometry } from '../../stores/shell/barBackground';
+import {shellMotion} from '../../lib/motion';
+import {type ControlCenterState} from '../../stores/panel/controlCenter';
+import {createBarBackgroundGeometry} from '../../stores/shell/barBackground';
 import ControlCenterContent from './ControlCenterContent';
 import PageContainer from './PageContainer';
-import { BluetoothPage, WifiPage } from './widget/Connectivity';
-import { SoundPage } from './widget/Sound';
+import {BluetoothPage, WifiPage} from './widget/Connectivity';
+import {SoundPage} from './widget/Sound';
 
 export interface ControlCenterPagesProps {
   state: ControlCenterState;
   monitorConnector: string;
 }
 
-export default function ControlCenterPages({ state, monitorConnector }: ControlCenterPagesProps) {
+export default function ControlCenterPages({state, monitorConnector}: ControlCenterPagesProps) {
   const geometry = createBarBackgroundGeometry(monitorConnector);
   const mainContent = (<ControlCenterContent onOpenPage={state.openPage} />) as Gtk.Widget;
   const main = (
@@ -27,7 +27,7 @@ export default function ControlCenterPages({ state, monitorConnector }: ControlC
       child={
         (
           <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
-            <For each={state.wifiLoaded.as((loaded) => (loaded ? [true] : []))}>
+            <For each={state.wifiLoaded.as(loaded => (loaded ? [true] : []))}>
               {() => <WifiPage monitorConnector={monitorConnector} onBack={state.showMainPage} />}
             </For>
           </box>
@@ -42,7 +42,7 @@ export default function ControlCenterPages({ state, monitorConnector }: ControlC
       child={
         (
           <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
-            <For each={state.bluetoothLoaded.as((loaded) => (loaded ? [true] : []))}>
+            <For each={state.bluetoothLoaded.as(loaded => (loaded ? [true] : []))}>
               {() => <BluetoothPage page={state.page} onBack={state.showMainPage} />}
             </For>
           </box>
@@ -57,7 +57,7 @@ export default function ControlCenterPages({ state, monitorConnector }: ControlC
       child={
         (
           <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
-            <For each={state.soundLoaded.as((loaded) => (loaded ? [true] : []))}>
+            <For each={state.soundLoaded.as(loaded => (loaded ? [true] : []))}>
               {() => <SoundPage onBack={state.showMainPage} />}
             </For>
           </box>

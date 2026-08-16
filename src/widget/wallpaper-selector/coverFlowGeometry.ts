@@ -30,12 +30,12 @@ export function createCoverFlowTransform(offset: number, containerWidth: number,
   const y = 52 + arcDrop + (1 - entrance) * 70;
 
   let transform: Gsk.Transform | null = Gsk.Transform.new();
-  transform = transform.translate(new Graphene.Point({ x, y }));
+  transform = transform.translate(new Graphene.Point({x, y}));
   transform = transform!.translate(
     new Graphene.Point({
       x: WALLPAPER_CARD_WIDTH / 2,
       y: WALLPAPER_CARD_HEIGHT / 2,
-    }),
+    })
   );
   transform = transform!.skew(skew, 0);
   transform = transform!.scale(scale, scale);
@@ -43,7 +43,7 @@ export function createCoverFlowTransform(offset: number, containerWidth: number,
     new Graphene.Point({
       x: -WALLPAPER_CARD_WIDTH / 2,
       y: -WALLPAPER_CARD_HEIGHT / 2,
-    }),
+    })
   );
   return transform;
 }

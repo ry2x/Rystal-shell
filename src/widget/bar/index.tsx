@@ -1,9 +1,9 @@
 import Cairo from 'cairo';
 
-import { onCleanup } from 'ags';
-import { Astal, Gdk, Gtk } from 'ags/gtk4';
+import {onCleanup} from 'ags';
+import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
-import { timeout } from 'ags/time';
+import {timeout} from 'ags/time';
 
 import BarReserve from './BarReserve';
 import PanelBackground from './PanelBackground';
@@ -39,10 +39,10 @@ function setBarInputRegion(window: Astal.Window) {
   surface.set_input_region(region);
 }
 
-export default function Bar({ monitor }: BarProps) {
-  BarReserve({ monitor });
+export default function Bar({monitor}: BarProps) {
+  BarReserve({monitor});
 
-  const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
+  const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
   const window = (
     <window
       visible

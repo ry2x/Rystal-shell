@@ -1,10 +1,10 @@
-import { type Process, subprocess } from 'ags/process';
+import {type Process, subprocess} from 'ags/process';
 
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-import { ryprlandCacheDir } from '../../lib/paths';
-import type { Wallpaper } from './wallpaper';
+import {ryprlandCacheDir} from '../../lib/paths';
+import type {Wallpaper} from './wallpaper';
 
 const THUMBNAIL_WIDTH = 384;
 const THUMBNAIL_HEIGHT = 252;
@@ -54,13 +54,13 @@ function deleteTemporaryThumbnail(path: string) {
 }
 
 function waitForThumbnailProcess(process: Process) {
-  return new Promise<{ code: number; signaled: boolean }>((resolve) => {
-    process.connect('exit', (_, code, signaled) => resolve({ code, signaled }));
+  return new Promise<{code: number; signaled: boolean}>(resolve => {
+    process.connect('exit', (_, code, signaled) => resolve({code, signaled}));
   });
 }
 
 async function generateThumbnail(job: ThumbnailJob) {
-  const { wallpaper, generation: jobGeneration } = job;
+  const {wallpaper, generation: jobGeneration} = job;
   if (GLib.file_test(wallpaper.thumbnailPath, GLib.FileTest.IS_REGULAR)) {
     if (jobGeneration === generation) notifyThumbnailReady(wallpaper.path, wallpaper.thumbnailPath);
     return;
@@ -87,12 +87,12 @@ async function generateThumbnail(job: ThumbnailJob) {
         `${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}`,
         `png:${temporaryPath}`,
       ],
-      err: (line) => errors.push(line),
+      err: line => errors.push(line),
     });
-    activeJob = { job, process, temporaryPath, cancelled: false };
+    activeJob = {job, process, temporaryPath, cancelled: false};
     activeThumbnailJobs.add(activeJob);
 
-    const { code, signaled } = await waitForThumbnailProcess(process);
+    const {code, signaled} = await waitForThumbnailProcess(process);
     if (activeJob.cancelled || jobGeneration !== generation) return;
     if (signaled || code !== 0) {
       throw new Error(errors.join('\n') || `magick exited with status ${code}`);
@@ -102,7 +102,7 @@ async function generateThumbnail(job: ThumbnailJob) {
       Gio.File.new_for_path(wallpaper.thumbnailPath),
       Gio.FileCopyFlags.OVERWRITE,
       null,
-      null,
+      null
     );
     if (jobGeneration === generation) notifyThumbnailReady(wallpaper.path, wallpaper.thumbnailPath);
   } catch (error) {
@@ -134,9 +134,9 @@ export function ensureWallpaperThumbnails(items: Wallpaper[], priority = true) {
     if (GLib.file_test(wallpaper.thumbnailPath, GLib.FileTest.IS_REGULAR)) continue;
     if (
       [...activeThumbnailJobs].some(
-        (activeJob) =>
+        activeJob =>
           activeJob.job.generation === currentGeneration &&
-          activeJob.job.wallpaper.path === wallpaper.path,
+          activeJob.job.wallpaper.path === wallpaper.path
       )
     ) {
       continue;
@@ -148,7 +148,7 @@ export function ensureWallpaperThumbnails(items: Wallpaper[], priority = true) {
       continue;
     }
 
-    const job = { wallpaper, generation: currentGeneration, priority: priority ? 1 : 0 };
+    const job = {wallpaper, generation: currentGeneration, priority: priority ? 1 : 0};
     thumbnailQueue.push(job);
     queuedThumbnails.set(wallpaper.path, job);
   }

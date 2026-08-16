@@ -1,7 +1,7 @@
-import { type Accessor } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
-import { LucideIcon } from '../../../../../widget/common/lucide';
+import {LucideIcon} from '../../../../../widget/common/lucide';
 
 export interface PageHeaderProps {
   title: string;
@@ -11,13 +11,7 @@ export interface PageHeaderProps {
   className?: string;
 }
 
-export default function PageHeader({
-  title,
-  enabled,
-  onToggle,
-  onBack,
-  className,
-}: PageHeaderProps) {
+export default function PageHeader({title, enabled, onToggle, onBack, className}: PageHeaderProps) {
   return (
     <box class={className} spacing={12}>
       <button class="icon-btn" onClicked={onBack} tooltipText="Back">

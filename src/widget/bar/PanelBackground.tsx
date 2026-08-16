@@ -1,7 +1,7 @@
 import Cairo from 'cairo';
 
-import { createEffect } from 'ags';
-import { Gdk, Gtk } from 'ags/gtk4';
+import {createEffect} from 'ags';
+import {Gdk, Gtk} from 'ags/gtk4';
 
 import {
   type BarBackgroundGeometry,
@@ -34,7 +34,7 @@ function drawBackground(
   width: number,
   height: number,
   geometry: BarBackgroundGeometry,
-  colors: BarColors,
+  colors: BarColors
 ) {
   const [backgroundRed, backgroundGreen, backgroundBlue] = hexToRgba(colors.surface);
   const [accentRed, accentGreen, accentBlue, accentAlpha] = hexToRgba(colors.primary);
@@ -56,28 +56,28 @@ function drawBackground(
     desktopY + BORDER_RADIUS,
     BORDER_RADIUS,
     -Math.PI / 2,
-    0,
+    0
   );
   context.arc(
     desktopX + desktopWidth - BORDER_RADIUS,
     desktopY + desktopHeight - BORDER_RADIUS,
     BORDER_RADIUS,
     0,
-    Math.PI / 2,
+    Math.PI / 2
   );
   context.arc(
     desktopX + BORDER_RADIUS,
     desktopY + desktopHeight - BORDER_RADIUS,
     BORDER_RADIUS,
     Math.PI / 2,
-    Math.PI,
+    Math.PI
   );
   context.arc(
     desktopX + BORDER_RADIUS,
     desktopY + BORDER_RADIUS,
     BORDER_RADIUS,
     Math.PI,
-    (3 * Math.PI) / 2,
+    (3 * Math.PI) / 2
   );
   context.closePath();
 
@@ -90,7 +90,7 @@ function drawBackground(
   context.$dispose();
 }
 
-export default function PanelBackground({ monitor }: PanelBackgroundProps) {
+export default function PanelBackground({monitor}: PanelBackgroundProps) {
   const geometry = createBarBackgroundGeometry(monitor.get_connector());
   let drawingArea!: Gtk.DrawingArea;
 
@@ -101,7 +101,7 @@ export default function PanelBackground({ monitor }: PanelBackgroundProps) {
       canTarget={false}
       canFocus={false}
       sensitive={false}
-      $={(self) => {
+      $={self => {
         drawingArea = self;
         self.set_draw_func((_area, context, width, height) => {
           drawBackground(context, width, height, geometry.peek(), barColors.peek());

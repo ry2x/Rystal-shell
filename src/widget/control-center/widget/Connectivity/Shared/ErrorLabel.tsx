@@ -1,5 +1,5 @@
-import { type Accessor } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
@@ -8,7 +8,7 @@ export interface ErrorLabelProps {
   onRetry?: () => void;
 }
 
-export default function ErrorLabel({ error, onRetry }: ErrorLabelProps) {
+export default function ErrorLabel({error, onRetry}: ErrorLabelProps) {
   return (
     <revealer
       revealChild={error.as(Boolean)}

@@ -1,4 +1,4 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
 import GLib from 'gi://GLib';
 
@@ -14,9 +14,9 @@ import {
   ensureWallpaperThumbnails,
   subscribeThumbnailReady,
 } from '../../../stores/wallpaper/wallpaperThumbnail';
-import { createCoverFlowTransform, getCoverFlowOpacity } from '../coverFlowGeometry';
-import { WallpaperCardController } from './WallpaperCard';
-import { CoverFlowAnimation, type CoverFlowCardState } from './coverFlowAnimation';
+import {createCoverFlowTransform, getCoverFlowOpacity} from '../coverFlowGeometry';
+import {WallpaperCardController} from './WallpaperCard';
+import {CoverFlowAnimation, type CoverFlowCardState} from './coverFlowAnimation';
 
 const VISIBLE_RADIUS = 3;
 const PREFETCH_RADIUS = 4;
@@ -74,7 +74,7 @@ export default class CoverFlowController {
       xalign: 0.5,
     });
 
-    this.statusLabel = new Gtk.Label({ cssClasses: ['wallpaper-status'], xalign: 0.5 });
+    this.statusLabel = new Gtk.Label({cssClasses: ['wallpaper-status'], xalign: 0.5});
 
     const coverFlowLayer = new Gtk.Overlay({
       cssClasses: ['wallpaper-coverflow'],
@@ -130,7 +130,7 @@ export default class CoverFlowController {
       }),
       wallpaperError.subscribe(() => this.updateLabels()),
       wallpapersLoading.subscribe(() => this.updateLabels()),
-      subscribeThumbnailReady((path) => this.cards.get(path)?.card.refreshImage()),
+      subscribeThumbnailReady(path => this.cards.get(path)?.card.refreshImage()),
     ];
     this.widget.connect('destroy', () => this.dispose());
   }
@@ -182,7 +182,7 @@ export default class CoverFlowController {
   private handleCardClicked(card: WallpaperCardController) {
     const clicked = card.wallpaper;
     if (!clicked || wallpaperApplying()) return;
-    const index = this.filtered.findIndex((item) => item.path === clicked.path);
+    const index = this.filtered.findIndex(item => item.path === clicked.path);
     if (index < 0) return;
     if (index === this.selectedIndex) this.activateSelection();
     else this.setSelection(index);
@@ -191,10 +191,10 @@ export default class CoverFlowController {
   private updateLabels() {
     const selected = this.selectedWallpaper();
     this.positionLabel.set_label(
-      selected ? `${this.selectedIndex + 1} / ${this.filtered.length}` : '0 / 0',
+      selected ? `${this.selectedIndex + 1} / ${this.filtered.length}` : '0 / 0'
     );
     this.statusLabel.set_label(
-      wallpaperError() || (wallpapersLoading() ? 'Loading wallpapers…' : ''),
+      wallpaperError() || (wallpapersLoading() ? 'Loading wallpapers…' : '')
     );
     this.statusLabel.set_visible(Boolean(this.statusLabel.get_label()));
   }
@@ -207,7 +207,7 @@ export default class CoverFlowController {
 
   private applyCardVisuals() {
     const ordered = [...this.cards.values()].sort(
-      (a, b) => Math.abs(b.currentOffset) - Math.abs(a.currentOffset),
+      (a, b) => Math.abs(b.currentOffset) - Math.abs(a.currentOffset)
     );
 
     for (const state of ordered) {
@@ -218,8 +218,8 @@ export default class CoverFlowController {
         createCoverFlowTransform(
           state.currentOffset,
           this.options.viewportWidth,
-          this.animation.getEntrance(),
-        ),
+          this.animation.getEntrance()
+        )
       );
       state.card.widget.insert_before(this.fixed, null);
     }
@@ -234,7 +234,7 @@ export default class CoverFlowController {
         state.card.widget.set_opacity(
           getCoverFlowOpacity(state.currentOffset) *
             state.currentOpacity *
-            this.animation.getEntrance(),
+            this.animation.getEntrance()
         );
       }
     }
@@ -271,7 +271,7 @@ export default class CoverFlowController {
 
       let state = this.cards.get(wallpaper.path);
       if (!state) {
-        const card = new WallpaperCardController((clicked) => this.handleCardClicked(clicked));
+        const card = new WallpaperCardController(clicked => this.handleCardClicked(clicked));
         card.bind(wallpaper);
         this.fixed.put(card.widget, 0, 0);
         const spawnOffset = offset + Math.sign(offset || direction || 1) * 0.35;
@@ -315,7 +315,7 @@ export default class CoverFlowController {
     const previousPath = this.selectedWallpaper()?.path;
     this.filtered = wallpapers();
     const preservedIndex = previousPath
-      ? this.filtered.findIndex((wallpaper) => wallpaper.path === previousPath)
+      ? this.filtered.findIndex(wallpaper => wallpaper.path === previousPath)
       : -1;
     this.selectedIndex = preservedIndex >= 0 ? preservedIndex : 0;
     this.reconcileCards();

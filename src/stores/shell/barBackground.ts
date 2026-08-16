@@ -1,10 +1,10 @@
-import { type Accessor, createExternal, createState } from 'ags';
-import { type Timer, interval } from 'ags/time';
+import {type Accessor, createExternal, createState} from 'ags';
+import {type Timer, interval} from 'ags/time';
 
 import GLib from 'gi://GLib';
 
-import { rystalShellConfigDir, rystalShellDataDir } from '../../lib/paths';
-import { activeSidePanel } from './windowManager';
+import {rystalShellConfigDir, rystalShellDataDir} from '../../lib/paths';
+import {activeSidePanel} from './windowManager';
 
 export interface BarColors {
   surface: string;
@@ -45,12 +45,12 @@ function readBarColors(): BarColors {
     };
   } catch (error) {
     console.error(`Failed to read bar colors: ${error}`);
-    return { surface: '#191114', primary: '#ffb0ce' };
+    return {surface: '#191114', primary: '#ffb0ce'};
   }
 }
 
 function getTargetGeometry(panel: string, isTargetMonitor: boolean): BarBackgroundGeometry {
-  if (!isTargetMonitor) return { dx: BAR_WIDTH, bottomHeight: 0 };
+  if (!isTargetMonitor) return {dx: BAR_WIDTH, bottomHeight: 0};
 
   const dx =
     panel === 'control-center'
@@ -65,7 +65,7 @@ function getTargetGeometry(panel: string, isTargetMonitor: boolean): BarBackgrou
         ? POWER_MENU_PANEL_HEIGHT
         : 0;
 
-  return { dx, bottomHeight };
+  return {dx, bottomHeight};
 }
 
 const [barColorsState, setBarColors] = createState(readBarColors());
@@ -78,9 +78,9 @@ export function reloadBarColors() {
 const monitorGeometries = new Map<string, Accessor<BarBackgroundGeometry>>();
 
 function createMonitorGeometry(monitorConnector: string | null): Accessor<BarBackgroundGeometry> {
-  const initialGeometry = { dx: BAR_WIDTH, bottomHeight: 0 };
+  const initialGeometry = {dx: BAR_WIDTH, bottomHeight: 0};
 
-  return createExternal(initialGeometry, (setGeometry) => {
+  return createExternal(initialGeometry, setGeometry => {
     let currentGeometry = initialGeometry;
     let targetGeometry = initialGeometry;
     let animationTimer: Timer | null = null;
@@ -104,7 +104,7 @@ function createMonitorGeometry(monitorConnector: string | null): Accessor<BarBac
       setGeometry(currentGeometry);
     };
 
-    const unsubscribePanel = activeSidePanel.subscribe(({ panel, monitor }) => {
+    const unsubscribePanel = activeSidePanel.subscribe(({panel, monitor}) => {
       targetGeometry = getTargetGeometry(panel, monitor === monitorConnector);
       animationTimer ??= interval(ANIMATION_INTERVAL_MS, animate);
     });
@@ -118,7 +118,7 @@ function createMonitorGeometry(monitorConnector: string | null): Accessor<BarBac
 }
 
 export function createBarBackgroundGeometry(
-  monitorConnector: string | null,
+  monitorConnector: string | null
 ): Accessor<BarBackgroundGeometry> {
   const key = monitorConnector ?? '';
   const existing = monitorGeometries.get(key);

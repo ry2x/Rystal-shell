@@ -1,5 +1,5 @@
-import { createBinding, createEffect } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {createBinding, createEffect} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import AstalTray from 'gi://AstalTray';
 
@@ -8,7 +8,7 @@ export interface TrayItemButtonProps {
   onActivate: () => void;
 }
 
-export function TrayItemButton({ item, onActivate }: TrayItemButtonProps) {
+export function TrayItemButton({item, onActivate}: TrayItemButtonProps) {
   const button = (
     <menubutton
       class="tray-item"
@@ -18,7 +18,7 @@ export function TrayItemButton({ item, onActivate }: TrayItemButtonProps) {
       <Gtk.GestureClick
         button={1}
         propagationPhase={Gtk.PropagationPhase.CAPTURE}
-        onPressed={(gesture) => {
+        onPressed={gesture => {
           gesture.set_state(Gtk.EventSequenceState.CLAIMED);
           item.activate(0, 0);
           onActivate();

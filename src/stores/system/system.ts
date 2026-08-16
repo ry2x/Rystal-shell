@@ -1,10 +1,10 @@
-import { createExternal } from 'ags';
-import { execAsync } from 'ags/process';
-import { idle, interval } from 'ags/time';
+import {createExternal} from 'ags';
+import {execAsync} from 'ags/process';
+import {idle, interval} from 'ags/time';
 
 import GLib from 'gi://GLib?version=2.0';
 
-import { closeAllControlCenters } from '../shell/windowManager';
+import {closeAllControlCenters} from '../shell/windowManager';
 
 export const userName = '@' + GLib.get_user_name();
 
@@ -49,13 +49,13 @@ interface SystemMetrics {
   gpu: number;
 }
 
-const EMPTY_RAM: RamData = { used: 0, total: 0, percent: 0 };
-const INITIAL_METRICS: SystemMetrics = { cpu: 0, ram: EMPTY_RAM, gpu: 0 };
+const EMPTY_RAM: RamData = {used: 0, total: 0, percent: 0};
+const INITIAL_METRICS: SystemMetrics = {cpu: 0, ram: EMPTY_RAM, gpu: 0};
 const textDecoder = new TextDecoder('utf-8');
 const gpuBusyPaths = Array.from(
-  { length: 32 },
-  (_, card) => `/sys/class/drm/card${card}/device/gpu_busy_percent`,
-).filter((path) => GLib.file_test(path, GLib.FileTest.EXISTS));
+  {length: 32},
+  (_, card) => `/sys/class/drm/card${card}/device/gpu_busy_percent`
+).filter(path => GLib.file_test(path, GLib.FileTest.EXISTS));
 
 function readText(path: string) {
   try {
@@ -71,7 +71,7 @@ function readCpuCounters(): CpuCounters | null {
   if (!firstLine) return null;
 
   const fields = firstLine.trim().split(/\s+/).slice(1).map(Number);
-  if (fields.length < 5 || fields.some((value) => !Number.isFinite(value))) return null;
+  if (fields.length < 5 || fields.some(value => !Number.isFinite(value))) return null;
 
   return {
     total: fields.reduce((sum, value) => sum + value, 0),
@@ -132,7 +132,7 @@ function readUptime() {
   return Number.isFinite(seconds) && seconds >= 0 ? formatUptime(seconds) : null;
 }
 
-const systemMetrics = createExternal(INITIAL_METRICS, (setMetrics) => {
+const systemMetrics = createExternal(INITIAL_METRICS, setMetrics => {
   let previousCpuCounters = readCpuCounters();
 
   function updateMetrics() {
@@ -159,11 +159,11 @@ const systemMetrics = createExternal(INITIAL_METRICS, (setMetrics) => {
   };
 });
 
-export const cpuUsage = systemMetrics.as((metrics) => metrics.cpu);
-export const ramUsage = systemMetrics.as((metrics) => metrics.ram);
-export const gpuUsage = systemMetrics.as((metrics) => metrics.gpu);
+export const cpuUsage = systemMetrics.as(metrics => metrics.cpu);
+export const ramUsage = systemMetrics.as(metrics => metrics.ram);
+export const gpuUsage = systemMetrics.as(metrics => metrics.gpu);
 
-export const uptime = createExternal('0m', (setUptime) => {
+export const uptime = createExternal('0m', setUptime => {
   function updateUptime() {
     const value = readUptime();
     if (value !== null) setUptime(value);

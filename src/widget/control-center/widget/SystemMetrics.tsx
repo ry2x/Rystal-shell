@@ -1,7 +1,7 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
-import { cpuUsage, gpuUsage, openSystemMonitor, ramUsage } from '../../../stores/system/system';
-import type { RamData } from '../../../stores/system/system';
+import {cpuUsage, gpuUsage, openSystemMonitor, ramUsage} from '../../../stores/system/system';
+import type {RamData} from '../../../stores/system/system';
 import CircularProgress from '../../common/CircularProgress';
 
 export default function SystemMetrics() {
@@ -14,7 +14,7 @@ export default function SystemMetrics() {
             transformer={(c: number) => c / 100}
             icon="cpu"
             label="CPU"
-            sublabel={cpuUsage.as((c) => `${Math.round(c)}%`)}
+            sublabel={cpuUsage.as(c => `${Math.round(c)}%`)}
             cssClass="cpu-progress"
           />
         </button>
@@ -27,7 +27,7 @@ export default function SystemMetrics() {
             transformer={(r: RamData) => r.percent}
             icon="memory-stick"
             label="RAM"
-            sublabel={ramUsage.as((r) => `${r.used.toFixed(1)} / ${r.total.toFixed(0)}GB`)}
+            sublabel={ramUsage.as(r => `${r.used.toFixed(1)} / ${r.total.toFixed(0)}GB`)}
             cssClass="ram-progress"
           />
         </button>
@@ -40,7 +40,7 @@ export default function SystemMetrics() {
             transformer={(g: number) => g / 100}
             icon="gpu"
             label="GPU"
-            sublabel={gpuUsage.as((g) => `${Math.round(g)}%`)}
+            sublabel={gpuUsage.as(g => `${Math.round(g)}%`)}
             cssClass="gpu-progress"
           />
         </button>

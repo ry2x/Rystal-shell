@@ -1,8 +1,8 @@
-import { For } from 'ags';
-import { Astal, Gdk, Gtk } from 'ags/gtk4';
+import {For} from 'ags';
+import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import { createDateWeatherPopupState } from '../../stores/panel/dateWeather';
+import {createDateWeatherPopupState} from '../../stores/panel/dateWeather';
 import ClickCatcher from '../common/ClickCatcher';
 import DateWeatherContent from './DateWeatherContent';
 
@@ -15,10 +15,10 @@ type DateWeatherWindow = Astal.Window & {
   show_animated: () => void;
 };
 
-export default function DateWeatherPopup({ monitor }: DateWeatherPopupProps) {
-  const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
+export default function DateWeatherPopup({monitor}: DateWeatherPopupProps) {
+  const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
   const connector = monitor.get_connector();
-  const { visible, revealed, loaded, showAnimated, hideAnimated } =
+  const {visible, revealed, loaded, showAnimated, hideAnimated} =
     createDateWeatherPopupState(connector);
 
   const window = (
@@ -45,7 +45,7 @@ export default function DateWeatherPopup({ monitor }: DateWeatherPopupProps) {
       <box orientation={Gtk.Orientation.VERTICAL}>
         <box orientation={Gtk.Orientation.HORIZONTAL} vexpand>
           <box hexpand={false} vexpand={false}>
-            <For each={loaded.as((isLoaded) => (isLoaded ? [true] : []))}>
+            <For each={loaded.as(isLoaded => (isLoaded ? [true] : []))}>
               {() => <DateWeatherContent revealed={revealed} monitorConnector={connector} />}
             </For>
           </box>

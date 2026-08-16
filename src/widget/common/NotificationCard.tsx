@@ -1,17 +1,14 @@
 import system from 'system';
 
-import { onCleanup } from 'ags';
-import { Gtk } from 'ags/gtk4';
-import { type Timer, timeout } from 'ags/time';
+import {onCleanup} from 'ags';
+import {Gtk} from 'ags/gtk4';
+import {type Timer, timeout} from 'ags/time';
 
 import Notifd from 'gi://AstalNotifd';
 import Pango from 'gi://Pango';
 
-import {
-  type SharedTexture,
-  acquireNotificationTexture,
-} from '../../stores/notification/imageCache';
-import { LucideIcon } from './lucide';
+import {type SharedTexture, acquireNotificationTexture} from '../../stores/notification/imageCache';
+import {LucideIcon} from './lucide';
 
 export interface NotificationCardProps {
   notif: Notifd.Notification;
@@ -92,7 +89,7 @@ class NotificationImageResources {
   }
 }
 
-export default function NotificationCard({ notif, onDismiss }: NotificationCardProps) {
+export default function NotificationCard({notif, onDismiss}: NotificationCardProps) {
   const appIcon = notif.app_icon || notif.desktop_entry || notif.image;
   const appIconPath = resolveImage(appIcon);
   const imageToDisplay = resolveImage(notif.image);
@@ -123,7 +120,7 @@ export default function NotificationCard({ notif, onDismiss }: NotificationCardP
                   canFocus={false}
                   canShrink
                   contentFit={Gtk.ContentFit.CONTAIN}
-                  $={(picture) => {
+                  $={picture => {
                     try {
                       resources.setAppIcon(picture, appIconPath);
                     } catch (error) {
@@ -197,7 +194,7 @@ export default function NotificationCard({ notif, onDismiss }: NotificationCardP
               canFocus={false}
               canShrink
               contentFit={Gtk.ContentFit.COVER}
-              $={(picture) => {
+              $={picture => {
                 try {
                   resources.setImage(picture, imageToDisplay);
                 } catch (error) {
@@ -211,7 +208,7 @@ export default function NotificationCard({ notif, onDismiss }: NotificationCardP
 
       {notif.get_actions().length > 0 && (
         <box spacing={8} class="notif-actions" marginTop={4}>
-          {notif.get_actions().map((action) => (
+          {notif.get_actions().map(action => (
             <button class="notif-action-btn" hexpand onClicked={() => notif.invoke(action.id)}>
               <label label={action.label} />
             </button>

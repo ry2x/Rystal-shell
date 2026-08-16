@@ -1,10 +1,10 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
 import GLib from 'gi://GLib?version=2.0';
 
-import { appConfig } from '../../../lib/config';
-import { loadTextureFromUri } from '../../../lib/image';
-import { getOsInfo, uptime, userName } from '../../../stores/system/system';
+import {appConfig} from '../../../lib/config';
+import {loadTextureFromUri} from '../../../lib/image';
+import {getOsInfo, uptime, userName} from '../../../stores/system/system';
 
 const DEFAULT_AVATAR_PATH = `${GLib.get_home_dir()}/Profile/Profile.png`;
 const osInfoCache = getOsInfo();
@@ -47,7 +47,7 @@ export default function ProfileCard() {
         <label label={profileHandle} class="profile-name" halign={Gtk.Align.START} />
         <label label={profileOs} class="profile-env" halign={Gtk.Align.START} />
         <label
-          label={uptime.as((u) => `Uptime: ${u.replace('up ', '')}`)}
+          label={uptime.as(u => `Uptime: ${u.replace('up ', '')}`)}
           class="profile-uptime"
           halign={Gtk.Align.START}
         />

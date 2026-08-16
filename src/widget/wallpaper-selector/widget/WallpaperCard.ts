@@ -1,8 +1,8 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
 import GLib from 'gi://GLib';
 
-import type { Wallpaper } from '../../../stores/wallpaper/wallpaper';
+import type {Wallpaper} from '../../../stores/wallpaper/wallpaper';
 
 const CARD_WIDTH = 384;
 const CARD_HEIGHT = 252;

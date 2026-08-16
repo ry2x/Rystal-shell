@@ -1,15 +1,15 @@
-import { onCleanup } from 'ags';
-import { Astal, Gdk, Gtk } from 'ags/gtk4';
+import {onCleanup} from 'ags';
+import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
-import { type Timer, idle } from 'ags/time';
+import {type Timer, idle} from 'ags/time';
 
-import { createAppLauncherState } from '../../stores/application/appLauncher';
+import {createAppLauncherState} from '../../stores/application/appLauncher';
 import {
   ensureLauncherBackground,
   registerLauncherBackground,
 } from '../../stores/application/launcherBackground';
-import { AppList } from './widget/AppList';
-import { SearchInput } from './widget/SearchInput';
+import {AppList} from './widget/AppList';
+import {SearchInput} from './widget/SearchInput';
 
 function createLauncherBackground() {
   const picture = new Gtk.Picture({
@@ -33,7 +33,7 @@ function createLauncherBackground() {
 function resetLauncherState(
   searchInput: Gtk.Entry,
   setText: (text: string) => void,
-  setSelectedIndex: (index: number) => void,
+  setSelectedIndex: (index: number) => void
 ) {
   searchInput.set_text('');
   setText('');
@@ -63,8 +63,8 @@ export interface AppLauncherProps {
   monitor: Gdk.Monitor;
 }
 
-export default function AppLauncher({ monitor }: AppLauncherProps) {
-  const { text, setText, selectedIndex, setSelectedIndex, results } = createAppLauncherState();
+export default function AppLauncher({monitor}: AppLauncherProps) {
+  const {text, setText, selectedIndex, setSelectedIndex, results} = createAppLauncherState();
   const monitorConnector = monitor.get_connector();
   let focusTimer: Timer | null = null;
 
@@ -105,7 +105,7 @@ export default function AppLauncher({ monitor }: AppLauncherProps) {
       keymode={Astal.Keymode.EXCLUSIVE}
       application={app}
       visible={false}
-      onNotifyVisible={(self) => {
+      onNotifyVisible={self => {
         focusTimer?.cancel();
         focusTimer = null;
 

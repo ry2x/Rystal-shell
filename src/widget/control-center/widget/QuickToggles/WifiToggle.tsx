@@ -1,24 +1,24 @@
-import { createBinding } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {createBinding} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Network from 'gi://AstalNetwork';
 import Pango from 'gi://Pango';
 
-import { toggleWifi } from '../../../../stores/connectivity/network';
-import { LucideIcon } from '../../../../widget/common/lucide';
+import {toggleWifi} from '../../../../stores/connectivity/network';
+import {LucideIcon} from '../../../../widget/common/lucide';
 
 export interface WifiToggleProps {
   onOpen: () => void;
 }
 
-export default function WifiToggle({ onOpen }: WifiToggleProps) {
+export default function WifiToggle({onOpen}: WifiToggleProps) {
   const wifi = Network.get_default().wifi;
   if (!wifi) return <box visible={false} />;
 
   const enabled = createBinding(wifi, 'enabled');
 
   return (
-    <box class={enabled.as((value) => `cc-toggle-btn ${value ? 'active' : ''}`)} spacing={0}>
+    <box class={enabled.as(value => `cc-toggle-btn ${value ? 'active' : ''}`)} spacing={0}>
       <button
         hexpand
         class="cc-split-btn-left"
@@ -30,7 +30,7 @@ export default function WifiToggle({ onOpen }: WifiToggleProps) {
           <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
             <label label="Wi-Fi" class="cc-toggle-title" halign={Gtk.Align.START} />
             <label
-              label={createBinding(wifi, 'ssid').as((ssid) => ssid || 'Disconnected')}
+              label={createBinding(wifi, 'ssid').as(ssid => ssid || 'Disconnected')}
               class="cc-toggle-status"
               halign={Gtk.Align.START}
               ellipsize={Pango.EllipsizeMode.END}

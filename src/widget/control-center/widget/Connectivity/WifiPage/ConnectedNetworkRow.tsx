@@ -1,11 +1,11 @@
-import { createBinding } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {createBinding} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Network from 'gi://AstalNetwork';
 import Pango from 'gi://Pango';
 
-import { DetailMenuButton } from '../Shared';
-import { getSignalLabel, getSsidLabel } from './utils';
+import {DetailMenuButton} from '../Shared';
+import {getSignalLabel, getSsidLabel} from './utils';
 
 export interface ConnectedNetworkRowProps {
   accessPoint: Network.AccessPoint;
@@ -33,8 +33,8 @@ export default function ConnectedNetworkRow({
           ellipsize={Pango.EllipsizeMode.END}
         />
         <label
-          label={createBinding(accessPoint, 'strength').as((strength) =>
-            getSignalLabel(accessPoint, strength),
+          label={createBinding(accessPoint, 'strength').as(strength =>
+            getSignalLabel(accessPoint, strength)
           )}
           class="cc-row-subtitle cc-wifi-signal"
           halign={Gtk.Align.START}

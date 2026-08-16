@@ -1,13 +1,13 @@
 import type Cairo from 'cairo';
 
-import { type Accessor, onCleanup } from 'ags';
-import { Gtk } from 'ags/gtk4';
-import { type Timer, interval } from 'ags/time';
+import {type Accessor, onCleanup} from 'ags';
+import {Gtk} from 'ags/gtk4';
+import {type Timer, interval} from 'ags/time';
 
 import GLib from 'gi://GLib';
 
-import { shellMotion } from '../../lib/motion';
-import { LucideIcon } from './lucide';
+import {shellMotion} from '../../lib/motion';
+import {LucideIcon} from './lucide';
 
 export interface CircularProgressProps<T> {
   variable: Accessor<T>;
@@ -38,7 +38,7 @@ class CircularProgressAnimation<T> {
   constructor(
     private readonly area: Gtk.DrawingArea,
     private readonly variable: Accessor<T>,
-    private readonly transformer: (value: T) => number,
+    private readonly transformer: (value: T) => number
   ) {
     this.currentValue = normalize(transformer(variable.peek()));
     this.startValue = this.currentValue;
@@ -117,7 +117,7 @@ class CircularProgressAnimation<T> {
       centerY,
       radius,
       1.5 * Math.PI,
-      1.5 * Math.PI + this.currentValue * 2 * Math.PI,
+      1.5 * Math.PI + this.currentValue * 2 * Math.PI
     );
     context.stroke();
   }
@@ -147,7 +147,7 @@ export default function CircularProgress<T>({
       contentHeight={120}
       widthRequest={120}
       heightRequest={120}
-      $={(self) => (area = self)}
+      $={self => (area = self)}
     />
   );
   const animation = new CircularProgressAnimation(area, variable, transformer);

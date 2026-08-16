@@ -1,11 +1,11 @@
-import { createExternal } from 'ags';
-import { type Timer, timeout } from 'ags/time';
+import {createExternal} from 'ags';
+import {type Timer, timeout} from 'ags/time';
 
 import GLib from 'gi://GLib?version=2.0';
 import Gio from 'gi://Gio';
 import Soup from 'gi://Soup?version=3.0';
 
-import { appConfig } from '../../lib/config';
+import {appConfig} from '../../lib/config';
 
 export const LOCATION = appConfig.weather.location;
 
@@ -31,12 +31,12 @@ interface WeatherDay {
   date: string;
   maxtempC: string;
   mintempC: string;
-  hourly: { weatherCode: string }[];
+  hourly: {weatherCode: string}[];
 }
 
 interface WeatherResponse {
   current_condition?: CurrentCondition[];
-  nearest_area?: { region?: WeatherDescription[] }[];
+  nearest_area?: {region?: WeatherDescription[]}[];
   weather?: WeatherDay[];
 }
 
@@ -72,12 +72,12 @@ function sendAndRead(message: Soup.Message, cancellable: Gio.Cancellable): Promi
         } catch (error) {
           reject(error);
         }
-      },
+      }
     );
   });
 }
 
-const weatherJson = createExternal('{}', (setWeatherJson) => {
+const weatherJson = createExternal('{}', setWeatherJson => {
   let refreshTimer: Timer | null = null;
   let refreshPromise: Promise<void> | null = null;
   let requestCancellable: Gio.Cancellable | null = null;
@@ -165,7 +165,7 @@ function parseWeatherInfo(json: string): WeatherInfo | null {
       region,
       todayMax: today.maxtempC,
       todayMin: today.mintempC,
-      forecast: (data.weather ?? []).slice(1, 3).map((day) => ({
+      forecast: (data.weather ?? []).slice(1, 3).map(day => ({
         date: day.date,
         max: day.maxtempC,
         min: day.mintempC,

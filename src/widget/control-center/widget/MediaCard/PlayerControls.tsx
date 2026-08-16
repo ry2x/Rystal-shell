@@ -1,5 +1,5 @@
-import { type Accessor, createBinding } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor, createBinding} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Mpris from 'gi://AstalMpris';
 import Pango from 'gi://Pango';
@@ -10,7 +10,7 @@ import {
   playPrevious,
   togglePlayback,
 } from '../../../../stores/media/media';
-import { LucideIcon } from '../../../../widget/common/lucide';
+import {LucideIcon} from '../../../../widget/common/lucide';
 
 export interface PlayerControlsProps {
   player: Mpris.Player;
@@ -18,7 +18,7 @@ export interface PlayerControlsProps {
   onSwitch: () => void;
 }
 
-export default function PlayerControls({ player, canSwitch, onSwitch }: PlayerControlsProps) {
+export default function PlayerControls({player, canSwitch, onSwitch}: PlayerControlsProps) {
   return (
     <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER} hexpand>
       <button
@@ -27,7 +27,7 @@ export default function PlayerControls({ player, canSwitch, onSwitch }: PlayerCo
         onClicked={() => focusMediaPlayer(player)}
       >
         <label
-          label={createBinding(player, 'title').as((title) => title || 'Unknown')}
+          label={createBinding(player, 'title').as(title => title || 'Unknown')}
           class="cc-player-title"
           halign={Gtk.Align.START}
           wrap
@@ -38,7 +38,7 @@ export default function PlayerControls({ player, canSwitch, onSwitch }: PlayerCo
         />
       </button>
       <label
-        label={createBinding(player, 'artist').as((artist) => artist || 'Unknown')}
+        label={createBinding(player, 'artist').as(artist => artist || 'Unknown')}
         class="cc-player-artist"
         halign={Gtk.Align.START}
         ellipsize={Pango.EllipsizeMode.END}
@@ -51,8 +51,8 @@ export default function PlayerControls({ player, canSwitch, onSwitch }: PlayerCo
         </button>
         <button class="icon-btn" onClicked={() => togglePlayback(player)}>
           <LucideIcon
-            name={createBinding(player, 'playback_status').as((status) =>
-              status === Mpris.PlaybackStatus.PLAYING ? 'pause' : 'play',
+            name={createBinding(player, 'playback_status').as(status =>
+              status === Mpris.PlaybackStatus.PLAYING ? 'pause' : 'play'
             )}
             pixelSize={20}
           />

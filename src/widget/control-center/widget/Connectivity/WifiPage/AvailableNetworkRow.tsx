@@ -1,18 +1,18 @@
-import { createBinding } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {createBinding} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Network from 'gi://AstalNetwork';
 import Pango from 'gi://Pango';
 
-import { LucideIcon } from '../../../../common/lucide';
-import { getSignalLabel, getSsidLabel } from './utils';
+import {LucideIcon} from '../../../../common/lucide';
+import {getSignalLabel, getSsidLabel} from './utils';
 
 export interface AvailableNetworkRowProps {
   accessPoint: Network.AccessPoint;
   onSelect: () => void;
 }
 
-export default function AvailableNetworkRow({ accessPoint, onSelect }: AvailableNetworkRowProps) {
+export default function AvailableNetworkRow({accessPoint, onSelect}: AvailableNetworkRowProps) {
   return (
     <button class="cc-connectivity-row" onClicked={onSelect}>
       <box spacing={14}>
@@ -29,8 +29,8 @@ export default function AvailableNetworkRow({ accessPoint, onSelect }: Available
             ellipsize={Pango.EllipsizeMode.END}
           />
           <label
-            label={createBinding(accessPoint, 'strength').as((strength) =>
-              getSignalLabel(accessPoint, strength),
+            label={createBinding(accessPoint, 'strength').as(strength =>
+              getSignalLabel(accessPoint, strength)
             )}
             class="cc-row-subtitle cc-wifi-signal"
             halign={Gtk.Align.START}

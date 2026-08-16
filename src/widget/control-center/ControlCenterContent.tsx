@@ -1,7 +1,7 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
-import { type ControlCenterDetailPage } from '../../stores/panel/controlCenter';
-import { LucideIcon } from '../../widget/common/lucide';
+import {type ControlCenterDetailPage} from '../../stores/panel/controlCenter';
+import {LucideIcon} from '../../widget/common/lucide';
 import BrightnessSlider from './widget/BrightnessSlider';
 import MediaCard from './widget/MediaCard';
 import QuickToggles from './widget/QuickToggles';
@@ -14,7 +14,7 @@ export interface ControlCenterContentProps {
   onOpenPage: (page: ControlCenterDetailPage) => void;
 }
 
-export default function ControlCenterContent({ onOpenPage }: ControlCenterContentProps) {
+export default function ControlCenterContent({onOpenPage}: ControlCenterContentProps) {
   return (
     <box orientation={Gtk.Orientation.VERTICAL} spacing={16}>
       <box spacing={12} halign={Gtk.Align.START}>

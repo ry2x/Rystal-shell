@@ -1,6 +1,6 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
-import { appConfig } from '../../../lib/config';
+import {appConfig} from '../../../lib/config';
 import WorldClockRow from './WorldClockRow';
 
 const WORLD_CLOCKS = appConfig.worldClocks;
@@ -13,7 +13,7 @@ export default function WorldClockCard() {
       spacing={8}
       hexpand
     >
-      {WORLD_CLOCKS.map(({ label, tz }) => (
+      {WORLD_CLOCKS.map(({label, tz}) => (
         <WorldClockRow label={label} timeZone={tz} />
       ))}
     </box>

@@ -1,9 +1,9 @@
-import { For, createBinding, onCleanup } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {For, createBinding, onCleanup} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import AstalTray from 'gi://AstalTray';
 
-import { TrayItemButton } from './TrayItemButton';
+import {TrayItemButton} from './TrayItemButton';
 
 function isFcitxItem(item: AstalTray.TrayItem) {
   return item.id.toLowerCase().includes('fcitx');
@@ -12,20 +12,20 @@ function isFcitxItem(item: AstalTray.TrayItem) {
 export default function Tray() {
   const tray = AstalTray.get_default();
   const items = createBinding(tray, 'items');
-  const primaryItem = items.as((list) => list.find(isFcitxItem) ?? list[0] ?? null);
+  const primaryItem = items.as(list => list.find(isFcitxItem) ?? list[0] ?? null);
 
   let expander: Gtk.Popover | null = null;
 
   const trigger = (
     <button
       class="tray-primary"
-      tooltipMarkup={primaryItem.as((item) => item?.tooltip_markup ?? '')}
+      tooltipMarkup={primaryItem.as(item => item?.tooltip_markup ?? '')}
       onClicked={() => {
         if (expander?.get_visible()) expander.popdown();
         else expander?.popup();
       }}
     >
-      <For each={primaryItem.as((item) => (item ? [item] : []))}>
+      <For each={primaryItem.as(item => (item ? [item] : []))}>
         {(item: AstalTray.TrayItem) => (
           <image gicon={createBinding(item, 'gicon')} pixelSize={18} />
         )}
@@ -58,7 +58,7 @@ export default function Tray() {
     <revealer
       transitionType={Gtk.RevealerTransitionType.SLIDE_RIGHT}
       transitionDuration={250}
-      revealChild={primaryItem.as((item) => item !== null)}
+      revealChild={primaryItem.as(item => item !== null)}
     >
       <box class="Tray" orientation={Gtk.Orientation.VERTICAL}>
         {trigger}

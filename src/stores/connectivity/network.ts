@@ -1,4 +1,4 @@
-import { execAsync } from 'ags/process';
+import {execAsync} from 'ags/process';
 
 export function toggleWifi(enabled: boolean) {
   execAsync(['nmcli', 'radio', 'wifi', enabled ? 'off' : 'on']).catch(console.error);

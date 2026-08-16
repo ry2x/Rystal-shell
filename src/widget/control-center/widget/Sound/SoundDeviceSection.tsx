@@ -1,12 +1,12 @@
-import { type Accessor, For } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {type Accessor, For} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
-import { LucideIcon } from '../../../../widget/common/lucide';
+import {LucideIcon} from '../../../../widget/common/lucide';
 import DeviceSelector from './DeviceSelector';
 import VolumeControls from './VolumeControls';
-import { type SoundDeviceKind } from './types';
+import {type SoundDeviceKind} from './types';
 
 export interface SoundDeviceSectionProps {
   title: string;
@@ -34,7 +34,7 @@ export default function SoundDeviceSection({
         <label label={title} class="cc-section-title" halign={Gtk.Align.START} />
       </box>
       <box orientation={Gtk.Orientation.VERTICAL} spacing={10} hexpand halign={Gtk.Align.FILL}>
-        <For each={endpoint.as((value) => (value ? [value] : []))}>
+        <For each={endpoint.as(value => (value ? [value] : []))}>
           {(value: Wp.Endpoint) => (
             <box
               orientation={Gtk.Orientation.VERTICAL}
@@ -55,7 +55,7 @@ export default function SoundDeviceSection({
       </box>
       <label
         label={unavailableLabel}
-        visible={endpoint.as((value) => value === null)}
+        visible={endpoint.as(value => value === null)}
         class="cc-sound-unavailable"
       />
     </>

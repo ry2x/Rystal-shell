@@ -1,4 +1,4 @@
-import { Astal } from 'ags/gtk4';
+import {Astal} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import Hyprland from 'gi://AstalHyprland';
@@ -11,11 +11,11 @@ export interface ActiveSidePanel {
 }
 
 const activeSidePanelCallbacks: ((value: ActiveSidePanel) => void)[] = [];
-let activeSidePanelValue: ActiveSidePanel = { panel: '', monitor: '' };
+let activeSidePanelValue: ActiveSidePanel = {panel: '', monitor: ''};
 
 function setActiveSidePanel(value: ActiveSidePanel) {
   activeSidePanelValue = value;
-  activeSidePanelCallbacks.forEach((callback) => callback(value));
+  activeSidePanelCallbacks.forEach(callback => callback(value));
 }
 
 export const activeSidePanel = {
@@ -33,14 +33,14 @@ export const activeSidePanel = {
 };
 
 export function activateSidePanel(panel: SidePanel, monitor: string) {
-  setActiveSidePanel({ panel, monitor });
+  setActiveSidePanel({panel, monitor});
 }
 
 export function deactivateSidePanel(panel: SidePanel, monitor?: string | null) {
   const active = activeSidePanel.get();
   if (active.panel !== panel) return;
   if (monitor !== undefined && monitor !== null && active.monitor !== monitor) return;
-  setActiveSidePanel({ panel: '', monitor: '' });
+  setActiveSidePanel({panel: '', monitor: ''});
 }
 
 type AnimatedWindow = Astal.Window & {
@@ -54,7 +54,7 @@ export function focusWindow(className: string) {
 }
 
 export function closeAllControlCenters() {
-  app.get_monitors().forEach((m) => {
+  app.get_monitors().forEach(m => {
     const cc = app.get_window(`control-center-${m.get_connector()}`) as AnimatedWindow;
     if (cc && cc.get_visible()) {
       if (cc.hide_animated) cc.hide_animated();
@@ -65,9 +65,9 @@ export function closeAllControlCenters() {
 }
 
 export function closeAllControlCentersImmediately() {
-  app.get_monitors().forEach((monitor) => {
+  app.get_monitors().forEach(monitor => {
     const controlCenter = app.get_window(
-      `control-center-${monitor.get_connector()}`,
+      `control-center-${monitor.get_connector()}`
     ) as AnimatedWindow;
     if (!controlCenter?.get_visible()) return;
 
@@ -78,7 +78,7 @@ export function closeAllControlCentersImmediately() {
 }
 
 function closeAllDateWeathers() {
-  app.get_monitors().forEach((m) => {
+  app.get_monitors().forEach(m => {
     const dw = app.get_window(`date-weather-popup-${m.get_connector()}`) as AnimatedWindow;
     if (dw && dw.get_visible()) {
       if (dw.hide_animated) dw.hide_animated();
@@ -89,14 +89,14 @@ function closeAllDateWeathers() {
 }
 
 function closeAllAppLaunchers() {
-  app.get_monitors().forEach((m) => {
+  app.get_monitors().forEach(m => {
     const al = app.get_window(`applauncher-${m.get_connector()}`);
     if (al) al.set_visible(false);
   });
 }
 
 function closeAllWallpaperSelectors() {
-  app.get_monitors().forEach((m) => {
+  app.get_monitors().forEach(m => {
     const selector = app.get_window(`wallpaper-selector-${m.get_connector()}`) as AnimatedWindow;
     if (selector?.get_visible()) {
       if (selector.hide_animated) selector.hide_animated();
@@ -107,7 +107,7 @@ function closeAllWallpaperSelectors() {
 }
 
 function closeAllPowerMenus() {
-  app.get_monitors().forEach((m) => {
+  app.get_monitors().forEach(m => {
     const menu = app.get_window(`power-menu-${m.get_connector()}`) as AnimatedWindow;
     if (menu?.get_visible()) {
       if (menu.hide_animated) menu.hide_animated();
@@ -119,7 +119,7 @@ function closeAllPowerMenus() {
 
 export function toggleControlCenter(monitorName?: string | null) {
   const targetMonitor = monitorName || Hyprland.get_default().get_focused_monitor().name;
-  app.get_monitors().forEach((m) => {
+  app.get_monitors().forEach(m => {
     const connector = m.get_connector();
     const cc = app.get_window(`control-center-${connector}`) as AnimatedWindow;
     const dw = app.get_window(`date-weather-popup-${connector}`) as AnimatedWindow;
@@ -147,7 +147,7 @@ export function toggleControlCenter(monitorName?: string | null) {
 
 export function toggleDateWeather(monitorName?: string | null) {
   const targetMonitor = monitorName || Hyprland.get_default().get_focused_monitor().name;
-  app.get_monitors().forEach((m) => {
+  app.get_monitors().forEach(m => {
     const connector = m.get_connector();
     const dw = app.get_window(`date-weather-popup-${connector}`) as AnimatedWindow;
     const cc = app.get_window(`control-center-${connector}`) as AnimatedWindow;
@@ -175,7 +175,7 @@ export function toggleDateWeather(monitorName?: string | null) {
 
 export function toggleAppLauncher(monitorName?: string | null) {
   const targetMonitor = monitorName || Hyprland.get_default().get_focused_monitor().name;
-  app.get_monitors().forEach((m) => {
+  app.get_monitors().forEach(m => {
     const al = app.get_window(`applauncher-${m.get_connector()}`);
     if (al) {
       if (m.get_connector() === targetMonitor) {
@@ -196,7 +196,7 @@ export function toggleAppLauncher(monitorName?: string | null) {
 
 export function toggleWallpaperSelector(monitorName?: string | null) {
   const targetMonitor = monitorName || Hyprland.get_default().get_focused_monitor().name;
-  app.get_monitors().forEach((m) => {
+  app.get_monitors().forEach(m => {
     const connector = m.get_connector();
     const selector = app.get_window(`wallpaper-selector-${connector}`) as AnimatedWindow;
     if (!selector) return;
@@ -223,7 +223,7 @@ export function toggleWallpaperSelector(monitorName?: string | null) {
 
 export function togglePowerMenu(monitorName?: string | null) {
   const targetMonitor = monitorName || Hyprland.get_default().get_focused_monitor().name;
-  app.get_monitors().forEach((m) => {
+  app.get_monitors().forEach(m => {
     const connector = m.get_connector();
     const menu = app.get_window(`power-menu-${connector}`) as AnimatedWindow;
     if (!menu) return;

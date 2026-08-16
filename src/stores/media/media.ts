@@ -1,12 +1,12 @@
-import { type Accessor, createState, onCleanup } from 'ags';
+import {type Accessor, createState, onCleanup} from 'ags';
 
 import Mpris from 'gi://AstalMpris';
 import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 
-import { loadTextureFromUri } from '../../lib/image';
-import { closeAllControlCenters, focusWindow } from '../shell/windowManager';
-import { fetchYouTubeThumbnail } from './mprisThumbnail';
+import {loadTextureFromUri} from '../../lib/image';
+import {closeAllControlCenters, focusWindow} from '../shell/windowManager';
+import {fetchYouTubeThumbnail} from './mprisThumbnail';
 
 export interface MediaCardState {
   activePlayer: Accessor<Mpris.Player | null>;
@@ -19,14 +19,14 @@ export function createMediaCardState(): MediaCardState {
   const mpris = Mpris.get_default();
   const [players, setPlayers] = createState<Mpris.Player[]>(mpris.get_players());
   const [activePlayer, setActivePlayer] = createState<Mpris.Player | null>(null);
-  const hasPlayers = players.as((list) => list.length > 0);
-  const canSwitch = players.as((list) => list.length > 1);
+  const hasPlayers = players.as(list => list.length > 0);
+  const canSwitch = players.as(list => list.length > 1);
 
   const refreshPlayers = () => {
     const nextPlayers = mpris.get_players();
     setPlayers(nextPlayers);
     const current = activePlayer.peek();
-    if (!current || !nextPlayers.some((player) => player.bus_name === current.bus_name)) {
+    if (!current || !nextPlayers.some(player => player.bus_name === current.bus_name)) {
       setActivePlayer(nextPlayers[0] ?? null);
     }
   };
@@ -36,7 +36,7 @@ export function createMediaCardState(): MediaCardState {
     const current = activePlayer.peek();
     if (!current || list.length <= 1) return;
 
-    const currentIndex = list.findIndex((player) => player.bus_name === current.bus_name);
+    const currentIndex = list.findIndex(player => player.bus_name === current.bus_name);
     setActivePlayer(list[(currentIndex + 1) % list.length]);
   };
 
@@ -44,7 +44,7 @@ export function createMediaCardState(): MediaCardState {
   refreshPlayers();
   onCleanup(() => mpris.disconnect(hook));
 
-  return { activePlayer, hasPlayers, canSwitch, switchPlayer };
+  return {activePlayer, hasPlayers, canSwitch, switchPlayer};
 }
 
 function artworkUri(path: string) {

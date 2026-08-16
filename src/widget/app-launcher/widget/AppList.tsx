@@ -1,11 +1,11 @@
-import { type Accessor, For, createEffect, onCleanup } from 'ags';
-import { Gtk } from 'ags/gtk4';
-import { type Timer, idle } from 'ags/time';
+import {type Accessor, For, createEffect, onCleanup} from 'ags';
+import {Gtk} from 'ags/gtk4';
+import {type Timer, idle} from 'ags/time';
 
 import Apps from 'gi://AstalApps';
 
-import { AppItem } from './AppItem';
-import { SearchGoogleBtn } from './SearchGoogleBtn';
+import {AppItem} from './AppItem';
+import {SearchGoogleBtn} from './SearchGoogleBtn';
 
 export interface AppListProps {
   text: Accessor<string>;
@@ -40,7 +40,7 @@ function updateSelection(
   scrollWindow: Gtk.ScrolledWindow,
   selectedIndex: number,
   currentResults: Apps.Application[],
-  query: string,
+  query: string
 ) {
   let targetChild: Gtk.Widget | null = null;
   let child = appList.get_first_child();
@@ -92,12 +92,12 @@ export function AppList({
       minContentHeight={300}
       maxContentHeight={600}
       propagateNaturalHeight={false}
-      $={(self) => (scrollWindow = self)}
+      $={self => (scrollWindow = self)}
     >
       <box orientation={Gtk.Orientation.VERTICAL} class="applauncher-list" spacing={10}>
-        <box orientation={Gtk.Orientation.VERTICAL} spacing={10} $={(self) => (appList = self)}>
+        <box orientation={Gtk.Orientation.VERTICAL} spacing={10} $={self => (appList = self)}>
           <For each={results}>
-            {(appInstance) => <AppItem res={appInstance} monitorConnector={monitorConnector} />}
+            {appInstance => <AppItem res={appInstance} monitorConnector={monitorConnector} />}
           </For>
         </box>
         {searchGoogleBtn}
@@ -119,7 +119,7 @@ export function AppList({
         scrollWindow,
         selectedIndex.peek(),
         results.peek(),
-        text.peek().trim(),
+        text.peek().trim()
       );
     });
   });

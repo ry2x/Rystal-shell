@@ -1,4 +1,4 @@
-import { execAsync } from 'ags/process';
+import {execAsync} from 'ags/process';
 
 const DOMAIN_PATTERN =
   /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}(?::\d{1,5})?(?:[/?#][^\s]*)?$/i;
@@ -6,7 +6,7 @@ const HTTP_URL_PATTERN = /^https?:\/\/[^\s]+$/i;
 
 function searchWeb(query: string) {
   execAsync(['xdg-open', `https://google.com/search?q=${encodeURIComponent(query)}`]).catch(
-    () => {},
+    () => {}
   );
 }
 

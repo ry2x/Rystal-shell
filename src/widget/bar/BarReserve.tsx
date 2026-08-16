@@ -1,4 +1,4 @@
-import { Astal, Gdk } from 'ags/gtk4';
+import {Astal, Gdk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 const BORDER_WIDTH = 3;
@@ -8,8 +8,8 @@ export interface BarReserveProps {
   monitor: Gdk.Monitor;
 }
 
-export default function BarReserve({ monitor }: BarReserveProps) {
-  const { TOP, BOTTOM, LEFT } = Astal.WindowAnchor;
+export default function BarReserve({monitor}: BarReserveProps) {
+  const {TOP, BOTTOM, LEFT} = Astal.WindowAnchor;
 
   return (
     <window

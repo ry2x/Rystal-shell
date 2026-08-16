@@ -1,14 +1,14 @@
-import { Gtk } from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
-import { createSoundPageState, openAudioControl } from '../../../../stores/system/audio';
-import { LucideIcon } from '../../../../widget/common/lucide';
+import {createSoundPageState, openAudioControl} from '../../../../stores/system/audio';
+import {LucideIcon} from '../../../../widget/common/lucide';
 import SoundDeviceSection from './SoundDeviceSection';
 
 export interface SoundPageProps {
   onBack: () => void;
 }
 
-export function SoundPage({ onBack }: SoundPageProps) {
+export function SoundPage({onBack}: SoundPageProps) {
   const state = createSoundPageState();
 
   return (

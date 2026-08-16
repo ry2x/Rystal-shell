@@ -1,5 +1,5 @@
-import { createBinding } from 'ags';
-import { Gtk } from 'ags/gtk4';
+import {createBinding} from 'ags';
+import {Gtk} from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
@@ -9,7 +9,7 @@ import {
   getPowerLabel,
   getPowerProfile,
 } from '../../../../stores/system/powerProfile';
-import { LucideIcon } from '../../../../widget/common/lucide';
+import {LucideIcon} from '../../../../widget/common/lucide';
 
 export default function PowerProfileToggle() {
   const power = getPowerProfile();
@@ -20,7 +20,7 @@ export default function PowerProfileToggle() {
   return (
     <box
       class={activeProfile.as(
-        (profile) => `cc-toggle-btn cc-single-toggle ${profile === 'performance' ? 'active' : ''}`,
+        profile => `cc-toggle-btn cc-single-toggle ${profile === 'performance' ? 'active' : ''}`
       )}
       spacing={0}
     >

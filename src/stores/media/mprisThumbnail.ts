@@ -3,11 +3,11 @@ import GLib from 'gi://GLib?version=2.0';
 import Gio from 'gi://Gio';
 import Soup from 'gi://Soup?version=3.0';
 
-import { ryprlandCacheDir } from '../../lib/paths';
+import {ryprlandCacheDir} from '../../lib/paths';
 
 const DOWNLOAD_TIMEOUT_SECONDS = 10;
 const YOUTUBE_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
-const thumbnailSession = new Soup.Session({ timeout: DOWNLOAD_TIMEOUT_SECONDS });
+const thumbnailSession = new Soup.Session({timeout: DOWNLOAD_TIMEOUT_SECONDS});
 
 function getYouTubeVideoId(url: string) {
   try {
@@ -26,7 +26,7 @@ function getYouTubeVideoId(url: string) {
     const query = uri.get_query() ?? '';
     const value = query
       .split('&')
-      .map((part) => part.split('=', 2))
+      .map(part => part.split('=', 2))
       .find(([key]) => key === 'v')?.[1];
     if (!value) return null;
 
@@ -49,7 +49,7 @@ function sendAndRead(message: Soup.Message, cancellable: Gio.Cancellable): Promi
         } catch (error) {
           reject(error);
         }
-      },
+      }
     );
   });
 }
@@ -93,7 +93,7 @@ async function downloadThumbnail(id: string, localPath: string, cancellable: Gio
 
 export async function fetchYouTubeThumbnail(
   player: Mpris.Player,
-  cancellable: Gio.Cancellable,
+  cancellable: Gio.Cancellable
 ): Promise<string | null> {
   const busName = player.bus_name;
   if (!busName) return null;

@@ -1,8 +1,8 @@
-import { Gdk, Gtk } from 'ags/gtk4';
+import {Gdk, Gtk} from 'ags/gtk4';
 
-import { toggleControlCenter } from '../../../stores/shell/windowManager';
-import { cpuUsage, gpuUsage, ramUsage } from '../../../stores/system/system';
-import { LucideIcon } from '../../../widget/common/lucide';
+import {toggleControlCenter} from '../../../stores/shell/windowManager';
+import {cpuUsage, gpuUsage, ramUsage} from '../../../stores/system/system';
+import {LucideIcon} from '../../../widget/common/lucide';
 
 export interface SysMetricsProps {
   monitor: Gdk.Monitor;
@@ -14,7 +14,7 @@ function formatPercent(value: number) {
   return capped.toString().padStart(2, '0');
 }
 
-export default function SysMetrics({ monitor }: SysMetricsProps) {
+export default function SysMetrics({monitor}: SysMetricsProps) {
   const toggleMenu = () => {
     toggleControlCenter(monitor.get_connector());
   };
@@ -29,7 +29,7 @@ export default function SysMetrics({ monitor }: SysMetricsProps) {
         </box>
         <box spacing={0} orientation={Gtk.Orientation.VERTICAL}>
           <LucideIcon name="memory-stick" class="icon metric-icon" />
-          <label label={ramUsage.as((r) => r.used.toFixed(1))} class="metric-value" />
+          <label label={ramUsage.as(r => r.used.toFixed(1))} class="metric-value" />
           <label label="GB" class="metric-unit" />
         </box>
         <box spacing={0} orientation={Gtk.Orientation.VERTICAL}>
