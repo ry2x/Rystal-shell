@@ -7,7 +7,7 @@ import { ryprlandRuntimeDir, rystalShellConfigDir, rystalShellDataDir } from '..
 import { reloadBarColors } from './barBackground';
 
 let cssProvider: Gtk.CssProvider | null = null;
-let lastCompiledCss: string | null = null;
+let lastCompiledCssHash: string | null = null;
 
 const styleEntry = `${rystalShellDataDir}/styles/style.scss`;
 const defaultThemeDir = `${rystalShellDataDir}/styles/default`;
@@ -19,26 +19,28 @@ function ensureRuntimeDir() {
   GLib.mkdir_with_parents(runtimeDir, 0o700);
 }
 
-function readCss(path: string) {
+function getCssHash(path: string): string {
   const [success, bytes] = GLib.file_get_contents(path);
   if (!success || !bytes) {
     throw new Error(`Cannot read CSS: ${path}`);
   }
-  return new TextDecoder().decode(bytes);
+  const hash = GLib.compute_checksum_for_data(GLib.ChecksumType.MD5, bytes);
+  if (!hash) throw new Error(`Cannot hash CSS: ${path}`);
+  return hash;
 }
 
-function reloadCss(cssInput: string) {
+function reloadCss(path: string) {
   const display = Gdk.Display.get_default();
   if (!display) {
     throw new Error('Cannot reload CSS without a default display');
   }
 
-  const nextProvider = new Gtk.CssProvider();
-  if (GLib.file_test(cssInput, GLib.FileTest.EXISTS)) {
-    nextProvider.load_from_path(cssInput);
-  } else {
-    nextProvider.load_from_string(cssInput);
+  if (!GLib.file_test(path, GLib.FileTest.EXISTS)) {
+    throw new Error(`CSS file not found: ${path}`);
   }
+
+  const nextProvider = new Gtk.CssProvider();
+  nextProvider.load_from_path(path);
 
   Gtk.StyleContext.add_provider_for_display(
     display,
@@ -72,11 +74,11 @@ export function compileAndReloadCss(): Promise<boolean> {
   ensureRuntimeDir();
   return execAsync(sassCommand())
     .then(() => {
-      const css = readCss(cssPath);
-      if (css === lastCompiledCss) return false;
+      const currentHash = getCssHash(cssPath);
+      if (currentHash === lastCompiledCssHash) return false;
 
-      reloadCss(css);
-      lastCompiledCss = css;
+      reloadCss(cssPath);
+      lastCompiledCssHash = currentHash;
       return true;
     })
     .catch((error) => {
@@ -89,14 +91,12 @@ export function initCss() {
   ensureRuntimeDir();
   try {
     exec(sassCommand());
-    const css = readCss(cssPath);
-    reloadCss(css);
-    lastCompiledCss = css;
+    reloadCss(cssPath);
+    lastCompiledCssHash = getCssHash(cssPath);
   } catch (error) {
     console.error(`Error compiling initial SCSS: ${error}`);
     const fallbackPath = GLib.file_test(cssPath, GLib.FileTest.EXISTS) ? cssPath : defaultCssPath;
-    const css = readCss(fallbackPath);
-    reloadCss(css);
-    lastCompiledCss = css;
+    reloadCss(fallbackPath);
+    lastCompiledCssHash = getCssHash(fallbackPath);
   }
 }

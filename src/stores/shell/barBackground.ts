@@ -35,17 +35,14 @@ function readBarColors(): BarColors {
     if (!success || !bytes) throw new Error(`Cannot read bar colors: ${themePath}`);
 
     const contents = new TextDecoder().decode(bytes);
-    let surface = '#191114';
-    let primary = '#ffb0ce';
 
-    for (const line of contents.split('\n')) {
-      const surfaceMatch = line.trim().match(/^\$surface:\s*(#[0-9a-fA-F]{6})/);
-      const primaryMatch = line.trim().match(/^\$primary:\s*(#[0-9a-fA-F]{6})/);
-      if (surfaceMatch) surface = surfaceMatch[1];
-      if (primaryMatch) primary = primaryMatch[1];
-    }
+    const surfaceMatch = contents.match(/^\s*\$surface:\s*(#[0-9a-fA-F]{6})/m);
+    const primaryMatch = contents.match(/^\s*\$primary:\s*(#[0-9a-fA-F]{6})/m);
 
-    return { surface, primary };
+    return {
+      surface: surfaceMatch ? surfaceMatch[1] : '#191114',
+      primary: primaryMatch ? primaryMatch[1] : '#ffb0ce',
+    };
   } catch (error) {
     console.error(`Failed to read bar colors: ${error}`);
     return { surface: '#191114', primary: '#ffb0ce' };
