@@ -7,7 +7,10 @@ import { type Timer, timeout } from 'ags/time';
 import Notifd from 'gi://AstalNotifd';
 import Pango from 'gi://Pango';
 
-import { loadTextureFromUri } from '../../lib/image';
+import {
+  type SharedTexture,
+  acquireNotificationTexture,
+} from '../../stores/notification/imageCache';
 import { LucideIcon } from './lucide';
 
 export interface NotificationCardProps {
@@ -35,6 +38,8 @@ function collectGarbage() {
 class NotificationImageResources {
   appIconPicture: Gtk.Picture | null = null;
   imagePicture: Gtk.Picture | null = null;
+  private appIconTexture: SharedTexture | null = null;
+  private imageTexture: SharedTexture | null = null;
 
   private releaseTimer: Timer | null = null;
   private disposed = false;
@@ -58,6 +63,22 @@ class NotificationImageResources {
     this.imagePicture?.set_paintable(null);
     this.appIconPicture = null;
     this.imagePicture = null;
+    this.appIconTexture?.release();
+    this.imageTexture?.release();
+    this.appIconTexture = null;
+    this.imageTexture = null;
+  }
+
+  setAppIcon(picture: Gtk.Picture, uri: string) {
+    this.appIconPicture = picture;
+    this.appIconTexture = acquireNotificationTexture(uri, 64, 64);
+    picture.set_paintable(this.appIconTexture.texture);
+  }
+
+  setImage(picture: Gtk.Picture, uri: string) {
+    this.imagePicture = picture;
+    this.imageTexture = acquireNotificationTexture(uri, 760, 280);
+    picture.set_paintable(this.imageTexture.texture);
   }
 
   dispose() {
@@ -103,9 +124,8 @@ export default function NotificationCard({ notif, onDismiss }: NotificationCardP
                   canShrink
                   contentFit={Gtk.ContentFit.CONTAIN}
                   $={(picture) => {
-                    resources.appIconPicture = picture;
                     try {
-                      picture.set_paintable(loadTextureFromUri(appIconPath, 64, 64));
+                      resources.setAppIcon(picture, appIconPath);
                     } catch (error) {
                       console.error(error);
                     }
@@ -178,9 +198,8 @@ export default function NotificationCard({ notif, onDismiss }: NotificationCardP
               canShrink
               contentFit={Gtk.ContentFit.COVER}
               $={(picture) => {
-                resources.imagePicture = picture;
                 try {
-                  picture.set_paintable(loadTextureFromUri(imageToDisplay, 760, 280));
+                  resources.setImage(picture, imageToDisplay);
                 } catch (error) {
                   console.error(error);
                 }
