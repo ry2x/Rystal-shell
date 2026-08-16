@@ -26,6 +26,41 @@ function uniqueItemsById<T>(items: T[], idFor: (item: T) => string) {
   });
 }
 
+function preserveExitingEntryPositions<T>(
+  nextEntries: AnimatedListEntry<T>[],
+  previousEntries: AnimatedListEntry<T>[],
+  nextIds: Set<string>,
+) {
+  const exitingBefore = new Map<string, AnimatedListEntry<T>[]>();
+  let pendingExits: AnimatedListEntry<T>[] = [];
+
+  for (const entry of previousEntries) {
+    if (!nextIds.has(entry.id)) {
+      pendingExits.push(entry);
+      continue;
+    }
+    if (pendingExits.length === 0) continue;
+
+    exitingBefore.set(entry.id, pendingExits);
+    pendingExits = [];
+  }
+
+  return [
+    ...nextEntries.flatMap((entry) => [...(exitingBefore.get(entry.id) ?? []), entry]),
+    ...pendingExits,
+  ];
+}
+
+function entriesChanged<T>(
+  previousEntries: AnimatedListEntry<T>[],
+  nextEntries: AnimatedListEntry<T>[],
+) {
+  return (
+    previousEntries.length !== nextEntries.length ||
+    previousEntries.some((entry, index) => entry !== nextEntries[index])
+  );
+}
+
 export function createAnimatedListEntries<T>(
   items: Accessor<T[]>,
   idFor: (item: T) => string,
@@ -79,7 +114,8 @@ export function createAnimatedListEntries<T>(
       if (!nextIds.has(entry.id) && !removeTimers.has(entry.id)) scheduleRemoval(entry);
     }
 
-    setEntries([...nextEntries, ...previousEntries.filter((entry) => !nextIds.has(entry.id))]);
+    const orderedEntries = preserveExitingEntryPositions(nextEntries, previousEntries, nextIds);
+    if (entriesChanged(previousEntries, orderedEntries)) setEntries(orderedEntries);
   };
 
   const unsubscribe = items.subscribe(updateEntries);

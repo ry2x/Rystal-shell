@@ -47,34 +47,37 @@ export default function NotificationList() {
       </box>
 
       {/* Notification List */}
-      <box
-        class="notif-empty"
-        visible={notifications.as((items) => items.length === 0)}
-        halign={Gtk.Align.CENTER}
-        valign={Gtk.Align.CENTER}
-      >
-        <LucideIcon name="bell-check" pixelSize={25} class="notif-empty-icon" />
-        <label label="No Notifications" class="notif-empty-label" />
-      </box>
-      <scrolledwindow
-        cssClasses={['notif-scroll']}
-        vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}
-        hscrollbarPolicy={Gtk.PolicyType.NEVER}
-        vexpand={true}
-      >
-        <AnimatedList
-          items={notifications}
-          idFor={(notification: Notifd.Notification) => String(notification.id)}
-          className="notif-list"
-          spacing={12}
-          renderItem={(notification: Notifd.Notification) => (
-            <NotificationCard
-              notif={notification}
-              onDismiss={() => dismissNotification(notification)}
-            />
-          )}
-        />
-      </scrolledwindow>
+      <overlay vexpand>
+        <scrolledwindow
+          cssClasses={['notif-scroll']}
+          vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}
+          hscrollbarPolicy={Gtk.PolicyType.NEVER}
+          vexpand
+        >
+          <AnimatedList
+            items={notifications}
+            idFor={(notification: Notifd.Notification) => String(notification.id)}
+            className="notif-list"
+            spacing={12}
+            renderItem={(notification: Notifd.Notification) => (
+              <NotificationCard
+                notif={notification}
+                onDismiss={() => dismissNotification(notification)}
+              />
+            )}
+          />
+        </scrolledwindow>
+        <box
+          $type="overlay"
+          class="notif-empty"
+          visible={notifications.as((items) => items.length === 0)}
+          halign={Gtk.Align.CENTER}
+          valign={Gtk.Align.CENTER}
+        >
+          <LucideIcon name="bell-check" pixelSize={25} class="notif-empty-icon" />
+          <label label="No Notifications" class="notif-empty-label" />
+        </box>
+      </overlay>
     </box>
   );
 }

@@ -22,7 +22,7 @@ export default function AnimatedList<T>({
   const entries = createAnimatedListEntries(items, idFor);
 
   return (
-    <box class={className} orientation={Gtk.Orientation.VERTICAL} spacing={spacing}>
+    <box class={className} orientation={Gtk.Orientation.VERTICAL}>
       <For each={entries} id={(entry) => entry.id}>
         {(entry) => (
           <revealer
@@ -30,13 +30,16 @@ export default function AnimatedList<T>({
             transitionDuration={shellMotion.listDuration}
             revealChild={entry.revealed}
           >
-            <revealer
-              transitionType={Gtk.RevealerTransitionType.CROSSFADE}
-              transitionDuration={shellMotion.listDuration}
-              revealChild={entry.revealed}
-            >
-              <For each={entry.item.as((item) => [item])}>{renderItem}</For>
-            </revealer>
+            <box orientation={Gtk.Orientation.VERTICAL}>
+              <revealer
+                transitionType={Gtk.RevealerTransitionType.CROSSFADE}
+                transitionDuration={shellMotion.listDuration}
+                revealChild={entry.revealed}
+              >
+                <For each={entry.item.as((item) => [item])}>{renderItem}</For>
+              </revealer>
+              {spacing > 0 && <box heightRequest={spacing} />}
+            </box>
           </revealer>
         )}
       </For>
