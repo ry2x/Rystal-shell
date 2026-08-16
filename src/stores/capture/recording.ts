@@ -1,9 +1,10 @@
 import { createState } from 'ags';
-import { type Process, subprocess } from 'ags/process';
+import { subprocess } from 'ags/process';
 
 import Hyprland from 'gi://AstalHyprland';
 import Wp from 'gi://AstalWp';
 import GLib from 'gi://GLib';
+import Gio from 'gi://Gio';
 
 import { appConfig } from '../../lib/config';
 import { sendNotification } from '../notification/send';
@@ -36,7 +37,7 @@ interface ActiveRecording {
 }
 
 interface RecordingStartSession {
-  process: Process | null;
+  process: Gio.Subprocess | null;
   cancelled: boolean;
 }
 
@@ -125,35 +126,42 @@ async function addCaptureTarget(
     return null;
   }
 
-  const output: string[] = [];
-  const errors: string[] = [];
-  const process = subprocess({
-    cmd: ['slurp'],
-    out: (line) => output.push(line),
-    err: (line) => errors.push(line),
-  });
+  const process = Gio.Subprocess.new(
+    ['slurp'],
+    Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE,
+  );
   session.process = process;
+  let stderr = '';
 
-  const result = await new Promise<RecordingStartResult | null>((resolve) => {
-    process.connect('exit', (_, code, signaled) => {
+  const result = await new Promise<RecordingStartResult | null>((resolve, reject) => {
+    process.communicate_utf8_async(null, null, (_, asyncResult) => {
       if (session.process === process) session.process = null;
-      if (session.cancelled || signaled || code !== 0) {
-        resolve({ status: 'cancelled' });
-        return;
-      }
 
-      const region = output.join('\n').trim();
-      if (!region) {
-        resolve({ status: 'cancelled' });
-        return;
+      try {
+        const [, stdout, processStderr] = process.communicate_utf8_finish(asyncResult);
+        if (session.cancelled) {
+          resolve({ status: 'cancelled' });
+          return;
+        }
+
+        stderr = processStderr.trim();
+        const region = stdout.trim();
+        if (!process.get_successful() || !region) {
+          resolve({ status: 'cancelled' });
+          return;
+        }
+
+        cmd.push('--geometry', region);
+        resolve(null);
+      } catch (error) {
+        if (session.cancelled) resolve({ status: 'cancelled' });
+        else reject(error);
       }
-      cmd.push('--geometry', region);
-      resolve(null);
     });
   });
 
   if (result?.status === 'cancelled' && !session.cancelled) {
-    if (errors.length > 0) console.warn(`Slurp cancelled: ${errors.join('\n')}`);
+    if (stderr) console.warn(`Slurp cancelled: ${stderr}`);
     sendNotification({
       summary: 'Recording cancelled',
       body: 'Selection was cancelled',
@@ -238,7 +246,7 @@ export function cleanupRecording(): RecordingStopResult {
   if (startSession) {
     startSession.cancelled = true;
     try {
-      startSession.process?.kill();
+      startSession.process?.force_exit();
     } catch (error) {
       console.error('Failed to cancel recording selection', error);
     }

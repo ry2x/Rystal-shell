@@ -17,6 +17,7 @@ export interface ControlCenterState {
   soundLoaded: Accessor<boolean>;
   showAnimated: () => void;
   hideAnimated: () => void;
+  hideImmediately: () => void;
   openPage: (page: ControlCenterDetailPage) => void;
   showMainPage: () => void;
 }
@@ -57,6 +58,14 @@ export function createControlCenterState(monitorConnector: string): ControlCente
     });
   };
 
+  const hideImmediately = () => {
+    cancelHideTimer();
+    setRevealed(false);
+    showMainPage();
+    setVisible(false);
+    deactivateSidePanel('control-center', monitorConnector);
+  };
+
   const showAnimated = () => {
     cancelHideTimer();
     setContentLoaded(true);
@@ -79,6 +88,7 @@ export function createControlCenterState(monitorConnector: string): ControlCente
     soundLoaded,
     showAnimated,
     hideAnimated,
+    hideImmediately,
     openPage,
     showMainPage,
   };

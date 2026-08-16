@@ -13,6 +13,7 @@ export interface ControlCenterProps {
 
 interface ControlCenterWindow extends Astal.Window {
   hide_animated: () => void;
+  hide_immediately: () => void;
   show_animated: () => void;
 }
 
@@ -66,6 +67,7 @@ export default function ControlCenter({ monitor }: ControlCenterProps) {
   ) as ControlCenterWindow;
 
   window.hide_animated = state.hideAnimated;
+  window.hide_immediately = state.hideImmediately;
   window.show_animated = state.showAnimated;
 
   return window;

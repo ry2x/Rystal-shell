@@ -45,6 +45,7 @@ export function deactivateSidePanel(panel: SidePanel, monitor?: string | null) {
 
 type AnimatedWindow = Astal.Window & {
   hide_animated?: () => void;
+  hide_immediately?: () => void;
   show_animated?: () => void;
 };
 
@@ -59,6 +60,19 @@ export function closeAllControlCenters() {
       if (cc.hide_animated) cc.hide_animated();
       else cc.set_visible(false);
     }
+  });
+  deactivateSidePanel('control-center');
+}
+
+export function closeAllControlCentersImmediately() {
+  app.get_monitors().forEach((monitor) => {
+    const controlCenter = app.get_window(
+      `control-center-${monitor.get_connector()}`,
+    ) as AnimatedWindow;
+    if (!controlCenter?.get_visible()) return;
+
+    if (controlCenter.hide_immediately) controlCenter.hide_immediately();
+    else controlCenter.set_visible(false);
   });
   deactivateSidePanel('control-center');
 }
