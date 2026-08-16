@@ -4,7 +4,9 @@
   "singleQuote": true,
   "printWidth": 100,
   "quoteProps": "consistent",
-  "arrowParens": "always",
+  "arrowParens": "avoid",
+  "bracketSpacing": false,
+  "trailingComma": "es5",
 
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "importOrder": ["^ags.*$", "^gi://.*$", ".*\\.scss$", "^[./]"],
