@@ -55,44 +55,7 @@ hl.on("hyprland.start",
 
 ### Configuration
 
-There are several configurable items in this shell.
-
-First, copy the [config template](./config/config.json.template):
-
-```sh
-mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/rystal-shell"
-cp ./config/config.json.template \
-  "${XDG_CONFIG_HOME:-$HOME/.config}/rystal-shell/config.json"
-```
-
-By modifying each setting in that file, you can alter the shell's behavior and some of the displayed information.
-
-```json
-{
-  "weather": {
-    "location": "<Your preferred location; if left blank, the location will be determined from your IP address.>"
-  },
-  "notifications": {
-    "maxCount": "<Maximum number of persistent notifications; positive integer.>"
-  },
-  "worldClocks": [
-    { "label": "<Your preferred location>", "tz": "<Timezone of that location>" },
-    ...
-  ],
-  "recorder": {
-    "savePath": "<Directory to save recorded videos>",
-    "filenameFormat": "<Filename format for the recorded videos>",
-    "recordAudio": "<Boolean(true/false) value indicating whether to record audio or not>",
-    "audioSource": "<Audio source for recording audio; 'system' or 'mic'>"
-  },
-  "profile": {
-    "avatarPath": "<Profile picture; 512x512 .png format is recommended>"
-  },
-  "brightness": {
-    "backend": "<Backend for brightness control; 'auto', 'brightnessctl', 'ddcutil'.>"
-  }
-}
-```
+Look at [config/README.md](/config/README.md) for details on how to configure Rystal-shell.
 
 ### Ryprland data directories
 
