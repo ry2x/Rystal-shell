@@ -3,8 +3,8 @@ import {type Timer, interval} from 'ags/time';
 
 import GLib from 'gi://GLib';
 
-import {rystalShellConfigDir, rystalShellDataDir} from '../../lib/paths';
-import {activeSidePanel} from './windowManager';
+import {rystalShellConfigDir, rystalShellDataDir} from '@/lib/paths';
+import {activeSidePanel} from '@/stores/shell/windowManager';
 
 export interface BarColors {
   surface: string;

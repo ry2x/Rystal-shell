@@ -6,8 +6,8 @@ import Wp from 'gi://AstalWp';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-import {appConfig} from '../../lib/config';
-import {sendNotification} from '../notification/send';
+import {appConfig} from '@/lib/config';
+import {sendNotification} from '@/stores/notification/send';
 
 const [isRecordingState, setIsRecording] = createState(false);
 export const isRecording = isRecordingState;

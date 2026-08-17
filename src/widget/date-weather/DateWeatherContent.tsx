@@ -1,13 +1,13 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import {shellMotion} from '../../lib/motion';
-import {createBarBackgroundGeometry} from '../../stores/shell/barBackground';
-import ClockCard from './widget/ClockCard';
-import NotificationList from './widget/NotificationList';
-import ProfileCard from './widget/ProfileCard';
-import WeatherCard from './widget/WeatherCard';
-import WorldClockCard from './widget/WorldClockCard';
+import {shellMotion} from '@/lib/motion';
+import {createBarBackgroundGeometry} from '@/stores/shell/barBackground';
+import ClockCard from '@/widget/date-weather/widget/ClockCard';
+import NotificationList from '@/widget/date-weather/widget/NotificationList';
+import ProfileCard from '@/widget/date-weather/widget/ProfileCard';
+import WeatherCard from '@/widget/date-weather/widget/WeatherCard';
+import WorldClockCard from '@/widget/date-weather/widget/WorldClockCard';
 
 export interface DateWeatherContentProps {
   revealed: Accessor<boolean>;

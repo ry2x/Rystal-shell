@@ -2,9 +2,9 @@ import {For} from 'ags';
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import {createDateWeatherPopupState} from '../../stores/panel/dateWeather';
-import ClickCatcher from '../common/ClickCatcher';
-import DateWeatherContent from './DateWeatherContent';
+import {createDateWeatherPopupState} from '@/stores/panel/dateWeather';
+import ClickCatcher from '@/widget/common/ClickCatcher';
+import DateWeatherContent from '@/widget/date-weather/DateWeatherContent';
 
 export interface DateWeatherPopupProps {
   monitor: Gdk.Monitor;

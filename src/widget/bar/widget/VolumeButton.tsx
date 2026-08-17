@@ -3,10 +3,10 @@ import {Gdk, Gtk} from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
-import {getVolumeIcon} from '../../../lib/audio';
-import {toggleControlCenter} from '../../../stores/shell/windowManager';
-import {adjustVolume} from '../../../stores/system/audio';
-import {LucideIcon} from '../../../widget/common/lucide';
+import {getVolumeIcon} from '@/lib/audio';
+import {toggleControlCenter} from '@/stores/shell/windowManager';
+import {adjustVolume} from '@/stores/system/audio';
+import {LucideIcon} from '@/widget/common/lucide';
 
 export interface VolumeButtonProps {
   speaker: Wp.Endpoint;

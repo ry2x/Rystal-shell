@@ -4,8 +4,11 @@ import {Gtk} from 'ags/gtk4';
 import Network from 'gi://AstalNetwork';
 import Pango from 'gi://Pango';
 
-import {LucideIcon} from '../../../../common/lucide';
-import {getSignalLabel, getSsidLabel} from './utils';
+import {LucideIcon} from '@/widget/common/lucide';
+import {
+  getSignalLabel,
+  getSsidLabel,
+} from '@/widget/control-center/widget/Connectivity/WifiPage/utils';
 
 export interface AvailableNetworkRowProps {
   accessPoint: Network.AccessPoint;

@@ -8,10 +8,10 @@ import {
   doNotDisturb,
   notifications,
   toggleDoNotDisturb,
-} from '../../../stores/notification/notification';
-import {LucideIcon} from '../../../widget/common/lucide';
-import AnimatedList from '../../common/AnimatedList';
-import NotificationCard from '../../common/NotificationCard';
+} from '@/stores/notification/notification';
+import AnimatedList from '@/widget/common/AnimatedList';
+import NotificationCard from '@/widget/common/NotificationCard';
+import {LucideIcon} from '@/widget/common/lucide';
 
 export default function NotificationList() {
   return (

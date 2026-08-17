@@ -10,8 +10,8 @@ import {
   getWifiProfileDuplicates,
   hasWifiProfile,
   listWifiAccessPoints,
-} from './wifi';
-import {openWifiPasswordDialog} from './wifiPasswordDialog';
+} from '@/stores/connectivity/wifi';
+import {openWifiPasswordDialog} from '@/stores/connectivity/wifiPasswordDialog';
 
 export interface WifiConfirmation {
   title: string;

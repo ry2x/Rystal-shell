@@ -1,7 +1,7 @@
 import {createState} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import {type Confirmation} from './types';
+import {type Confirmation} from '@/widget/control-center/widget/Connectivity/Shared/types';
 
 export interface ConfirmOverlayProps {
   confirmation: Confirmation;

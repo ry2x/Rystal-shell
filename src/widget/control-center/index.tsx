@@ -2,10 +2,10 @@ import {For} from 'ags';
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import {shellMotion} from '../../lib/motion';
-import {createControlCenterState} from '../../stores/panel/controlCenter';
-import ClickCatcher from '../common/ClickCatcher';
-import ControlCenterPages from './ControlCenterPages';
+import {shellMotion} from '@/lib/motion';
+import {createControlCenterState} from '@/stores/panel/controlCenter';
+import ClickCatcher from '@/widget/common/ClickCatcher';
+import ControlCenterPages from '@/widget/control-center/ControlCenterPages';
 
 export interface ControlCenterProps {
   monitor: Gdk.Monitor;

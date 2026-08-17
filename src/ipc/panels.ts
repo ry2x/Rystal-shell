@@ -2,14 +2,14 @@ import app from 'ags/gtk4/app';
 
 import Hyprland from 'gi://AstalHyprland';
 
+import {type IpcCommandHandler} from '@/ipc/types';
 import {
   toggleAppLauncher,
   toggleControlCenter,
   toggleDateWeather,
   togglePowerMenu,
   toggleWallpaperSelector,
-} from '../stores/shell/windowManager';
-import {type IpcCommandHandler} from './types';
+} from '@/stores/shell/windowManager';
 
 export const panelCommandHandlers: ReadonlyMap<string, IpcCommandHandler> = new Map<
   string,

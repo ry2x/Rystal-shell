@@ -1,8 +1,8 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import type {PowerItem} from '../../../stores/panel/powerMenu';
-import {LucideIcon} from '../../common/lucide';
+import type {PowerItem} from '@/stores/panel/powerMenu';
+import {LucideIcon} from '@/widget/common/lucide';
 
 const CARD_OUTER_WIDTH = 260;
 const CARD_GAP = 18;

@@ -3,8 +3,8 @@ import {exec, execAsync} from 'ags/process';
 
 import GLib from 'gi://GLib';
 
-import {ryprlandRuntimeDir, rystalShellConfigDir, rystalShellDataDir} from '../../lib/paths';
-import {reloadBarColors} from './barBackground';
+import {ryprlandRuntimeDir, rystalShellConfigDir, rystalShellDataDir} from '@/lib/paths';
+import {reloadBarColors} from '@/stores/shell/barBackground';
 
 let cssProvider: Gtk.CssProvider | null = null;
 let lastCompiledCssHash: string | null = null;

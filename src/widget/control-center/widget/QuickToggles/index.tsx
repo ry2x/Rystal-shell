@@ -1,9 +1,9 @@
 import {Gtk} from 'ags/gtk4';
 
-import BluetoothToggle from './BluetoothToggle';
-import CaffeineToggle from './CaffeineToggle';
-import PowerProfileToggle from './PowerProfileToggle';
-import WifiToggle from './WifiToggle';
+import BluetoothToggle from '@/widget/control-center/widget/QuickToggles/BluetoothToggle';
+import CaffeineToggle from '@/widget/control-center/widget/QuickToggles/CaffeineToggle';
+import PowerProfileToggle from '@/widget/control-center/widget/QuickToggles/PowerProfileToggle';
+import WifiToggle from '@/widget/control-center/widget/QuickToggles/WifiToggle';
 
 export interface QuickTogglesProps {
   onOpenWifi: () => void;

@@ -9,7 +9,7 @@
   "trailingComma": "es5",
 
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
-  "importOrder": ["^ags.*$", "^gi://.*$", ".*\\.scss$", "^[./]"],
+  "importOrder": ["^ags.*$", "^gi://.*$", ".*\\.scss$", "^@/.*$", "^[./]"],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true
 }

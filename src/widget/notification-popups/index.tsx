@@ -3,9 +3,9 @@ import app from 'ags/gtk4/app';
 
 import Notifd from 'gi://AstalNotifd';
 
-import {createNotificationPopupState} from '../../stores/notification/notificationPopup';
-import AnimatedList from '../common/AnimatedList';
-import NotificationCard from '../common/NotificationCard';
+import {createNotificationPopupState} from '@/stores/notification/notificationPopup';
+import AnimatedList from '@/widget/common/AnimatedList';
+import NotificationCard from '@/widget/common/NotificationCard';
 
 export interface NotificationPopupsProps {
   monitor: Gdk.Monitor;

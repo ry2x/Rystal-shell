@@ -2,7 +2,7 @@ import {createBinding, createState} from 'ags';
 
 import Notifd from 'gi://AstalNotifd';
 
-import {appConfig} from '../../lib/config';
+import {appConfig} from '@/lib/config';
 
 const notifd = Notifd.get_default();
 export const doNotDisturb = createBinding(notifd, 'dontDisturb');

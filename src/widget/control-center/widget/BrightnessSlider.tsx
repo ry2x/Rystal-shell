@@ -3,8 +3,8 @@ import {
   cycleBrightnessPreset,
   setBrightness,
   toggleBrightnessDim,
-} from '../../../stores/system/brightness';
-import {LucideIcon} from '../../../widget/common/lucide';
+} from '@/stores/system/brightness';
+import {LucideIcon} from '@/widget/common/lucide';
 
 function getBrightnessIcon(value: number) {
   if (value <= 0.2) return 'sun-dim';

@@ -1,11 +1,11 @@
+import {type IpcCommandHandler} from '@/ipc/types';
 import {
   brightnessStep,
   changeBrightness,
   getBrightnessBackend,
   refreshBrightness,
   refreshBrightnessBackend,
-} from '../stores/system/brightness';
-import {type IpcCommandHandler} from './types';
+} from '@/stores/system/brightness';
 
 export const handleBrightness: IpcCommandHandler = (args, response) => {
   const action = args[0] ?? 'get';

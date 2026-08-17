@@ -3,14 +3,10 @@ import {Gtk} from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
-import {getVolumeIcon} from '../../../../lib/audio';
-import {
-  setEndpointVolume,
-  setMicrophoneVolume,
-  toggleEndpointMute,
-} from '../../../../stores/system/audio';
-import {LucideIcon} from '../../../../widget/common/lucide';
-import {type SoundDeviceKind} from './types';
+import {getVolumeIcon} from '@/lib/audio';
+import {setEndpointVolume, setMicrophoneVolume, toggleEndpointMute} from '@/stores/system/audio';
+import {LucideIcon} from '@/widget/common/lucide';
+import {type SoundDeviceKind} from '@/widget/control-center/widget/Sound/types';
 
 export interface VolumeControlsProps {
   endpoint: Wp.Endpoint;

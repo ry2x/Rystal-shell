@@ -6,8 +6,8 @@ import {type Timer, interval} from 'ags/time';
 
 import GLib from 'gi://GLib';
 
-import {shellMotion} from '../../lib/motion';
-import {LucideIcon} from './lucide';
+import {shellMotion} from '@/lib/motion';
+import {LucideIcon} from '@/widget/common/lucide';
 
 export interface CircularProgressProps<T> {
   variable: Accessor<T>;

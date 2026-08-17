@@ -1,7 +1,7 @@
 import {Gtk} from 'ags/gtk4';
 
-import {openUpdateManager, updatesPoll} from '../../../stores/system/update';
-import {LucideIcon} from '../../../widget/common/lucide';
+import {openUpdateManager, updatesPoll} from '@/stores/system/update';
+import {LucideIcon} from '@/widget/common/lucide';
 
 export default function UpdatesCard() {
   const isAvailable = updatesPoll.as(u => parseInt(u) > 0);

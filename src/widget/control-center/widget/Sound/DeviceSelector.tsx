@@ -4,9 +4,9 @@ import {Gtk} from 'ags/gtk4';
 import Wp from 'gi://AstalWp';
 import Pango from 'gi://Pango';
 
-import {LucideIcon} from '../../../../widget/common/lucide';
-import {type SoundDeviceKind} from './types';
-import {getEndpointLabel, getRouteLabel} from './utils';
+import {LucideIcon} from '@/widget/common/lucide';
+import {type SoundDeviceKind} from '@/widget/control-center/widget/Sound/types';
+import {getEndpointLabel, getRouteLabel} from '@/widget/control-center/widget/Sound/utils';
 
 export interface DeviceSelectorProps {
   endpoint: Wp.Endpoint;

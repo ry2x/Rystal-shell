@@ -1,14 +1,14 @@
 import {Gtk} from 'ags/gtk4';
 
-import {type ControlCenterDetailPage} from '../../stores/panel/controlCenter';
-import {LucideIcon} from '../../widget/common/lucide';
-import BrightnessSlider from './widget/BrightnessSlider';
-import MediaCard from './widget/MediaCard';
-import QuickToggles from './widget/QuickToggles';
-import ScreenCapture from './widget/ScreenCapture';
-import SystemMetrics from './widget/SystemMetrics';
-import UpdatesCard from './widget/UpdatesCard';
-import VolumeSlider from './widget/VolumeSlider';
+import {type ControlCenterDetailPage} from '@/stores/panel/controlCenter';
+import {LucideIcon} from '@/widget/common/lucide';
+import BrightnessSlider from '@/widget/control-center/widget/BrightnessSlider';
+import MediaCard from '@/widget/control-center/widget/MediaCard';
+import QuickToggles from '@/widget/control-center/widget/QuickToggles';
+import ScreenCapture from '@/widget/control-center/widget/ScreenCapture';
+import SystemMetrics from '@/widget/control-center/widget/SystemMetrics';
+import UpdatesCard from '@/widget/control-center/widget/UpdatesCard';
+import VolumeSlider from '@/widget/control-center/widget/VolumeSlider';
 
 export interface ControlCenterContentProps {
   onOpenPage: (page: ControlCenterDetailPage) => void;

@@ -4,11 +4,11 @@ import {Gtk} from 'ags/gtk4';
 import Mpris from 'gi://AstalMpris';
 import Pango from 'gi://Pango';
 
-import {createPlayerArtwork} from '../../../../stores/media/media';
-import CavaWidget from './CavaWidget';
-import PlayerArtwork from './PlayerArtwork';
-import PlayerControls from './PlayerControls';
-import {getMediaSource} from './utils';
+import {createPlayerArtwork} from '@/stores/media/media';
+import CavaWidget from '@/widget/control-center/widget/MediaCard/CavaWidget';
+import PlayerArtwork from '@/widget/control-center/widget/MediaCard/PlayerArtwork';
+import PlayerControls from '@/widget/control-center/widget/MediaCard/PlayerControls';
+import {getMediaSource} from '@/widget/control-center/widget/MediaCard/utils';
 
 export interface PlayerCardProps {
   player: Mpris.Player;

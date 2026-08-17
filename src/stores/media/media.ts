@@ -4,9 +4,9 @@ import Mpris from 'gi://AstalMpris';
 import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 
-import {loadTextureFromUri} from '../../lib/image';
-import {closeAllControlCenters, focusWindow} from '../shell/windowManager';
-import {fetchYouTubeThumbnail} from './mprisThumbnail';
+import {loadTextureFromUri} from '@/lib/image';
+import {fetchYouTubeThumbnail} from '@/stores/media/mprisThumbnail';
+import {closeAllControlCenters, focusWindow} from '@/stores/shell/windowManager';
 
 export interface MediaCardState {
   activePlayer: Accessor<Mpris.Player | null>;

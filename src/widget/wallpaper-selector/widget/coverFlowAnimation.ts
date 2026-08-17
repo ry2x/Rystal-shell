@@ -2,8 +2,8 @@ import {Gtk} from 'ags/gtk4';
 
 import GLib from 'gi://GLib';
 
-import {easeOutCubic, getCoverFlowOpacity} from '../coverFlowGeometry';
-import {WallpaperCardController} from './WallpaperCard';
+import {easeOutCubic, getCoverFlowOpacity} from '@/widget/wallpaper-selector/coverFlowGeometry';
+import {WallpaperCardController} from '@/widget/wallpaper-selector/widget/WallpaperCard';
 
 export interface CoverFlowCardState {
   card: WallpaperCardController;

@@ -6,14 +6,18 @@ import Bluetooth from 'gi://AstalBluetooth';
 import {
   type BluetoothConfirmation,
   createBluetoothPageState,
-} from '../../../../../stores/connectivity/bluetooth';
-import {toggleBluetooth} from '../../../../../stores/connectivity/network';
-import {LucideIcon} from '../../../../../widget/common/lucide';
-import AnimatedList from '../../../../common/AnimatedList';
-import {ConfirmOverlay, ErrorLabel, PageHeader} from '../Shared';
-import {type ControlCenterPage} from '../Shared';
-import AvailableDeviceRow from './AvailableDeviceRow';
-import ConnectedDeviceRow from './ConnectedDeviceRow';
+} from '@/stores/connectivity/bluetooth';
+import {toggleBluetooth} from '@/stores/connectivity/network';
+import AnimatedList from '@/widget/common/AnimatedList';
+import {LucideIcon} from '@/widget/common/lucide';
+import AvailableDeviceRow from '@/widget/control-center/widget/Connectivity/BluetoothPage/AvailableDeviceRow';
+import ConnectedDeviceRow from '@/widget/control-center/widget/Connectivity/BluetoothPage/ConnectedDeviceRow';
+import {
+  ConfirmOverlay,
+  ErrorLabel,
+  PageHeader,
+} from '@/widget/control-center/widget/Connectivity/Shared';
+import {type ControlCenterPage} from '@/widget/control-center/widget/Connectivity/Shared';
 
 export interface BluetoothPageProps {
   page: Accessor<ControlCenterPage>;

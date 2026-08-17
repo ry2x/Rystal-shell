@@ -1,6 +1,6 @@
 import Apps from 'gi://AstalApps';
 
-import {ApplicationHistory} from './applicationHistory';
+import {ApplicationHistory} from '@/stores/application/applicationHistory';
 
 const MAX_APP_RESULTS = 30;
 const applications = new Apps.Apps();

@@ -3,8 +3,8 @@ import {Gtk} from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
-import {getDirectUrl, openQuery} from '../../../stores/application/query';
-import {toggleAppLauncher} from '../../../stores/shell/windowManager';
+import {getDirectUrl, openQuery} from '@/stores/application/query';
+import {toggleAppLauncher} from '@/stores/shell/windowManager';
 
 export interface SearchGoogleBtnProps {
   textState: Accessor<string>;

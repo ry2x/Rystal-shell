@@ -6,7 +6,7 @@ import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 import Soup from 'gi://Soup?version=3.0';
 
-import {closeAllControlCenters} from '../shell/windowManager';
+import {closeAllControlCenters} from '@/stores/shell/windowManager';
 
 const NORMAL_INTERVAL_MS = 30 * 60_000;
 const RETRY_INTERVAL_MS = 60_000;

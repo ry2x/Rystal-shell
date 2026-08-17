@@ -1,8 +1,8 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import {POWER_ITEMS, type PowerItem} from '../../../stores/panel/powerMenu';
-import PowerMenuItemButton from './PowerMenuItemButton';
+import {POWER_ITEMS, type PowerItem} from '@/stores/panel/powerMenu';
+import PowerMenuItemButton from '@/widget/power-menu/widget/PowerMenuItemButton';
 
 export interface PowerMenuMainViewProps {
   selectedIndex: Accessor<number>;

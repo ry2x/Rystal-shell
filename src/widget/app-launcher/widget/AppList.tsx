@@ -4,8 +4,8 @@ import {type Timer, idle} from 'ags/time';
 
 import Apps from 'gi://AstalApps';
 
-import {AppItem} from './AppItem';
-import {SearchGoogleBtn} from './SearchGoogleBtn';
+import {AppItem} from '@/widget/app-launcher/widget/AppItem';
+import {SearchGoogleBtn} from '@/widget/app-launcher/widget/SearchGoogleBtn';
 
 export interface AppListProps {
   text: Accessor<string>;

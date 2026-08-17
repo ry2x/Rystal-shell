@@ -1,7 +1,7 @@
 import {Gtk} from 'ags/gtk4';
 
-import RecordingActions from './RecordingActions';
-import ScreenshotActions from './ScreenshotActions';
+import RecordingActions from '@/widget/control-center/widget/ScreenCapture/RecordingActions';
+import ScreenshotActions from '@/widget/control-center/widget/ScreenCapture/ScreenshotActions';
 
 export default function ScreenCapture() {
   return (

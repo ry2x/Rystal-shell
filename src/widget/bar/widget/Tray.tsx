@@ -3,7 +3,7 @@ import {Gtk} from 'ags/gtk4';
 
 import AstalTray from 'gi://AstalTray';
 
-import {TrayItemButton} from './TrayItemButton';
+import {TrayItemButton} from '@/widget/bar/widget/TrayItemButton';
 
 function isFcitxItem(item: AstalTray.TrayItem) {
   return item.id.toLowerCase().includes('fcitx');

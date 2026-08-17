@@ -1,8 +1,11 @@
 import {createState} from 'ags';
 import {type Timer, timeout} from 'ags/time';
 
-import {sendNotification} from '../notification/send';
-import {BrightnessBackendController, clampBrightnessPercent} from './brightnessBackend';
+import {sendNotification} from '@/stores/notification/send';
+import {
+  BrightnessBackendController,
+  clampBrightnessPercent,
+} from '@/stores/system/brightnessBackend';
 
 const KEYBOARD_STEP = 10;
 const DEFAULT_RESTORE_BRIGHTNESS = 0.25;

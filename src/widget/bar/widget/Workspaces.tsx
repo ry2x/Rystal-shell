@@ -3,7 +3,7 @@ import {Gdk, Gtk} from 'ags/gtk4';
 
 import Hyprland from 'gi://AstalHyprland';
 
-import {createMonitorWorkspaceState, focusWorkspace} from '../../../stores/shell/workspace';
+import {createMonitorWorkspaceState, focusWorkspace} from '@/stores/shell/workspace';
 
 export interface WorkspacesProps {
   monitor: Gdk.Monitor;

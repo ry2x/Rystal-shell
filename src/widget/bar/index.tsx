@@ -5,17 +5,17 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import {timeout} from 'ags/time';
 
-import BarReserve from './BarReserve';
-import PanelBackground from './PanelBackground';
-import Clock from './widget/Clock';
-import RecordIndicator from './widget/RecordIndicator';
-import ScrollerIndicator from './widget/ScrollerIndicator';
-import SysMetrics from './widget/SysMetrics';
-import Tray from './widget/Tray';
-import Updates from './widget/Updates';
-import Volume from './widget/Volume';
-import Weather from './widget/Weather';
-import Workspaces from './widget/Workspaces';
+import BarReserve from '@/widget/bar/BarReserve';
+import PanelBackground from '@/widget/bar/PanelBackground';
+import Clock from '@/widget/bar/widget/Clock';
+import RecordIndicator from '@/widget/bar/widget/RecordIndicator';
+import ScrollerIndicator from '@/widget/bar/widget/ScrollerIndicator';
+import SysMetrics from '@/widget/bar/widget/SysMetrics';
+import Tray from '@/widget/bar/widget/Tray';
+import Updates from '@/widget/bar/widget/Updates';
+import Volume from '@/widget/bar/widget/Volume';
+import Weather from '@/widget/bar/widget/Weather';
+import Workspaces from '@/widget/bar/widget/Workspaces';
 
 export interface BarProps {
   monitor: Gdk.Monitor;

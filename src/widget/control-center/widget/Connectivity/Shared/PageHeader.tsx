@@ -1,7 +1,7 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import {LucideIcon} from '../../../../../widget/common/lucide';
+import {LucideIcon} from '@/widget/common/lucide';
 
 export interface PageHeaderProps {
   title: string;

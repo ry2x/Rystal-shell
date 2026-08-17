@@ -1,5 +1,5 @@
-import {isRecording, startRecord, stopRecord} from '../stores/capture/recording';
-import {type IpcCommandHandler, type ResponseCallback} from './types';
+import {type IpcCommandHandler, type ResponseCallback} from '@/ipc/types';
+import {isRecording, startRecord, stopRecord} from '@/stores/capture/recording';
 
 async function start(mode: 'monitor' | 'slurp', response: ResponseCallback) {
   const result = await startRecord(mode);

@@ -1,6 +1,6 @@
 import {Gtk} from 'ags/gtk4';
 
-import {clockDate, clockDay, clockTime, clockTz} from '../../../stores/system/time';
+import {clockDate, clockDay, clockTime, clockTz} from '@/stores/system/time';
 
 export default function ClockCard() {
   return (

@@ -3,9 +3,9 @@ import {Gdk, Gtk} from 'ags/gtk4';
 
 import Apps from 'gi://AstalApps';
 
-import {recordAppLaunch} from '../../../stores/application/applicationCatalog';
-import {openQuery} from '../../../stores/application/query';
-import {toggleAppLauncher} from '../../../stores/shell/windowManager';
+import {recordAppLaunch} from '@/stores/application/applicationCatalog';
+import {openQuery} from '@/stores/application/query';
+import {toggleAppLauncher} from '@/stores/shell/windowManager';
 
 export interface SearchInputProps {
   text: Accessor<string>;

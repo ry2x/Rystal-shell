@@ -1,8 +1,8 @@
 import {type Accessor, For} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import {shellMotion} from '../../lib/motion';
-import {createAnimatedListEntries} from '../../stores/common/animatedList';
+import {shellMotion} from '@/lib/motion';
+import {createAnimatedListEntries} from '@/stores/common/animatedList';
 
 export interface AnimatedListProps<T> {
   items: Accessor<T[]>;

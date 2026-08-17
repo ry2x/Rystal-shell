@@ -9,14 +9,20 @@ import {
   wallpaperError,
   wallpapers,
   wallpapersLoading,
-} from '../../../stores/wallpaper/wallpaper';
+} from '@/stores/wallpaper/wallpaper';
 import {
   ensureWallpaperThumbnails,
   subscribeThumbnailReady,
-} from '../../../stores/wallpaper/wallpaperThumbnail';
-import {createCoverFlowTransform, getCoverFlowOpacity} from '../coverFlowGeometry';
-import {WallpaperCardController} from './WallpaperCard';
-import {CoverFlowAnimation, type CoverFlowCardState} from './coverFlowAnimation';
+} from '@/stores/wallpaper/wallpaperThumbnail';
+import {
+  createCoverFlowTransform,
+  getCoverFlowOpacity,
+} from '@/widget/wallpaper-selector/coverFlowGeometry';
+import {WallpaperCardController} from '@/widget/wallpaper-selector/widget/WallpaperCard';
+import {
+  CoverFlowAnimation,
+  type CoverFlowCardState,
+} from '@/widget/wallpaper-selector/widget/coverFlowAnimation';
 
 const VISIBLE_RADIUS = 3;
 const PREFETCH_RADIUS = 4;

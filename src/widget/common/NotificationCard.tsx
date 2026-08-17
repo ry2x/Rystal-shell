@@ -7,8 +7,8 @@ import {type Timer, timeout} from 'ags/time';
 import Notifd from 'gi://AstalNotifd';
 import Pango from 'gi://Pango';
 
-import {type SharedTexture, acquireNotificationTexture} from '../../stores/notification/imageCache';
-import {LucideIcon} from './lucide';
+import {type SharedTexture, acquireNotificationTexture} from '@/stores/notification/imageCache';
+import {LucideIcon} from '@/widget/common/lucide';
 
 export interface NotificationCardProps {
   notif: Notifd.Notification;

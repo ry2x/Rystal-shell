@@ -4,8 +4,11 @@ import {Gtk} from 'ags/gtk4';
 import Network from 'gi://AstalNetwork';
 import Pango from 'gi://Pango';
 
-import {DetailMenuButton} from '../Shared';
-import {getSignalLabel, getSsidLabel} from './utils';
+import {DetailMenuButton} from '@/widget/control-center/widget/Connectivity/Shared';
+import {
+  getSignalLabel,
+  getSsidLabel,
+} from '@/widget/control-center/widget/Connectivity/WifiPage/utils';
 
 export interface ConnectedNetworkRowProps {
   accessPoint: Network.AccessPoint;

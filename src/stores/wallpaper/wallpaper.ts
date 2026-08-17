@@ -4,12 +4,12 @@ import {execAsync} from 'ags/process';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-import {ryprlandWallpaperDir} from '../../lib/paths';
+import {ryprlandWallpaperDir} from '@/lib/paths';
 import {
   cancelWallpaperThumbnailWork,
   ensureWallpaperThumbnails,
   getWallpaperThumbnailPath,
-} from './wallpaperThumbnail';
+} from '@/stores/wallpaper/wallpaperThumbnail';
 
 export interface Wallpaper {
   path: string;

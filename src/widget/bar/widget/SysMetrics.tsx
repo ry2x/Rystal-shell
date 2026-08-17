@@ -1,8 +1,8 @@
 import {Gdk, Gtk} from 'ags/gtk4';
 
-import {toggleControlCenter} from '../../../stores/shell/windowManager';
-import {cpuUsage, gpuUsage, ramUsage} from '../../../stores/system/system';
-import {LucideIcon} from '../../../widget/common/lucide';
+import {toggleControlCenter} from '@/stores/shell/windowManager';
+import {cpuUsage, gpuUsage, ramUsage} from '@/stores/system/system';
+import {LucideIcon} from '@/widget/common/lucide';
 
 export interface SysMetricsProps {
   monitor: Gdk.Monitor;

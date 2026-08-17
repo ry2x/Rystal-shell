@@ -2,8 +2,8 @@ import {For} from 'ags';
 
 import Wp from 'gi://AstalWp';
 
-import {defaultSpeaker} from '../../../stores/system/audio';
-import VolumeSliderContent from './VolumeSliderContent';
+import {defaultSpeaker} from '@/stores/system/audio';
+import VolumeSliderContent from '@/widget/control-center/widget/VolumeSliderContent';
 
 export interface VolumeSliderProps {
   onOpenSound: () => void;

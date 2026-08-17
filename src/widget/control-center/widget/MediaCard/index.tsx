@@ -3,9 +3,9 @@ import {Gtk} from 'ags/gtk4';
 
 import Mpris from 'gi://AstalMpris';
 
-import {createMediaCardState} from '../../../../stores/media/media';
-import {LucideIcon} from '../../../../widget/common/lucide';
-import PlayerCard from './PlayerCard';
+import {createMediaCardState} from '@/stores/media/media';
+import {LucideIcon} from '@/widget/common/lucide';
+import PlayerCard from '@/widget/control-center/widget/MediaCard/PlayerCard';
 
 export default function MediaCard() {
   const state = createMediaCardState();

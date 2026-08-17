@@ -3,7 +3,7 @@ import GLib from 'gi://GLib?version=2.0';
 import Gio from 'gi://Gio';
 import Soup from 'gi://Soup?version=3.0';
 
-import {ryprlandCacheDir} from '../../lib/paths';
+import {ryprlandCacheDir} from '@/lib/paths';
 
 const DOWNLOAD_TIMEOUT_SECONDS = 10;
 const YOUTUBE_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;

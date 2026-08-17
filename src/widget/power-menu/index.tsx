@@ -2,10 +2,10 @@ import {createEffect} from 'ags';
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import {createPowerMenuState} from '../../stores/panel/powerMenu';
-import ClickCatcher from '../common/ClickCatcher';
-import PowerMenuConfirmationView from './widget/PowerMenuConfirmationView';
-import PowerMenuMainView from './widget/PowerMenuMainView';
+import {createPowerMenuState} from '@/stores/panel/powerMenu';
+import ClickCatcher from '@/widget/common/ClickCatcher';
+import PowerMenuConfirmationView from '@/widget/power-menu/widget/PowerMenuConfirmationView';
+import PowerMenuMainView from '@/widget/power-menu/widget/PowerMenuMainView';
 
 const BAR_WIDTH = 47;
 const PANEL_HEIGHT = 350;

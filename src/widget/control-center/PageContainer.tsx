@@ -1,7 +1,7 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import {type BarBackgroundGeometry} from '../../stores/shell/barBackground';
+import {type BarBackgroundGeometry} from '@/stores/shell/barBackground';
 
 export interface PageContainerProps {
   revealed: Accessor<boolean>;

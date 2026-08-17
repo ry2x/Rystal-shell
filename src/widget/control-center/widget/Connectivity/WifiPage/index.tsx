@@ -3,17 +3,18 @@ import {Gtk} from 'ags/gtk4';
 
 import Network from 'gi://AstalNetwork';
 
-import {toggleWifi} from '../../../../../stores/connectivity/network';
+import {toggleWifi} from '@/stores/connectivity/network';
+import {type WifiConfirmation, createWifiPageState} from '@/stores/connectivity/wifiPage';
+import AnimatedList from '@/widget/common/AnimatedList';
+import {LucideIcon} from '@/widget/common/lucide';
 import {
-  type WifiConfirmation,
-  createWifiPageState,
-} from '../../../../../stores/connectivity/wifiPage';
-import {LucideIcon} from '../../../../../widget/common/lucide';
-import AnimatedList from '../../../../common/AnimatedList';
-import {ConfirmOverlay, ErrorLabel, PageHeader} from '../Shared';
-import AvailableNetworkRow from './AvailableNetworkRow';
-import ConnectedNetworkRow from './ConnectedNetworkRow';
-import {getAccessPointId} from './utils';
+  ConfirmOverlay,
+  ErrorLabel,
+  PageHeader,
+} from '@/widget/control-center/widget/Connectivity/Shared';
+import AvailableNetworkRow from '@/widget/control-center/widget/Connectivity/WifiPage/AvailableNetworkRow';
+import ConnectedNetworkRow from '@/widget/control-center/widget/Connectivity/WifiPage/ConnectedNetworkRow';
+import {getAccessPointId} from '@/widget/control-center/widget/Connectivity/WifiPage/utils';
 
 export interface WifiPageProps {
   monitorConnector: string;

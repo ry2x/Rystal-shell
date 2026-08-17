@@ -1,8 +1,12 @@
 import {type Accessor, createState, onCleanup} from 'ags';
 import {type Timer, interval, timeout} from 'ags/time';
 
-import {deactivateSidePanel} from '../shell/windowManager';
-import {cancelWallpaperWork, clearWallpaperError, refreshWallpapers} from './wallpaper';
+import {deactivateSidePanel} from '@/stores/shell/windowManager';
+import {
+  cancelWallpaperWork,
+  clearWallpaperError,
+  refreshWallpapers,
+} from '@/stores/wallpaper/wallpaper';
 
 const PANEL_HEIGHT = 390;
 const HIDE_DELAY_MS = 420;

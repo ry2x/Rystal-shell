@@ -1,7 +1,7 @@
 import {type Accessor, type Setter, createState, onCleanup} from 'ags';
 import {type Timer, timeout} from 'ags/time';
 
-import {shellMotion} from '../../lib/motion';
+import {shellMotion} from '@/lib/motion';
 
 export interface AnimatedListEntry<T> {
   id: string;

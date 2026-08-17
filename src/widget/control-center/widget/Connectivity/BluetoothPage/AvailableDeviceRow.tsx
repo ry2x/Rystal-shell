@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Bluetooth from 'gi://AstalBluetooth';
 import Pango from 'gi://Pango';
 
-import {getBluetoothDeviceDetail} from './utils';
+import {getBluetoothDeviceDetail} from '@/widget/control-center/widget/Connectivity/BluetoothPage/utils';
 
 export interface AvailableDeviceRowProps {
   device: Bluetooth.Device;

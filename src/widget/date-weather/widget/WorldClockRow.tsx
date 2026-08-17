@@ -1,7 +1,7 @@
 import {Gtk} from 'ags/gtk4';
 
-import {clockTime} from '../../../stores/system/time';
-import {formatWorldClockDetails, formatWorldClockTime} from '../utils';
+import {clockTime} from '@/stores/system/time';
+import {formatWorldClockDetails, formatWorldClockTime} from '@/widget/date-weather/utils';
 
 export interface WorldClockRowProps {
   label: string;

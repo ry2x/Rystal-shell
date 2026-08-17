@@ -1,9 +1,9 @@
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import {createWallpaperSelectorState} from '../../stores/wallpaper/wallpaperSelector';
-import ClickCatcher from '../common/ClickCatcher';
-import CoverFlowController from './widget/CoverFlow';
+import {createWallpaperSelectorState} from '@/stores/wallpaper/wallpaperSelector';
+import ClickCatcher from '@/widget/common/ClickCatcher';
+import CoverFlowController from '@/widget/wallpaper-selector/widget/CoverFlow';
 
 const PANEL_HEIGHT = 390;
 const BAR_WIDTH = 47;

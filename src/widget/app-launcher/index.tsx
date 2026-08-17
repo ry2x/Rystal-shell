@@ -3,13 +3,13 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import {type Timer, idle} from 'ags/time';
 
-import {createAppLauncherState} from '../../stores/application/appLauncher';
+import {createAppLauncherState} from '@/stores/application/appLauncher';
 import {
   ensureLauncherBackground,
   registerLauncherBackground,
-} from '../../stores/application/launcherBackground';
-import {AppList} from './widget/AppList';
-import {SearchInput} from './widget/SearchInput';
+} from '@/stores/application/launcherBackground';
+import {AppList} from '@/widget/app-launcher/widget/AppList';
+import {SearchInput} from '@/widget/app-launcher/widget/SearchInput';
 
 function createLauncherBackground() {
   const picture = new Gtk.Picture({

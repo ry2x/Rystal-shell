@@ -5,8 +5,8 @@ import {
   caffeineBusy,
   caffeineState,
   toggleCaffeine,
-} from '../../../../stores/system/caffeine';
-import {LucideIcon} from '../../../../widget/common/lucide';
+} from '@/stores/system/caffeine';
+import {LucideIcon} from '@/widget/common/lucide';
 
 function getCaffeineIcon(state: CaffeineState) {
   if (state === 'enabled') return 'coffee';

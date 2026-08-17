@@ -1,13 +1,13 @@
 import {For, onCleanup} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import {shellMotion} from '../../lib/motion';
-import {type ControlCenterState} from '../../stores/panel/controlCenter';
-import {createBarBackgroundGeometry} from '../../stores/shell/barBackground';
-import ControlCenterContent from './ControlCenterContent';
-import PageContainer from './PageContainer';
-import {BluetoothPage, WifiPage} from './widget/Connectivity';
-import {SoundPage} from './widget/Sound';
+import {shellMotion} from '@/lib/motion';
+import {type ControlCenterState} from '@/stores/panel/controlCenter';
+import {createBarBackgroundGeometry} from '@/stores/shell/barBackground';
+import ControlCenterContent from '@/widget/control-center/ControlCenterContent';
+import PageContainer from '@/widget/control-center/PageContainer';
+import {BluetoothPage, WifiPage} from '@/widget/control-center/widget/Connectivity';
+import {SoundPage} from '@/widget/control-center/widget/Sound';
 
 export interface ControlCenterPagesProps {
   state: ControlCenterState;

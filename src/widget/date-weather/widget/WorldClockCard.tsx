@@ -1,7 +1,7 @@
 import {Gtk} from 'ags/gtk4';
 
-import {appConfig} from '../../../lib/config';
-import WorldClockRow from './WorldClockRow';
+import {appConfig} from '@/lib/config';
+import WorldClockRow from '@/widget/date-weather/widget/WorldClockRow';
 
 const WORLD_CLOCKS = appConfig.worldClocks;
 

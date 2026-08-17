@@ -3,8 +3,8 @@ import {Gtk} from 'ags/gtk4';
 
 import Bluetooth from 'gi://AstalBluetooth';
 
-import {toggleBluetooth} from '../../../../stores/connectivity/network';
-import {LucideIcon} from '../../../../widget/common/lucide';
+import {toggleBluetooth} from '@/stores/connectivity/network';
+import {LucideIcon} from '@/widget/common/lucide';
 
 export interface BluetoothToggleProps {
   onOpen: () => void;

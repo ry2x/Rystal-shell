@@ -3,10 +3,10 @@ import {Gtk} from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
-import {LucideIcon} from '../../../../widget/common/lucide';
-import DeviceSelector from './DeviceSelector';
-import VolumeControls from './VolumeControls';
-import {type SoundDeviceKind} from './types';
+import {LucideIcon} from '@/widget/common/lucide';
+import DeviceSelector from '@/widget/control-center/widget/Sound/DeviceSelector';
+import VolumeControls from '@/widget/control-center/widget/Sound/VolumeControls';
+import {type SoundDeviceKind} from '@/widget/control-center/widget/Sound/types';
 
 export interface SoundDeviceSectionProps {
   title: string;

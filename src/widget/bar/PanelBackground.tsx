@@ -8,7 +8,7 @@ import {
   type BarColors,
   barColors,
   createBarBackgroundGeometry,
-} from '../../stores/shell/barBackground';
+} from '@/stores/shell/barBackground';
 
 export interface PanelBackgroundProps {
   monitor: Gdk.Monitor;

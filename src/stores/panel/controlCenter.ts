@@ -1,8 +1,8 @@
 import {type Accessor, createState, onCleanup} from 'ags';
 import {type Timer, timeout} from 'ags/time';
 
-import {shellMotion} from '../../lib/motion';
-import {deactivateSidePanel} from '../shell/windowManager';
+import {shellMotion} from '@/lib/motion';
+import {deactivateSidePanel} from '@/stores/shell/windowManager';
 
 export type ControlCenterPage = 'main' | 'wifi' | 'bluetooth' | 'sound';
 export type ControlCenterDetailPage = Exclude<ControlCenterPage, 'main'>;
