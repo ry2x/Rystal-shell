@@ -4,7 +4,7 @@ import {execAsync} from 'ags/process';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-import {ryprlandWallpaperDir} from '@/lib/paths';
+import {rystalShellWallpaperDir} from '@/lib/paths';
 import {
   cancelWallpaperThumbnailWork,
   ensureWallpaperThumbnails,
@@ -21,7 +21,7 @@ export interface Wallpaper {
 }
 
 const SUPPORTED_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'webp', 'gif']);
-const wallpaperRoot = GLib.canonicalize_filename(ryprlandWallpaperDir, GLib.get_home_dir());
+const wallpaperRoot = GLib.canonicalize_filename(rystalShellWallpaperDir, GLib.get_home_dir());
 
 const [wallpapersState, setWallpapers] = createState<Wallpaper[]>([]);
 const [wallpapersLoadingState, setWallpapersLoading] = createState(false);
@@ -240,11 +240,17 @@ export async function applyWallpaper(wallpaper: Wallpaper) {
       throw new Error('Wallpaper no longer exists');
     }
 
+    if (!GLib.find_program_in_path('theme-switch.sh')) {
+      throw new Error('Theme switcher (theme-switch.sh) not found in PATH');
+    }
+
     await execAsync(['theme-switch.sh', 'set', '--', wallpaper.path]);
     return true;
   } catch (error) {
     console.error(`Failed to apply wallpaper ${wallpaper.path}:`, error);
-    setWallpaperError(`Failed to apply ${wallpaper.relativePath}`);
+    const message =
+      error instanceof Error ? error.message : `Failed to apply ${wallpaper.relativePath}`;
+    setWallpaperError(message);
     return false;
   } finally {
     setWallpaperApplying(false);

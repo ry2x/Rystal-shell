@@ -2,10 +2,10 @@ import {createState} from 'ags';
 
 import GLib from 'gi://GLib?version=2.0';
 
-import {ryprlandRuntimeDir} from '@/lib/paths';
+import {rystalShellRuntimeDir} from '@/lib/paths';
 import {type IdleDaemon, idleDaemonAdapter} from '@/stores/system/idleDaemon';
 
-const RUNTIME_DIR = `${ryprlandRuntimeDir}/rystal-shell`;
+const RUNTIME_DIR = rystalShellRuntimeDir;
 const CAFFEINE_REMOTE_FILE = `${RUNTIME_DIR}/caffeine-remote`;
 export type CaffeineState = 'disabled' | 'enabled' | 'remote';
 

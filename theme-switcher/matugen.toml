@@ -1,0 +1,6 @@
+[config]
+version_check = false
+
+[templates.rystal_shell]
+input_path = '~/theme.scss.template'
+output_path = '~/theme.scss'

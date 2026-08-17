@@ -2,9 +2,9 @@ import Apps from 'gi://AstalApps';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-import {ryprlandStateDir} from '@/lib/paths';
+import {rystalShellStateDir} from '@/lib/paths';
 
-const STATE_DIR = `${ryprlandStateDir}/rystal-shell`;
+const STATE_DIR = rystalShellStateDir;
 const HISTORY_FILE = `${STATE_DIR}/app-history.json`;
 const LEGACY_HISTORY_FILE = `${GLib.get_user_cache_dir()}/ags/app_history.json`;
 const MAX_HISTORY_ENTRIES = 100;

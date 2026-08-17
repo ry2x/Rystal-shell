@@ -3,14 +3,14 @@ import {type Process, subprocess} from 'ags/process';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-import {ryprlandCacheDir} from '@/lib/paths';
+import {rystalShellCacheDir} from '@/lib/paths';
 import type {Wallpaper} from '@/stores/wallpaper/wallpaper';
 
 const THUMBNAIL_WIDTH = 384;
 const THUMBNAIL_HEIGHT = 252;
 const THUMBNAIL_VERSION = `v7-${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}`;
 const MAX_THUMBNAIL_WORKERS = 4;
-const cacheRoot = `${ryprlandCacheDir}/wallpapers/thumbnails`;
+const cacheRoot = `${rystalShellCacheDir}/wallpapers/thumbnails`;
 const thumbnailSubscribers = new Set<(path: string, thumbnailPath: string) => void>();
 const textEncoder = new TextEncoder();
 

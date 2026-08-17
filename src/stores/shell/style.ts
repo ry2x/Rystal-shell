@@ -3,7 +3,7 @@ import {exec, execAsync} from 'ags/process';
 
 import GLib from 'gi://GLib';
 
-import {ryprlandRuntimeDir, rystalShellConfigDir, rystalShellDataDir} from '@/lib/paths';
+import {rystalShellConfigDir, rystalShellDataDir, rystalShellRuntimeDir} from '@/lib/paths';
 import {reloadBarColors} from '@/stores/shell/barBackground';
 
 let cssProvider: Gtk.CssProvider | null = null;
@@ -12,7 +12,7 @@ let lastCompiledCssHash: string | null = null;
 const styleEntry = `${rystalShellDataDir}/styles/style.scss`;
 const defaultThemeDir = `${rystalShellDataDir}/styles/default`;
 const defaultCssPath = `${rystalShellDataDir}/styles/default.css`;
-const runtimeDir = `${ryprlandRuntimeDir}/rystal-shell`;
+const runtimeDir = rystalShellRuntimeDir;
 const cssPath = `${runtimeDir}/style.css`;
 
 function ensureRuntimeDir() {

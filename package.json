@@ -26,7 +26,8 @@
     "check": "pnpm format:check && pnpm lint && pnpm knip && pnpm typecheck",
     "build": "./scripts/build.sh",
     "dev": "./scripts/dev.sh",
-    "deploy:user": "./scripts/deploy-user.sh"
+    "deploy:user": "./scripts/deploy-user.sh",
+    "install:launcher": "./scripts/install-launcher.sh"
   },
   "name": "rystal-shell",
   "packageManager": "pnpm@11.9.0",
