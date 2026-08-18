@@ -3,34 +3,14 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import {type Timer, idle} from 'ags/time';
 
-import {createAppLauncherState} from '@/stores/application/appLauncher';
-import {
-  ensureLauncherBackground,
-  registerLauncherBackground,
-} from '@/stores/application/launcherBackground';
-import {AppList} from '@/widget/app-launcher/widget/AppList';
-import {SearchInput} from '@/widget/app-launcher/widget/SearchInput';
+import {createAppSearchTextState} from '@/stores/application/appLauncher';
+import {ensureLauncherBackground} from '@/stores/application/launcherBackground';
 
-function createLauncherBackground() {
-  const picture = new Gtk.Picture({
-    contentFit: Gtk.ContentFit.COVER,
-    canTarget: false,
-    canShrink: true,
-    hexpand: true,
-    vexpand: true,
-    halign: Gtk.Align.FILL,
-    valign: Gtk.Align.FILL,
-    widthRequest: 1,
-    heightRequest: 1,
-  });
+import {AppList} from './widget/AppList';
+import {createLauncherBackground} from './widget/LauncherBackground';
+import {SearchInputBar} from './widget/SearchInput';
 
-  const unregister = registerLauncherBackground(picture);
-  picture.connect('destroy', unregister);
-
-  return picture;
-}
-
-function resetLauncherState(
+function resetAppSearchTextState(
   searchInput: Gtk.Entry,
   setText: (text: string) => void,
   setSelectedIndex: (index: number) => void
@@ -64,13 +44,15 @@ export interface AppLauncherProps {
 }
 
 export default function AppLauncher({monitor}: AppLauncherProps) {
-  const {text, setText, selectedIndex, setSelectedIndex, results} = createAppLauncherState();
   const monitorConnector = monitor.get_connector();
-  let focusTimer: Timer | null = null;
+
+  const {text, setText, selectedIndex, setSelectedIndex, results} = createAppSearchTextState();
 
   const launcherBackground = createLauncherBackground();
 
-  const searchInput = SearchInput({
+  let focusTimer: Timer | null = null;
+
+  const searchInputBar = SearchInputBar({
     text,
     setText,
     selectedIndex,
@@ -79,17 +61,8 @@ export default function AppLauncher({monitor}: AppLauncherProps) {
     monitorConnector,
   });
 
-  const launcherContent = (
-    <box orientation={Gtk.Orientation.VERTICAL} vexpand>
-      <box vexpand />
-      <box class="applauncher-search-container" hexpand>
-        {searchInput}
-      </box>
-    </box>
-  ) as Gtk.Box;
-
   const appList = AppList({
-    text,
+    searchText: text,
     selectedIndex,
     results,
     monitorConnector,
@@ -110,9 +83,9 @@ export default function AppLauncher({monitor}: AppLauncherProps) {
         focusTimer = null;
 
         if (!self.visible) {
-          resetLauncherState(searchInput, setText, setSelectedIndex);
+          resetAppSearchTextState(searchInputBar, setText, setSelectedIndex);
         } else {
-          focusTimer = focusLauncher(searchInput, appList);
+          focusTimer = focusLauncher(searchInputBar, appList);
         }
       }}
     >
@@ -125,14 +98,15 @@ export default function AppLauncher({monitor}: AppLauncherProps) {
             vexpand
             overflow={Gtk.Overflow.HIDDEN}
           >
-            <overlay
-              hexpand
-              vexpand
-              $={(self: Gtk.Overlay) => {
-                self.set_child(launcherBackground);
-                self.add_overlay(launcherContent);
-              }}
-            />
+            <overlay hexpand vexpand>
+              {launcherBackground}
+              <box $type="overlay" orientation={Gtk.Orientation.VERTICAL} vexpand>
+                <box vexpand />
+                <box class="applauncher-search-container" hexpand>
+                  {searchInputBar}
+                </box>
+              </box>
+            </overlay>
           </box>
 
           {/* Right Panel */}

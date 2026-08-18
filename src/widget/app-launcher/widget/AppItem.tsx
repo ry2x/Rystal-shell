@@ -7,10 +7,17 @@ import {recordAppLaunch} from '@/stores/application/applicationCatalog';
 import {toggleAppLauncher} from '@/stores/shell/windowManager';
 
 export interface AppItemProps {
-  res: Apps.Application;
+  app: Apps.Application;
   monitorConnector: string | null;
 }
 
+/**
+ * Creates a set of properties for a Gtk.Image widget based on the provided icon string.
+ * If the icon string is a file path,
+ * it sets the 'file' property; otherwise, it sets the 'iconName' property.
+ * @param iconStr The icon string, either a file path or an icon name.
+ * @returns An object containing the appropriate Gtk.Image properties.
+ */
 function createImageProp(iconStr: string): Partial<Gtk.Image.ConstructorProps> {
   const iconProps: Partial<Gtk.Image.ConstructorProps> = {
     cssClasses: ['applauncher-item-icon'],
@@ -25,29 +32,29 @@ function createImageProp(iconStr: string): Partial<Gtk.Image.ConstructorProps> {
   return iconProps;
 }
 
-export function AppItem({res, monitorConnector}: AppItemProps): Gtk.Button {
+export function AppItem({app, monitorConnector}: AppItemProps): Gtk.Button {
   return (
     <button
       class="applauncher-item"
       canFocus={false}
       onClicked={() => {
         toggleAppLauncher(monitorConnector);
-        recordAppLaunch(res);
-        res.launch();
+        recordAppLaunch(app);
+        app.launch();
       }}
     >
       <box orientation={Gtk.Orientation.HORIZONTAL} spacing={12}>
-        <image {...createImageProp(res.iconName)} />
+        <image {...createImageProp(app.iconName)} />
         <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
           <label
-            label={res.name}
+            label={app.name}
             halign={Gtk.Align.START}
             class="applauncher-item-name"
             ellipsize={Pango.EllipsizeMode.END}
           />
-          {res.description && (
+          {app.description && (
             <label
-              label={res.description}
+              label={app.description}
               halign={Gtk.Align.START}
               class="applauncher-item-desc"
               ellipsize={Pango.EllipsizeMode.END}

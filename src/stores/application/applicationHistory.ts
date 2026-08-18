@@ -18,6 +18,11 @@ function getApplicationKey(application: Apps.Application) {
   return application.entry || application.executable || application.name;
 }
 
+/**
+ * Manages the history of application launches,
+ * allowing for scoring and ranking of applications based on launch frequency.
+ * The history is persisted to a JSON file in the user's state directory.
+ */
 export class ApplicationHistory {
   private scores: Record<string, number> = {};
 
@@ -29,6 +34,11 @@ export class ApplicationHistory {
     return this.scores[getApplicationKey(application)] || 0;
   }
 
+  /**
+   * Records the launch of an application, updating its score in the history.
+   * @param application The application that was launched.
+   * @returns void
+   */
   recordLaunch(application: Apps.Application) {
     const key = getApplicationKey(application);
     if (!key) return;
@@ -41,6 +51,10 @@ export class ApplicationHistory {
     this.save();
   }
 
+  /**
+   * Trims the history to ensure that only the top MAX_HISTORY_ENTRIES are kept,
+   * based on their scores.
+   */
   private trim() {
     const entries = Object.entries(this.scores)
       .filter(([, score]) => Number.isFinite(score) && score > 0)
@@ -49,6 +63,12 @@ export class ApplicationHistory {
     this.scores = Object.fromEntries(entries);
   }
 
+  /**
+   * Migrates legacy scores from an older format to the current format,
+   * ensuring that only valid applications are retained.
+   * @param legacy A record of legacy application keys and their associated scores.
+   * @returns A new record of application keys and their migrated scores.
+   */
   private migrateLegacyScores(legacy: Record<string, number>) {
     const migrated: Record<string, number> = {};
     for (const [legacyKey, score] of Object.entries(legacy)) {
@@ -65,6 +85,9 @@ export class ApplicationHistory {
     return migrated;
   }
 
+  /**
+   * Loads the application launch history from the JSON file.
+   */
   private load() {
     try {
       const currentFile = Gio.File.new_for_path(HISTORY_FILE);

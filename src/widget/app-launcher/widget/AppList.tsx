@@ -4,16 +4,20 @@ import {type Timer, idle} from 'ags/time';
 
 import Apps from 'gi://AstalApps';
 
-import {AppItem} from '@/widget/app-launcher/widget/AppItem';
-import {SearchGoogleBtn} from '@/widget/app-launcher/widget/SearchGoogleBtn';
+import {AppItem} from './AppItem';
+import {SearchGoogleBtn} from './SearchGoogleBtn';
 
 export interface AppListProps {
-  text: Accessor<string>;
+  searchText: Accessor<string>;
   selectedIndex: Accessor<number>;
   results: Accessor<Apps.Application[]>;
   monitorConnector: string | null;
 }
 
+/**
+ * Adjust the scroll position of the provided scroll window to
+ * ensure that the target child widget is visible within the viewport.
+ */
 function scrollToSelection(scrollWindow: Gtk.ScrolledWindow, targetChild: Gtk.Widget) {
   const adjustment = scrollWindow.get_vadjustment();
   const viewport = scrollWindow.get_child();
@@ -34,6 +38,12 @@ function scrollToSelection(scrollWindow: Gtk.ScrolledWindow, targetChild: Gtk.Wi
   }
 }
 
+/**
+ * Updates the selection state of the application list and the "Search Google" button
+ * based on the current selected index and search query.
+ * It ensures that only one item is highlighted at a time and scrolls to
+ * the selected item if necessary.
+ */
 function updateSelection(
   appList: Gtk.Box,
   searchGoogleBtn: Gtk.Button,
@@ -68,13 +78,13 @@ function updateSelection(
 }
 
 export function AppList({
-  text,
+  searchText,
   selectedIndex,
   results,
   monitorConnector,
 }: AppListProps): Gtk.ScrolledWindow {
   const searchGoogleBtn = SearchGoogleBtn({
-    textState: text,
+    searchText,
     monitorConnector,
   });
 
@@ -97,7 +107,7 @@ export function AppList({
       <box orientation={Gtk.Orientation.VERTICAL} class="applauncher-list" spacing={10}>
         <box orientation={Gtk.Orientation.VERTICAL} spacing={10} $={self => (appList = self)}>
           <For each={results}>
-            {appInstance => <AppItem res={appInstance} monitorConnector={monitorConnector} />}
+            {appInstance => <AppItem app={appInstance} monitorConnector={monitorConnector} />}
           </For>
         </box>
         {searchGoogleBtn}
@@ -108,7 +118,7 @@ export function AppList({
   createEffect(() => {
     selectedIndex();
     results();
-    text();
+    searchText();
 
     selectionTimer?.cancel();
     selectionTimer = idle(() => {
@@ -119,7 +129,7 @@ export function AppList({
         scrollWindow,
         selectedIndex.peek(),
         results.peek(),
-        text.peek().trim()
+        searchText.peek().trim()
       );
     });
   });

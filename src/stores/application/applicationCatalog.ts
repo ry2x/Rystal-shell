@@ -10,6 +10,13 @@ function getResultKey(application: Apps.Application) {
   return application.name + (application.description || '') + (application.iconName || '');
 }
 
+/**
+ * Filters the provided list of applications to ensure that only unique applications are returned,
+ * based on their name, description, and icon name.
+ * The results are limited to a maximum number of entries defined by MAX_APP_RESULTS.
+ * @param applicationList The list of applications to filter for uniqueness.
+ * @returns A list of unique applications, limited to MAX_APP_RESULTS.
+ */
 function getUniqueResults(applicationList: Apps.Application[]) {
   const results: Apps.Application[] = [];
   const seen = new Set<string>();
@@ -26,7 +33,7 @@ function getUniqueResults(applicationList: Apps.Application[]) {
   return results;
 }
 
-function getApplicationList() {
+function getSortedAppList() {
   return applications.get_list().sort((applicationA, applicationB) => {
     const scoreA = history.getScore(applicationA);
     const scoreB = history.getScore(applicationB);
@@ -35,13 +42,26 @@ function getApplicationList() {
   });
 }
 
+/**
+ * Records the launch of an application, updating its score in the history.
+ * @param application The application that was launched.
+ * @returns void
+ */
 export function recordAppLaunch(application: Apps.Application) {
   history.recordLaunch(application);
 }
 
+/**
+ * Searches for applications based on the provided query string,
+ * returning a list of matching applications sorted by relevance and launch history.
+ * @param query The search query string.
+ * @returns A list of applications that match the search query.
+ */
 export function searchApps(query: string) {
-  const allApplications = getApplicationList();
+  const allApplications = getSortedAppList();
+
   if (query === '') return getUniqueResults(allApplications);
+
   const keywords = query.split(/\s+/);
 
   const results = allApplications

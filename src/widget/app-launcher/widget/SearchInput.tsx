@@ -7,7 +7,7 @@ import {recordAppLaunch} from '@/stores/application/applicationCatalog';
 import {openQuery} from '@/stores/application/query';
 import {toggleAppLauncher} from '@/stores/shell/windowManager';
 
-export interface SearchInputProps {
+export interface SearchInputBarProps {
   text: Accessor<string>;
   setText: Setter<string>;
   selectedIndex: Accessor<number>;
@@ -16,14 +16,14 @@ export interface SearchInputProps {
   monitorConnector: string | null;
 }
 
-export function SearchInput({
+export function SearchInputBar({
   text,
   setText,
   selectedIndex,
   setSelectedIndex,
   results,
   monitorConnector,
-}: SearchInputProps): Gtk.Entry {
+}: SearchInputBarProps): Gtk.Entry {
   const searchEntry = (
     <entry class="applauncher-input" placeholderText="Search apps..." hexpand />
   ) as Gtk.Entry;
@@ -33,6 +33,7 @@ export function SearchInput({
     setSelectedIndex(0);
   });
 
+  // Capture navigation keys before Gtk.Entry handles them so they control the selected result.
   const entryKeyCtrl = new Gtk.EventControllerKey();
   entryKeyCtrl.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
   entryKeyCtrl.connect('key-pressed', (_, keyval) => {
@@ -65,6 +66,7 @@ export function SearchInput({
     }
     return false;
   });
+
   searchEntry.add_controller(entryKeyCtrl);
 
   return searchEntry;
