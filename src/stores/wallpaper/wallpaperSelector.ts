@@ -45,6 +45,7 @@ export function createWallpaperSelectorState({
 
   function animatePanelTo(height: number) {
     targetPanelHeight = height;
+    // Reuse the current timer when the target changes during an animation.
     if (animationTimer) return;
 
     animationTimer = interval(ANIMATION_INTERVAL_MS, () => {
@@ -69,6 +70,7 @@ export function createWallpaperSelectorState({
     deactivateSidePanel('wallpaper-selector', monitorConnector);
 
     cancelHideTimer();
+    // Keep scanning and the window alive until the closing animation has settled.
     hideTimer = timeout(HIDE_DELAY_MS, () => {
       hideTimer = null;
       setCoverFlowActive(false);

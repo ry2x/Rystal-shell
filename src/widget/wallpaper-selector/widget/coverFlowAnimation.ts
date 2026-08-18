@@ -17,7 +17,7 @@ export interface CoverFlowCardState {
 }
 
 interface CoverFlowAnimationOptions {
-  fixed: Gtk.Fixed;
+  cardContainer: Gtk.Fixed;
   cards: Map<string, CoverFlowCardState>;
   onVisualsUpdated: () => void;
   onFinished: () => void;
@@ -47,7 +47,9 @@ export class CoverFlowAnimation {
     this.animationStartedAt = GLib.get_monotonic_time();
     if (this.tickId !== 0) return;
 
-    this.tickId = this.options.fixed.add_tick_callback((_widget, frameClock) => {
+    // A GTK frame callback keeps movement and opacity changes synchronized
+    // with rendering instead of relying on a fixed-rate timer.
+    this.tickId = this.options.cardContainer.add_tick_callback((_widget, frameClock) => {
       const now = frameClock.get_frame_time();
       const moveProgress = Math.min(1, (now - this.animationStartedAt) / MOVE_DURATION_US);
       const eased = easeOutCubic(moveProgress);
@@ -76,7 +78,7 @@ export class CoverFlowAnimation {
 
   stop() {
     if (this.tickId === 0) return;
-    this.options.fixed.remove_tick_callback(this.tickId);
+    this.options.cardContainer.remove_tick_callback(this.tickId);
     this.tickId = 0;
   }
 }

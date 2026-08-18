@@ -129,6 +129,7 @@ function pumpThumbnailQueue() {
 }
 
 export function ensureWallpaperThumbnails(items: Wallpaper[], priority = true) {
+  // Visible cards use priority jobs; the initial scan fills the cache afterward.
   const currentGeneration = generation;
   for (const wallpaper of items) {
     if (GLib.file_test(wallpaper.thumbnailPath, GLib.FileTest.IS_REGULAR)) continue;
@@ -162,6 +163,7 @@ export function subscribeThumbnailReady(subscriber: (path: string, thumbnailPath
 }
 
 export function cancelWallpaperThumbnailWork() {
+  // Invalidate queued and running jobs before killing their processes.
   generation++;
   thumbnailQueue = [];
   queuedThumbnails.clear();

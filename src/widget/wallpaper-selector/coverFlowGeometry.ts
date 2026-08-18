@@ -3,6 +3,10 @@ import Gsk from 'gi://Gsk';
 
 const WALLPAPER_CARD_WIDTH = 384;
 const WALLPAPER_CARD_HEIGHT = 252;
+const CENTER_Y = 52;
+const ENTRANCE_OFFSET_Y = 70;
+const CLOSE_CARD_SPACING = 290;
+const FAR_CARD_SPACING = 190;
 
 function interpolateStops(distance: number, values: readonly number[]) {
   const clamped = Math.min(distance, values.length - 1);
@@ -22,12 +26,15 @@ export function getCoverFlowOpacity(offset: number) {
 export function createCoverFlowTransform(offset: number, containerWidth: number, entrance: number) {
   const distance = Math.abs(offset);
   const direction = Math.sign(offset);
-  const horizontal = distance <= 1 ? distance * 290 : 290 + (distance - 1) * 190;
+  const horizontal =
+    distance <= 1
+      ? distance * CLOSE_CARD_SPACING
+      : CLOSE_CARD_SPACING + (distance - 1) * FAR_CARD_SPACING;
   const scale = interpolateStops(distance, [1.06, 0.88, 0.76, 0.64, 0.56]);
   const skew = direction * interpolateStops(distance, [0, -9, -12, -14, -16]);
   const arcDrop = interpolateStops(distance, [-14, 24, 62, 108, 152]);
   const x = (containerWidth - WALLPAPER_CARD_WIDTH) / 2 + direction * horizontal;
-  const y = 52 + arcDrop + (1 - entrance) * 70;
+  const y = CENTER_Y + arcDrop + (1 - entrance) * ENTRANCE_OFFSET_Y;
 
   let transform: Gsk.Transform | null = Gsk.Transform.new();
   transform = transform.translate(new Graphene.Point({x, y}));

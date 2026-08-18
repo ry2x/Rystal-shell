@@ -32,6 +32,7 @@ export const wallpapersLoading = wallpapersLoadingState;
 export const wallpaperApplying = wallpaperApplyingState;
 export const wallpaperError = wallpaperErrorState;
 
+// A new refresh invalidates every older async enumeration.
 let refreshGeneration = 0;
 let refreshCancellable: Gio.Cancellable | null = null;
 
