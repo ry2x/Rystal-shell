@@ -8,7 +8,7 @@ import type {Wallpaper} from '@/stores/wallpaper/wallpaper';
 
 const THUMBNAIL_WIDTH = 384;
 const THUMBNAIL_HEIGHT = 252;
-const THUMBNAIL_VERSION = `v7-${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}`;
+const THUMBNAIL_VERSION = `v8-${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}`;
 const MAX_THUMBNAIL_WORKERS = 4;
 const cacheRoot = `${rystalShellCacheDir}/wallpapers/thumbnails`;
 const thumbnailSubscribers = new Set<(path: string, thumbnailPath: string) => void>();
@@ -38,7 +38,7 @@ function thumbnailKey(path: string, size: number, modified: number) {
 }
 
 export function getWallpaperThumbnailPath(path: string, size: number, modified: number) {
-  return `${cacheRoot}/${thumbnailKey(path, size, modified)}.png`;
+  return `${cacheRoot}/${thumbnailKey(path, size, modified)}.webp`;
 }
 
 function notifyThumbnailReady(path: string, thumbnailPath: string) {
@@ -85,7 +85,7 @@ async function generateThumbnail(job: ThumbnailJob) {
         'center',
         '-extent',
         `${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}`,
-        `png:${temporaryPath}`,
+        `webp:${temporaryPath}`,
       ],
       err: line => errors.push(line),
     });
