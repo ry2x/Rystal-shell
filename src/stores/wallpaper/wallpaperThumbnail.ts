@@ -77,7 +77,12 @@ async function generateThumbnail(job: ThumbnailJob) {
     const process = subprocess({
       cmd: [
         'magick',
+        '-limit',
+        'thread',
+        '1',
         `${wallpaper.path}[0]`,
+        '-colorspace',
+        'sRGB',
         '-strip',
         '-thumbnail',
         `${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}^`,
@@ -85,6 +90,10 @@ async function generateThumbnail(job: ThumbnailJob) {
         'center',
         '-extent',
         `${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}`,
+        '-quality',
+        '80',
+        '-define',
+        'webp:method=2',
         `webp:${temporaryPath}`,
       ],
       err: line => errors.push(line),
