@@ -55,7 +55,11 @@ function deleteTemporaryThumbnail(path: string) {
 
 function waitForThumbnailProcess(process: Process) {
   return new Promise<{code: number; signaled: boolean}>(resolve => {
-    process.connect('exit', (_, code, signaled) => resolve({code, signaled}));
+    let exitHook: number | null = null;
+    exitHook = process.connect('exit', (_, code, signaled) => {
+      if (exitHook !== null) process.disconnect(exitHook);
+      resolve({code, signaled});
+    });
   });
 }
 
