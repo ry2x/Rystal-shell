@@ -25,6 +25,8 @@ The following packages are required to build and use Rystal-shell on its own:
 - [libastal-meta](https://aur.archlinux.org/packages/libastal-meta)
 - `dart-sass`
 - `imagemagick`
+- `webp-pixbuf-loader`
+- `gsound`
 - `pnpm` (build and development)
 
 The bundled wallpaper and theme switcher additionally requires:
@@ -39,7 +41,7 @@ Individual shell features may require their corresponding system tools, such as
 
 ```sh
 # for Arch Linux
-paru -S aylurs-gtk-shell-git libastal-meta dart-sass imagemagick awww matugen util-linux pnpm
+paru -S aylurs-gtk-shell-git libastal-meta dart-sass imagemagick awww matugen util-linux pnpm webp-pixbuf-loader gsound
 ```
 
 ### Build, Deploy, and Start
