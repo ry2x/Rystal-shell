@@ -1,3 +1,5 @@
+import {type Process, subprocess} from 'ags/process';
+
 import Mpris from 'gi://AstalMpris';
 import GLib from 'gi://GLib?version=2.0';
 import Gio from 'gi://Gio';
@@ -6,6 +8,7 @@ import Soup from 'gi://Soup?version=3.0';
 import {rystalShellCacheDir} from '@/lib/paths';
 
 const DOWNLOAD_TIMEOUT_SECONDS = 10;
+const THUMBNAIL_SIZE = 160;
 const YOUTUBE_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
 const thumbnailSession = new Soup.Session({timeout: DOWNLOAD_TIMEOUT_SECONDS});
 
@@ -79,16 +82,80 @@ async function downloadThumbnail(id: string, localPath: string, cancellable: Gio
   // 1280x720 max-resolution image only increases JPEG/Pixbuf working memory.
   const mediumQualityUrl = `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
   if (await downloadThumbnailUrl(mediumQualityUrl, localPath, cancellable)) {
-    return `file://${localPath}`;
+    return true;
   }
   if (cancellable.is_cancelled()) return null;
 
   const fallbackUrl = `https://img.youtube.com/vi/${id}/default.jpg`;
   if (await downloadThumbnailUrl(fallbackUrl, localPath, cancellable)) {
-    return `file://${localPath}`;
+    return true;
   }
 
   return null;
+}
+
+function deleteDownloadedThumbnail(path: string) {
+  try {
+    Gio.File.new_for_path(path).delete(null);
+  } catch {
+    // The process may not have created the file, or it may already have been moved.
+  }
+}
+
+function waitForProcess(process: Process) {
+  return new Promise<{code: number; signaled: boolean}>(resolve => {
+    let exitHook: number | null = null;
+    exitHook = process.connect('exit', (_, code, signaled) => {
+      if (exitHook !== null) process.disconnect(exitHook);
+      resolve({code, signaled});
+    });
+  });
+}
+
+async function convertThumbnail(
+  sourcePath: string,
+  outputPath: string,
+  jobCancellable: Gio.Cancellable
+) {
+  const errors: string[] = [];
+  const process = subprocess({
+    cmd: [
+      'magick',
+      sourcePath,
+      '-strip',
+      '-thumbnail',
+      `${THUMBNAIL_SIZE}x${THUMBNAIL_SIZE}^`,
+      '-gravity',
+      'center',
+      '-extent',
+      `${THUMBNAIL_SIZE}x${THUMBNAIL_SIZE}`,
+      '-quality',
+      '70',
+      '-define',
+      'webp:method=2',
+      `webp:${outputPath}`,
+    ],
+    err: line => errors.push(line),
+  });
+
+  const cancellationHook = jobCancellable.connect(() => {
+    try {
+      process.kill();
+    } catch {
+      // The process may have exited immediately before cancellation.
+    }
+  });
+
+  try {
+    const {code, signaled} = await waitForProcess(process);
+    if (jobCancellable.is_cancelled()) return false;
+    if (signaled || code !== 0) {
+      throw new Error(errors.join('\n') || `magick exited with status ${code}`);
+    }
+    return true;
+  } finally {
+    jobCancellable.disconnect(cancellationHook);
+  }
 }
 
 export async function fetchYouTubeThumbnail(
@@ -112,9 +179,32 @@ export async function fetchYouTubeThumbnail(
   if (!id) return null;
 
   const cacheDir = `${rystalShellCacheDir}/media`;
-  const localPath = `${cacheDir}/${id}-mq.jpg`;
+  const localPath = `${cacheDir}/${id}-160.webp`;
   if (GLib.file_test(localPath, GLib.FileTest.EXISTS)) return `file://${localPath}`;
 
   GLib.mkdir_with_parents(cacheDir, 0o755);
-  return downloadThumbnail(id, localPath, cancellable);
+  const temporarySourcePath = `${localPath}.source-${GLib.uuid_string_random()}.jpg`;
+  const temporaryOutputPath = `${localPath}.tmp-${GLib.uuid_string_random()}`;
+
+  try {
+    if (!(await downloadThumbnail(id, temporarySourcePath, cancellable))) return null;
+    if (cancellable.is_cancelled()) return null;
+    if (!(await convertThumbnail(temporarySourcePath, temporaryOutputPath, cancellable)))
+      return null;
+
+    Gio.File.new_for_path(temporaryOutputPath).move(
+      Gio.File.new_for_path(localPath),
+      Gio.FileCopyFlags.OVERWRITE,
+      cancellable,
+      null
+    );
+    return `file://${localPath}`;
+  } catch (error) {
+    if (!cancellable.is_cancelled()) {
+      console.error(`Failed to generate YouTube thumbnail for ${id}:`, error);
+    }
+    return null;
+  } finally {
+    deleteDownloadedThumbnail(temporarySourcePath);
+  }
 }

@@ -8,7 +8,7 @@ import type {Wallpaper} from '@/stores/wallpaper/wallpaper';
 
 const THUMBNAIL_WIDTH = 384;
 const THUMBNAIL_HEIGHT = 252;
-const THUMBNAIL_VERSION = `v7-${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}`;
+const THUMBNAIL_VERSION = `v8-${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}`;
 const MAX_THUMBNAIL_WORKERS = 4;
 const cacheRoot = `${rystalShellCacheDir}/wallpapers/thumbnails`;
 const thumbnailSubscribers = new Set<(path: string, thumbnailPath: string) => void>();
@@ -38,7 +38,7 @@ function thumbnailKey(path: string, size: number, modified: number) {
 }
 
 export function getWallpaperThumbnailPath(path: string, size: number, modified: number) {
-  return `${cacheRoot}/${thumbnailKey(path, size, modified)}.png`;
+  return `${cacheRoot}/${thumbnailKey(path, size, modified)}.webp`;
 }
 
 function notifyThumbnailReady(path: string, thumbnailPath: string) {
@@ -55,7 +55,11 @@ function deleteTemporaryThumbnail(path: string) {
 
 function waitForThumbnailProcess(process: Process) {
   return new Promise<{code: number; signaled: boolean}>(resolve => {
-    process.connect('exit', (_, code, signaled) => resolve({code, signaled}));
+    let exitHook: number | null = null;
+    exitHook = process.connect('exit', (_, code, signaled) => {
+      if (exitHook !== null) process.disconnect(exitHook);
+      resolve({code, signaled});
+    });
   });
 }
 
@@ -77,7 +81,12 @@ async function generateThumbnail(job: ThumbnailJob) {
     const process = subprocess({
       cmd: [
         'magick',
+        '-limit',
+        'thread',
+        '1',
         `${wallpaper.path}[0]`,
+        '-colorspace',
+        'sRGB',
         '-strip',
         '-thumbnail',
         `${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}^`,
@@ -85,7 +94,11 @@ async function generateThumbnail(job: ThumbnailJob) {
         'center',
         '-extent',
         `${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}`,
-        `png:${temporaryPath}`,
+        '-quality',
+        '80',
+        '-define',
+        'webp:method=2',
+        `webp:${temporaryPath}`,
       ],
       err: line => errors.push(line),
     });

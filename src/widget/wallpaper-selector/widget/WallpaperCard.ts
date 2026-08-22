@@ -1,7 +1,9 @@
 import {Gtk} from 'ags/gtk4';
 
 import GLib from 'gi://GLib';
+import Gio from 'gi://Gio';
 
+import {loadTextureFromUri} from '@/lib/image';
 import type {Wallpaper} from '@/stores/wallpaper/wallpaper';
 
 const CARD_WIDTH = 384;
@@ -52,7 +54,14 @@ export class WallpaperCardController {
     const imagePath = GLib.file_test(wallpaper.thumbnailPath, GLib.FileTest.IS_REGULAR)
       ? wallpaper.thumbnailPath
       : wallpaper.path;
-    this.picture.set_filename(imagePath);
+    try {
+      this.picture.set_paintable(
+        loadTextureFromUri(Gio.File.new_for_path(imagePath).get_uri(), CARD_WIDTH, CARD_HEIGHT)
+      );
+    } catch (error) {
+      console.error(`Failed to load wallpaper image ${imagePath}:`, error);
+      this.picture.set_paintable(null);
+    }
   }
 
   setSelected(selected: boolean) {
@@ -61,7 +70,7 @@ export class WallpaperCardController {
   }
 
   clear() {
-    this.picture.set_filename(null);
+    this.picture.set_paintable(null);
     this.widget.set_tooltip_text(null);
     this.widget.remove_css_class('selected');
     this.boundWallpaper = null;
