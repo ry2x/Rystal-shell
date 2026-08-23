@@ -1,6 +1,10 @@
 @use 'sass:color';
 @use 'variables' as *;
 
+$glass-edge: rgba($on-surface, 0.13);
+$glass-edge-soft: rgba($on-surface, 0.07);
+$glass-shadow: rgba(0, 0, 0, 0.28);
+
 // Date & Weather popup
 window.DateWeatherPopup {
   background: transparent;
@@ -8,12 +12,16 @@ window.DateWeatherPopup {
   font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
 
   .dw-container {
-    background: transparent;
+    background-color: transparent;
+    background-image: none;
     margin: 0;
     border: none;
+    border-right: 1px solid $glass-edge;
     border-radius: 0;
     padding: 24px;
-    box-shadow: none;
+    box-shadow:
+      inset -1px 0 rgba($on-surface, 0.035),
+      18px 0 48px rgba(0, 0, 0, 0.18);
     min-width: 830px;
     min-height: 600px;
   }
@@ -26,14 +34,27 @@ window.DateWeatherPopup {
   }
 
   .widget-card {
-    background: rgba($on-surface, 0.04);
-    border: 1px solid rgba($on-surface, 0.08);
+    background-color: rgba($surface, 0.3);
+    background-image: linear-gradient(
+      145deg,
+      rgba($on-surface, 0.095),
+      rgba($on-surface, 0.035) 48%,
+      rgba($surface, 0.14)
+    );
+    border: 1px solid $glass-edge;
     border-radius: 16px;
     padding: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    box-shadow:
+      inset 0 1px rgba($on-surface, 0.07),
+      0 10px 28px $glass-shadow;
     transition: all $motion-standard $motion-ease;
     &:hover {
-      background: rgba($on-surface, 0.06);
+      background-color: rgba($surface, 0.38);
+      border-color: rgba($primary, 0.22);
+      box-shadow:
+        inset 0 1px rgba($on-surface, 0.1),
+        0 12px 32px rgba(0, 0, 0, 0.34),
+        0 0 18px rgba($primary, 0.07);
     }
   }
 
@@ -113,48 +134,123 @@ window.DateWeatherPopup {
 
   .vertical-sep {
     min-width: 1px;
-    background: $border;
+    background-color: transparent;
+    background-image: linear-gradient(
+      to bottom,
+      transparent,
+      rgba($on-surface, 0.12) 8%,
+      rgba($primary, 0.18) 50%,
+      rgba($on-surface, 0.12) 92%,
+      transparent
+    );
     margin: 8px 0;
+    box-shadow: 1px 0 12px rgba($primary, 0.08);
+  }
+  .notif-header {
+    background-color: rgba($surface, 0.22);
+    background-image: linear-gradient(110deg, rgba($on-surface, 0.075), rgba($on-surface, 0.025));
+    border: 1px solid $glass-edge-soft;
+    border-radius: 14px;
+    padding: 8px 10px;
+    box-shadow:
+      inset 0 1px rgba($on-surface, 0.06),
+      0 8px 22px rgba(0, 0, 0, 0.2);
   }
   .notif-header-btn {
-    background: rgba($on-surface, 0.05);
-    border: none;
-    border-radius: 8px;
-    padding: 6px 12px;
+    background-color: rgba($surface, 0.22);
+    background-image: linear-gradient(
+      to bottom,
+      rgba($on-surface, 0.12),
+      rgba($on-surface, 0.045) 48%,
+      rgba($surface, 0.16)
+    );
+    border: 1px solid rgba($on-surface, 0.14);
+    border-radius: 10px;
+    padding: 7px 13px;
+    color: rgba($text, 0.84);
+    box-shadow:
+      inset 0 1px rgba($on-surface, 0.13),
+      inset 0 -1px rgba(0, 0, 0, 0.16),
+      0 6px 16px rgba(0, 0, 0, 0.24);
     transition: all $motion-standard $motion-ease;
     label {
       font-size: 0.8em;
       font-weight: 600;
     }
     &.clear-all:hover {
-      background: $error;
-      color: $on-error;
+      background-color: rgba($error-container, 0.22);
+      background-image: linear-gradient(to bottom, rgba($error, 0.18), rgba($error, 0.07));
+      border-color: rgba($error, 0.42);
+      color: $error;
+      box-shadow:
+        inset 0 1px rgba($on-surface, 0.14),
+        0 6px 18px rgba(0, 0, 0, 0.28),
+        0 0 16px rgba($error, 0.14);
     }
     &.dnd:hover {
-      background: rgba($on-surface, 0.1);
+      background-color: rgba($primary, 0.08);
+      border-color: rgba($primary, 0.28);
+      color: $primary;
+      box-shadow:
+        inset 0 1px rgba($on-surface, 0.16),
+        0 6px 18px rgba(0, 0, 0, 0.28),
+        0 0 14px rgba($primary, 0.1);
     }
     &.dnd.active {
-      background: rgba($primary, 0.15);
+      background-color: rgba($primary-container, 0.32);
+      background-image: linear-gradient(to bottom, rgba($primary, 0.2), rgba($primary, 0.08));
+      border-color: rgba($primary, 0.46);
       color: $primary;
+      box-shadow:
+        inset 0 1px rgba($on-surface, 0.18),
+        inset 0 -1px rgba($primary, 0.08),
+        0 6px 18px rgba(0, 0, 0, 0.28),
+        0 0 18px rgba($primary, 0.18);
     }
   }
   .notif-scroll {
     min-height: 500px;
   }
   .notif-empty {
-    color: rgba($text, 0.5);
+    color: rgba($text, 0.68);
     min-height: 160px;
+    background-color: rgba($surface, 0.42);
+    background-image: linear-gradient(
+      145deg,
+      rgba($on-surface, 0.085),
+      rgba($on-surface, 0.025) 46%,
+      rgba($surface, 0.18)
+    );
+    border: 1px solid $glass-edge;
+    border-radius: 18px;
+    padding: 0 28px;
+    box-shadow:
+      inset 0 1px rgba($on-surface, 0.075),
+      0 10px 30px rgba(0, 0, 0, 0.28);
+    transition: all $motion-standard $motion-ease;
+    &:hover {
+      background-color: rgba($surface, 0.5);
+      border-color: rgba($primary, 0.22);
+      box-shadow:
+        inset 0 1px rgba($on-surface, 0.1),
+        0 13px 34px rgba(0, 0, 0, 0.34),
+        0 0 18px rgba($primary, 0.07);
+    }
   }
   .notif-empty-icon {
     margin-right: 8px;
+    color: $primary;
+    -gtk-icon-shadow: 0 0 12px rgba($primary, 0.28);
   }
   .notif-empty-label {
     font-weight: 700;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.42);
   }
   .dw-title {
     font-size: 1.1em;
     font-weight: 700;
     color: $text;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
   }
 
   .click-catcher {
