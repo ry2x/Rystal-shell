@@ -18,13 +18,23 @@ export default function WifiToggle({onOpen}: WifiToggleProps) {
   const enabled = createBinding(wifi, 'enabled');
 
   return (
-    <box class={enabled.as(value => `cc-toggle-btn ${value ? 'active' : ''}`)} spacing={0}>
+    <box
+      class={enabled.as(value => `cc-toggle-btn cc-single-toggle ${value ? 'active' : ''}`)}
+      spacing={0}
+    >
       <button
         hexpand
-        class="cc-split-btn-left"
+        class="cc-toggle-button"
         onClicked={() => toggleWifi(wifi.enabled)}
-        tooltipText="Toggle Wi-Fi"
+        tooltipText="Click to toggle Wi-Fi · Hold to manage"
       >
+        <Gtk.GestureLongPress
+          propagationPhase={Gtk.PropagationPhase.CAPTURE}
+          onPressed={gesture => {
+            gesture.set_state(Gtk.EventSequenceState.CLAIMED);
+            onOpen();
+          }}
+        />
         <box spacing={12}>
           <LucideIcon name="wifi" class="icon" pixelSize={24} />
           <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
@@ -39,9 +49,6 @@ export default function WifiToggle({onOpen}: WifiToggleProps) {
             />
           </box>
         </box>
-      </button>
-      <button class="cc-split-btn-right" onClicked={onOpen} tooltipText="Manage Wi-Fi">
-        <LucideIcon name="chevron-right" pixelSize={20} />
       </button>
     </box>
   );

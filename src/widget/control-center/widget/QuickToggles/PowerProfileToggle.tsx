@@ -26,7 +26,7 @@ export default function PowerProfileToggle() {
     >
       <button
         hexpand
-        class="cc-split-btn-left"
+        class="cc-toggle-button"
         onClicked={cyclePowerProfile}
         tooltipText="Toggle Power Profile"
       >

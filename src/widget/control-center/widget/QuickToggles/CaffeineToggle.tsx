@@ -30,7 +30,7 @@ export default function CaffeineToggle() {
     >
       <button
         hexpand
-        class="cc-split-btn-left"
+        class="cc-toggle-button"
         sensitive={caffeineBusy.as(busy => !busy)}
         onClicked={() => void toggleCaffeine().catch(() => {})}
         tooltipText="Toggle Caffeine (Disabled -> Enabled -> Remote)"

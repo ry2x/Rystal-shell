@@ -236,37 +236,16 @@ levelbar {
   }
 }
 
-.cc-split-btn {
+.cc-toggle-button {
   background: transparent;
   border: none;
+  border-radius: 20px;
+  padding: 16px;
   box-shadow: none;
   transition: all $motion-standard $motion-ease;
   &:hover {
     background: rgba(255, 255, 255, 0.05);
   }
-}
-
-.cc-split-btn-right {
-  @extend .cc-split-btn;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-  padding: 16px;
-}
-
-.cc-split-btn-left {
-  @extend .cc-split-btn;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  padding: 16px;
-}
-
-.cc-single-toggle .cc-split-btn-left {
-  border-radius: 0.8em;
 }
 
 .cc-media-card {

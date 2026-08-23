@@ -15,13 +15,23 @@ export default function BluetoothToggle({onOpen}: BluetoothToggleProps) {
   const powered = createBinding(bluetooth, 'is_powered');
 
   return (
-    <box class={powered.as(value => `cc-toggle-btn ${value ? 'active' : ''}`)} spacing={0}>
+    <box
+      class={powered.as(value => `cc-toggle-btn cc-single-toggle ${value ? 'active' : ''}`)}
+      spacing={0}
+    >
       <button
         hexpand
-        class="cc-split-btn-left"
+        class="cc-toggle-button"
         onClicked={() => toggleBluetooth(bluetooth.is_powered)}
-        tooltipText="Toggle Bluetooth"
+        tooltipText="Click to toggle Bluetooth · Hold to manage"
       >
+        <Gtk.GestureLongPress
+          propagationPhase={Gtk.PropagationPhase.CAPTURE}
+          onPressed={gesture => {
+            gesture.set_state(Gtk.EventSequenceState.CLAIMED);
+            onOpen();
+          }}
+        />
         <box spacing={12}>
           <LucideIcon name="bluetooth" class="icon" pixelSize={24} />
           <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
@@ -35,9 +45,6 @@ export default function BluetoothToggle({onOpen}: BluetoothToggleProps) {
             />
           </box>
         </box>
-      </button>
-      <button class="cc-split-btn-right" onClicked={onOpen} tooltipText="Manage Bluetooth">
-        <LucideIcon name="chevron-right" pixelSize={20} />
       </button>
     </box>
   );
