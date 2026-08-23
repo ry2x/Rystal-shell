@@ -2,7 +2,7 @@ import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
 import {shellMotion} from '@/lib/motion';
-import {createBarBackgroundGeometry} from '@/stores/shell/barBackground';
+import {DATE_WEATHER_PANEL_WIDTH, createBarBackgroundGeometry} from '@/stores/shell/barBackground';
 import ClockCard from '@/widget/date-weather/widget/ClockCard';
 import NotificationList from '@/widget/date-weather/widget/NotificationList';
 import ProfileCard from '@/widget/date-weather/widget/ProfileCard';
@@ -29,10 +29,14 @@ export default function DateWeatherContent({revealed, monitorConnector}: DateWea
             isRevealed ? ['dw-container', 'revealed'] : ['dw-container']
           )}
           css={geometry(({dx}) => {
-            const marginLeft = Math.max(-900, dx - 947);
-            const opacity = Math.max(0, Math.min(1, (dx - 47) / 900));
+            const marginLeft = Math.max(
+              -DATE_WEATHER_PANEL_WIDTH,
+              dx - 47 - DATE_WEATHER_PANEL_WIDTH
+            );
+            const opacity = Math.max(0, Math.min(1, (dx - 47) / DATE_WEATHER_PANEL_WIDTH));
             return `transform: translateX(${marginLeft}px); opacity: ${opacity};`;
           })}
+          widthRequest={DATE_WEATHER_PANEL_WIDTH}
           spacing={24}
           hexpand={false}
           vexpand

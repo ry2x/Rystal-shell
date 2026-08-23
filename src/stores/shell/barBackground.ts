@@ -18,7 +18,7 @@ export interface BarBackgroundGeometry {
 
 const BAR_WIDTH = 47;
 const CONTROL_CENTER_WIDTH = 490;
-const DATE_WEATHER_WIDTH = 900;
+export const DATE_WEATHER_PANEL_WIDTH = 900;
 const WALLPAPER_PANEL_HEIGHT = 390;
 const POWER_MENU_PANEL_HEIGHT = 350;
 const ANIMATION_INTERVAL_MS = 1000 / 60;
@@ -56,7 +56,7 @@ function getTargetGeometry(panel: string, isTargetMonitor: boolean): BarBackgrou
     panel === 'control-center'
       ? BAR_WIDTH + CONTROL_CENTER_WIDTH
       : panel === 'date-weather'
-        ? BAR_WIDTH + DATE_WEATHER_WIDTH
+        ? BAR_WIDTH + DATE_WEATHER_PANEL_WIDTH
         : BAR_WIDTH;
   const bottomHeight =
     panel === 'wallpaper-selector'
