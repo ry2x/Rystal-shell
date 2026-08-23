@@ -39,15 +39,23 @@ export default function DateWeatherContent({revealed, monitorConnector}: DateWea
           valign={Gtk.Align.FILL}
           halign={Gtk.Align.START}
         >
-          <box orientation={Gtk.Orientation.VERTICAL} spacing={16} class="left-column">
-            <ClockCard />
-            <WorldClockCard />
-            <WeatherCard />
-            <box class="calendar-card widget-card" halign={Gtk.Align.FILL}>
-              <Gtk.Calendar halign={Gtk.Align.CENTER} hexpand />
+          <scrolledwindow
+            class="left-panel-scroll"
+            hscrollbarPolicy={Gtk.PolicyType.NEVER}
+            vscrollbarPolicy={Gtk.PolicyType.EXTERNAL}
+            vexpand
+            propagateNaturalHeight={false}
+          >
+            <box orientation={Gtk.Orientation.VERTICAL} spacing={16} class="left-column">
+              <ClockCard />
+              <WorldClockCard />
+              <WeatherCard />
+              <box class="calendar-card widget-card" halign={Gtk.Align.FILL}>
+                <Gtk.Calendar halign={Gtk.Align.CENTER} hexpand />
+              </box>
+              <ProfileCard />
             </box>
-            <ProfileCard />
-          </box>
+          </scrolledwindow>
 
           <box class="vertical-sep" />
           <NotificationList />

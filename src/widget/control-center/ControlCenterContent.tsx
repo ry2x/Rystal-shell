@@ -16,23 +16,33 @@ export interface ControlCenterContentProps {
 
 export default function ControlCenterContent({onOpenPage}: ControlCenterContentProps) {
   return (
-    <box orientation={Gtk.Orientation.VERTICAL} spacing={16}>
+    <box orientation={Gtk.Orientation.VERTICAL} spacing={11} vexpand>
       <box spacing={12} halign={Gtk.Align.START}>
         <LucideIcon name="settings-2" pixelSize={24} />
         <label label="Control Center" class="cc-title" />
       </box>
-      <QuickToggles
-        onOpenWifi={() => onOpenPage('wifi')}
-        onOpenBluetooth={() => onOpenPage('bluetooth')}
-      />
-      <VolumeSlider onOpenSound={() => onOpenPage('sound')} />
-      <BrightnessSlider />
-      <MediaCard />
-      <box orientation={Gtk.Orientation.HORIZONTAL} spacing={16}>
-        <SystemMetrics />
-      </box>
-      <UpdatesCard />
-      <ScreenCapture />
+      <scrolledwindow
+        class="left-panel-scroll"
+        hscrollbarPolicy={Gtk.PolicyType.NEVER}
+        vscrollbarPolicy={Gtk.PolicyType.EXTERNAL}
+        vexpand
+        propagateNaturalHeight={false}
+      >
+        <box orientation={Gtk.Orientation.VERTICAL} spacing={16}>
+          <QuickToggles
+            onOpenWifi={() => onOpenPage('wifi')}
+            onOpenBluetooth={() => onOpenPage('bluetooth')}
+          />
+          <VolumeSlider onOpenSound={() => onOpenPage('sound')} />
+          <BrightnessSlider />
+          <MediaCard />
+          <box orientation={Gtk.Orientation.HORIZONTAL} spacing={16}>
+            <SystemMetrics />
+          </box>
+          <UpdatesCard />
+          <ScreenCapture />
+        </box>
+      </scrolledwindow>
     </box>
   );
 }
