@@ -16,8 +16,8 @@ export interface ControlCenterContentProps {
 
 export default function ControlCenterContent({onOpenPage}: ControlCenterContentProps) {
   return (
-    <box orientation={Gtk.Orientation.VERTICAL} spacing={11} vexpand>
-      <box spacing={12} halign={Gtk.Align.START}>
+    <box class="cc-main-panel" orientation={Gtk.Orientation.VERTICAL} spacing={11} vexpand>
+      <box class="cc-main-header" spacing={12} hexpand>
         <LucideIcon name="settings-2" pixelSize={24} />
         <label label="Control Center" class="cc-title" />
       </box>

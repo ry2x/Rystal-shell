@@ -1,5 +1,9 @@
 @use 'variables' as *;
 
+$sound-glass-edge: rgba($on-surface, 0.13);
+$sound-glass-edge-soft: rgba($on-surface, 0.075);
+$sound-glass-shadow: rgba(0, 0, 0, 0.28);
+
 .cc-sound-page {
   .cc-section-title {
     margin: 2px 0;
@@ -11,6 +15,36 @@
 
 .cc-sound-header {
   min-height: 36px;
+  padding: 8px 10px;
+  background-color: rgba($surface, 0.22);
+  background-image: linear-gradient(110deg, rgba($on-surface, 0.085), rgba($on-surface, 0.025));
+  border: 1px solid $sound-glass-edge-soft;
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px rgba($on-surface, 0.075),
+    0 8px 22px rgba(0, 0, 0, 0.22);
+
+  .cc-title {
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+  }
+
+  .icon-btn {
+    background-color: rgba($surface, 0.2);
+    background-image: linear-gradient(to bottom, rgba($on-surface, 0.12), rgba($on-surface, 0.035));
+    border-color: rgba($on-surface, 0.13);
+    box-shadow:
+      inset 0 1px rgba($on-surface, 0.13),
+      0 5px 14px rgba(0, 0, 0, 0.22);
+
+    &:hover {
+      background-color: rgba($primary-container, 0.25);
+      border-color: rgba($primary, 0.4);
+      color: $primary;
+      box-shadow:
+        inset 0 1px rgba($on-surface, 0.16),
+        0 0 15px rgba($primary, 0.14);
+    }
+  }
 }
 
 .cc-sound-section-header {
@@ -20,20 +54,29 @@
 
 .cc-sound-device-card {
   padding: 15px 14px;
-  background: rgba($primary, 0.1);
-  border: 2px solid rgba($primary, 0.82);
+  background-color: rgba($primary-container, 0.28);
+  background-image: linear-gradient(
+    145deg,
+    rgba($primary, 0.18),
+    rgba($primary, 0.06) 52%,
+    rgba($surface, 0.17)
+  );
+  border: 1px solid rgba($primary, 0.42);
   border-radius: 16px;
   color: $primary;
   box-shadow:
-    inset 0 0 28px rgba($primary, 0.1),
-    0 0 20px rgba($primary, 0.36);
+    inset 0 1px rgba($on-surface, 0.12),
+    0 9px 26px rgba(0, 0, 0, 0.28),
+    0 0 18px rgba($primary, 0.15);
   transition: all 200ms;
 
   &:hover {
-    background: rgba($primary, 0.14);
+    background-color: rgba($primary-container, 0.36);
+    border-color: rgba($primary, 0.52);
     box-shadow:
-      inset 0 0 28px rgba($primary, 0.12),
-      0 0 22px rgba($primary, 0.42);
+      inset 0 1px rgba($on-surface, 0.15),
+      0 11px 30px rgba(0, 0, 0, 0.32),
+      0 0 20px rgba($primary, 0.19);
   }
 }
 
@@ -61,10 +104,18 @@ popover.cc-sound-device-menu {
   > contents {
     min-width: 330px;
     padding: 6px;
-    background: rgba($surface, 0.98);
-    border: 1px solid rgba($on-surface, 0.12);
+    background-color: rgba($surface, 0.68);
+    background-image: linear-gradient(
+      145deg,
+      rgba($on-surface, 0.11),
+      rgba($on-surface, 0.035),
+      rgba($surface, 0.26)
+    );
+    border: 1px solid rgba($on-surface, 0.17);
     border-radius: 16px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.42);
+    box-shadow:
+      inset 0 1px rgba($on-surface, 0.1),
+      0 14px 36px rgba(0, 0, 0, 0.42);
   }
 }
 
@@ -77,12 +128,19 @@ popover.cc-sound-device-menu {
   color: $text;
 
   &:hover {
-    background: rgba($on-surface, 0.08);
+    background-color: rgba($on-surface, 0.075);
+    background-image: linear-gradient(to right, rgba($on-surface, 0.055), transparent);
+    box-shadow: inset 0 1px rgba($on-surface, 0.055);
   }
 
   &.active {
-    background: rgba($primary, 0.12);
+    background-color: rgba($primary-container, 0.28);
+    background-image: linear-gradient(to right, rgba($primary, 0.15), rgba($primary, 0.045));
+    border: 1px solid rgba($primary, 0.3);
     color: $primary;
+    box-shadow:
+      inset 0 1px rgba($on-surface, 0.1),
+      0 0 12px rgba($primary, 0.1);
   }
 }
 
@@ -101,10 +159,18 @@ popover.cc-sound-device-menu {
 
 .cc-sound-controls {
   padding: 13px 14px 14px;
-  background: rgba($on-surface, 0.04);
-  border: 1px solid rgba($on-surface, 0.08);
+  background-color: rgba($surface, 0.3);
+  background-image: linear-gradient(
+    145deg,
+    rgba($on-surface, 0.09),
+    rgba($on-surface, 0.028) 46%,
+    rgba($surface, 0.16)
+  );
+  border: 1px solid $sound-glass-edge;
   border-radius: 18px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    inset 0 1px rgba($on-surface, 0.07),
+    0 10px 28px $sound-glass-shadow;
 }
 
 .cc-sound-control-label {
@@ -129,44 +195,103 @@ popover.cc-sound-device-menu {
   min-width: 38px;
   min-height: 38px;
   padding: 0;
-  background: rgba($on-surface, 0.04);
-  border: 1px solid rgba($on-surface, 0.1);
+  background-color: rgba($surface, 0.22);
+  background-image: linear-gradient(to bottom, rgba($on-surface, 0.12), rgba($on-surface, 0.035));
+  border: 1px solid rgba($on-surface, 0.14);
   border-radius: 11px;
-  box-shadow: none;
+  box-shadow:
+    inset 0 1px rgba($on-surface, 0.13),
+    0 5px 14px rgba(0, 0, 0, 0.22);
   color: $text;
 
   &:hover {
-    background: rgba($primary, 0.12);
-    border-color: rgba($primary, 0.3);
+    background-color: rgba($primary-container, 0.25);
+    border-color: rgba($primary, 0.4);
     color: $primary;
+    box-shadow:
+      inset 0 1px rgba($on-surface, 0.16),
+      0 0 15px rgba($primary, 0.14);
   }
 
   &.muted {
-    background: rgba($error, 0.1);
-    border-color: rgba($error, 0.26);
+    background-color: rgba($error-container, 0.28);
+    background-image: linear-gradient(to bottom, rgba($error, 0.17), rgba($error, 0.05));
+    border-color: rgba($error, 0.4);
     color: $error;
+    box-shadow:
+      inset 0 1px rgba($on-surface, 0.12),
+      0 0 14px rgba($error, 0.13);
   }
 }
 
 .cc-sound-unavailable {
   padding: 18px;
-  background: rgba($on-surface, 0.04);
-  border: 1px solid rgba($on-surface, 0.08);
+  background-color: rgba($surface, 0.3);
+  background-image: linear-gradient(
+    145deg,
+    rgba($on-surface, 0.08),
+    rgba($on-surface, 0.025),
+    rgba($surface, 0.16)
+  );
+  border: 1px solid $sound-glass-edge;
   border-radius: 16px;
   color: rgba($text, 0.65);
+  box-shadow:
+    inset 0 1px rgba($on-surface, 0.07),
+    0 10px 28px $sound-glass-shadow;
 }
 
 .cc-sound-advanced {
   padding: 12px 14px;
-  background: rgba($on-surface, 0.04);
-  border: 1px solid rgba($on-surface, 0.08);
+  background-color: rgba($surface, 0.3);
+  background-image: linear-gradient(
+    145deg,
+    rgba($on-surface, 0.09),
+    rgba($on-surface, 0.028) 48%,
+    rgba($surface, 0.16)
+  );
+  border: 1px solid $sound-glass-edge;
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    inset 0 1px rgba($on-surface, 0.07),
+    0 9px 26px $sound-glass-shadow;
   color: $text;
 
   &:hover {
-    background: rgba($on-surface, 0.08);
-    border-color: rgba($primary, 0.24);
+    background-color: rgba($primary-container, 0.2);
+    border-color: rgba($primary, 0.34);
+    color: $primary;
+    box-shadow:
+      inset 0 1px rgba($on-surface, 0.11),
+      0 11px 30px rgba(0, 0, 0, 0.32),
+      0 0 17px rgba($primary, 0.11);
+  }
+}
+
+.cc-sound-page .cc-sound-slider {
+  trough {
+    background-color: rgba($surface, 0.32);
+    background-image: linear-gradient(to bottom, rgba($on-surface, 0.09), rgba($on-surface, 0.025));
+    border: 1px solid rgba($on-surface, 0.09);
+    box-shadow:
+      inset 0 2px 4px rgba(0, 0, 0, 0.3),
+      0 1px rgba($on-surface, 0.035);
+
+    highlight,
+    fill {
+      background-image: linear-gradient(to right, $primary, $primary-fixed-dim);
+      box-shadow: 0 0 10px rgba($primary, 0.38);
+    }
+
+    slider {
+      background-color: rgba($primary-fixed, 0.92);
+      background-image: linear-gradient(145deg, rgba($on-surface, 0.8), rgba($primary, 0.9));
+      border-color: rgba($on-surface, 0.82);
+      box-shadow:
+        inset 0 1px rgba($on-surface, 0.55),
+        0 3px 9px rgba(0, 0, 0, 0.42),
+        0 0 10px rgba($primary, 0.2);
+    }
   }
 }
 

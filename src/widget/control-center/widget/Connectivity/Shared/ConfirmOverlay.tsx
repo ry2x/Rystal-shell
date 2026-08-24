@@ -34,11 +34,15 @@ export default function ConfirmOverlay({confirmation, clear, setError}: ConfirmO
         <label label={confirmation.title} class="cc-modal-title" halign={Gtk.Align.START} />
         <label label={confirmation.message} wrap halign={Gtk.Align.START} />
         <box spacing={8} halign={Gtk.Align.END}>
-          <button class="power-btn" onClicked={clear} sensitive={busy.as(value => !value)}>
+          <button
+            class="power-btn cc-modal-action"
+            onClicked={clear}
+            sensitive={busy.as(value => !value)}
+          >
             <label label="Cancel" />
           </button>
           <button
-            class="power-btn cc-danger-btn"
+            class="power-btn cc-modal-action cc-danger-btn"
             sensitive={busy.as(value => !value)}
             onClicked={async () => {
               setBusy(true);

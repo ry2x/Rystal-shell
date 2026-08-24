@@ -106,7 +106,7 @@ export function WifiPage({monitorConnector, onBack}: WifiPageProps) {
       <label
         label="Wi-Fi is turned off"
         visible={createBinding(wifi, 'enabled').as(value => !value)}
-        class="cc-card"
+        class="cc-card cc-connectivity-disabled"
         halign={Gtk.Align.CENTER}
       />
     </box>

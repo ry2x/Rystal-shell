@@ -13,7 +13,10 @@ export interface PageHeaderProps {
 
 export default function PageHeader({title, enabled, onToggle, onBack, className}: PageHeaderProps) {
   return (
-    <box class={className} spacing={12}>
+    <box
+      class={className ? `cc-connectivity-header ${className}` : 'cc-connectivity-header'}
+      spacing={12}
+    >
       <button class="icon-btn" onClicked={onBack} tooltipText="Back">
         <LucideIcon name="chevron-left" pixelSize={22} />
       </button>

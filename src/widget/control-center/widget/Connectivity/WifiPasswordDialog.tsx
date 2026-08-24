@@ -72,6 +72,7 @@ export default function WifiPasswordDialog({monitor}: WifiPasswordDialogProps) {
             maxWidthChars={32}
           />
           <entry
+            class="cc-password-entry"
             placeholderText="Password"
             visibility={false}
             inputPurpose={Gtk.InputPurpose.PASSWORD}
@@ -90,13 +91,17 @@ export default function WifiPasswordDialog({monitor}: WifiPasswordDialogProps) {
           />
           <box spacing={8} halign={Gtk.Align.END}>
             <button
-              class="power-btn"
+              class="power-btn cc-modal-action"
               sensitive={state.busy.as(value => !value)}
               onClicked={state.close}
             >
               <label label="Cancel" />
             </button>
-            <button class="power-btn" sensitive={state.busy.as(value => !value)} onClicked={submit}>
+            <button
+              class="power-btn cc-modal-action cc-primary-btn"
+              sensitive={state.busy.as(value => !value)}
+              onClicked={submit}
+            >
               <label
                 label={state.connectLabel}
                 ellipsize={Pango.EllipsizeMode.END}

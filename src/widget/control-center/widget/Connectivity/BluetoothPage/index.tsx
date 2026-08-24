@@ -102,7 +102,7 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
       <label
         label="Bluetooth is turned off"
         visible={createBinding(bluetooth, 'is_powered').as(value => !value)}
-        class="cc-card"
+        class="cc-card cc-connectivity-disabled"
         halign={Gtk.Align.CENTER}
       />
     </box>
