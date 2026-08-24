@@ -19,6 +19,7 @@ export default function Tray() {
   const trigger = (
     <button
       class="tray-primary"
+      halign={Gtk.Align.CENTER}
       tooltipMarkup={primaryItem.as(item => item?.tooltip_markup ?? '')}
       onClicked={() => {
         if (expander?.get_visible()) expander.popdown();
