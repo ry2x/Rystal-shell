@@ -117,7 +117,12 @@ export default function AppLauncher({monitor}: AppLauncherProps) {
       }}
     >
       <box class="applauncher-window" halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER}>
-        <box class="applauncher-box-wrapper" halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER}>
+        <box
+          class="applauncher-box-wrapper"
+          halign={Gtk.Align.CENTER}
+          valign={Gtk.Align.CENTER}
+          overflow={Gtk.Overflow.HIDDEN}
+        >
           {/* Left Panel */}
           <box
             class="applauncher-left-panel"
