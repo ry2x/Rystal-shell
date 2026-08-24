@@ -15,14 +15,19 @@ function getTimeZoneName(date: Date, timeZone: string, format: 'short' | 'shortO
   );
 }
 
-export function formatWorldClockDetails(date: Date, timeZone: string) {
+export function formatWorldClockLocationDetails(date: Date, timeZone: string) {
   const formattedDate = date.toLocaleDateString('en-US', {
     timeZone,
     month: 'short',
     day: '2-digit',
   });
-  const offset = getTimeZoneName(date, timeZone, 'shortOffset').replace('GMT', '') || '+0';
   const abbreviation = getTimeZoneName(date, timeZone, 'short');
 
-  return `${formattedDate} | ${offset}h | ${abbreviation}`;
+  return `${formattedDate} | ${abbreviation}`;
+}
+
+export function formatWorldClockOffset(date: Date, timeZone: string) {
+  const offset = getTimeZoneName(date, timeZone, 'shortOffset').replace('GMT', '') || '+0';
+
+  return `${offset}h`;
 }
