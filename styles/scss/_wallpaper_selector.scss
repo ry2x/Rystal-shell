@@ -32,36 +32,114 @@ window.WallpaperSelector {
   min-height: 252px;
   padding: 0;
   margin: 0;
-  border: 2px solid rgba($on-surface, 0.12);
+  border: 2px solid rgba($on-surface, 0.16);
   border-radius: 18px;
-  background: rgba($surface, 0.45);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  background-color: rgba($surface, 0.3);
+  background-image: linear-gradient(
+    145deg,
+    rgba($on-surface, 0.1),
+    rgba($on-surface, 0.035) 48%,
+    rgba($surface, 0.16)
+  );
+  box-shadow:
+    inset 0 1px rgba($on-surface, 0.09),
+    inset 0 -1px rgba(0, 0, 0, 0.16),
+    0 10px 28px rgba(0, 0, 0, 0.3);
   outline: none;
+  transition: all $motion-standard $motion-ease;
 
   &:hover {
-    border-color: rgba($primary, 0.55);
+    border-color: rgba($primary, 0.48);
+    box-shadow:
+      inset 0 1px rgba($on-surface, 0.18),
+      0 12px 32px rgba(0, 0, 0, 0.34),
+      0 0 20px rgba($primary, 0.14);
+
+    .wallpaper-light-overlay {
+      background-color: rgba(0, 0, 0, 0.055);
+      opacity: 0.86;
+    }
   }
 
   &.selected {
-    border-width: 3px;
-    border-color: $primary;
+    border-width: 2px;
+    border-color: rgba($primary, 0.72);
     box-shadow:
-      0 20px 44px rgba(0, 0, 0, 0.5),
-      0 0 18px rgba($primary, 0.62),
-      0 0 42px rgba($primary, 0.42),
-      0 0 72px rgba($primary, 0.24);
+      inset 0 1px rgba($on-surface, 0.25),
+      inset 0 0 24px rgba($primary, 0.07),
+      0 18px 42px rgba(0, 0, 0, 0.46),
+      0 -7px 28px rgba($primary, 0.42),
+      0 0 34px rgba($primary, 0.3),
+      0 0 58px rgba($primary, 0.16);
+
+    .wallpaper-light-overlay {
+      background-color: rgba($primary, 0.012);
+      background-image: linear-gradient(
+        120deg,
+        rgba($on-surface, 0.14),
+        rgba($on-surface, 0.04) 16%,
+        transparent 27%,
+        transparent 36%,
+        rgba($on-surface, 0.18) 43%,
+        rgba($on-surface, 0.045) 50%,
+        transparent 58%,
+        rgba($primary, 0.05) 78%,
+        rgba(0, 0, 0, 0.1)
+      );
+      box-shadow:
+        inset 0 1px rgba($on-surface, 0.32),
+        inset 1px 0 rgba($on-surface, 0.1),
+        inset 0 -1px rgba($primary, 0.14);
+      opacity: 1;
+    }
   }
 
   picture {
     padding: 0;
     margin: 0;
   }
+
+  .wallpaper-light-overlay {
+    background-color: rgba(0, 0, 0, 0.16);
+    background-image: linear-gradient(
+      120deg,
+      rgba($on-surface, 0.1),
+      rgba($on-surface, 0.025) 15%,
+      transparent 27%,
+      transparent 37%,
+      rgba($on-surface, 0.11) 43%,
+      rgba($on-surface, 0.025) 50%,
+      transparent 58%,
+      rgba($primary, 0.02) 76%,
+      rgba(0, 0, 0, 0.16)
+    );
+    box-shadow:
+      inset 0 1px rgba($on-surface, 0.2),
+      inset 1px 0 rgba($on-surface, 0.07),
+      inset 0 -1px rgba(0, 0, 0, 0.18);
+    opacity: 0.68;
+    transition: all $motion-standard $motion-ease;
+  }
 }
 
 .wallpaper-path {
   min-height: 20px;
+  padding: 6px 14px;
   transform: translateY(12px);
-  color: rgba($text, 0.82);
+  color: rgba($text, 0.88);
+  background-color: rgba($surface, 0.32);
+  background-image: linear-gradient(
+    to bottom,
+    rgba($on-surface, 0.12),
+    rgba($on-surface, 0.035) 48%,
+    rgba($surface, 0.16)
+  );
+  border: 1px solid rgba($on-surface, 0.14);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px rgba($on-surface, 0.12),
+    inset 0 -1px rgba(0, 0, 0, 0.16),
+    0 6px 16px rgba(0, 0, 0, 0.24);
   font-family: 'GeistMono Nerd Font', monospace;
   font-variant-numeric: tabular-nums;
   font-size: 0.92em;

@@ -73,8 +73,8 @@ export default class CoverFlowController {
     this.positionLabel = new Gtk.Label({
       cssClasses: ['wallpaper-path'],
       canTarget: false,
-      hexpand: true,
-      halign: Gtk.Align.FILL,
+      hexpand: false,
+      halign: Gtk.Align.CENTER,
       valign: Gtk.Align.END,
       marginBottom: 48,
       xalign: 0.5,

@@ -25,11 +25,20 @@ export class WallpaperCardController {
       heightRequest: CARD_HEIGHT,
     });
 
+    const lightOverlay = new Gtk.Box({
+      cssClasses: ['wallpaper-light-overlay'],
+      canTarget: false,
+      hexpand: true,
+      vexpand: true,
+    });
+    const preview = new Gtk.Overlay({child: this.picture});
+    preview.add_overlay(lightOverlay);
+
     this.widget = new Gtk.Button({
       cssClasses: ['wallpaper-card'],
       canFocus: false,
       overflow: Gtk.Overflow.HIDDEN,
-      child: this.picture,
+      child: preview,
       widthRequest: CARD_WIDTH,
       heightRequest: CARD_HEIGHT,
     });
