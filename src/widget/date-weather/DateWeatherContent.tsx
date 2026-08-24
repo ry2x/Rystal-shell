@@ -50,7 +50,13 @@ export default function DateWeatherContent({revealed, monitorConnector}: DateWea
             vexpand
             propagateNaturalHeight={false}
           >
-            <box orientation={Gtk.Orientation.VERTICAL} spacing={16} class="left-column">
+            <box
+              orientation={Gtk.Orientation.VERTICAL}
+              spacing={16}
+              class="left-column"
+              marginStart={12}
+              marginEnd={12}
+            >
               <ClockCard />
               <WorldClockCard />
               <WeatherCard />

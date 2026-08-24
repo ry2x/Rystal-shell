@@ -54,18 +54,20 @@ export default function NotificationList() {
           hscrollbarPolicy={Gtk.PolicyType.NEVER}
           vexpand
         >
-          <AnimatedList
-            items={notifications}
-            idFor={(notification: Notifd.Notification) => String(notification.id)}
-            className="notif-list"
-            spacing={12}
-            renderItem={(notification: Notifd.Notification) => (
-              <NotificationCard
-                notif={notification}
-                onDismiss={() => dismissNotification(notification)}
-              />
-            )}
-          />
+          <box orientation={Gtk.Orientation.VERTICAL} marginStart={12} marginEnd={12}>
+            <AnimatedList
+              items={notifications}
+              idFor={(notification: Notifd.Notification) => String(notification.id)}
+              className="notif-list"
+              spacing={12}
+              renderItem={(notification: Notifd.Notification) => (
+                <NotificationCard
+                  notif={notification}
+                  onDismiss={() => dismissNotification(notification)}
+                />
+              )}
+            />
+          </box>
         </scrolledwindow>
         <box
           $type="overlay"

@@ -28,7 +28,7 @@ export default function ControlCenterContent({onOpenPage}: ControlCenterContentP
         vexpand
         propagateNaturalHeight={false}
       >
-        <box orientation={Gtk.Orientation.VERTICAL} spacing={16}>
+        <box orientation={Gtk.Orientation.VERTICAL} spacing={16} marginStart={12} marginEnd={12}>
           <QuickToggles
             onOpenWifi={() => onOpenPage('wifi')}
             onOpenBluetooth={() => onOpenPage('bluetooth')}
