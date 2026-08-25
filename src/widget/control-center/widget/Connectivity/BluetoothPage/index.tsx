@@ -102,11 +102,10 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
           </button>
         </box>
       </revealer>
-      <label
+      <EmptyState
+        icon="bluetooth-off"
         label="Bluetooth is turned off"
         visible={createBinding(bluetooth, 'is_powered').as(value => !value)}
-        class="cc-card cc-connectivity-disabled"
-        halign={Gtk.Align.CENTER}
       />
     </box>
   ) as Gtk.Widget;

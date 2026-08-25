@@ -106,11 +106,10 @@ export function WifiPage({monitorConnector, onBack}: WifiPageProps) {
           </button>
         </box>
       </revealer>
-      <label
+      <EmptyState
+        icon="wifi-off"
         label="Wi-Fi is turned off"
         visible={createBinding(wifi, 'enabled').as(value => !value)}
-        class="cc-card cc-connectivity-disabled"
-        halign={Gtk.Align.CENTER}
       />
     </box>
   ) as Gtk.Widget;
