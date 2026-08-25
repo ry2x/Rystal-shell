@@ -6,6 +6,7 @@ import Network from 'gi://AstalNetwork';
 import {toggleWifi} from '@/stores/connectivity/network';
 import {type WifiConfirmation, createWifiPageState} from '@/stores/connectivity/wifiPage';
 import AnimatedList from '@/widget/common/AnimatedList';
+import EmptyState from '@/widget/common/EmptyState';
 import {LucideIcon} from '@/widget/common/lucide';
 import {
   ConfirmOverlay,
@@ -25,7 +26,9 @@ export function WifiPage({monitorConnector, onBack}: WifiPageProps) {
   const state = createWifiPageState(monitorConnector);
   const {wifi} = state;
 
-  if (!wifi) return <label label="No Wi-Fi adapter available" class="cc-card" />;
+  if (!wifi) {
+    return <EmptyState icon="wifi-off" label="No Wi-Fi adapter available" />;
+  }
 
   const content = (
     <box

@@ -297,20 +297,6 @@ levelbar {
   opacity: 0.7;
 }
 
-.cc-media-empty {
-  min-height: 160px;
-}
-
-.cc-media-empty-icon {
-  color: rgba($text, 0.5);
-  margin-right: 8px;
-}
-
-.cc-media-empty-label {
-  color: rgba($text, 0.5);
-  font-weight: 700;
-}
-
 .cc-media-source {
   padding: 3px 7px;
   border-radius: 999px;
@@ -417,8 +403,7 @@ levelbar {
   }
 
   .cc-card,
-  .cc-media-card,
-  .cc-media-empty {
+  .cc-media-card {
     @include cc-main-glass-card;
     border-radius: 20px;
     transition: all $motion-standard $motion-ease;
@@ -431,11 +416,6 @@ levelbar {
         0 12px 32px rgba(0, 0, 0, 0.34),
         0 0 18px rgba($primary, 0.07);
     }
-  }
-
-  .cc-media-empty {
-    padding: 16px;
-    color: rgba($text, 0.68);
   }
 
   .cc-toggle-btn {
@@ -572,11 +552,6 @@ levelbar {
     box-shadow:
       inset 0 1px rgba($on-surface, 0.08),
       0 4px 12px rgba(0, 0, 0, 0.24);
-  }
-
-  .cc-media-empty-icon {
-    color: $primary;
-    -gtk-icon-shadow: 0 0 12px rgba($primary, 0.26);
   }
 
   .cc-metric-button:hover {

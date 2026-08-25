@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Mpris from 'gi://AstalMpris';
 
 import {createMediaCardState} from '@/stores/media/media';
-import {LucideIcon} from '@/widget/common/lucide';
+import EmptyState from '@/widget/common/EmptyState';
 import PlayerCard from '@/widget/control-center/widget/MediaCard/PlayerCard';
 
 export default function MediaCard() {
@@ -13,13 +13,11 @@ export default function MediaCard() {
   return (
     <box class="cc-media-container" orientation={Gtk.Orientation.VERTICAL} spacing={8}>
       <box
-        class="cc-media-empty"
         visible={state.hasPlayers.as(hasPlayers => !hasPlayers)}
+        heightRequest={160}
         halign={Gtk.Align.CENTER}
-        valign={Gtk.Align.CENTER}
       >
-        <LucideIcon name="music" pixelSize={25} class="cc-media-empty-icon" />
-        <label label="No Media Playing" class="cc-media-empty-label" />
+        <EmptyState className="cc-media-empty" icon="music" label="No Media Playing" />
       </box>
       <box orientation={Gtk.Orientation.VERTICAL}>
         <For each={state.activePlayer.as(player => (player ? [player] : []))}>

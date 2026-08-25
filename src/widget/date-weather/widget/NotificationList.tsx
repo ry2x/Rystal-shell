@@ -10,6 +10,7 @@ import {
   toggleDoNotDisturb,
 } from '@/stores/notification/notification';
 import AnimatedList from '@/widget/common/AnimatedList';
+import EmptyState from '@/widget/common/EmptyState';
 import NotificationCard from '@/widget/common/NotificationCard';
 import {LucideIcon} from '@/widget/common/lucide';
 
@@ -69,16 +70,13 @@ export default function NotificationList() {
             />
           </box>
         </scrolledwindow>
-        <box
+        <EmptyState
           $type="overlay"
-          class="notif-empty"
+          className="notif-empty"
           visible={notifications.as(items => items.length === 0)}
-          halign={Gtk.Align.CENTER}
-          valign={Gtk.Align.CENTER}
-        >
-          <LucideIcon name="bell-check" pixelSize={25} class="notif-empty-icon" />
-          <label label="No Notifications" class="notif-empty-label" />
-        </box>
+          icon="bell-check"
+          label="No Notifications"
+        />
       </overlay>
     </box>
   );

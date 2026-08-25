@@ -9,6 +9,7 @@ import {
 } from '@/stores/connectivity/bluetooth';
 import {toggleBluetooth} from '@/stores/connectivity/network';
 import AnimatedList from '@/widget/common/AnimatedList';
+import EmptyState from '@/widget/common/EmptyState';
 import {LucideIcon} from '@/widget/common/lucide';
 import AvailableDeviceRow from '@/widget/control-center/widget/Connectivity/BluetoothPage/AvailableDeviceRow';
 import ConnectedDeviceRow from '@/widget/control-center/widget/Connectivity/BluetoothPage/ConnectedDeviceRow';
@@ -28,7 +29,9 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
   const state = createBluetoothPageState(page.as(value => value === 'bluetooth'));
   const {bluetooth, adapter} = state;
 
-  if (!adapter) return <label label="No Bluetooth adapter available" class="cc-card" />;
+  if (!adapter) {
+    return <EmptyState icon="bluetooth-off" label="No Bluetooth adapter available" />;
+  }
 
   const content = (
     <box
