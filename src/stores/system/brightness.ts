@@ -17,6 +17,7 @@ export const brightness = brightnessState;
 let setTimer: Timer | null = null;
 let scheduledTarget: number | null = null;
 let lastNonZeroBrightness: number | null = null;
+let restoreBrightnessPercent: number | null = null;
 
 interface BrightnessRequest {
   resolve: (percent: number) => void;
@@ -164,6 +165,42 @@ async function performBrightnessChange(delta: number) {
 
 export function changeBrightness(delta: number): Promise<number> {
   const operation = changeQueue.then(() => performBrightnessChange(delta));
+  changeQueue = operation.then(
+    () => {},
+    () => {}
+  );
+  return operation;
+}
+
+async function performTemporaryBrightnessSet(percent: number) {
+  await flushScheduledApply();
+  const previous = await brightnessBackend.getPercent();
+  const applied = await requestBrightnessApply(clampBrightnessPercent(percent));
+  restoreBrightnessPercent ??= previous;
+  return applied;
+}
+
+export function setTemporaryBrightness(percent: number): Promise<number> {
+  const operation = changeQueue.then(() => performTemporaryBrightnessSet(percent));
+  changeQueue = operation.then(
+    () => {},
+    () => {}
+  );
+  return operation;
+}
+
+async function performBrightnessRestore() {
+  await flushScheduledApply();
+  if (restoreBrightnessPercent === null) throw new Error('No saved brightness to restore');
+
+  const target = restoreBrightnessPercent;
+  await requestBrightnessApply(target);
+  restoreBrightnessPercent = null;
+  return target;
+}
+
+export function restoreBrightness(): Promise<number> {
+  const operation = changeQueue.then(performBrightnessRestore);
   changeQueue = operation.then(
     () => {},
     () => {}
