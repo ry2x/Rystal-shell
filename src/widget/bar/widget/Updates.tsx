@@ -1,7 +1,7 @@
 import {Gdk, Gtk} from 'ags/gtk4';
 
 import {toggleControlCenter} from '@/stores/shell/windowManager';
-import {updatesPoll} from '@/stores/system/update';
+import {openUpdateManager, updatesPoll} from '@/stores/system/update';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface UpdatesProps {
@@ -24,6 +24,14 @@ export default function Updates({monitor}: UpdatesProps) {
     >
       <box orientation={Gtk.Orientation.VERTICAL}>
         <button class="Updates" onClicked={toggleMenu}>
+          <Gtk.GestureClick
+            button={3}
+            propagationPhase={Gtk.PropagationPhase.CAPTURE}
+            onPressed={gesture => {
+              gesture.set_state(Gtk.EventSequenceState.CLAIMED);
+              openUpdateManager();
+            }}
+          />
           <box spacing={4} orientation={Gtk.Orientation.VERTICAL}>
             <LucideIcon name="package" class="icon" />
             <label label={updatesPoll} />
