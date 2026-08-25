@@ -1,5 +1,6 @@
-import {For} from 'ags';
+import {type Accessor, For} from 'ags';
 import {Gdk, Gtk} from 'ags/gtk4';
+import {type Timer, timeout} from 'ags/time';
 
 import Hyprland from 'gi://AstalHyprland';
 
@@ -7,6 +8,31 @@ import {createMonitorWorkspaceState, focusWorkspace} from '@/stores/shell/worksp
 
 export interface WorkspacesProps {
   monitor: Gdk.Monitor;
+}
+
+const INDICATOR_STRETCH_DURATION = 190;
+
+function setupIndicatorMotion(indicator: Gtk.Widget, activeIndex: Accessor<number>) {
+  let previousIndex = activeIndex.peek();
+  let stretchTimer: Timer | null = null;
+  const unsubscribe = activeIndex.subscribe(() => {
+    const nextIndex = activeIndex.peek();
+    if (nextIndex === previousIndex) return;
+
+    previousIndex = nextIndex;
+    stretchTimer?.cancel();
+    indicator.add_css_class('moving');
+    stretchTimer = timeout(INDICATOR_STRETCH_DURATION, () => {
+      indicator.remove_css_class('moving');
+      stretchTimer = null;
+    });
+  });
+
+  indicator.connect('destroy', () => {
+    unsubscribe();
+    stretchTimer?.cancel();
+    stretchTimer = null;
+  });
 }
 
 export default function Workspaces({monitor}: WorkspacesProps) {
@@ -20,10 +46,14 @@ export default function Workspaces({monitor}: WorkspacesProps) {
         class="active-indicator"
         halign={Gtk.Align.CENTER}
         valign={Gtk.Align.START}
+        canTarget={false}
         css={activeIndex.as(
           index => `margin-bottom: -13px; transform: translateY(${index * 22 - 2}px);`
         )}
-      />
+        $={self => setupIndicatorMotion(self, activeIndex)}
+      >
+        <box class="active-indicator-dot" />
+      </box>
       <box orientation={Gtk.Orientation.VERTICAL} spacing={12}>
         <For each={workspaces}>
           {(workspace: Hyprland.Workspace) => (

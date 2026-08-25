@@ -111,15 +111,27 @@ window.Bar {
     }
 
     .active-indicator {
-      background-color: $accent;
-      background-image: none;
-      border: none;
-      border-radius: 50%;
       // Counter the workspace capsule's scaleX(0.76) so this renders as a circle.
       min-width: 17px;
       min-height: 13px;
-      box-shadow: none;
       transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      .active-indicator-dot {
+        background-color: $accent;
+        background-image: none;
+        border: none;
+        border-radius: 50%;
+        min-width: 17px;
+        min-height: 13px;
+        box-shadow: none;
+        transform: scaleY(1);
+        transition: transform 190ms cubic-bezier(0.25, 1, 0.5, 1);
+      }
+
+      &.moving .active-indicator-dot {
+        border-radius: 99px;
+        transform: scaleY(1.55);
+      }
     }
   }
 
