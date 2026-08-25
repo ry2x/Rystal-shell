@@ -366,48 +366,58 @@ window.DateWeatherPopup {
 
 .weather-icon {
   color: $primary;
+  -gtk-icon-shadow: 0 0 18px rgba($primary, 0.2);
 }
 .weather-temp {
-  font-size: 2.2em;
+  font-size: 2.65em;
   font-weight: 800;
   color: $primary;
+  text-shadow: 0 0 18px rgba($primary, 0.15);
 }
 .weather-desc {
-  font-size: 1.1em;
+  font-size: 0.9em;
   color: rgba($text, 0.7);
 }
 .weather-region {
-  color: rgba($text, 0.7);
-  font-size: 1.1em;
-  font-weight: 700;
+  color: $text;
+  font-size: 1.05em;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+.weather-range {
+  min-width: 62px;
+}
+.weather-high,
+.weather-low {
+  color: rgba($text, 0.78);
+  font-size: 0.86em;
+  font-weight: 650;
 }
 .weather-forecast {
-  margin-top: 4px;
+  margin-top: 5px;
 }
 .weather-info {
-  font-size: 0.9em;
-  color: rgba($text, 0.6);
+  font-size: 0.95em;
+  color: rgba($text, 0.72);
 }
 .weather-info-icon {
-  color: $secondary;
+  color: $primary;
+  -gtk-icon-shadow: 0 0 10px rgba($primary, 0.16);
 }
 .forecast-day {
-  font-size: 0.95em;
+  font-size: 0.86em;
   font-weight: 800;
-  min-width: 45px;
+  min-width: 30px;
   color: $text;
 }
 .forecast-icon {
   color: $primary;
+  -gtk-icon-shadow: 0 0 10px rgba($primary, 0.14);
 }
-.forecast-max {
-  font-size: 0.85em;
-  font-weight: 700;
-  color: $secondary;
-}
-.forecast-min {
-  font-size: 0.8em;
-  color: rgba($text, 0.6);
+.forecast-temps {
+  font-size: 0.76em;
+  font-weight: 650;
+  color: rgba($text, 0.72);
 }
 
 .world-clock-card .world-clock-label {
