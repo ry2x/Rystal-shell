@@ -1,4 +1,4 @@
-import type Cairo from 'cairo';
+import Cairo from 'cairo';
 
 import {type Accessor, onCleanup} from 'ags';
 import {Gtk} from 'ags/gtk4';
@@ -23,6 +23,28 @@ const LINE_WIDTH = 6;
 
 function normalize(value: number) {
   return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
+}
+
+function createProgressGradient(
+  centerX: number,
+  centerY: number,
+  radius: number,
+  red: number,
+  green: number,
+  blue: number
+) {
+  const gradient = new Cairo.LinearGradient(
+    centerX - radius,
+    centerY - radius,
+    centerX + radius,
+    centerY + radius
+  );
+  gradient.addColorStopRGBA(0, red, green, blue, 0.72);
+  gradient.addColorStopRGBA(0.44, red, green, blue, 0.96);
+  gradient.addColorStopRGBA(0.52, 1, 1, 1, 0.88);
+  gradient.addColorStopRGBA(0.6, red, green, blue, 0.9);
+  gradient.addColorStopRGBA(1, red, green, blue, 0.62);
+  return gradient;
 }
 
 class CircularProgressAnimation<T> {
@@ -109,7 +131,15 @@ class CircularProgressAnimation<T> {
 
     if (this.currentValue <= 0) return;
 
-    context.setSourceRGBA(color.red, color.green, color.blue, 1);
+    const progressGradient = createProgressGradient(
+      centerX,
+      centerY,
+      radius,
+      color.red,
+      color.green,
+      color.blue
+    );
+    context.setSource(progressGradient);
     context.setLineWidth(LINE_WIDTH);
     context.setLineCap(1);
     context.arc(
