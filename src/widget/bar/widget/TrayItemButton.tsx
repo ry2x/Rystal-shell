@@ -13,6 +13,7 @@ export function TrayItemButton({item, onActivate}: TrayItemButtonProps) {
     <menubutton
       class="tray-item"
       hasFrame={false}
+      direction={Gtk.ArrowType.LEFT}
       tooltipMarkup={createBinding(item, 'tooltip_markup')}
     >
       <Gtk.GestureClick
