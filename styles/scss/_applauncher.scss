@@ -57,7 +57,9 @@ window.AppLauncher {
 
 .applauncher-input,
 .applauncher-input:hover,
-.applauncher-input:focus {
+.applauncher-input:focus,
+.applauncher-input:focus-visible,
+.applauncher-input:focus-within {
   caret-color: $accent;
   background-color: rgba($primary-container, 0.26);
   background-image: linear-gradient(
@@ -78,7 +80,26 @@ window.AppLauncher {
     inset 0 -1px rgba(0, 0, 0, 0.16),
     0 8px 22px rgba(0, 0, 0, 0.3),
     0 0 18px rgba($primary, 0.15);
+  outline: none;
   transition: none;
+}
+
+.applauncher-input text,
+.applauncher-input text:hover,
+.applauncher-input text:focus {
+  background: transparent;
+  color: $text;
+  caret-color: $accent;
+  outline: none;
+
+  selection {
+    background-color: rgba($primary, 0.38);
+    color: $on-primary-container;
+  }
+
+  placeholder {
+    color: rgba($text, 0.55);
+  }
 }
 
 .applauncher-right-panel {
