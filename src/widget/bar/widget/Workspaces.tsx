@@ -21,7 +21,7 @@ export default function Workspaces({monitor}: WorkspacesProps) {
         halign={Gtk.Align.CENTER}
         valign={Gtk.Align.START}
         css={activeIndex.as(
-          index => `margin-bottom: -14px; transform: translateY(${index * 22 - 2}px);`
+          index => `margin-bottom: -13px; transform: translateY(${index * 22 - 2}px);`
         )}
       />
       <box orientation={Gtk.Orientation.VERTICAL} spacing={12}>
