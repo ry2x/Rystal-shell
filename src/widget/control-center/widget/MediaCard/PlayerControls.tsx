@@ -40,7 +40,7 @@ export default function PlayerControls({player, canSwitch, onSwitch}: PlayerCont
         maxWidthChars={20}
         lines={1}
       />
-      <box spacing={16} halign={Gtk.Align.START}>
+      <box class="cc-player-controls" spacing={10} halign={Gtk.Align.START}>
         <button class="icon-btn" onClicked={() => playPrevious(player)}>
           <LucideIcon name="skip-back" pixelSize={20} />
         </button>
