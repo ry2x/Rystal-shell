@@ -32,6 +32,7 @@ export default function NotificationPopups({monitor}: NotificationPopupsProps) {
       <AnimatedList
         items={popups}
         idFor={(notification: Notifd.Notification) => String(notification.id)}
+        className="notification-popup-list"
         spacing={8}
         renderItem={(notification: Notifd.Notification) => (
           <box halign={Gtk.Align.END}>

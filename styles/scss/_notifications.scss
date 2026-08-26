@@ -73,6 +73,10 @@ $notification-edge-hover: rgba($primary, 0.24);
   background-color: transparent;
 }
 
+.notification-popup-list {
+  padding: 0 22px;
+}
+
 // Notification card styling
 .notif-card {
   background-color: rgba($surface, 0.48);
