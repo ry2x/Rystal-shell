@@ -61,19 +61,19 @@ window.AppLauncher {
 .applauncher-input:focus-visible,
 .applauncher-input:focus-within {
   caret-color: $accent;
-  background-color: rgba($primary-container, 0.26);
+  background-color: rgba($primary-container, 0.42);
   background-image: linear-gradient(
     to bottom,
-    rgba($on-surface, 0.15),
-    rgba($primary, 0.065) 48%,
-    rgba($surface, 0.18)
+    rgba($on-surface, 0.18),
+    rgba($primary, 0.12) 48%,
+    rgba($surface, 0.24)
   );
   color: $text;
   padding: 8px 16px;
   font-family: 'GeistMono Nerd Font', monospace;
   font-weight: bold;
   margin: 0 6em 1em 0;
-  border: 1px solid rgba($primary, 0.48);
+  border: 1px solid rgba($primary, 0.56);
   border-radius: 0.5em;
   box-shadow:
     inset 0 1px rgba($on-surface, 0.17),
@@ -98,7 +98,8 @@ window.AppLauncher {
   }
 
   placeholder {
-    color: rgba($text, 0.55);
+    color: rgba($text, 0.86);
+    opacity: 1;
   }
 }
 
