@@ -406,15 +406,6 @@ levelbar {
   color: $error;
 }
 
-// Tooltip Styling
-.tooltip {
-  background: rgba($on-surface, 0.08);
-  border-radius: 8px;
-  padding: 8px 12px;
-  box-shadow: 0 4px 16px rgba($primary, 0.2);
-  transition: all $motion-standard $motion-ease;
-}
-
 // Main page glass treatment. Detail pages and dialogs intentionally keep their own styling.
 .cc-main-panel {
   .cc-main-header {
