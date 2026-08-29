@@ -27,6 +27,7 @@ The following packages are required to build and use Rystal-shell on its own:
 - `imagemagick`
 - `webp-pixbuf-loader`
 - `gsound`
+- Node.js 24 or later (build, checks, and tests)
 - `pnpm` (build and development)
 
 The bundled wallpaper and theme switcher additionally requires:
@@ -144,7 +145,7 @@ pnpm build
 git diff --check
 ```
 
-`pnpm check` runs Prettier's check mode, ESLint, Knip, and the project type check.
+`pnpm check` runs Prettier's check mode, ESLint, Knip, the project type check, and Node tests.
 Use `pnpm format` to apply formatting before running the checks again.
 
 `pnpm check` ignores the following 2 known upstream type errors:

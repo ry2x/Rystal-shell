@@ -6,14 +6,7 @@ import {appConfig} from '@/lib/config';
 
 const notifd = Notifd.get_default();
 export const doNotDisturb = createBinding(notifd, 'dontDisturb');
-const DEFAULT_MAX_NOTIFICATIONS = 30;
-const configuredMaxNotifications = appConfig.notifications?.maxCount;
-const MAX_NOTIFICATIONS =
-  typeof configuredMaxNotifications === 'number' &&
-  Number.isInteger(configuredMaxNotifications) &&
-  configuredMaxNotifications > 0
-    ? configuredMaxNotifications
-    : DEFAULT_MAX_NOTIFICATIONS;
+const MAX_NOTIFICATIONS = appConfig.notifications.maxCount;
 
 function uniqueNotifications(notifications: Notifd.Notification[]) {
   const seenIds = new Set<number>();

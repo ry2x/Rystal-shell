@@ -79,10 +79,10 @@ function finishRecording(recording: ActiveRecording, code: number, signaled: boo
 
 function getRecordingPath() {
   const now = GLib.DateTime.new_now_local();
-  const format = appConfig.recorder?.filenameFormat || 'recording_%Y-%m-%d_%H.%M.%S.mp4';
+  const format = appConfig.recorder.filenameFormat;
   const filename = now.format(format) || `recording_${Date.now()}.mp4`;
 
-  let savePath = appConfig.recorder?.savePath || '~/Videos';
+  let savePath = appConfig.recorder.savePath;
   if (savePath === '~' || savePath.startsWith('~/')) {
     savePath = `${GLib.get_home_dir()}${savePath.slice(1)}`;
   }
@@ -96,9 +96,9 @@ function getRecordingPath() {
 }
 
 function addAudioOptions(cmd: string[]) {
-  if (appConfig.recorder?.recordAudio === false) return;
+  if (!appConfig.recorder.recordAudio) return;
 
-  if (appConfig.recorder?.audioSource === 'mic') {
+  if (appConfig.recorder.audioSource === 'mic') {
     cmd.push('-a');
     return;
   }
