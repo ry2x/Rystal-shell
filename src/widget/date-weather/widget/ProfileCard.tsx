@@ -8,7 +8,7 @@ import {getOsInfo, uptime, userName} from '@/stores/system/system';
 
 const DEFAULT_AVATAR_PATH = `${GLib.get_home_dir()}/Profile/Profile.png`;
 const osInfoCache = getOsInfo();
-const profile = appConfig.profile ?? {};
+const profile = appConfig.profile;
 const profileHandle = profile.handle ?? userName;
 const profileOs = profile.os ?? osInfoCache;
 

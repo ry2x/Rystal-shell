@@ -5,7 +5,6 @@ import GLib from 'gi://GLib';
 import {appConfig} from '@/lib/config';
 
 export type BrightnessBackend = 'ddcutil' | 'brightnessctl';
-type ConfiguredBackend = BrightnessBackend | 'auto';
 
 const DDC_VCP_BRIGHTNESS = '10';
 
@@ -36,7 +35,7 @@ export class BrightnessBackendController {
   async resolve() {
     if (this.backend) return this.backend;
 
-    const configured = (appConfig.brightness?.backend ?? 'auto') as ConfiguredBackend;
+    const configured = appConfig.brightness.backend;
     if (configured === 'ddcutil' || configured === 'auto') {
       this.ddcBuses = await this.detectDdcBuses();
       if (this.ddcBuses.length > 0) {

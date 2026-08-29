@@ -6,8 +6,13 @@ It contains various settings that can be customized to alter the behavior of the
 Rystal-shell has a default configuration settings, but you can create a custom configuration file by copying the template and modifying it according to your preferences.
 
 > [!NOTE]
-> Default configuration settings are coded in [`/src/lib/config.ts`](/src/lib/config.ts).
+> Default configuration settings are coded in
+> [`/src/lib/configParser.ts`](/src/lib/configParser.ts).
 > If you want to change settings without creating a custom configuration file, you can modify the default settings in that file.
+
+The user configuration may contain only the values that differ from the defaults. Missing object
+properties are filled individually from the defaults, while arrays such as `worldClocks` replace the
+default array in full. Invalid values fall back to their defaults, and unknown keys produce a warning.
 
 ## 1. Placement
 
