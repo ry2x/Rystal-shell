@@ -65,6 +65,17 @@ describe('resolveConfig', () => {
     assert.equal(warnings.mock.callCount(), 3);
   });
 
+  it('falls back for blank recorder paths and filename formats', context => {
+    const warnings = mockWarnings(context);
+    const config = resolveConfig({
+      recorder: {savePath: '', filenameFormat: '   '},
+    });
+
+    assert.equal(config.recorder.savePath, DEFAULT_CONFIG.recorder.savePath);
+    assert.equal(config.recorder.filenameFormat, DEFAULT_CONFIG.recorder.filenameFormat);
+    assert.equal(warnings.mock.callCount(), 2);
+  });
+
   it('replaces world clocks as a complete array', () => {
     const worldClocks = [{label: 'Tokyo', tz: 'Asia/Tokyo'}];
 
@@ -75,11 +86,16 @@ describe('resolveConfig', () => {
   it('ignores invalid world clock entries', context => {
     const warnings = mockWarnings(context);
     const config = resolveConfig({
-      worldClocks: [{label: 'Tokyo', tz: 'Asia/Tokyo'}, {label: 'Missing timezone'}, null],
+      worldClocks: [
+        {label: 'Tokyo', tz: 'Asia/Tokyo'},
+        {label: 'Invalid timezone', tz: 'Not/AZone'},
+        {label: 'Missing timezone'},
+        null,
+      ],
     });
 
     assert.deepEqual(config.worldClocks, [{label: 'Tokyo', tz: 'Asia/Tokyo'}]);
-    assert.equal(warnings.mock.callCount(), 2);
+    assert.equal(warnings.mock.callCount(), 3);
   });
 
   it('reports unknown keys', context => {

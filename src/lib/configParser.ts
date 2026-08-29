@@ -81,6 +81,19 @@ function readString(
   return fallback;
 }
 
+function readNonBlankString(
+  section: ConfigObject | undefined,
+  key: string,
+  path: string,
+  fallback: string
+) {
+  const value = section?.[key];
+  if (value === undefined) return fallback;
+  if (typeof value === 'string' && value.trim().length > 0) return value;
+  warnConfig(`${path}.${key}`, 'expected a non-empty string');
+  return fallback;
+}
+
 function readOptionalString(section: ConfigObject | undefined, key: string, path: string) {
   const value = section?.[key];
   if (value === undefined) return undefined;
@@ -91,6 +104,17 @@ function readOptionalString(section: ConfigObject | undefined, key: string, path
 
 function defaultWorldClocks() {
   return DEFAULT_CONFIG.worldClocks.map(clock => ({...clock}));
+}
+
+function isValidTimeZone(timeZone: string) {
+  if (timeZone.trim().length === 0) return false;
+  try {
+    new Intl.DateTimeFormat('en-US', {timeZone}).format(0);
+    return true;
+  } catch (error) {
+    if (error instanceof RangeError) return false;
+    throw error;
+  }
 }
 
 function resolveWorldClocks(value: unknown): WorldClockConfig[] {
@@ -108,6 +132,10 @@ function resolveWorldClocks(value: unknown): WorldClockConfig[] {
     warnUnknownKeys(`worldClocks[${index}]`, entry, ['label', 'tz']);
     if (typeof entry.label !== 'string' || typeof entry.tz !== 'string') {
       warnConfig(`worldClocks[${index}]`, "expected string properties 'label' and 'tz'");
+      return [];
+    }
+    if (!isValidTimeZone(entry.tz)) {
+      warnConfig(`worldClocks[${index}].tz`, 'expected a valid IANA time zone');
       return [];
     }
     return [{label: entry.label, tz: entry.tz}];
@@ -171,8 +199,8 @@ function resolveRecorder(root: ConfigObject): AppConfig['recorder'] {
   }
 
   return {
-    savePath: readString(section, 'savePath', 'recorder', DEFAULT_CONFIG.recorder.savePath),
-    filenameFormat: readString(
+    savePath: readNonBlankString(section, 'savePath', 'recorder', DEFAULT_CONFIG.recorder.savePath),
+    filenameFormat: readNonBlankString(
       section,
       'filenameFormat',
       'recorder',
