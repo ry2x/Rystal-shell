@@ -126,9 +126,9 @@ Rystal-shell uses `RYSTAL_SHELL_*` environment variables for directory configura
 
 ## Development
 
-`pnpm dev` starts the `rystal-shell-dev` AGS instance with config, cache, state, and runtime
-data isolated below `.dev/`. Optionally run `direnv allow` to load the same environment while
-working in the repository.
+Development requires [direnv](https://direnv.net/). Run `direnv allow` once from the repository
+root; then `pnpm dev` starts the `rystal-shell-dev` AGS instance with config, cache, state, and
+runtime data isolated below `.dev/`.
 
 Run the static checks before submitting changes:
 

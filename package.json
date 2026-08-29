@@ -26,7 +26,7 @@
     "test": "node --test --test-isolation=none",
     "check": "pnpm format:check && pnpm lint && pnpm knip && pnpm typecheck && pnpm test",
     "build": "./scripts/build.sh",
-    "dev": "./scripts/dev.sh",
+    "dev": "direnv exec . ./scripts/dev.sh",
     "deploy:user": "./scripts/deploy-user.sh",
     "install:launcher": "./scripts/install-launcher.sh"
   },

@@ -2,8 +2,8 @@
 # Exercise AGS panels while recording PSS/RSS before and after each operation.
 set -euo pipefail
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
-ROOT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+ROOT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd -P)
 COLLECTOR="$SCRIPT_DIR/collect-memory.sh"
 AGS_INSTANCE="${RYSTAL_SHELL_INSTANCE:-rystal-shell-dev}"
 export RYSTAL_SHELL_INSTANCE="$AGS_INSTANCE"
@@ -131,7 +131,7 @@ start_ags() {
   if "$dry_run"; then
     printf '+ %q/scripts/dev.sh\n' "$ROOT_DIR"
   else
-    "$ROOT_DIR/scripts/dev.sh" >/dev/null 2>&1 &
+    direnv exec "$ROOT_DIR" "$ROOT_DIR/scripts/dev.sh" >/dev/null 2>&1 &
   fi
   wait_for_settle "$settle_seconds"
 }
