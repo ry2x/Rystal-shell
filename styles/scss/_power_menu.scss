@@ -13,10 +13,10 @@ window.PowerMenu {
 }
 
 .power-menu-panel {
-  padding: 0 42px;
+  padding: 0 s(42);
   background: transparent;
   opacity: 0;
-  transform: translateY(350px);
+  transform: translateY(s(350));
   transition:
     transform $motion-panel $motion-ease,
     opacity $motion-standard $motion-ease;
@@ -29,21 +29,21 @@ window.PowerMenu {
 
 .power-menu-main,
 .power-menu-confirmation {
-  min-height: 284px;
+  min-height: s(284);
 }
 
 .power-menu-main {
-  transform: translateY(20px);
+  transform: translateY(s(20));
 }
 
 .power-menu-items {
-  min-height: 250px;
+  min-height: s(250);
 }
 
 .power-menu-item {
-  min-width: 220px;
-  min-height: 250px;
-  padding: 24px 18px 28px;
+  min-width: s(220);
+  min-height: s(250);
+  padding: s(24) s(18) s(28);
   color: $text;
   background-color: rgba($surface, 0.3);
   background-image: linear-gradient(
@@ -52,12 +52,12 @@ window.PowerMenu {
     rgba($on-surface, 0.035) 48%,
     rgba($surface, 0.14)
   );
-  border: 1px solid rgba($on-surface, 0.13);
-  border-radius: 24px;
+  border: s(1) solid rgba($on-surface, 0.13);
+  border-radius: s(24);
   box-shadow:
-    inset 0 1px rgba($on-surface, 0.07),
-    inset 0 -1px rgba(0, 0, 0, 0.14),
-    0 10px 28px rgba(0, 0, 0, 0.28);
+    inset 0 s(1) rgba($on-surface, 0.07),
+    inset 0 s(-1) rgba(0, 0, 0, 0.14),
+    0 s(10) s(28) rgba(0, 0, 0, 0.28);
   outline: none;
   transition: all $motion-panel $motion-ease;
 
@@ -79,18 +79,18 @@ window.PowerMenu {
       rgba($primary, 0.13) 48%,
       rgba($surface, 0.16)
     );
-    border: 1px solid rgba($primary, 0.46);
+    border: s(1) solid rgba($primary, 0.46);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.18),
-      inset 0 -1px rgba($primary, 0.09),
-      inset 0 0 28px rgba($primary, 0.055),
-      0 14px 34px rgba(0, 0, 0, 0.32),
-      0 0 24px rgba($primary, 0.18);
-    transform: translateY(-5px);
+      inset 0 s(1) rgba($on-surface, 0.18),
+      inset 0 s(-1) rgba($primary, 0.09),
+      inset 0 0 s(28) rgba($primary, 0.055),
+      0 s(14) s(34) rgba(0, 0, 0, 0.32),
+      0 0 s(24) rgba($primary, 0.18);
+    transform: translateY(s(-5));
 
     image {
       color: $primary-fixed;
-      -gtk-icon-shadow: 0 0 20px rgba($primary, 0.32);
+      -gtk-icon-shadow: 0 0 s(20) rgba($primary, 0.32);
       transform: scale(2.35);
     }
   }
@@ -103,7 +103,7 @@ window.PowerMenu {
 }
 
 .power-menu-error {
-  min-height: 20px;
+  min-height: s(20);
   color: transparent;
   font-size: 0.82em;
   font-weight: 700;
@@ -114,24 +114,24 @@ window.PowerMenu {
 }
 
 .power-menu-confirmation {
-  min-width: 1080px;
-  min-height: 250px;
+  min-width: s(1080);
+  min-height: s(250);
   padding: 0;
-  transform: translateY(-1px);
+  transform: translateY(s(-1));
   background: transparent;
   border: 0;
   box-shadow: none;
 
   image {
     color: $primary-fixed;
-    -gtk-icon-shadow: 0 0 20px rgba($primary, 0.32);
+    -gtk-icon-shadow: 0 0 s(20) rgba($primary, 0.32);
   }
 }
 
 .power-menu-confirmation-card {
-  min-width: 220px;
-  min-height: 250px;
-  padding: 24px 18px 28px;
+  min-width: s(220);
+  min-height: s(250);
+  padding: s(24) s(18) s(28);
   color: $primary-fixed;
   background-color: rgba($primary-container, 0.34);
   background-image: linear-gradient(
@@ -140,14 +140,14 @@ window.PowerMenu {
     rgba($primary, 0.13) 48%,
     rgba($surface, 0.16)
   );
-  border: 1px solid rgba($primary, 0.46);
-  border-radius: 24px;
+  border: s(1) solid rgba($primary, 0.46);
+  border-radius: s(24);
   box-shadow:
-    inset 0 1px rgba($on-surface, 0.18),
-    inset 0 -1px rgba($primary, 0.09),
-    inset 0 0 28px rgba($primary, 0.055),
-    0 14px 34px rgba(0, 0, 0, 0.32),
-    0 0 24px rgba($primary, 0.18);
+    inset 0 s(1) rgba($on-surface, 0.18),
+    inset 0 s(-1) rgba($primary, 0.09),
+    inset 0 0 s(28) rgba($primary, 0.055),
+    0 s(14) s(34) rgba(0, 0, 0, 0.32),
+    0 0 s(24) rgba($primary, 0.18);
 
   image {
     transform: scale(2.35);
@@ -155,8 +155,8 @@ window.PowerMenu {
 }
 
 .power-menu-confirmation-body {
-  min-width: 780px;
-  padding: 32px 34px;
+  min-width: s(780);
+  padding: s(32) s(34);
   background-color: rgba($surface, 0.42);
   background-image: linear-gradient(
     145deg,
@@ -164,12 +164,12 @@ window.PowerMenu {
     rgba($on-surface, 0.03) 48%,
     rgba($surface, 0.18)
   );
-  border: 1px solid rgba($on-surface, 0.13);
-  border-radius: 24px;
+  border: s(1) solid rgba($on-surface, 0.13);
+  border-radius: s(24);
   box-shadow:
-    inset 0 1px rgba($on-surface, 0.075),
-    inset 0 -1px rgba(0, 0, 0, 0.14),
-    0 12px 36px rgba(0, 0, 0, 0.3);
+    inset 0 s(1) rgba($on-surface, 0.075),
+    inset 0 s(-1) rgba(0, 0, 0, 0.14),
+    0 s(12) s(36) rgba(0, 0, 0, 0.3);
 }
 
 .power-menu-confirmation-title {
@@ -186,9 +186,9 @@ window.PowerMenu {
 
 .power-menu-cancel,
 .power-menu-confirm {
-  min-width: 150px;
-  min-height: 64px;
-  padding: 12px 20px;
+  min-width: s(150);
+  min-height: s(64);
+  padding: s(12) s(20);
   color: $text;
   background-color: rgba($surface, 0.24);
   background-image: linear-gradient(
@@ -197,14 +197,14 @@ window.PowerMenu {
     rgba($on-surface, 0.045) 48%,
     rgba($surface, 0.16)
   );
-  border: 1px solid rgba($on-surface, 0.14);
-  border-radius: 12px;
+  border: s(1) solid rgba($on-surface, 0.14);
+  border-radius: s(12);
   font-weight: 750;
   outline: none;
   box-shadow:
-    inset 0 1px rgba($on-surface, 0.14),
-    inset 0 -1px rgba(0, 0, 0, 0.16),
-    0 6px 16px rgba(0, 0, 0, 0.24);
+    inset 0 s(1) rgba($on-surface, 0.14),
+    inset 0 s(-1) rgba(0, 0, 0, 0.16),
+    0 s(6) s(16) rgba(0, 0, 0, 0.24);
   transition: all $motion-standard $motion-ease;
 }
 
@@ -216,10 +216,10 @@ window.PowerMenu {
     background-image: linear-gradient(to bottom, rgba($primary, 0.18), rgba($primary, 0.06));
     border-color: rgba($primary, 0.42);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.17),
-      0 7px 18px rgba(0, 0, 0, 0.28),
-      0 0 18px rgba($primary, 0.15);
-    transform: translateY(-2px);
+      inset 0 s(1) rgba($on-surface, 0.17),
+      0 s(7) s(18) rgba(0, 0, 0, 0.28),
+      0 0 s(18) rgba($primary, 0.15);
+    transform: translateY(s(-2));
   }
 }
 
@@ -231,9 +231,9 @@ window.PowerMenu {
     background-image: linear-gradient(to bottom, rgba($error, 0.2), rgba($error, 0.065));
     border-color: rgba($error, 0.46);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.16),
-      0 7px 18px rgba(0, 0, 0, 0.28),
-      0 0 18px rgba($error, 0.18);
-    transform: translateY(-2px);
+      inset 0 s(1) rgba($on-surface, 0.16),
+      0 s(7) s(18) rgba(0, 0, 0, 0.28),
+      0 0 s(18) rgba($error, 0.18);
+    transform: translateY(s(-2));
   }
 }

@@ -2,7 +2,7 @@
 
 window.AppLauncher {
   background: transparent;
-  font-size: 18px; /* Scales up everything using em units */
+  font-size: s(18); /* Scales up everything using em units */
 }
 
 .applauncher-window {
@@ -14,13 +14,13 @@ window.AppLauncher {
     rgba($on-surface, 0.025) 46%,
     rgba($surface, 0.2)
   );
-  border: 3px solid $primary;
-  border-radius: 16px;
+  border: s(3) solid $primary;
+  border-radius: s(16);
   box-shadow:
-    inset 0 1px rgba($on-surface, 0.12),
-    inset 0 -1px rgba(0, 0, 0, 0.2),
-    0 22px 54px rgba(0, 0, 0, 0.42),
-    0 0 32px rgba($primary, 0.08);
+    inset 0 s(1) rgba($on-surface, 0.12),
+    inset 0 s(-1) rgba(0, 0, 0, 0.2),
+    0 s(22) s(54) rgba(0, 0, 0, 0.42),
+    0 0 s(32) rgba($primary, 0.08);
   padding: 0.75em;
 }
 
@@ -32,12 +32,12 @@ window.AppLauncher {
     rgba($on-surface, 0.012) 48%,
     rgba($surface, 0.1)
   );
-  border: 1px solid rgba($on-surface, 0.12);
+  border: s(1) solid rgba($on-surface, 0.12);
   border-radius: 0.85em;
   box-shadow:
-    inset 0 1px rgba($on-surface, 0.09),
-    inset 0 -1px rgba(0, 0, 0, 0.16),
-    0 8px 24px rgba(0, 0, 0, 0.18);
+    inset 0 s(1) rgba($on-surface, 0.09),
+    inset 0 s(-1) rgba(0, 0, 0, 0.16),
+    0 s(8) s(24) rgba(0, 0, 0, 0.18);
   padding: 0;
   min-width: 66em;
   min-height: 34em;
@@ -52,7 +52,7 @@ window.AppLauncher {
 }
 
 .applauncher-search-container {
-  padding: 6px 12px;
+  padding: s(6) s(12);
 }
 
 .applauncher-input,
@@ -69,17 +69,17 @@ window.AppLauncher {
     rgba($surface, 0.24)
   );
   color: $text;
-  padding: 8px 16px;
+  padding: s(8) s(16);
   font-family: 'GeistMono Nerd Font', monospace;
   font-weight: bold;
   margin: 0 6em 1em 0;
-  border: 1px solid rgba($primary, 0.56);
+  border: s(1) solid rgba($primary, 0.56);
   border-radius: 0.5em;
   box-shadow:
-    inset 0 1px rgba($on-surface, 0.17),
-    inset 0 -1px rgba(0, 0, 0, 0.16),
-    0 8px 22px rgba(0, 0, 0, 0.3),
-    0 0 18px rgba($primary, 0.15);
+    inset 0 s(1) rgba($on-surface, 0.17),
+    inset 0 s(-1) rgba(0, 0, 0, 0.16),
+    0 s(8) s(22) rgba(0, 0, 0, 0.3),
+    0 0 s(18) rgba($primary, 0.15);
   outline: none;
   transition: none;
 }
@@ -113,24 +113,24 @@ window.AppLauncher {
 
 .applauncher-scroll {
   min-width: 32em;
-  margin-top: 24px;
-  margin-bottom: 24px;
+  margin-top: s(24);
+  margin-bottom: s(24);
 }
 
 .applauncher-list {
   color: $text;
-  padding: 0px 32px 0px 32px;
-  margin: 0px 8px 0px 0px;
+  padding: s(0) s(32) s(0) s(32);
+  margin: s(0) s(8) s(0) s(0);
 }
 
 .applauncher-item {
   border-radius: 0.5em;
   padding: 0.6em 0.5em 0.6em 1.2em;
-  margin: 1px 0;
+  margin: s(1) 0;
   min-height: 2.8em;
   background-color: transparent;
   background-image: none;
-  border: 1px solid transparent;
+  border: s(1) solid transparent;
   box-shadow: none;
   color: $text;
   transition: all $motion-standard $motion-ease;
@@ -148,10 +148,10 @@ window.AppLauncher {
   border-color: rgba($primary, 0.4);
   color: $primary-fixed;
   box-shadow:
-    inset 0 1px rgba($on-surface, 0.16),
-    inset 0 -1px rgba($primary, 0.07),
-    0 8px 20px rgba(0, 0, 0, 0.24),
-    0 0 16px rgba($primary, 0.12);
+    inset 0 s(1) rgba($on-surface, 0.16),
+    inset 0 s(-1) rgba($primary, 0.07),
+    0 s(8) s(20) rgba(0, 0, 0, 0.24),
+    0 0 s(16) rgba($primary, 0.12);
 }
 .applauncher-item:hover label,
 .applauncher-item:focus label,

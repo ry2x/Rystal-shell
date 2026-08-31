@@ -12,9 +12,9 @@ $bar-content-counter-scale: 1.3158;
     rgba($surface, 0.14)
   );
   box-shadow:
-    inset 0 0 0 1px rgba($on-surface, 0.13),
-    inset 0 1px rgba($on-surface, 0.07),
-    inset 0 -1px rgba(0, 0, 0, 0.16);
+    inset 0 0 0 s(1) rgba($on-surface, 0.13),
+    inset 0 s(1) rgba($on-surface, 0.07),
+    inset 0 s(-1) rgba(0, 0, 0, 0.16);
 }
 
 //========================
@@ -35,31 +35,31 @@ window.Bar {
 
   // The main floating bar container
   .panel {
-    padding: 12px 0;
-    min-width: 47px;
+    padding: s(12) 0;
+    min-width: s(47);
 
     .panel-start,
     .panel-center,
     .panel-end {
-      padding: 4px 0;
+      padding: s(4) 0;
     }
   }
 
   // Separators between modules
   .sep {
     background: $border;
-    min-height: 1px;
-    min-width: 12px;
-    margin: 6px 0;
-    border-radius: 2px;
+    min-height: s(1);
+    min-width: s(12);
+    margin: s(6) 0;
+    border-radius: s(2);
   }
 
   // Workspace module
   .Workspaces {
     margin: 0;
-    padding: 16px 0;
+    padding: s(16) 0;
     @include bar-card-surface;
-    border-radius: 14px;
+    border-radius: s(14);
     transform: scaleX($bar-capsule-scale);
 
     > box {
@@ -74,16 +74,16 @@ window.Bar {
         rgba($on-surface, 0.16) 48%,
         rgba($surface, 0.2)
       );
-      border-radius: 99px;
-      border: 1px solid rgba($on-surface, 0.16);
+      border-radius: s(99);
+      border: s(1) solid rgba($on-surface, 0.16);
       padding: 0;
-      min-width: 8px;
-      min-height: 8px;
+      min-width: s(8);
+      min-height: s(8);
       margin: 0;
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.22),
-        inset 0 -1px rgba(0, 0, 0, 0.2),
-        0 2px 5px rgba(0, 0, 0, 0.18);
+        inset 0 s(1) rgba($on-surface, 0.22),
+        inset 0 s(-1) rgba(0, 0, 0, 0.2),
+        0 s(2) s(5) rgba(0, 0, 0, 0.18);
       transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
 
       &:hover {
@@ -96,9 +96,9 @@ window.Bar {
         );
         border-color: rgba($primary, 0.48);
         box-shadow:
-          inset 0 1px rgba($on-surface, 0.42),
-          inset 0 -1px rgba($primary, 0.12),
-          0 0 11px rgba($primary, 0.24);
+          inset 0 s(1) rgba($on-surface, 0.42),
+          inset 0 s(-1) rgba($primary, 0.12),
+          0 0 s(11) rgba($primary, 0.24);
         transform: scale(1.08);
       }
 
@@ -112,8 +112,8 @@ window.Bar {
 
     .active-indicator {
       // Counter the workspace capsule's scaleX(0.76) so this renders as a circle.
-      min-width: 17px;
-      min-height: 13px;
+      min-width: s(17);
+      min-height: s(13);
       transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
       .active-indicator-dot {
@@ -121,15 +121,15 @@ window.Bar {
         background-image: none;
         border: none;
         border-radius: 50%;
-        min-width: 17px;
-        min-height: 13px;
+        min-width: s(17);
+        min-height: s(13);
         box-shadow: none;
         transform: scaleY(1);
         transition: transform 190ms cubic-bezier(0.25, 1, 0.5, 1);
       }
 
       &.moving .active-indicator-dot {
-        border-radius: 99px;
+        border-radius: s(99);
         transform: scaleY(1.55);
       }
     }
@@ -145,10 +145,10 @@ window.Bar {
   .Wifi,
   .network-btn {
     margin: 0;
-    padding: 11px 0;
-    border-radius: 10px;
+    padding: s(11) 0;
+    border-radius: s(10);
     transition: all 200ms cubic-bezier(0.25, 1, 0.5, 1);
-    min-height: 22px;
+    min-height: s(22);
     min-width: 0;
     @include bar-card-surface;
     border: none;
@@ -168,10 +168,10 @@ window.Bar {
         rgba($surface, 0.11)
       );
       box-shadow:
-        inset 0 0 0 1px rgba($primary, 0.34),
-        inset 0 1px rgba($on-surface, 0.18),
-        inset 0 -1px rgba($primary, 0.08),
-        inset 0 0 9px rgba($primary, 0.055);
+        inset 0 0 0 s(1) rgba($primary, 0.34),
+        inset 0 s(1) rgba($on-surface, 0.18),
+        inset 0 s(-1) rgba($primary, 0.08),
+        inset 0 0 s(9) rgba($primary, 0.055);
 
       > box {
         transform: scaleX($bar-content-counter-scale);
@@ -179,11 +179,11 @@ window.Bar {
 
       image {
         color: $primary-fixed;
-        -gtk-icon-shadow: 0 0 10px rgba($primary, 0.3);
+        -gtk-icon-shadow: 0 0 s(10) rgba($primary, 0.3);
       }
 
       label {
-        text-shadow: 0 0 8px rgba($primary, 0.14);
+        text-shadow: 0 0 s(8) rgba($primary, 0.14);
       }
     }
 
@@ -196,9 +196,9 @@ window.Bar {
         rgba($surface, 0.1)
       );
       box-shadow:
-        inset 0 0 0 1px rgba($primary, 0.4),
-        inset 0 2px 5px rgba(0, 0, 0, 0.2),
-        inset 0 0 8px rgba($primary, 0.07);
+        inset 0 0 0 s(1) rgba($primary, 0.4),
+        inset 0 s(2) s(5) rgba(0, 0, 0, 0.2),
+        inset 0 0 s(8) rgba($primary, 0.07);
     }
 
     // Unify all icons
@@ -216,29 +216,29 @@ window.Bar {
 
   // Clock
   .Clock {
-    padding: 7px 0;
+    padding: s(7) 0;
 
     .time {
       font-weight: 800;
       color: $on-surface;
       font-size: 1.2em;
-      margin: 0 -22px;
+      margin: 0 s(-22);
       transform: rotate(90deg);
-      text-shadow: 0 1px 9px rgba(0, 0, 0, 0.5);
+      text-shadow: 0 s(1) s(9) rgba(0, 0, 0, 0.5);
     }
     .date {
       color: $accent;
       font-size: 1.1em;
       font-weight: 700;
-      margin: 0 -18px;
+      margin: 0 s(-18);
       transform: rotate(90deg);
-      text-shadow: 0 0 9px rgba($primary, 0.16);
+      text-shadow: 0 0 s(9) rgba($primary, 0.16);
     }
     .day {
       color: rgba($text, 0.7);
       font-size: 0.95em;
       font-weight: 600;
-      margin: 0 -12px;
+      margin: 0 s(-12);
       text-transform: uppercase;
       transform: rotate(90deg);
     }
@@ -250,7 +250,7 @@ window.Bar {
 
   .SysMetrics {
     .metric-icon {
-      margin-bottom: 4px;
+      margin-bottom: s(4);
     }
     .metric-value {
       font-size: 0.9em;
@@ -262,7 +262,7 @@ window.Bar {
 
   .Weather {
     .bar-weather-icon {
-      margin-bottom: 4px;
+      margin-bottom: s(4);
     }
     .bar-weather-value {
       font-weight: 800;
@@ -280,24 +280,24 @@ window.Bar {
     background-color: rgba($error-container, 0.26);
     background-image: linear-gradient(to bottom, rgba($error, 0.18), rgba($error, 0.055));
     border: none;
-    border-radius: 10px;
+    border-radius: s(10);
     color: $error;
     box-shadow:
-      inset 0 0 0 1px rgba($error, 0.38),
-      inset 0 1px rgba($on-surface, 0.12);
+      inset 0 0 0 s(1) rgba($error, 0.38),
+      inset 0 s(1) rgba($on-surface, 0.12);
     transform: scaleX($bar-capsule-scale);
     animation: pulse-record 2s infinite;
 
     &:hover {
       background-color: rgba($error-container, 0.36);
       box-shadow:
-        inset 0 0 0 1px rgba($error, 0.5),
-        inset 0 1px rgba($on-surface, 0.15),
-        inset 0 0 8px rgba($error, 0.1);
+        inset 0 0 0 s(1) rgba($error, 0.5),
+        inset 0 s(1) rgba($on-surface, 0.15),
+        inset 0 0 s(8) rgba($error, 0.1);
     }
 
     .record-indicator-content {
-      padding: 4px;
+      padding: s(4);
       transform: scaleX($bar-content-counter-scale);
     }
   }
@@ -305,40 +305,40 @@ window.Bar {
   @keyframes pulse-record {
     0% {
       box-shadow:
-        inset 0 0 0 1px rgba($error, 0.38),
-        inset 0 1px rgba($on-surface, 0.12),
-        0 3px 10px rgba(0, 0, 0, 0.2),
+        inset 0 0 0 s(1) rgba($error, 0.38),
+        inset 0 s(1) rgba($on-surface, 0.12),
+        0 s(3) s(10) rgba(0, 0, 0, 0.2),
         0 0 0 0 rgba($error, 0.42);
     }
     70% {
       box-shadow:
-        inset 0 0 0 1px rgba($error, 0.42),
-        inset 0 1px rgba($on-surface, 0.12),
-        0 3px 10px rgba(0, 0, 0, 0.2),
-        0 0 0 6px rgba($error, 0);
+        inset 0 0 0 s(1) rgba($error, 0.42),
+        inset 0 s(1) rgba($on-surface, 0.12),
+        0 s(3) s(10) rgba(0, 0, 0, 0.2),
+        0 0 0 s(6) rgba($error, 0);
     }
     100% {
       box-shadow:
-        inset 0 0 0 1px rgba($error, 0.38),
-        inset 0 1px rgba($on-surface, 0.12),
-        0 3px 10px rgba(0, 0, 0, 0.2),
+        inset 0 0 0 s(1) rgba($error, 0.38),
+        inset 0 s(1) rgba($on-surface, 0.12),
+        0 s(3) s(10) rgba(0, 0, 0, 0.2),
         0 0 0 0 rgba($error, 0);
     }
   }
 
   .ScrollerIndicator {
     .scroller-icon {
-      margin-bottom: 4px;
+      margin-bottom: s(4);
     }
     .scroller-count {
       font-weight: 800;
     }
     .separator {
       background-color: $accent;
-      border-radius: 2px;
-      margin: 2px 0;
-      min-height: 3px;
-      min-width: 12px;
+      border-radius: s(2);
+      margin: s(2) 0;
+      min-height: s(3);
+      min-width: s(12);
     }
   }
 
@@ -350,30 +350,30 @@ window.Bar {
     box-shadow: none;
 
     .tray-primary {
-      min-width: 32px;
-      min-height: 32px;
+      min-width: s(32);
+      min-height: s(32);
       padding: 0;
       border: none;
-      border-radius: 8px;
+      border-radius: s(8);
       background-color: rgba($surface, 0.16);
       background-image: linear-gradient(145deg, rgba($on-surface, 0.1), rgba($on-surface, 0.025));
       box-shadow:
-        inset 0 0 0 1px rgba($on-surface, 0.1),
-        inset 0 1px rgba($on-surface, 0.09),
-        inset 0 -1px rgba(0, 0, 0, 0.12);
+        inset 0 0 0 s(1) rgba($on-surface, 0.1),
+        inset 0 s(1) rgba($on-surface, 0.09),
+        inset 0 s(-1) rgba(0, 0, 0, 0.12);
       transform: none;
       transition: all $motion-standard $motion-ease;
 
       &:hover {
         background-color: rgba($primary-container, 0.24);
         box-shadow:
-          inset 0 0 0 1px rgba($primary, 0.32),
-          inset 0 1px rgba($on-surface, 0.15),
-          inset 0 0 7px rgba($primary, 0.06);
+          inset 0 0 0 s(1) rgba($primary, 0.32),
+          inset 0 s(1) rgba($on-surface, 0.15),
+          inset 0 0 s(7) rgba($primary, 0.06);
 
         image {
           color: $primary-fixed;
-          -gtk-icon-shadow: 0 0 9px rgba($primary, 0.28);
+          -gtk-icon-shadow: 0 0 s(9) rgba($primary, 0.28);
         }
       }
     }
@@ -403,12 +403,12 @@ popover.menu {
       rgba($on-surface, 0.035),
       rgba($surface, 0.26)
     );
-    border: 1px solid rgba($on-surface, 0.17);
-    border-radius: 14px;
+    border: s(1) solid rgba($on-surface, 0.17);
+    border-radius: s(14);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.1),
-      0 12px 32px rgba(0, 0, 0, 0.4);
-    padding: 6px;
+      inset 0 s(1) rgba($on-surface, 0.1),
+      0 s(12) s(32) rgba(0, 0, 0, 0.4);
+    padding: s(6);
   }
 }
 
@@ -416,21 +416,21 @@ popover.tray-menu {
   .tray-menu-btn {
     background: transparent;
     border: 0;
-    border-radius: 9px;
+    border-radius: s(9);
     box-shadow: none;
-    padding: 7px 10px;
+    padding: s(7) s(10);
 
     &:hover {
       background-color: rgba($on-surface, 0.075);
       background-image: linear-gradient(to right, rgba($on-surface, 0.055), transparent);
-      box-shadow: inset 0 1px rgba($on-surface, 0.055);
+      box-shadow: inset 0 s(1) rgba($on-surface, 0.055);
     }
   }
 }
 
 popover.tray-expander {
   > contents {
-    margin-left: 8px;
+    margin-left: s(8);
   }
 
   menubutton.tray-item {
@@ -442,8 +442,8 @@ popover.tray-expander {
 
   button.tray-item,
   menubutton.tray-item > button.toggle {
-    min-width: 24px;
-    min-height: 24px;
+    min-width: s(24);
+    min-height: s(24);
     background-color: rgba($surface, 0.22);
     background-image: linear-gradient(
       to bottom,
@@ -451,13 +451,13 @@ popover.tray-expander {
       rgba($on-surface, 0.045) 48%,
       rgba($surface, 0.16)
     );
-    border: 1px solid rgba($on-surface, 0.14);
-    border-radius: 9px;
+    border: s(1) solid rgba($on-surface, 0.14);
+    border-radius: s(9);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.14),
-      inset 0 -1px rgba(0, 0, 0, 0.16),
-      0 4px 12px rgba(0, 0, 0, 0.22);
-    padding: 4px;
+      inset 0 s(1) rgba($on-surface, 0.14),
+      inset 0 s(-1) rgba(0, 0, 0, 0.16),
+      0 s(4) s(12) rgba(0, 0, 0, 0.22);
+    padding: s(4);
     transition: all $motion-standard $motion-ease;
 
     &:hover {
@@ -465,9 +465,9 @@ popover.tray-expander {
       background-image: linear-gradient(to bottom, rgba($primary, 0.18), rgba($primary, 0.06));
       border-color: rgba($primary, 0.42);
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.17),
-        0 5px 14px rgba(0, 0, 0, 0.26),
-        0 0 15px rgba($primary, 0.14);
+        inset 0 s(1) rgba($on-surface, 0.17),
+        0 s(5) s(14) rgba(0, 0, 0, 0.26),
+        0 0 s(15) rgba($primary, 0.14);
     }
 
     &:active {
@@ -475,8 +475,8 @@ popover.tray-expander {
       background-image: linear-gradient(to bottom, rgba($primary, 0.14), rgba($surface, 0.12));
       border-color: rgba($primary, 0.34);
       box-shadow:
-        inset 0 2px 4px rgba(0, 0, 0, 0.28),
-        0 2px 7px rgba(0, 0, 0, 0.18);
+        inset 0 s(2) s(4) rgba(0, 0, 0, 0.28),
+        0 s(2) s(7) rgba(0, 0, 0, 0.18);
     }
   }
 }
@@ -485,18 +485,18 @@ popover.tray-item-menu button.model,
 popover.menu button.model {
   background: transparent;
   border: 0;
-  border-radius: 9px;
+  border-radius: s(9);
   box-shadow: none;
-  padding: 7px 10px;
+  padding: s(7) s(10);
 
   &:hover {
     background-color: rgba($on-surface, 0.075);
     background-image: linear-gradient(to right, rgba($on-surface, 0.055), transparent);
-    box-shadow: inset 0 1px rgba($on-surface, 0.055);
+    box-shadow: inset 0 s(1) rgba($on-surface, 0.055);
   }
 }
 
 .tray-menu-placeholder {
   color: rgba($text, 0.7);
-  padding: 8px 12px;
+  padding: s(8) s(12);
 }

@@ -3,5 +3,5 @@
   "tags": ["-lintignore"],
   "entry": ["src/app.ts", "scripts/build-js.mjs", "test/**/*.test.mjs"],
   "ignoreDependencies": ["cairo", "gi", "system"],
-  "ignoreBinaries": ["ags"]
+  "ignoreBinaries": ["ags", "direnv", "sass"]
 }

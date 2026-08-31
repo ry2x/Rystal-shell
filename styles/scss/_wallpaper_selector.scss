@@ -19,21 +19,21 @@ window.WallpaperSelector {
 }
 
 .wallpaper-selector-content {
-  padding: 8px 28px 10px;
+  padding: s(8) s(28) s(10);
 }
 
 .wallpaper-coverflow {
-  min-height: 280px;
-  transform: translateY(32px);
+  min-height: s(280);
+  transform: translateY(s(32));
 }
 
 .wallpaper-card {
-  min-width: 384px;
-  min-height: 252px;
+  min-width: s(384);
+  min-height: s(252);
   padding: 0;
   margin: 0;
-  border: 2px solid rgba($on-surface, 0.16);
-  border-radius: 18px;
+  border: s(2) solid rgba($on-surface, 0.16);
+  border-radius: s(18);
   background-color: rgba($surface, 0.3);
   background-image: linear-gradient(
     145deg,
@@ -42,18 +42,18 @@ window.WallpaperSelector {
     rgba($surface, 0.16)
   );
   box-shadow:
-    inset 0 1px rgba($on-surface, 0.09),
-    inset 0 -1px rgba(0, 0, 0, 0.16),
-    0 10px 28px rgba(0, 0, 0, 0.3);
+    inset 0 s(1) rgba($on-surface, 0.09),
+    inset 0 s(-1) rgba(0, 0, 0, 0.16),
+    0 s(10) s(28) rgba(0, 0, 0, 0.3);
   outline: none;
   transition: all $motion-standard $motion-ease;
 
   &:hover {
     border-color: rgba($primary, 0.48);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.18),
-      0 12px 32px rgba(0, 0, 0, 0.34),
-      0 0 20px rgba($primary, 0.14);
+      inset 0 s(1) rgba($on-surface, 0.18),
+      0 s(12) s(32) rgba(0, 0, 0, 0.34),
+      0 0 s(20) rgba($primary, 0.14);
 
     .wallpaper-light-overlay {
       background-color: rgba(0, 0, 0, 0.055);
@@ -62,15 +62,15 @@ window.WallpaperSelector {
   }
 
   &.selected {
-    border-width: 2px;
+    border-width: s(2);
     border-color: rgba($primary, 0.72);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.25),
-      inset 0 0 24px rgba($primary, 0.07),
-      0 18px 42px rgba(0, 0, 0, 0.46),
-      0 -7px 28px rgba($primary, 0.42),
-      0 0 34px rgba($primary, 0.3),
-      0 0 58px rgba($primary, 0.16);
+      inset 0 s(1) rgba($on-surface, 0.25),
+      inset 0 0 s(24) rgba($primary, 0.07),
+      0 s(18) s(42) rgba(0, 0, 0, 0.46),
+      0 s(-7) s(28) rgba($primary, 0.42),
+      0 0 s(34) rgba($primary, 0.3),
+      0 0 s(58) rgba($primary, 0.16);
 
     .wallpaper-light-overlay {
       background-color: rgba($primary, 0.012);
@@ -87,9 +87,9 @@ window.WallpaperSelector {
         rgba(0, 0, 0, 0.1)
       );
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.32),
-        inset 1px 0 rgba($on-surface, 0.1),
-        inset 0 -1px rgba($primary, 0.14);
+        inset 0 s(1) rgba($on-surface, 0.32),
+        inset s(1) 0 rgba($on-surface, 0.1),
+        inset 0 s(-1) rgba($primary, 0.14);
       opacity: 1;
     }
   }
@@ -114,18 +114,18 @@ window.WallpaperSelector {
       rgba(0, 0, 0, 0.16)
     );
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.2),
-      inset 1px 0 rgba($on-surface, 0.07),
-      inset 0 -1px rgba(0, 0, 0, 0.18);
+      inset 0 s(1) rgba($on-surface, 0.2),
+      inset s(1) 0 rgba($on-surface, 0.07),
+      inset 0 s(-1) rgba(0, 0, 0, 0.18);
     opacity: 0.68;
     transition: all $motion-standard $motion-ease;
   }
 }
 
 .wallpaper-path {
-  min-height: 20px;
-  padding: 6px 14px;
-  transform: translateY(12px);
+  min-height: s(20);
+  padding: s(6) s(14);
+  transform: translateY(s(12));
   color: rgba($text, 0.88);
   background-color: rgba($surface, 0.32);
   background-image: linear-gradient(
@@ -134,12 +134,12 @@ window.WallpaperSelector {
     rgba($on-surface, 0.035) 48%,
     rgba($surface, 0.16)
   );
-  border: 1px solid rgba($on-surface, 0.14);
-  border-radius: 10px;
+  border: s(1) solid rgba($on-surface, 0.14);
+  border-radius: s(10);
   box-shadow:
-    inset 0 1px rgba($on-surface, 0.12),
-    inset 0 -1px rgba(0, 0, 0, 0.16),
-    0 6px 16px rgba(0, 0, 0, 0.24);
+    inset 0 s(1) rgba($on-surface, 0.12),
+    inset 0 s(-1) rgba(0, 0, 0, 0.16),
+    0 s(6) s(16) rgba(0, 0, 0, 0.24);
   font-family: 'GeistMono Nerd Font', monospace;
   font-variant-numeric: tabular-nums;
   font-size: 0.92em;
@@ -147,14 +147,14 @@ window.WallpaperSelector {
 }
 
 .wallpaper-count {
-  min-width: 72px;
+  min-width: s(72);
   color: rgba($text, 0.55);
   font-size: 0.82em;
   font-weight: 700;
 }
 
 .wallpaper-status {
-  min-height: 18px;
+  min-height: s(18);
   color: $error;
   font-size: 0.82em;
   font-weight: 700;

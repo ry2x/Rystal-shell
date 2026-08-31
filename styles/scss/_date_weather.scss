@@ -17,17 +17,17 @@ window.DateWeatherPopup {
     margin: 0;
     border: none;
     border-radius: 0;
-    padding: 24px;
+    padding: s(24);
     box-shadow: none;
-    min-width: 830px;
-    min-height: 600px;
+    min-width: s(830);
+    min-height: s(600);
   }
 
   .left-column {
-    min-width: 320px;
+    min-width: s(320);
   }
   .right-column {
-    min-width: 450px;
+    min-width: s(450);
   }
 
   .widget-card {
@@ -38,20 +38,20 @@ window.DateWeatherPopup {
       rgba($on-surface, 0.035) 48%,
       rgba($surface, 0.14)
     );
-    border: 1px solid $glass-edge;
-    border-radius: 16px;
-    padding: 16px;
+    border: s(1) solid $glass-edge;
+    border-radius: s(16);
+    padding: s(16);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.07),
-      0 10px 28px $glass-shadow;
+      inset 0 s(1) rgba($on-surface, 0.07),
+      0 s(10) s(28) $glass-shadow;
     transition: all $motion-standard $motion-ease;
     &:hover {
       background-color: rgba($surface, 0.38);
       border-color: rgba($primary, 0.22);
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.1),
-        0 12px 32px rgba(0, 0, 0, 0.34),
-        0 0 18px rgba($primary, 0.07);
+        inset 0 s(1) rgba($on-surface, 0.1),
+        0 s(12) s(32) rgba(0, 0, 0, 0.34),
+        0 0 s(18) rgba($primary, 0.07);
     }
   }
 
@@ -64,10 +64,10 @@ window.DateWeatherPopup {
       rgba($surface, 0.18)
     );
     border-color: $glass-edge;
-    padding: 16px;
+    padding: s(16);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.075),
-      0 10px 30px rgba(0, 0, 0, 0.28);
+      inset 0 s(1) rgba($on-surface, 0.075),
+      0 s(10) s(30) rgba(0, 0, 0, 0.28);
     calendar {
       background: transparent;
       border: none;
@@ -77,10 +77,10 @@ window.DateWeatherPopup {
       header {
         background: transparent;
         border: none;
-        border-bottom: 1px solid rgba($on-surface, 0.1);
-        padding: 0 0 10px;
-        margin-bottom: 10px;
-        box-shadow: 0 1px 8px rgba($primary, 0.045);
+        border-bottom: s(1) solid rgba($on-surface, 0.1);
+        padding: 0 0 s(10);
+        margin-bottom: s(10);
+        box-shadow: 0 s(1) s(8) rgba($primary, 0.045);
         button {
           background-color: rgba($surface, 0.18);
           background-image: linear-gradient(
@@ -88,14 +88,14 @@ window.DateWeatherPopup {
             rgba($on-surface, 0.11),
             rgba($on-surface, 0.025)
           );
-          border: 1px solid rgba($on-surface, 0.1);
+          border: s(1) solid rgba($on-surface, 0.1);
           box-shadow:
-            inset 0 1px rgba($on-surface, 0.11),
-            0 4px 10px rgba(0, 0, 0, 0.2);
+            inset 0 s(1) rgba($on-surface, 0.11),
+            0 s(4) s(10) rgba(0, 0, 0, 0.2);
           border-radius: 50%;
-          min-width: 26px;
-          min-height: 26px;
-          padding: 2px;
+          min-width: s(26);
+          min-height: s(26);
+          padding: s(2);
           color: $text;
           transition: all $motion-standard $motion-ease;
           &:hover {
@@ -108,12 +108,12 @@ window.DateWeatherPopup {
             border-color: rgba($primary, 0.38);
             color: $primary;
             box-shadow:
-              inset 0 1px rgba($on-surface, 0.14),
-              0 0 14px rgba($primary, 0.14);
+              inset 0 s(1) rgba($on-surface, 0.14),
+              0 0 s(14) rgba($primary, 0.14);
           }
           &:active {
             background-color: rgba($primary-container, 0.38);
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.28);
+            box-shadow: inset 0 s(2) s(5) rgba(0, 0, 0, 0.28);
           }
         }
         label.year,
@@ -133,12 +133,12 @@ window.DateWeatherPopup {
         label.day-name {
           font-size: 0.9em;
           font-weight: 700;
-          margin-bottom: 8px;
+          margin-bottom: s(8);
           opacity: 0.7;
         }
         label.day-number {
-          padding: 5px 0;
-          border: 1px solid transparent;
+          padding: s(5) 0;
+          border: s(1) solid transparent;
           border-radius: 1em;
           transition: all $motion-standard $motion-ease;
           &:hover {
@@ -149,7 +149,7 @@ window.DateWeatherPopup {
               rgba($on-surface, 0.025)
             );
             border-color: rgba($on-surface, 0.12);
-            box-shadow: inset 0 1px rgba($on-surface, 0.08);
+            box-shadow: inset 0 s(1) rgba($on-surface, 0.08);
           }
           &:selected {
             background-color: rgba($primary-container, 0.32);
@@ -161,8 +161,8 @@ window.DateWeatherPopup {
             border-color: rgba($primary, 0.55);
             color: $text;
             box-shadow:
-              inset 0 1px rgba($on-surface, 0.15),
-              0 0 12px rgba($primary, 0.16);
+              inset 0 s(1) rgba($on-surface, 0.15),
+              0 0 s(12) rgba($primary, 0.16);
           }
         }
         label.other-month {
@@ -175,12 +175,12 @@ window.DateWeatherPopup {
             rgba($primary-fixed, 0.72),
             rgba($primary, 0.54)
           );
-          border: 1px solid rgba($primary-fixed, 0.76);
+          border: s(1) solid rgba($primary-fixed, 0.76);
           color: $on-primary-fixed;
           font-weight: 800;
           box-shadow:
-            inset 0 1px rgba($on-surface, 0.35),
-            0 4px 14px rgba($primary, 0.34);
+            inset 0 s(1) rgba($on-surface, 0.35),
+            0 s(4) s(14) rgba($primary, 0.34);
           &:hover {
             background-color: rgba(color.adjust($primary, $lightness: 5%), 0.82);
             border-color: $primary-fixed;
@@ -191,7 +191,7 @@ window.DateWeatherPopup {
   }
 
   .vertical-sep {
-    min-width: 1px;
+    min-width: s(1);
     background-color: transparent;
     background-image: linear-gradient(
       to bottom,
@@ -201,18 +201,18 @@ window.DateWeatherPopup {
       rgba($on-surface, 0.12) 92%,
       transparent
     );
-    margin: 8px 0;
-    box-shadow: 1px 0 12px rgba($primary, 0.08);
+    margin: s(8) 0;
+    box-shadow: s(1) 0 s(12) rgba($primary, 0.08);
   }
   .notif-header {
     background-color: rgba($surface, 0.22);
     background-image: linear-gradient(110deg, rgba($on-surface, 0.075), rgba($on-surface, 0.025));
-    border: 1px solid $glass-edge-soft;
-    border-radius: 14px;
-    padding: 8px 10px;
+    border: s(1) solid $glass-edge-soft;
+    border-radius: s(14);
+    padding: s(8) s(10);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.06),
-      0 8px 22px rgba(0, 0, 0, 0.2);
+      inset 0 s(1) rgba($on-surface, 0.06),
+      0 s(8) s(22) rgba(0, 0, 0, 0.2);
   }
   .notif-header-btn {
     background-color: rgba($surface, 0.22);
@@ -222,14 +222,14 @@ window.DateWeatherPopup {
       rgba($on-surface, 0.045) 48%,
       rgba($surface, 0.16)
     );
-    border: 1px solid rgba($on-surface, 0.14);
-    border-radius: 10px;
-    padding: 7px 13px;
+    border: s(1) solid rgba($on-surface, 0.14);
+    border-radius: s(10);
+    padding: s(7) s(13);
     color: rgba($text, 0.84);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.13),
-      inset 0 -1px rgba(0, 0, 0, 0.16),
-      0 6px 16px rgba(0, 0, 0, 0.24);
+      inset 0 s(1) rgba($on-surface, 0.13),
+      inset 0 s(-1) rgba(0, 0, 0, 0.16),
+      0 s(6) s(16) rgba(0, 0, 0, 0.24);
     transition: all $motion-standard $motion-ease;
     label {
       font-size: 0.8em;
@@ -241,18 +241,18 @@ window.DateWeatherPopup {
       border-color: rgba($error, 0.42);
       color: $error;
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.14),
-        0 6px 18px rgba(0, 0, 0, 0.28),
-        0 0 16px rgba($error, 0.14);
+        inset 0 s(1) rgba($on-surface, 0.14),
+        0 s(6) s(18) rgba(0, 0, 0, 0.28),
+        0 0 s(16) rgba($error, 0.14);
     }
     &.dnd:hover {
       background-color: rgba($primary, 0.08);
       border-color: rgba($primary, 0.28);
       color: $primary;
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.16),
-        0 6px 18px rgba(0, 0, 0, 0.28),
-        0 0 14px rgba($primary, 0.1);
+        inset 0 s(1) rgba($on-surface, 0.16),
+        0 s(6) s(18) rgba(0, 0, 0, 0.28),
+        0 0 s(14) rgba($primary, 0.1);
     }
     &.dnd.active {
       background-color: rgba($primary-container, 0.32);
@@ -260,20 +260,20 @@ window.DateWeatherPopup {
       border-color: rgba($primary, 0.46);
       color: $primary;
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.18),
-        inset 0 -1px rgba($primary, 0.08),
-        0 6px 18px rgba(0, 0, 0, 0.28),
-        0 0 18px rgba($primary, 0.18);
+        inset 0 s(1) rgba($on-surface, 0.18),
+        inset 0 s(-1) rgba($primary, 0.08),
+        0 s(6) s(18) rgba(0, 0, 0, 0.28),
+        0 0 s(18) rgba($primary, 0.18);
     }
   }
   .notif-scroll {
-    min-height: 500px;
+    min-height: s(500);
   }
   .dw-title {
     font-size: 1.1em;
     font-weight: 700;
     color: $text;
-    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+    text-shadow: 0 s(1) s(10) rgba(0, 0, 0, 0.45);
   }
 
   .click-catcher {
@@ -298,7 +298,7 @@ window.DateWeatherPopup {
   }
 
   &.urgency-2 {
-    border: 1px solid rgba($error, 0.5);
+    border: s(1) solid rgba($error, 0.5);
     background: rgba($error, 0.05);
   }
 }
@@ -325,19 +325,19 @@ window.DateWeatherPopup {
   font-size: 1.2em;
   font-weight: 700;
   color: $primary;
-  margin-bottom: 8px;
-  margin-left: 8px;
+  margin-bottom: s(8);
+  margin-left: s(8);
 }
 
 .weather-icon {
   color: $primary;
-  -gtk-icon-shadow: 0 0 18px rgba($primary, 0.2);
+  -gtk-icon-shadow: 0 0 s(18) rgba($primary, 0.2);
 }
 .weather-temp {
   font-size: 2.65em;
   font-weight: 800;
   color: $primary;
-  text-shadow: 0 0 18px rgba($primary, 0.15);
+  text-shadow: 0 0 s(18) rgba($primary, 0.15);
 }
 .weather-desc {
   font-size: 0.9em;
@@ -347,10 +347,10 @@ window.DateWeatherPopup {
   color: $text;
   font-size: 1.05em;
   font-weight: 800;
-  margin-bottom: 3px;
+  margin-bottom: s(3);
 }
 .weather-range {
-  min-width: 62px;
+  min-width: s(62);
 }
 .weather-high,
 .weather-low {
@@ -359,7 +359,7 @@ window.DateWeatherPopup {
   font-weight: 650;
 }
 .weather-forecast {
-  margin-top: 5px;
+  margin-top: s(5);
 }
 .weather-info {
   font-size: 0.95em;
@@ -367,17 +367,17 @@ window.DateWeatherPopup {
 }
 .weather-info-icon {
   color: $primary;
-  -gtk-icon-shadow: 0 0 10px rgba($primary, 0.16);
+  -gtk-icon-shadow: 0 0 s(10) rgba($primary, 0.16);
 }
 .forecast-day {
   font-size: 0.86em;
   font-weight: 800;
-  min-width: 30px;
+  min-width: s(30);
   color: $text;
 }
 .forecast-icon {
   color: $primary;
-  -gtk-icon-shadow: 0 0 10px rgba($primary, 0.14);
+  -gtk-icon-shadow: 0 0 s(10) rgba($primary, 0.14);
 }
 .forecast-temps {
   font-size: 0.76em;
@@ -399,15 +399,15 @@ window.DateWeatherPopup {
 }
 
 .profile-card {
-  padding: 16px;
+  padding: s(16);
   .profile-avatar {
     border-radius: 50%;
-    border: 2px solid $primary;
-    min-height: 64px;
-    min-width: 64px;
+    border: s(2) solid $primary;
+    min-height: s(64);
+    min-width: s(64);
     box-shadow:
-      0 0 8px rgba($primary, 0.8),
-      0 0 16px rgba($primary, 0.4);
+      0 0 s(8) rgba($primary, 0.8),
+      0 0 s(16) rgba($primary, 0.4);
   }
   .profile-name {
     font-size: 1.2em;
