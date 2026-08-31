@@ -4,11 +4,11 @@ import app from 'ags/gtk4/app';
 
 import {scaleUiSize} from '@/lib/uiScale';
 import {createPowerMenuState} from '@/stores/panel/powerMenu';
+import {BAR_WIDTH} from '@/stores/shell/barBackground';
 import ClickCatcher from '@/widget/common/ClickCatcher';
 import PowerMenuConfirmationView from '@/widget/power-menu/widget/PowerMenuConfirmationView';
 import PowerMenuMainView from '@/widget/power-menu/widget/PowerMenuMainView';
 
-const BAR_WIDTH = scaleUiSize(47);
 const PANEL_HEIGHT = scaleUiSize(350);
 const CONFIRM_FADE_MS = 180;
 

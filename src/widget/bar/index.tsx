@@ -6,6 +6,7 @@ import app from 'ags/gtk4/app';
 import {timeout} from 'ags/time';
 
 import {scaleUiSize} from '@/lib/uiScale';
+import {BAR_WIDTH} from '@/stores/shell/barBackground';
 import BarReserve from '@/widget/bar/BarReserve';
 import PanelBackground from '@/widget/bar/PanelBackground';
 import Clock from '@/widget/bar/widget/Clock';
@@ -23,7 +24,6 @@ export interface BarProps {
 }
 
 const BORDER_WIDTH = scaleUiSize(3);
-const BAR_WIDTH = scaleUiSize(47);
 const INPUT_REGION_DELAY_MS = 500;
 
 function setBarInputRegion(window: Astal.Window) {

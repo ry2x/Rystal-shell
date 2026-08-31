@@ -2,7 +2,7 @@ import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {type BarBackgroundGeometry} from '@/stores/shell/barBackground';
+import {BAR_WIDTH, type BarBackgroundGeometry} from '@/stores/shell/barBackground';
 
 export interface PageContainerProps {
   revealed: Accessor<boolean>;
@@ -12,9 +12,8 @@ export interface PageContainerProps {
 
 function getContainerCss(dx: number) {
   const panelWidth = scaleUiSize(490);
-  const barWidth = scaleUiSize(47);
-  const marginLeft = Math.max(-panelWidth, dx - barWidth - panelWidth);
-  const opacity = Math.max(0, Math.min(1, (dx - barWidth) / panelWidth));
+  const marginLeft = Math.max(-panelWidth, dx - BAR_WIDTH - panelWidth);
+  const opacity = Math.max(0, Math.min(1, (dx - BAR_WIDTH) / panelWidth));
   return `transform: translateX(${marginLeft}px); opacity: ${opacity};`;
 }
 

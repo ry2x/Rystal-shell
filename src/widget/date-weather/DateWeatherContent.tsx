@@ -3,7 +3,11 @@ import {Gtk} from 'ags/gtk4';
 
 import {shellMotion} from '@/lib/motion';
 import {scaleUiSize} from '@/lib/uiScale';
-import {DATE_WEATHER_PANEL_WIDTH, createBarBackgroundGeometry} from '@/stores/shell/barBackground';
+import {
+  BAR_WIDTH,
+  DATE_WEATHER_PANEL_WIDTH,
+  createBarBackgroundGeometry,
+} from '@/stores/shell/barBackground';
 import ClockCard from '@/widget/date-weather/widget/ClockCard';
 import NotificationList from '@/widget/date-weather/widget/NotificationList';
 import ProfileCard from '@/widget/date-weather/widget/ProfileCard';
@@ -17,7 +21,6 @@ export interface DateWeatherContentProps {
 
 export default function DateWeatherContent({revealed, monitorConnector}: DateWeatherContentProps) {
   const geometry = createBarBackgroundGeometry(monitorConnector);
-  const barWidth = scaleUiSize(47);
 
   return (
     <revealer
@@ -33,9 +36,9 @@ export default function DateWeatherContent({revealed, monitorConnector}: DateWea
           css={geometry(({dx}) => {
             const marginLeft = Math.max(
               -DATE_WEATHER_PANEL_WIDTH,
-              dx - barWidth - DATE_WEATHER_PANEL_WIDTH
+              dx - BAR_WIDTH - DATE_WEATHER_PANEL_WIDTH
             );
-            const opacity = Math.max(0, Math.min(1, (dx - barWidth) / DATE_WEATHER_PANEL_WIDTH));
+            const opacity = Math.max(0, Math.min(1, (dx - BAR_WIDTH) / DATE_WEATHER_PANEL_WIDTH));
             return `transform: translateX(${marginLeft}px); opacity: ${opacity};`;
           })}
           widthRequest={DATE_WEATHER_PANEL_WIDTH}

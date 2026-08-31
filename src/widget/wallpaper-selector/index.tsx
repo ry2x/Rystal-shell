@@ -2,12 +2,12 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import {scaleUiSize} from '@/lib/uiScale';
+import {BAR_WIDTH} from '@/stores/shell/barBackground';
 import {createWallpaperSelectorState} from '@/stores/wallpaper/wallpaperSelector';
 import ClickCatcher from '@/widget/common/ClickCatcher';
 import CoverFlowController from '@/widget/wallpaper-selector/widget/CoverFlow';
 
 const PANEL_HEIGHT = scaleUiSize(390);
-const BAR_WIDTH = scaleUiSize(47);
 const CONTENT_HORIZONTAL_PADDING = scaleUiSize(56);
 
 export interface WallpaperSelectorProps {

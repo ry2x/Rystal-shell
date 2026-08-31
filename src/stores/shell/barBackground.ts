@@ -17,7 +17,7 @@ export interface BarBackgroundGeometry {
   bottomHeight: number;
 }
 
-const BAR_WIDTH = scaleUiSize(50);
+export const BAR_WIDTH = scaleUiSize(50);
 const CONTROL_CENTER_WIDTH = scaleUiSize(490);
 export const DATE_WEATHER_PANEL_WIDTH = scaleUiSize(900);
 const WALLPAPER_PANEL_HEIGHT = scaleUiSize(390);
