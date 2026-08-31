@@ -12,10 +12,10 @@ $cc-glass-shadow: rgba(0, 0, 0, 0.28);
     rgba($on-surface, 0.03) 46%,
     rgba($surface, 0.16)
   );
-  border: 1px solid $cc-glass-edge;
+  border: s(1) solid $cc-glass-edge;
   box-shadow:
-    inset 0 1px rgba($on-surface, 0.07),
-    0 10px 28px $cc-glass-shadow;
+    inset 0 s(1) rgba($on-surface, 0.07),
+    0 s(10) s(28) $cc-glass-shadow;
 }
 
 // Control Center
@@ -29,12 +29,12 @@ window.ControlCenter {
     margin: 0;
     border: none;
     border-radius: 0;
-    padding: 24px;
+    padding: s(24);
     box-shadow: none;
   }
 
   .cc-container {
-    min-width: 400px;
+    min-width: s(400);
   }
 
   .click-catcher {
@@ -61,23 +61,23 @@ window.ControlCenter {
 
 .cc-card {
   background: rgba($on-surface, 0.04);
-  border-radius: 20px;
-  padding: 16px;
-  border: 1px solid transparent;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  border-radius: s(20);
+  padding: s(16);
+  border: s(1) solid transparent;
+  box-shadow: 0 s(4) s(16) rgba(0, 0, 0, 0.15);
   transition: all $motion-standard $motion-ease;
   &:hover {
     background: rgba($on-surface, 0.06);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 s(6) s(20) rgba(0, 0, 0, 0.2);
   }
 }
 
 .cc-toggle-btn {
   background: rgba($on-surface, 0.04);
-  border-radius: 20px;
+  border-radius: s(20);
   padding: 0;
-  border: 1px solid rgba($on-surface, 0.08);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  border: s(1) solid rgba($on-surface, 0.08);
+  box-shadow: 0 s(4) s(16) rgba(0, 0, 0, 0.15);
   transition: all $motion-standard $motion-ease;
 
   &.active {
@@ -88,14 +88,14 @@ window.ControlCenter {
       color: $primary;
     }
     box-shadow:
-      inset 0 0 18px rgba($primary, 0.07),
-      0 0 10px rgba($primary, 0.2);
+      inset 0 0 s(18) rgba($primary, 0.07),
+      0 0 s(10) rgba($primary, 0.2);
   }
   &:hover {
     background: rgba($on-surface, 0.08);
     box-shadow:
-      inset 0 0 18px rgba($primary, 0.07),
-      0 0 10px rgba($primary, 0.2);
+      inset 0 0 s(18) rgba($primary, 0.07),
+      0 0 s(10) rgba($primary, 0.2);
     &.active {
       background: rgba($primary, 0.14);
     }
@@ -114,9 +114,9 @@ window.ControlCenter {
 
 .power-btn {
   background: rgba($on-surface, 0.04);
-  border-radius: 12px;
-  padding: 12px;
-  border: 1px solid rgba($on-surface, 0.08);
+  border-radius: s(12);
+  padding: s(12);
+  border: s(1) solid rgba($on-surface, 0.08);
   transition: all $motion-standard $motion-ease;
   &:hover {
     background: rgba($on-surface, 0.1);
@@ -145,16 +145,16 @@ window.ControlCenter {
 }
 .cava-visualizer {
   color: $primary;
-  margin-left: 12px;
-  margin-right: 12px;
-  margin-bottom: 1px;
+  margin-left: s(12);
+  margin-right: s(12);
+  margin-bottom: s(1);
 }
 
 .icon-btn.cc-value-button {
-  border-radius: 10px;
+  border-radius: s(10);
   font-weight: 700;
-  min-width: 40px;
-  padding: 4px;
+  min-width: s(40);
+  padding: s(4);
 }
 
 .cc-metric-button {
@@ -166,14 +166,14 @@ window.ControlCenter {
 }
 
 .circular-progress-label {
-  font-size: 14px;
+  font-size: s(14);
   font-weight: 800;
 }
 
 .circular-progress-sublabel {
-  font-size: 11px;
+  font-size: s(11);
   font-weight: 700;
-  margin-top: 2px;
+  margin-top: s(2);
   opacity: 0.7;
 }
 
@@ -189,9 +189,9 @@ window.ControlCenter {
 
 .icon-btn {
   background: transparent;
-  border: 1px solid transparent;
+  border: s(1) solid transparent;
   border-radius: 50%;
-  padding: 8px;
+  padding: s(8);
   box-shadow: none;
   transition: all $motion-standard $motion-ease;
   color: $text;
@@ -199,7 +199,7 @@ window.ControlCenter {
     background: rgba($primary, 0.15);
     border-color: rgba($primary, 0.3);
     color: $primary;
-    box-shadow: 0 4px 12px rgba($primary, 0.2);
+    box-shadow: 0 s(4) s(12) rgba($primary, 0.2);
   }
   &:active {
     background: rgba($primary, 0.25);
@@ -212,13 +212,13 @@ window.ControlCenter {
   trough {
     background-color: rgba($surface, 0.28);
     background-image: linear-gradient(to bottom, rgba($on-surface, 0.13), rgba($on-surface, 0.025));
-    border: 1px solid rgba($on-surface, 0.14);
-    border-radius: 999px;
-    min-height: 8px;
+    border: s(1) solid rgba($on-surface, 0.14);
+    border-radius: s(999);
+    min-height: s(8);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.12),
-      inset 0 -2px 4px rgba(0, 0, 0, 0.26),
-      0 3px 10px rgba(0, 0, 0, 0.14);
+      inset 0 s(1) rgba($on-surface, 0.12),
+      inset 0 s(-2) s(4) rgba(0, 0, 0, 0.26),
+      0 s(3) s(10) rgba(0, 0, 0, 0.14);
     highlight,
     fill {
       background-color: rgba($primary, 0.58);
@@ -230,10 +230,10 @@ window.ControlCenter {
         rgba($primary-fixed-dim, 0.68) 60%,
         rgba($primary, 0.5) 100%
       );
-      border-radius: 999px;
+      border-radius: s(999);
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.28),
-        0 0 10px rgba($primary, 0.3);
+        inset 0 s(1) rgba($on-surface, 0.28),
+        0 0 s(10) rgba($primary, 0.3);
     }
     slider {
       background-color: rgba($surface, 0.62);
@@ -243,25 +243,26 @@ window.ControlCenter {
         rgba($primary-fixed, 0.72) 48%,
         rgba($surface, 0.5)
       );
-      min-width: 16px;
-      min-height: 16px;
+      min-width: s(16);
+      min-height: s(16);
+      margin: s(-9);
       border-radius: 50%;
-      border: 1px solid rgba($on-surface, 0.78);
+      border: s(1) solid rgba($on-surface, 0.78);
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.72),
-        inset 0 -2px 3px rgba(0, 0, 0, 0.16),
-        0 3px 8px rgba(0, 0, 0, 0.42),
-        0 0 10px rgba($primary, 0.18);
+        inset 0 s(1) rgba($on-surface, 0.72),
+        inset 0 s(-2) s(3) rgba(0, 0, 0, 0.16),
+        0 s(3) s(8) rgba(0, 0, 0, 0.42),
+        0 0 s(10) rgba($primary, 0.18);
       transition: all $motion-standard $motion-ease;
       &:hover {
         background-color: rgba($primary-fixed, 0.78);
         border-color: rgba($on-surface, 0.94);
         transform: scale(1.15);
         box-shadow:
-          inset 0 1px rgba($on-surface, 0.85),
-          inset 0 -2px 3px rgba(0, 0, 0, 0.12),
-          0 4px 11px rgba(0, 0, 0, 0.48),
-          0 0 15px rgba($primary, 0.34);
+          inset 0 s(1) rgba($on-surface, 0.85),
+          inset 0 s(-2) s(3) rgba(0, 0, 0, 0.12),
+          0 s(4) s(11) rgba(0, 0, 0, 0.48),
+          0 0 s(15) rgba($primary, 0.34);
       }
     }
   }
@@ -271,11 +272,11 @@ window.ControlCenter {
 levelbar {
   trough {
     background: rgba($on-surface, 0.1);
-    border-radius: 4px;
-    min-height: 8px;
+    border-radius: s(4);
+    min-height: s(8);
     block.filled {
       background: $primary;
-      border-radius: 4px;
+      border-radius: s(4);
     }
   }
 }
@@ -283,8 +284,8 @@ levelbar {
 .cc-toggle-button {
   background: transparent;
   border: none;
-  border-radius: 20px;
-  padding: 16px;
+  border-radius: s(20);
+  padding: s(16);
   box-shadow: none;
   transition: all $motion-standard $motion-ease;
   &:hover {
@@ -298,11 +299,11 @@ levelbar {
 }
 
 .cc-player-content {
-  padding: 16px;
+  padding: s(16);
 }
 
 .cc-player-artwork {
-  border-radius: 12px;
+  border-radius: s(12);
 }
 
 .cc-player-title-button {
@@ -319,17 +320,17 @@ levelbar {
 
 .cc-player-artist {
   font-size: 0.9em;
-  margin-bottom: 4px;
+  margin-bottom: s(4);
   opacity: 0.7;
 }
 
 .cc-player-controls .icon-btn {
-  padding: 7px;
+  padding: s(7);
 }
 
 .cc-media-source {
-  padding: 3px 7px;
-  border-radius: 999px;
+  padding: s(3) s(7);
+  border-radius: s(999);
   background: rgba($surface, 0.68);
   color: rgba($text, 0.78);
   font-size: 0.75em;
@@ -354,13 +355,13 @@ levelbar {
 }
 
 .cc-record-header {
-  margin-top: 8px;
+  margin-top: s(8);
 }
 
 .power-btn.active-record {
   background: rgba($error, 0.15);
   border-color: rgba($error, 0.3);
-  box-shadow: 0 4px 16px rgba($error, 0.2);
+  box-shadow: 0 s(4) s(16) rgba($error, 0.2);
   animation: cc-pulse-record 2s infinite;
 
   image {
@@ -378,17 +379,17 @@ levelbar {
 @keyframes cc-pulse-record {
   0% {
     box-shadow:
-      0 4px 16px rgba($error, 0.2),
+      0 s(4) s(16) rgba($error, 0.2),
       0 0 0 0 rgba($error, 0.4);
   }
   70% {
     box-shadow:
-      0 4px 16px rgba($error, 0.2),
-      0 0 0 8px rgba($error, 0);
+      0 s(4) s(16) rgba($error, 0.2),
+      0 0 0 s(8) rgba($error, 0);
   }
   100% {
     box-shadow:
-      0 4px 16px rgba($error, 0.2),
+      0 s(4) s(16) rgba($error, 0.2),
       0 0 0 0 rgba($error, 0);
   }
 }
@@ -411,37 +412,37 @@ levelbar {
   .cc-main-header {
     background-color: rgba($surface, 0.2);
     background-image: linear-gradient(110deg, rgba($on-surface, 0.08), rgba($on-surface, 0.025));
-    border: 1px solid $cc-glass-edge-soft;
-    border-radius: 14px;
-    padding: 9px 12px;
+    border: s(1) solid $cc-glass-edge-soft;
+    border-radius: s(14);
+    padding: s(9) s(12);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.07),
-      0 8px 22px rgba(0, 0, 0, 0.2);
+      inset 0 s(1) rgba($on-surface, 0.07),
+      0 s(8) s(22) rgba(0, 0, 0, 0.2);
   }
 
   .cc-title {
-    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+    text-shadow: 0 s(1) s(10) rgba(0, 0, 0, 0.45);
   }
 
   .cc-card,
   .cc-media-card {
     @include cc-main-glass-card;
-    border-radius: 20px;
+    border-radius: s(20);
     transition: all $motion-standard $motion-ease;
 
     &:hover {
       background-color: rgba($surface, 0.38);
       border-color: rgba($primary, 0.22);
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.1),
-        0 12px 32px rgba(0, 0, 0, 0.34),
-        0 0 18px rgba($primary, 0.07);
+        inset 0 s(1) rgba($on-surface, 0.1),
+        0 s(12) s(32) rgba(0, 0, 0, 0.34),
+        0 0 s(18) rgba($primary, 0.07);
     }
   }
 
   .cc-toggle-btn {
     @include cc-main-glass-card;
-    border-radius: 20px;
+    border-radius: s(20);
 
     &.active {
       background-color: rgba($primary-container, 0.28);
@@ -453,18 +454,18 @@ levelbar {
       );
       border-color: rgba($primary, 0.34);
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.11),
-        0 9px 26px rgba(0, 0, 0, 0.28),
-        0 0 16px rgba($primary, 0.13);
+        inset 0 s(1) rgba($on-surface, 0.11),
+        0 s(9) s(26) rgba(0, 0, 0, 0.28),
+        0 0 s(16) rgba($primary, 0.13);
     }
 
     &:hover {
       background-color: rgba($surface, 0.4);
       border-color: rgba($primary, 0.25);
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.11),
-        0 12px 30px rgba(0, 0, 0, 0.33),
-        0 0 17px rgba($primary, 0.1);
+        inset 0 s(1) rgba($on-surface, 0.11),
+        0 s(12) s(30) rgba(0, 0, 0, 0.33),
+        0 0 s(17) rgba($primary, 0.1);
 
       &.active {
         background-color: rgba($primary-container, 0.36);
@@ -480,7 +481,7 @@ levelbar {
 
     &:active {
       background-color: rgba($on-surface, 0.065);
-      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+      box-shadow: inset 0 s(2) s(5) rgba(0, 0, 0, 0.2);
     }
   }
 
@@ -495,25 +496,25 @@ levelbar {
     );
     border-color: rgba($on-surface, 0.13);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.13),
-      inset 0 -1px rgba(0, 0, 0, 0.14),
-      0 5px 14px rgba(0, 0, 0, 0.22);
+      inset 0 s(1) rgba($on-surface, 0.13),
+      inset 0 s(-1) rgba(0, 0, 0, 0.14),
+      0 s(5) s(14) rgba(0, 0, 0, 0.22);
 
     &:hover {
       background-color: rgba($primary-container, 0.24);
       border-color: rgba($primary, 0.38);
       color: $primary;
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.16),
-        0 6px 17px rgba(0, 0, 0, 0.27),
-        0 0 15px rgba($primary, 0.13);
+        inset 0 s(1) rgba($on-surface, 0.16),
+        0 s(6) s(17) rgba(0, 0, 0, 0.27),
+        0 0 s(15) rgba($primary, 0.13);
     }
 
     &:active {
       background-color: rgba($primary-container, 0.34);
       box-shadow:
-        inset 0 2px 5px rgba(0, 0, 0, 0.28),
-        0 2px 8px rgba(0, 0, 0, 0.18);
+        inset 0 s(2) s(5) rgba(0, 0, 0, 0.28),
+        0 s(2) s(8) rgba(0, 0, 0, 0.18);
     }
   }
 
@@ -523,9 +524,9 @@ levelbar {
     border-color: rgba($error, 0.42);
     color: $error;
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.14),
-      0 6px 17px rgba(0, 0, 0, 0.28),
-      0 0 16px rgba($error, 0.16);
+      inset 0 s(1) rgba($on-surface, 0.14),
+      0 s(6) s(17) rgba(0, 0, 0, 0.28),
+      0 0 s(16) rgba($error, 0.16);
 
     &:hover {
       background-color: rgba($error-container, 0.36);
@@ -545,10 +546,10 @@ levelbar {
       );
       border-color: rgba($on-surface, 0.15);
       box-shadow:
-        inset 0 1px rgba($on-surface, 0.14),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.28),
-        0 3px 10px rgba(0, 0, 0, 0.16),
-        0 0 8px rgba($primary, 0.035);
+        inset 0 s(1) rgba($on-surface, 0.14),
+        inset 0 s(-2) s(4) rgba(0, 0, 0, 0.28),
+        0 s(3) s(10) rgba(0, 0, 0, 0.16),
+        0 0 s(8) rgba($primary, 0.035);
 
       highlight,
       fill {
@@ -562,8 +563,8 @@ levelbar {
           rgba($primary, 0.52) 100%
         );
         box-shadow:
-          inset 0 1px rgba($on-surface, 0.3),
-          0 0 11px rgba($primary, 0.34);
+          inset 0 s(1) rgba($on-surface, 0.3),
+          0 0 s(11) rgba($primary, 0.34);
       }
 
       slider {
@@ -576,10 +577,10 @@ levelbar {
         );
         border-color: rgba($on-surface, 0.78);
         box-shadow:
-          inset 0 1px rgba($on-surface, 0.72),
-          inset 0 -2px 3px rgba(0, 0, 0, 0.16),
-          0 3px 9px rgba(0, 0, 0, 0.42),
-          0 0 11px rgba($primary, 0.22);
+          inset 0 s(1) rgba($on-surface, 0.72),
+          inset 0 s(-2) s(3) rgba(0, 0, 0, 0.16),
+          0 s(3) s(9) rgba(0, 0, 0, 0.42),
+          0 0 s(11) rgba($primary, 0.22);
       }
     }
   }
@@ -587,14 +588,14 @@ levelbar {
   .cc-media-source {
     background-color: rgba($surface, 0.38);
     background-image: linear-gradient(to bottom, rgba($on-surface, 0.1), rgba($surface, 0.2));
-    border: 1px solid rgba($on-surface, 0.11);
+    border: s(1) solid rgba($on-surface, 0.11);
     box-shadow:
-      inset 0 1px rgba($on-surface, 0.08),
-      0 4px 12px rgba(0, 0, 0, 0.24);
+      inset 0 s(1) rgba($on-surface, 0.08),
+      0 s(4) s(12) rgba(0, 0, 0, 0.24);
   }
 
   .cc-metric-button:hover {
     background: rgba($on-surface, 0.035);
-    box-shadow: 0 0 18px rgba($primary, 0.08);
+    box-shadow: 0 0 s(18) rgba($primary, 0.08);
   }
 }

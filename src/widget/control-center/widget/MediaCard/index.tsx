@@ -3,6 +3,7 @@ import {Gtk} from 'ags/gtk4';
 
 import Mpris from 'gi://AstalMpris';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {createMediaCardState} from '@/stores/media/media';
 import EmptyState from '@/widget/common/EmptyState';
 import PlayerCard from '@/widget/control-center/widget/MediaCard/PlayerCard';
@@ -11,10 +12,10 @@ export default function MediaCard() {
   const state = createMediaCardState();
 
   return (
-    <box class="cc-media-container" orientation={Gtk.Orientation.VERTICAL} spacing={8}>
+    <box class="cc-media-container" orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(8)}>
       <box
         visible={state.hasPlayers.as(hasPlayers => !hasPlayers)}
-        heightRequest={160}
+        heightRequest={scaleUiSize(160)}
         halign={Gtk.Align.CENTER}
       >
         <EmptyState className="cc-media-empty" icon="music" label="No Media Playing" />

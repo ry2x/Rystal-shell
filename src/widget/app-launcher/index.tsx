@@ -3,6 +3,7 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import {type Timer, idle} from 'ags/time';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {createAppLauncherState} from '@/stores/application/appLauncher';
 import {
   ensureLauncherBackground,
@@ -20,8 +21,8 @@ function createLauncherBackground() {
     vexpand: true,
     halign: Gtk.Align.FILL,
     valign: Gtk.Align.FILL,
-    widthRequest: 1,
-    heightRequest: 1,
+    widthRequest: scaleUiSize(1),
+    heightRequest: scaleUiSize(1),
   });
 
   const unregister = registerLauncherBackground(picture);

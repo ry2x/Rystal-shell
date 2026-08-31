@@ -1,6 +1,8 @@
 import {Accessor, type CCProps} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
+
 type ImageProps = Omit<
   CCProps<Gtk.Image, Partial<Gtk.Image.ConstructorProps>>,
   'children' | 'iconName' | 'name'
@@ -27,6 +29,10 @@ function lucideIcon(name: string): string {
  */
 export function LucideIcon({name, ...props}: LucideIconProps) {
   const icon = name instanceof Accessor ? name.as(lucideIcon) : lucideIcon(name);
+  const imageProps =
+    typeof props.pixelSize === 'number'
+      ? {...props, pixelSize: scaleUiSize(props.pixelSize)}
+      : props;
 
-  return <image iconName={icon} {...props} />;
+  return <image iconName={icon} {...imageProps} />;
 }

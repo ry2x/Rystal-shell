@@ -1,5 +1,6 @@
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {type ControlCenterDetailPage} from '@/stores/panel/controlCenter';
 import {LucideIcon} from '@/widget/common/lucide';
 import BrightnessSlider from '@/widget/control-center/widget/BrightnessSlider';
@@ -16,8 +17,13 @@ export interface ControlCenterContentProps {
 
 export default function ControlCenterContent({onOpenPage}: ControlCenterContentProps) {
   return (
-    <box class="cc-main-panel" orientation={Gtk.Orientation.VERTICAL} spacing={11} vexpand>
-      <box class="cc-main-header" spacing={12} hexpand>
+    <box
+      class="cc-main-panel"
+      orientation={Gtk.Orientation.VERTICAL}
+      spacing={scaleUiSize(11)}
+      vexpand
+    >
+      <box class="cc-main-header" spacing={scaleUiSize(12)} hexpand>
         <LucideIcon name="settings-2" pixelSize={24} />
         <label label="Control Center" class="cc-title" />
       </box>
@@ -28,7 +34,12 @@ export default function ControlCenterContent({onOpenPage}: ControlCenterContentP
         vexpand
         propagateNaturalHeight={false}
       >
-        <box orientation={Gtk.Orientation.VERTICAL} spacing={16} marginStart={12} marginEnd={12}>
+        <box
+          orientation={Gtk.Orientation.VERTICAL}
+          spacing={scaleUiSize(16)}
+          marginStart={scaleUiSize(12)}
+          marginEnd={scaleUiSize(12)}
+        >
           <QuickToggles
             onOpenWifi={() => onOpenPage('wifi')}
             onOpenBluetooth={() => onOpenPage('bluetooth')}
@@ -36,7 +47,7 @@ export default function ControlCenterContent({onOpenPage}: ControlCenterContentP
           <VolumeSlider onOpenSound={() => onOpenPage('sound')} />
           <BrightnessSlider />
           <MediaCard />
-          <box orientation={Gtk.Orientation.HORIZONTAL} spacing={16}>
+          <box orientation={Gtk.Orientation.HORIZONTAL} spacing={scaleUiSize(16)}>
             <SystemMetrics />
           </box>
           <UpdatesCard />

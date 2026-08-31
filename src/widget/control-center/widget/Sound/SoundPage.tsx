@@ -1,5 +1,6 @@
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {createSoundPageState, openAudioControl} from '@/stores/system/audio';
 import {LucideIcon} from '@/widget/common/lucide';
 import SoundDeviceSection from '@/widget/control-center/widget/Sound/SoundDeviceSection';
@@ -15,11 +16,11 @@ export function SoundPage({onBack}: SoundPageProps) {
     <box
       class="cc-sound-page"
       orientation={Gtk.Orientation.VERTICAL}
-      spacing={12}
+      spacing={scaleUiSize(12)}
       hexpand
       halign={Gtk.Align.FILL}
     >
-      <box class="cc-sound-header" spacing={12}>
+      <box class="cc-sound-header" spacing={scaleUiSize(12)}>
         <button class="icon-btn" onClicked={onBack} tooltipText="Back">
           <LucideIcon name="chevron-left" pixelSize={22} />
         </button>
@@ -45,7 +46,7 @@ export function SoundPage({onBack}: SoundPageProps) {
         onSelect={state.selectMicrophone}
       />
 
-      <box class="cc-sound-section-header" spacing={8}>
+      <box class="cc-sound-section-header" spacing={scaleUiSize(8)}>
         <LucideIcon name="settings" pixelSize={17} />
         <label label="Advanced" class="cc-section-title" halign={Gtk.Align.START} />
       </box>
@@ -55,7 +56,7 @@ export function SoundPage({onBack}: SoundPageProps) {
         halign={Gtk.Align.FILL}
         onClicked={openAudioControl}
       >
-        <box spacing={12} hexpand>
+        <box spacing={scaleUiSize(12)} hexpand>
           <box orientation={Gtk.Orientation.VERTICAL} hexpand>
             <label label="More Sound Settings" halign={Gtk.Align.START} />
             <label

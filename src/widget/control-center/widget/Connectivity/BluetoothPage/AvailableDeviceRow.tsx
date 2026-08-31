@@ -4,6 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Bluetooth from 'gi://AstalBluetooth';
 import Pango from 'gi://Pango';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {getBluetoothDeviceDetail} from '@/widget/control-center/widget/Connectivity/BluetoothPage/utils';
 
 export interface AvailableDeviceRowProps {
@@ -14,8 +15,12 @@ export interface AvailableDeviceRowProps {
 export default function AvailableDeviceRow({device, onConnect}: AvailableDeviceRowProps) {
   return (
     <button class="cc-connectivity-row" onClicked={onConnect}>
-      <box spacing={14}>
-        <image class="cc-bt-device-icon" iconName={createBinding(device, 'icon')} pixelSize={24} />
+      <box spacing={scaleUiSize(14)}>
+        <image
+          class="cc-bt-device-icon"
+          iconName={createBinding(device, 'icon')}
+          pixelSize={scaleUiSize(24)}
+        />
         <box orientation={Gtk.Orientation.VERTICAL} hexpand>
           <label
             label={createBinding(device, 'alias')}

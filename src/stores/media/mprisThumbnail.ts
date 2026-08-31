@@ -6,9 +6,10 @@ import Gio from 'gi://Gio';
 import Soup from 'gi://Soup?version=3.0';
 
 import {rystalShellCacheDir} from '@/lib/paths';
+import {scaleUiSize} from '@/lib/uiScale';
 
 const DOWNLOAD_TIMEOUT_SECONDS = 10;
-const THUMBNAIL_SIZE = 160;
+const THUMBNAIL_SIZE = scaleUiSize(160);
 const YOUTUBE_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
 const thumbnailSession = new Soup.Session({timeout: DOWNLOAD_TIMEOUT_SECONDS});
 
@@ -78,7 +79,7 @@ async function downloadThumbnailUrl(url: string, localPath: string, cancellable:
 }
 
 async function downloadThumbnail(id: string, localPath: string, cancellable: Gio.Cancellable) {
-  // The card renders at 80x80 (160x160 decode limit), so downloading the
+  // The card renders at a scaled 80x80 (scaled 160x160 decode limit), so downloading the
   // 1280x720 max-resolution image only increases JPEG/Pixbuf working memory.
   const mediumQualityUrl = `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
   if (await downloadThumbnailUrl(mediumQualityUrl, localPath, cancellable)) {
@@ -179,7 +180,7 @@ export async function fetchYouTubeThumbnail(
   if (!id) return null;
 
   const cacheDir = `${rystalShellCacheDir}/media`;
-  const localPath = `${cacheDir}/${id}-160.webp`;
+  const localPath = `${cacheDir}/${id}-${THUMBNAIL_SIZE}.webp`;
   if (GLib.file_test(localPath, GLib.FileTest.EXISTS)) return `file://${localPath}`;
 
   GLib.mkdir_with_parents(cacheDir, 0o755);

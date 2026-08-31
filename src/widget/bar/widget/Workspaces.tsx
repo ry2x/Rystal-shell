@@ -4,6 +4,7 @@ import {type Timer, timeout} from 'ags/time';
 
 import Hyprland from 'gi://AstalHyprland';
 
+import {scaleUi, scaleUiSize} from '@/lib/uiScale';
 import {createMonitorWorkspaceState, focusWorkspace} from '@/stores/shell/workspace';
 
 export interface WorkspacesProps {
@@ -48,13 +49,14 @@ export default function Workspaces({monitor}: WorkspacesProps) {
         valign={Gtk.Align.START}
         canTarget={false}
         css={activeIndex.as(
-          index => `margin-bottom: -13px; transform: translateY(${index * 22 - 2}px);`
+          index =>
+            `margin-bottom: ${scaleUi(-13)}px; transform: translateY(${scaleUi(index * 22 - 2)}px);`
         )}
         $={self => setupIndicatorMotion(self, activeIndex)}
       >
         <box class="active-indicator-dot" />
       </box>
-      <box orientation={Gtk.Orientation.VERTICAL} spacing={12}>
+      <box orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(12)}>
         <For each={workspaces}>
           {(workspace: Hyprland.Workspace) => (
             <box valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}>

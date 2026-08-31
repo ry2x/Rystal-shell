@@ -4,10 +4,11 @@ import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
 import {loadTextureFromUri} from '@/lib/image';
+import {scaleUiSize} from '@/lib/uiScale';
 import type {Wallpaper} from '@/stores/wallpaper/wallpaper';
 
-const CARD_WIDTH = 384;
-const CARD_HEIGHT = 252;
+const CARD_WIDTH = scaleUiSize(384);
+const CARD_HEIGHT = scaleUiSize(252);
 
 export class WallpaperCardController {
   readonly widget: Gtk.Button;

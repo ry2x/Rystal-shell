@@ -4,6 +4,7 @@ import GLib from 'gi://GLib';
 
 import {loadTextureFromUri} from '@/lib/image';
 import {rystalShellConfigDir, rystalShellDataDir} from '@/lib/paths';
+import {scaleUiSize} from '@/lib/uiScale';
 
 const configuredBackgroundPath = `${rystalShellConfigDir}/assets/launcher_bg.png`;
 const defaultBackgroundPath = `${rystalShellDataDir}/assets/icon.png`;
@@ -16,7 +17,7 @@ function loadBackground() {
     const path = GLib.file_test(configuredBackgroundPath, GLib.FileTest.EXISTS)
       ? configuredBackgroundPath
       : defaultBackgroundPath;
-    return loadTextureFromUri(`file://${path}`, 500, 500);
+    return loadTextureFromUri(`file://${path}`, scaleUiSize(500), scaleUiSize(500));
   } catch (error) {
     console.error('Failed to load launcher background:', error);
     return null;

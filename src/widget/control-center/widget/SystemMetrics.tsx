@@ -1,12 +1,19 @@
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {cpuUsage, gpuUsage, openSystemMonitor, ramUsage} from '@/stores/system/system';
 import type {RamData} from '@/stores/system/system';
 import CircularProgress from '@/widget/common/CircularProgress';
 
 export default function SystemMetrics() {
   return (
-    <box class="cc-card" orientation={Gtk.Orientation.HORIZONTAL} spacing={16} homogeneous hexpand>
+    <box
+      class="cc-card"
+      orientation={Gtk.Orientation.HORIZONTAL}
+      spacing={scaleUiSize(16)}
+      homogeneous
+      hexpand
+    >
       <box halign={Gtk.Align.CENTER}>
         <button class="cc-metric-button" onClicked={openSystemMonitor}>
           <CircularProgress

@@ -3,6 +3,7 @@ import {Gtk} from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface ErrorLabelProps {
@@ -16,7 +17,7 @@ export default function ErrorLabel({error, onRetry}: ErrorLabelProps) {
       revealChild={error.as(Boolean)}
       transitionType={Gtk.RevealerTransitionType.SLIDE_DOWN}
     >
-      <box class="cc-connectivity-error" spacing={8}>
+      <box class="cc-connectivity-error" spacing={scaleUiSize(8)}>
         <LucideIcon name="circle-alert" pixelSize={18} class="cc-connectivity-error-icon" />
         <label
           label={error}

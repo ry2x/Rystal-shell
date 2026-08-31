@@ -1,6 +1,7 @@
 import {createState} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {type Confirmation} from '@/widget/control-center/widget/Connectivity/Shared/types';
 
 export interface ConfirmOverlayProps {
@@ -27,13 +28,13 @@ export default function ConfirmOverlay({confirmation, clear, setError}: ConfirmO
       <box
         class="cc-modal"
         orientation={Gtk.Orientation.VERTICAL}
-        spacing={12}
+        spacing={scaleUiSize(12)}
         halign={Gtk.Align.CENTER}
         valign={Gtk.Align.CENTER}
       >
         <label label={confirmation.title} class="cc-modal-title" halign={Gtk.Align.START} />
         <label label={confirmation.message} wrap halign={Gtk.Align.START} />
-        <box spacing={8} halign={Gtk.Align.END}>
+        <box spacing={scaleUiSize(8)} halign={Gtk.Align.END}>
           <button
             class="power-btn cc-modal-action"
             onClicked={clear}

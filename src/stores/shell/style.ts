@@ -3,6 +3,7 @@ import {exec, execAsync} from 'ags/process';
 
 import GLib from 'gi://GLib';
 
+import {appConfig} from '@/lib/config';
 import {rystalShellConfigDir, rystalShellDataDir, rystalShellRuntimeDir} from '@/lib/paths';
 import {reloadBarColors} from '@/stores/shell/barBackground';
 
@@ -14,9 +15,31 @@ const defaultThemeDir = `${rystalShellDataDir}/styles/default`;
 const defaultCssPath = `${rystalShellDataDir}/styles/default.css`;
 const runtimeDir = rystalShellRuntimeDir;
 const cssPath = `${runtimeDir}/style.css`;
+const currentScalePath = `${runtimeDir}/_current-scale.scss`;
+
+interface CompiledCss {
+  path: string;
+  hash: string;
+}
 
 function ensureRuntimeDir() {
   GLib.mkdir_with_parents(runtimeDir, 0o700);
+}
+
+function writeCurrentScale() {
+  const temporaryPath = `${currentScalePath}.tmp`;
+  const contents = `// Generated file. Do not edit.\n$app-scale: ${appConfig.ui.scale};\n`;
+  try {
+    if (!GLib.file_set_contents(temporaryPath, contents)) {
+      throw new Error(`Cannot write generated scale file: ${temporaryPath}`);
+    }
+    if (GLib.rename(temporaryPath, currentScalePath) !== 0) {
+      throw new Error(`Cannot replace generated scale file: ${currentScalePath}`);
+    }
+  } catch (error) {
+    removeFile(temporaryPath);
+    throw error;
+  }
 }
 
 function getCssHash(path: string): string {
@@ -27,6 +50,17 @@ function getCssHash(path: string): string {
   const hash = GLib.compute_checksum_for_data(GLib.ChecksumType.MD5, bytes);
   if (!hash) throw new Error(`Cannot hash CSS: ${path}`);
   return hash;
+}
+
+function removeFile(path: string) {
+  if (GLib.file_test(path, GLib.FileTest.EXISTS)) GLib.unlink(path);
+}
+
+function promoteCss(compiledCss: CompiledCss) {
+  if (GLib.rename(compiledCss.path, cssPath) !== 0) {
+    removeFile(compiledCss.path);
+    throw new Error(`Cannot replace compiled CSS: ${cssPath}`);
+  }
 }
 
 function reloadCss(path: string) {
@@ -56,29 +90,51 @@ function reloadCss(path: string) {
   reloadBarColors();
 }
 
-function sassCommand() {
-  return [
-    'sass',
-    '--style=expanded',
-    '--no-source-map',
-    '--load-path',
-    rystalShellConfigDir,
-    '--load-path',
-    defaultThemeDir,
-    styleEntry,
-    cssPath,
-  ];
+function sassCommand(outputPath: string, useConfiguredTheme: boolean) {
+  const command = ['sass', '--style=expanded', '--no-source-map', '--load-path', runtimeDir];
+  if (useConfiguredTheme) command.push('--load-path', rystalShellConfigDir);
+  command.push('--load-path', defaultThemeDir, styleEntry, outputPath);
+  return command;
+}
+
+function temporaryCssPath() {
+  return `${cssPath}.tmp-${GLib.uuid_string_random()}`;
+}
+
+function compileCss(useConfiguredTheme: boolean): CompiledCss {
+  const path = temporaryCssPath();
+  try {
+    exec(sassCommand(path, useConfiguredTheme));
+    return {path, hash: getCssHash(path)};
+  } catch (error) {
+    removeFile(path);
+    throw error;
+  }
+}
+
+function compileCssAsync(useConfiguredTheme: boolean): Promise<CompiledCss> {
+  const path = temporaryCssPath();
+  return execAsync(sassCommand(path, useConfiguredTheme))
+    .then(() => ({path, hash: getCssHash(path)}))
+    .catch(error => {
+      removeFile(path);
+      throw error;
+    });
 }
 
 export function compileAndReloadCss(): Promise<boolean> {
   ensureRuntimeDir();
-  return execAsync(sassCommand())
-    .then(() => {
-      const currentHash = getCssHash(cssPath);
-      if (currentHash === lastCompiledCssHash) return false;
+  writeCurrentScale();
+  return compileCssAsync(true)
+    .then(compiledCss => {
+      if (compiledCss.hash === lastCompiledCssHash) {
+        removeFile(compiledCss.path);
+        return false;
+      }
 
+      promoteCss(compiledCss);
       reloadCss(cssPath);
-      lastCompiledCssHash = currentHash;
+      lastCompiledCssHash = compiledCss.hash;
       return true;
     })
     .catch(error => {
@@ -89,14 +145,31 @@ export function compileAndReloadCss(): Promise<boolean> {
 
 export function initCss() {
   ensureRuntimeDir();
+  writeCurrentScale();
+  let compiledCss: CompiledCss;
+
   try {
-    exec(sassCommand());
-    reloadCss(cssPath);
-    lastCompiledCssHash = getCssHash(cssPath);
-  } catch (error) {
-    console.error(`Error compiling initial SCSS: ${error}`);
-    const fallbackPath = GLib.file_test(cssPath, GLib.FileTest.EXISTS) ? cssPath : defaultCssPath;
-    reloadCss(fallbackPath);
-    lastCompiledCssHash = getCssHash(fallbackPath);
+    compiledCss = compileCss(true);
+  } catch (configuredThemeError) {
+    console.error(`Error compiling configured SCSS: ${configuredThemeError}`);
+    try {
+      compiledCss = compileCss(false);
+      console.warn(`Using the default theme at UI scale ${appConfig.ui.scale}`);
+    } catch (defaultThemeError) {
+      console.error(`Error compiling default SCSS: ${defaultThemeError}`);
+      if (appConfig.ui.scale !== 1) {
+        throw new Error(
+          `Cannot initialize CSS at requested UI scale ${appConfig.ui.scale}: ${defaultThemeError}`,
+          {cause: defaultThemeError}
+        );
+      }
+      reloadCss(defaultCssPath);
+      lastCompiledCssHash = getCssHash(defaultCssPath);
+      return;
+    }
   }
+
+  promoteCss(compiledCss);
+  reloadCss(cssPath);
+  lastCompiledCssHash = compiledCss.hash;
 }

@@ -4,6 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Mpris from 'gi://AstalMpris';
 import Pango from 'gi://Pango';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {createPlayerArtwork} from '@/stores/media/media';
 import CavaWidget from '@/widget/control-center/widget/MediaCard/CavaWidget';
 import PlayerArtwork from '@/widget/control-center/widget/MediaCard/PlayerArtwork';
@@ -22,23 +23,23 @@ export default function PlayerCard({player, canSwitch, onSwitch}: PlayerCardProp
 
   return (
     <overlay name={player.bus_name} cssClasses={['cc-media-card']}>
-      <box heightRequest={160} hexpand>
+      <box heightRequest={scaleUiSize(160)} hexpand>
         <CavaWidget />
       </box>
-      <box $type="overlay" class="cc-player-content" spacing={16} hexpand>
+      <box $type="overlay" class="cc-player-content" spacing={scaleUiSize(16)} hexpand>
         <PlayerArtwork artwork={artwork} />
         <PlayerControls player={player} canSwitch={canSwitch} onSwitch={onSwitch} />
       </box>
       <box
         $type="overlay"
         class="cc-media-source"
-        spacing={5}
+        spacing={scaleUiSize(5)}
         halign={Gtk.Align.END}
         valign={Gtk.Align.END}
-        marginBottom={10}
-        marginEnd={12}
+        marginBottom={scaleUiSize(10)}
+        marginEnd={scaleUiSize(12)}
       >
-        <image iconName={mediaSource.iconName} pixelSize={14} />
+        <image iconName={mediaSource.iconName} pixelSize={scaleUiSize(14)} />
         <label
           label={mediaSource.name}
           ellipsize={Pango.EllipsizeMode.END}

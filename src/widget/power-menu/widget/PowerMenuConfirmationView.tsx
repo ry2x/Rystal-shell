@@ -1,6 +1,7 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import type {PowerItem} from '@/stores/panel/powerMenu';
 import {LucideIcon} from '@/widget/common/lucide';
 
@@ -24,7 +25,7 @@ export default function PowerMenuConfirmationView({
   return (
     <box
       class="power-menu-confirmation"
-      spacing={14}
+      spacing={scaleUiSize(14)}
       halign={Gtk.Align.CENTER}
       valign={Gtk.Align.CENTER}
     >
@@ -42,8 +43,13 @@ export default function PowerMenuConfirmationView({
           />
         </box>
       </box>
-      <box class="power-menu-confirmation-body" spacing={28}>
-        <box orientation={Gtk.Orientation.VERTICAL} spacing={8} hexpand valign={Gtk.Align.CENTER}>
+      <box class="power-menu-confirmation-body" spacing={scaleUiSize(28)}>
+        <box
+          orientation={Gtk.Orientation.VERTICAL}
+          spacing={scaleUiSize(8)}
+          hexpand
+          valign={Gtk.Align.CENTER}
+        >
           <label
             class="power-menu-confirmation-title"
             label={confirmation.as(item => (item ? `${item.label}?` : 'Confirm action'))}
@@ -55,7 +61,11 @@ export default function PowerMenuConfirmationView({
             halign={Gtk.Align.START}
           />
         </box>
-        <box class="power-menu-confirmation-actions" valign={Gtk.Align.CENTER} spacing={14}>
+        <box
+          class="power-menu-confirmation-actions"
+          valign={Gtk.Align.CENTER}
+          spacing={scaleUiSize(14)}
+        >
           <button class="power-menu-cancel" onClicked={onCancel} $={onCancelButtonCreated}>
             <Gtk.EventControllerFocus onEnter={() => onSelectionChanged(0)} />
             <label label="Cancel (<u>ESC</u>)" useMarkup />

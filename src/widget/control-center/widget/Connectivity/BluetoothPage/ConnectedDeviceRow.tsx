@@ -4,6 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Bluetooth from 'gi://AstalBluetooth';
 import Pango from 'gi://Pango';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {getBluetoothDeviceDetail} from '@/widget/control-center/widget/Connectivity/BluetoothPage/utils';
 import {DetailMenuButton} from '@/widget/control-center/widget/Connectivity/Shared';
 
@@ -19,8 +20,12 @@ export default function ConnectedDeviceRow({
   onForget,
 }: ConnectedDeviceRowProps) {
   return (
-    <box class="cc-connectivity-row active" spacing={14}>
-      <image class="cc-bt-device-icon" iconName={createBinding(device, 'icon')} pixelSize={24} />
+    <box class="cc-connectivity-row active" spacing={scaleUiSize(14)}>
+      <image
+        class="cc-bt-device-icon"
+        iconName={createBinding(device, 'icon')}
+        pixelSize={scaleUiSize(24)}
+      />
       <box orientation={Gtk.Orientation.VERTICAL} hexpand>
         <label
           label={createBinding(device, 'alias')}

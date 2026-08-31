@@ -1,6 +1,17 @@
 @forward 'theme';
+@forward 'current-scale';
 @use 'sass:color';
+@use 'sass:math';
+@use 'current-scale' as *;
 @use 'theme' as *;
+
+@function s($pixels) {
+  @if not math.is-unitless($pixels) {
+    @error 's() expects a unitless pixel value, received #{$pixels}';
+  }
+
+  @return math.round($pixels * $app-scale) * 1px;
+}
 
 // Base colors
 $bg: color.adjust($surface, $alpha: -0.25);

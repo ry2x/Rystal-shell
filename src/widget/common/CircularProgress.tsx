@@ -7,6 +7,7 @@ import {type Timer, interval} from 'ags/time';
 import GLib from 'gi://GLib';
 
 import {shellMotion} from '@/lib/motion';
+import {scaleUi, scaleUiSize} from '@/lib/uiScale';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface CircularProgressProps<T> {
@@ -19,7 +20,7 @@ export interface CircularProgressProps<T> {
 }
 
 const ANIMATION_INTERVAL_MS = 1000 / 60;
-const LINE_WIDTH = 6;
+const LINE_WIDTH = scaleUi(6);
 
 function normalize(value: number) {
   return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
@@ -173,10 +174,10 @@ export default function CircularProgress<T>({
   const areaWidget = (
     <drawingarea
       class={cssClass}
-      contentWidth={120}
-      contentHeight={120}
-      widthRequest={120}
-      heightRequest={120}
+      contentWidth={scaleUiSize(120)}
+      contentHeight={scaleUiSize(120)}
+      widthRequest={scaleUiSize(120)}
+      heightRequest={scaleUiSize(120)}
       $={self => (area = self)}
     />
   );
@@ -192,7 +193,7 @@ export default function CircularProgress<T>({
         valign={Gtk.Align.CENTER}
         halign={Gtk.Align.CENTER}
       >
-        <box spacing={6} valign={Gtk.Align.CENTER} class={cssClass}>
+        <box spacing={scaleUiSize(6)} valign={Gtk.Align.CENTER} class={cssClass}>
           <LucideIcon name={icon} pixelSize={14} />
           <label label={label} class="circular-progress-label" />
         </box>

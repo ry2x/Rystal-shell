@@ -3,6 +3,7 @@ import {createBinding} from 'ags';
 import Wp from 'gi://AstalWp';
 
 import {getVolumeIcon} from '@/lib/audio';
+import {scaleUiSize} from '@/lib/uiScale';
 import {setEndpointVolume} from '@/stores/system/audio';
 import {LucideIcon} from '@/widget/common/lucide';
 
@@ -16,7 +17,7 @@ export default function VolumeSliderContent({speaker, onOpenSound}: VolumeSlider
   const volumeIcon = createBinding(speaker, 'volume_icon').as(getVolumeIcon);
 
   return (
-    <box class="cc-card" spacing={16}>
+    <box class="cc-card" spacing={scaleUiSize(16)}>
       <button
         class="icon-btn"
         onClicked={() => (speaker.mute = !speaker.mute)}

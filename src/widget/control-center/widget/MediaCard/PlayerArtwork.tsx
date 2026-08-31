@@ -3,6 +3,8 @@ import {Gtk} from 'ags/gtk4';
 
 import Gdk from 'gi://Gdk';
 
+import {scaleUiSize} from '@/lib/uiScale';
+
 export interface PlayerArtworkProps {
   artwork: Accessor<Gdk.Texture | null>;
 }
@@ -15,20 +17,20 @@ export default function PlayerArtwork({artwork}: PlayerArtworkProps) {
     <box
       class="cc-player-artwork"
       valign={Gtk.Align.CENTER}
-      widthRequest={80}
-      heightRequest={80}
+      widthRequest={scaleUiSize(80)}
+      heightRequest={scaleUiSize(80)}
       overflow={Gtk.Overflow.HIDDEN}
     >
       <overlay>
-        <box widthRequest={80} heightRequest={80} />
+        <box widthRequest={scaleUiSize(80)} heightRequest={scaleUiSize(80)} />
         <scrolledwindow
           $type="overlay"
           hscrollbarPolicy={Gtk.PolicyType.NEVER}
           vscrollbarPolicy={Gtk.PolicyType.NEVER}
           propagateNaturalWidth={false}
           propagateNaturalHeight={false}
-          widthRequest={80}
-          heightRequest={80}
+          widthRequest={scaleUiSize(80)}
+          heightRequest={scaleUiSize(80)}
         >
           <Gtk.Picture
             paintable={paintable}

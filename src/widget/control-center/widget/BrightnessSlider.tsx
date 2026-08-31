@@ -1,3 +1,4 @@
+import {scaleUiSize} from '@/lib/uiScale';
 import {
   brightness,
   cycleBrightnessPreset,
@@ -16,7 +17,7 @@ export default function BrightnessSlider() {
   const icon = brightness.as(getBrightnessIcon);
 
   return (
-    <box class="cc-card" spacing={16}>
+    <box class="cc-card" spacing={scaleUiSize(16)}>
       <button
         class="icon-btn"
         tooltipText="Dim to 0% / restore previous brightness"

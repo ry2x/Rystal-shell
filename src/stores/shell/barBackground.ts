@@ -4,6 +4,7 @@ import {type Timer, interval} from 'ags/time';
 import GLib from 'gi://GLib';
 
 import {rystalShellConfigDir, rystalShellDataDir} from '@/lib/paths';
+import {scaleUi, scaleUiSize} from '@/lib/uiScale';
 import {activeSidePanel} from '@/stores/shell/windowManager';
 
 export interface BarColors {
@@ -16,11 +17,11 @@ export interface BarBackgroundGeometry {
   bottomHeight: number;
 }
 
-const BAR_WIDTH = 47;
-const CONTROL_CENTER_WIDTH = 490;
-export const DATE_WEATHER_PANEL_WIDTH = 900;
-const WALLPAPER_PANEL_HEIGHT = 390;
-const POWER_MENU_PANEL_HEIGHT = 350;
+export const BAR_WIDTH = scaleUiSize(50);
+const CONTROL_CENTER_WIDTH = scaleUiSize(490);
+export const DATE_WEATHER_PANEL_WIDTH = scaleUiSize(900);
+const WALLPAPER_PANEL_HEIGHT = scaleUiSize(390);
+const POWER_MENU_PANEL_HEIGHT = scaleUiSize(350);
 const ANIMATION_INTERVAL_MS = 1000 / 60;
 const ANIMATION_SPEED = 0.22;
 const configuredThemePath = `${rystalShellConfigDir}/theme.scss`;
@@ -89,7 +90,7 @@ function createMonitorGeometry(monitorConnector: string | null): Accessor<BarBac
       const horizontalDiff = targetGeometry.dx - currentGeometry.dx;
       const bottomDiff = targetGeometry.bottomHeight - currentGeometry.bottomHeight;
 
-      if (Math.abs(horizontalDiff) < 1 && Math.abs(bottomDiff) < 1) {
+      if (Math.abs(horizontalDiff) < scaleUi(1) && Math.abs(bottomDiff) < scaleUi(1)) {
         currentGeometry = targetGeometry;
         setGeometry(currentGeometry);
         animationTimer?.cancel();

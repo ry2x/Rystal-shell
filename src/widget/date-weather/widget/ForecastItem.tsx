@@ -1,5 +1,6 @@
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {getWeatherIcon, weatherInfo} from '@/stores/system/weather';
 import {LucideIcon} from '@/widget/common/lucide';
 
@@ -15,7 +16,7 @@ export default function ForecastItem({index}: ForecastItemProps) {
   return (
     <box
       orientation={Gtk.Orientation.HORIZONTAL}
-      spacing={4}
+      spacing={scaleUiSize(4)}
       valign={Gtk.Align.CENTER}
       halign={Gtk.Align.CENTER}
       hexpand

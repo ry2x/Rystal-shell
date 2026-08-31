@@ -1,4 +1,7 @@
 {
+  "ui": {
+    "scale": 1
+  },
   "brightness": {
     "backend": "auto"
   },

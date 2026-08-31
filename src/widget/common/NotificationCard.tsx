@@ -7,6 +7,7 @@ import {type Timer, timeout} from 'ags/time';
 import Notifd from 'gi://AstalNotifd';
 import Pango from 'gi://Pango';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {type SharedTexture, acquireNotificationTexture} from '@/stores/notification/imageCache';
 import {LucideIcon} from '@/widget/common/lucide';
 
@@ -68,13 +69,13 @@ class NotificationImageResources {
 
   setAppIcon(picture: Gtk.Picture, uri: string) {
     this.appIconPicture = picture;
-    this.appIconTexture = acquireNotificationTexture(uri, 64, 64);
+    this.appIconTexture = acquireNotificationTexture(uri, scaleUiSize(64), scaleUiSize(64));
     picture.set_paintable(this.appIconTexture.texture);
   }
 
   setImage(picture: Gtk.Picture, uri: string) {
     this.imagePicture = picture;
-    this.imageTexture = acquireNotificationTexture(uri, 760, 280);
+    this.imageTexture = acquireNotificationTexture(uri, scaleUiSize(760), scaleUiSize(280));
     picture.set_paintable(this.imageTexture.texture);
   }
 
@@ -106,15 +107,15 @@ export default function NotificationCard({notif, onDismiss}: NotificationCardPro
       onDestroy={() => resources.dispose()}
       class={`notif-card urgency-${notif.urgency}`}
       orientation={Gtk.Orientation.VERTICAL}
-      spacing={8}
-      widthRequest={380}
+      spacing={scaleUiSize(8)}
+      widthRequest={scaleUiSize(380)}
     >
-      <box spacing={12}>
+      <box spacing={scaleUiSize(12)}>
         <box class="notif-icon-container" valign={Gtk.Align.START}>
           {appIconPath ? (
             <box class="notif-app-icon" overflow={Gtk.Overflow.HIDDEN} valign={Gtk.Align.CENTER}>
               <overlay>
-                <box widthRequest={32} heightRequest={32} />
+                <box widthRequest={scaleUiSize(32)} heightRequest={scaleUiSize(32)} />
                 <Gtk.Picture
                   $type="overlay"
                   canFocus={false}
@@ -131,7 +132,7 @@ export default function NotificationCard({notif, onDismiss}: NotificationCardPro
               </overlay>
             </box>
           ) : appIcon ? (
-            <image iconName={appIcon} pixelSize={32} valign={Gtk.Align.CENTER} />
+            <image iconName={appIcon} pixelSize={scaleUiSize(32)} valign={Gtk.Align.CENTER} />
           ) : (
             <LucideIcon name="message-square" pixelSize={24} valign={Gtk.Align.CENTER} />
           )}
@@ -188,7 +189,7 @@ export default function NotificationCard({notif, onDismiss}: NotificationCardPro
       {imageToDisplay && (
         <box class="notif-image" overflow={Gtk.Overflow.HIDDEN}>
           <overlay>
-            <box hexpand heightRequest={140} />
+            <box hexpand heightRequest={scaleUiSize(140)} />
             <Gtk.Picture
               $type="overlay"
               canFocus={false}
@@ -207,7 +208,7 @@ export default function NotificationCard({notif, onDismiss}: NotificationCardPro
       )}
 
       {notif.get_actions().length > 0 && (
-        <box spacing={8} class="notif-actions" marginTop={4}>
+        <box spacing={scaleUiSize(8)} class="notif-actions" marginTop={scaleUiSize(4)}>
           {notif.get_actions().map(action => (
             <button class="notif-action-btn" hexpand onClicked={() => notif.invoke(action.id)}>
               <label label={action.label} />

@@ -1,5 +1,6 @@
 import {Gdk, Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {toggleControlCenter} from '@/stores/shell/windowManager';
 import {cpuUsage, gpuUsage, ramUsage} from '@/stores/system/system';
 import {LucideIcon} from '@/widget/common/lucide';
@@ -21,7 +22,7 @@ export default function SysMetrics({monitor}: SysMetricsProps) {
 
   return (
     <button class="SysMetrics" onClicked={toggleMenu}>
-      <box spacing={10} orientation={Gtk.Orientation.VERTICAL}>
+      <box spacing={scaleUiSize(10)} orientation={Gtk.Orientation.VERTICAL}>
         <box spacing={0} orientation={Gtk.Orientation.VERTICAL}>
           <LucideIcon name="cpu" class="icon metric-icon" />
           <label label={cpuUsage.as(formatPercent)} class="metric-value" />

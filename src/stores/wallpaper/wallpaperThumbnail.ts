@@ -4,10 +4,11 @@ import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
 import {rystalShellCacheDir} from '@/lib/paths';
+import {scaleUiSize} from '@/lib/uiScale';
 import type {Wallpaper} from '@/stores/wallpaper/wallpaper';
 
-const THUMBNAIL_WIDTH = 384;
-const THUMBNAIL_HEIGHT = 252;
+const THUMBNAIL_WIDTH = scaleUiSize(384);
+const THUMBNAIL_HEIGHT = scaleUiSize(252);
 const THUMBNAIL_VERSION = `v8-${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}`;
 const MAX_THUMBNAIL_WORKERS = 4;
 const cacheRoot = `${rystalShellCacheDir}/wallpapers/thumbnails`;

@@ -4,6 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Network from 'gi://AstalNetwork';
 import Pango from 'gi://Pango';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {DetailMenuButton} from '@/widget/control-center/widget/Connectivity/Shared';
 import {
   getSignalLabel,
@@ -22,11 +23,11 @@ export default function ConnectedNetworkRow({
   onForget,
 }: ConnectedNetworkRowProps) {
   return (
-    <box class="cc-connectivity-row active" spacing={14}>
+    <box class="cc-connectivity-row active" spacing={scaleUiSize(14)}>
       <image
         class="cc-wifi-network-icon"
         iconName={createBinding(accessPoint, 'icon_name')}
-        pixelSize={26}
+        pixelSize={scaleUiSize(26)}
       />
       <box orientation={Gtk.Orientation.VERTICAL} hexpand>
         <label
