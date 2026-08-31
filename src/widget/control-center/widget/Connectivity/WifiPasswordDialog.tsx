@@ -4,15 +4,16 @@ import {type Timer, idle} from 'ags/time';
 
 import Pango from 'gi://Pango';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {createWifiPasswordDialogState} from '@/stores/connectivity/wifiPasswordDialog';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface WifiPasswordDialogProps {
   monitor: Gdk.Monitor;
+  uiScale: UiScaleContext;
 }
 
-export default function WifiPasswordDialog({monitor}: WifiPasswordDialogProps) {
+export default function WifiPasswordDialog({monitor, uiScale}: WifiPasswordDialogProps) {
   const connector = monitor.get_connector() ?? '';
   const state = createWifiPasswordDialogState(connector);
   let entry: Gtk.Entry | null = null;
@@ -22,7 +23,7 @@ export default function WifiPasswordDialog({monitor}: WifiPasswordDialogProps) {
   const win = (
     <window
       name={`wifi-password-${connector}`}
-      class="WifiPasswordDialog"
+      class={`WifiPasswordDialog ${uiScale.cssClass}`}
       gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.TOP}
@@ -56,14 +57,14 @@ export default function WifiPasswordDialog({monitor}: WifiPasswordDialogProps) {
         <box
           class="cc-modal cc-password-modal"
           orientation={Gtk.Orientation.VERTICAL}
-          spacing={scaleUiSize(12)}
+          spacing={uiScale.size(12)}
           halign={Gtk.Align.START}
           valign={Gtk.Align.CENTER}
-          widthRequest={scaleUiSize(320)}
-          marginStart={scaleUiSize(100)}
+          widthRequest={uiScale.size(320)}
+          marginStart={uiScale.size(100)}
         >
-          <box spacing={scaleUiSize(8)}>
-            <LucideIcon name="wifi" pixelSize={18} />
+          <box spacing={uiScale.size(8)}>
+            <LucideIcon name="wifi" pixelSize={18} uiScale={uiScale} />
             <label label="Connect to Wi-Fi" class="cc-modal-title" />
           </box>
           <label
@@ -90,7 +91,7 @@ export default function WifiPasswordDialog({monitor}: WifiPasswordDialogProps) {
             wrapMode={Pango.WrapMode.WORD_CHAR}
             maxWidthChars={38}
           />
-          <box spacing={scaleUiSize(8)} halign={Gtk.Align.END}>
+          <box spacing={uiScale.size(8)} halign={Gtk.Align.END}>
             <button
               class="power-btn cc-modal-action"
               sensitive={state.busy.as(value => !value)}

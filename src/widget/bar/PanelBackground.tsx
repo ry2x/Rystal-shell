@@ -1,9 +1,9 @@
 import Cairo from 'cairo';
 
 import {createEffect} from 'ags';
-import {Gdk, Gtk} from 'ags/gtk4';
+import {Gtk} from 'ags/gtk4';
 
-import {scaleUi} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {
   type BarBackgroundGeometry,
   type BarColors,
@@ -12,11 +12,8 @@ import {
 } from '@/stores/shell/barBackground';
 
 export interface PanelBackgroundProps {
-  monitor: Gdk.Monitor;
+  uiScale: UiScaleContext;
 }
-
-const BORDER_WIDTH = scaleUi(3);
-const BORDER_RADIUS = scaleUi(16);
 
 function hexToRgba(hex: string): [number, number, number, number] {
   const value = hex.replace('#', '');
@@ -35,15 +32,18 @@ function drawBackground(
   width: number,
   height: number,
   geometry: BarBackgroundGeometry,
-  colors: BarColors
+  colors: BarColors,
+  uiScale: UiScaleContext
 ) {
   const [backgroundRed, backgroundGreen, backgroundBlue] = hexToRgba(colors.surface);
   const [accentRed, accentGreen, accentBlue, accentAlpha] = hexToRgba(colors.primary);
-  const halfBorderWidth = BORDER_WIDTH / 2;
+  const borderWidth = uiScale.value(3);
+  const borderRadius = uiScale.value(16);
+  const halfBorderWidth = borderWidth / 2;
   const desktopX = geometry.dx + halfBorderWidth;
   const desktopY = halfBorderWidth;
-  const desktopWidth = width - geometry.dx - BORDER_WIDTH;
-  const desktopHeight = height - geometry.bottomHeight - BORDER_WIDTH;
+  const desktopWidth = width - geometry.dx - borderWidth;
+  const desktopHeight = height - geometry.bottomHeight - borderWidth;
 
   context.setAntialias(Cairo.Antialias.BEST);
   context.setOperator(Cairo.Operator.OVER);
@@ -53,30 +53,30 @@ function drawBackground(
 
   context.newPath();
   context.arc(
-    desktopX + desktopWidth - BORDER_RADIUS,
-    desktopY + BORDER_RADIUS,
-    BORDER_RADIUS,
+    desktopX + desktopWidth - borderRadius,
+    desktopY + borderRadius,
+    borderRadius,
     -Math.PI / 2,
     0
   );
   context.arc(
-    desktopX + desktopWidth - BORDER_RADIUS,
-    desktopY + desktopHeight - BORDER_RADIUS,
-    BORDER_RADIUS,
+    desktopX + desktopWidth - borderRadius,
+    desktopY + desktopHeight - borderRadius,
+    borderRadius,
     0,
     Math.PI / 2
   );
   context.arc(
-    desktopX + BORDER_RADIUS,
-    desktopY + desktopHeight - BORDER_RADIUS,
-    BORDER_RADIUS,
+    desktopX + borderRadius,
+    desktopY + desktopHeight - borderRadius,
+    borderRadius,
     Math.PI / 2,
     Math.PI
   );
   context.arc(
-    desktopX + BORDER_RADIUS,
-    desktopY + BORDER_RADIUS,
-    BORDER_RADIUS,
+    desktopX + borderRadius,
+    desktopY + borderRadius,
+    borderRadius,
     Math.PI,
     (3 * Math.PI) / 2
   );
@@ -86,13 +86,13 @@ function drawBackground(
   context.fillPreserve();
   context.setOperator(Cairo.Operator.OVER);
   context.setSourceRGBA(accentRed, accentGreen, accentBlue, accentAlpha);
-  context.setLineWidth(BORDER_WIDTH);
+  context.setLineWidth(borderWidth);
   context.stroke();
   context.$dispose();
 }
 
-export default function PanelBackground({monitor}: PanelBackgroundProps) {
-  const geometry = createBarBackgroundGeometry(monitor.get_connector());
+export default function PanelBackground({uiScale}: PanelBackgroundProps) {
+  const geometry = createBarBackgroundGeometry(uiScale);
   let drawingArea!: Gtk.DrawingArea;
 
   const widget = (
@@ -105,7 +105,7 @@ export default function PanelBackground({monitor}: PanelBackgroundProps) {
       $={self => {
         drawingArea = self;
         self.set_draw_func((_area, context, width, height) => {
-          drawBackground(context, width, height, geometry.peek(), barColors.peek());
+          drawBackground(context, width, height, geometry.peek(), barColors.peek(), uiScale);
         });
       }}
     />

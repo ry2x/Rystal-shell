@@ -1,7 +1,7 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface PageHeaderProps {
@@ -10,16 +10,24 @@ export interface PageHeaderProps {
   onToggle: () => void;
   onBack: () => void;
   className?: string;
+  uiScale: UiScaleContext;
 }
 
-export default function PageHeader({title, enabled, onToggle, onBack, className}: PageHeaderProps) {
+export default function PageHeader({
+  title,
+  enabled,
+  onToggle,
+  onBack,
+  className,
+  uiScale,
+}: PageHeaderProps) {
   return (
     <box
       class={className ? `cc-connectivity-header ${className}` : 'cc-connectivity-header'}
-      spacing={scaleUiSize(12)}
+      spacing={uiScale.size(12)}
     >
       <button class="icon-btn" onClicked={onBack} tooltipText="Back">
-        <LucideIcon name="chevron-left" pixelSize={22} />
+        <LucideIcon name="chevron-left" pixelSize={22} uiScale={uiScale} />
       </button>
       <label label={title} class="cc-title" hexpand halign={Gtk.Align.START} />
       <switch

@@ -1,16 +1,19 @@
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {cpuUsage, gpuUsage, openSystemMonitor, ramUsage} from '@/stores/system/system';
 import type {RamData} from '@/stores/system/system';
 import CircularProgress from '@/widget/common/CircularProgress';
 
-export default function SystemMetrics() {
+export interface SystemMetricsProps {
+  uiScale: UiScaleContext;
+}
+export default function SystemMetrics({uiScale}: SystemMetricsProps) {
   return (
     <box
       class="cc-card"
       orientation={Gtk.Orientation.HORIZONTAL}
-      spacing={scaleUiSize(16)}
+      spacing={uiScale.size(16)}
       homogeneous
       hexpand
     >
@@ -23,6 +26,7 @@ export default function SystemMetrics() {
             label="CPU"
             sublabel={cpuUsage.as(c => `${Math.round(c)}%`)}
             cssClass="cpu-progress"
+            uiScale={uiScale}
           />
         </button>
       </box>
@@ -36,6 +40,7 @@ export default function SystemMetrics() {
             label="RAM"
             sublabel={ramUsage.as(r => `${r.used.toFixed(1)} / ${r.total.toFixed(0)}GB`)}
             cssClass="ram-progress"
+            uiScale={uiScale}
           />
         </button>
       </box>
@@ -49,6 +54,7 @@ export default function SystemMetrics() {
             label="GPU"
             sublabel={gpuUsage.as(g => `${Math.round(g)}%`)}
             cssClass="gpu-progress"
+            uiScale={uiScale}
           />
         </button>
       </box>

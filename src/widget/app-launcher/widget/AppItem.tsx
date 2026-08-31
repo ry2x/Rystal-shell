@@ -3,13 +3,14 @@ import {Gtk} from 'ags/gtk4';
 import Apps from 'gi://AstalApps';
 import Pango from 'gi://Pango';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {recordAppLaunch} from '@/stores/application/applicationCatalog';
 import {toggleAppLauncher} from '@/stores/shell/windowManager';
 
 export interface AppItemProps {
   res: Apps.Application;
   monitorConnector: string | null;
+  uiScale: UiScaleContext;
 }
 
 function createImageProp(iconStr: string): Partial<Gtk.Image.ConstructorProps> {
@@ -26,7 +27,7 @@ function createImageProp(iconStr: string): Partial<Gtk.Image.ConstructorProps> {
   return iconProps;
 }
 
-export function AppItem({res, monitorConnector}: AppItemProps): Gtk.Button {
+export function AppItem({res, monitorConnector, uiScale}: AppItemProps): Gtk.Button {
   return (
     <button
       class="applauncher-item"
@@ -37,7 +38,7 @@ export function AppItem({res, monitorConnector}: AppItemProps): Gtk.Button {
         res.launch();
       }}
     >
-      <box orientation={Gtk.Orientation.HORIZONTAL} spacing={scaleUiSize(12)}>
+      <box orientation={Gtk.Orientation.HORIZONTAL} spacing={uiScale.size(12)}>
         <image {...createImageProp(res.iconName)} />
         <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
           <label

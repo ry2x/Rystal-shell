@@ -1,7 +1,7 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {POWER_ITEMS, type PowerItem} from '@/stores/panel/powerMenu';
 import PowerMenuItemButton from '@/widget/power-menu/widget/PowerMenuItemButton';
 
@@ -12,6 +12,7 @@ export interface PowerMenuMainViewProps {
   onRequestAction: (item: PowerItem) => void;
   onItemFocused: (index: number) => void;
   onButtonCreated: (index: number, button: Gtk.Button) => void;
+  uiScale: UiScaleContext;
 }
 
 export default function PowerMenuMainView({
@@ -21,18 +22,19 @@ export default function PowerMenuMainView({
   onRequestAction,
   onItemFocused,
   onButtonCreated,
+  uiScale,
 }: PowerMenuMainViewProps) {
   return (
     <box
       class="power-menu-main"
       orientation={Gtk.Orientation.VERTICAL}
-      spacing={scaleUiSize(14)}
+      spacing={uiScale.size(14)}
       hexpand
       halign={Gtk.Align.FILL}
     >
       <box
         class="power-menu-items"
-        spacing={scaleUiSize(18)}
+        spacing={uiScale.size(18)}
         halign={Gtk.Align.CENTER}
         valign={Gtk.Align.CENTER}
         vexpand
@@ -46,6 +48,7 @@ export default function PowerMenuMainView({
             onRequestAction={onRequestAction}
             onItemFocused={onItemFocused}
             onButtonCreated={onButtonCreated}
+            uiScale={uiScale}
           />
         ))}
       </box>

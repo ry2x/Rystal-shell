@@ -1,16 +1,19 @@
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUi, scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {acquireCava, isCavaAvailable} from '@/stores/media/cava';
 
-export default function CavaWidget() {
+export interface CavaWidgetProps {
+  uiScale: UiScaleContext;
+}
+export default function CavaWidget({uiScale}: CavaWidgetProps) {
   if (!isCavaAvailable()) return <box visible={false} />;
 
   const area = new Gtk.DrawingArea({
     hexpand: true,
     valign: Gtk.Align.END,
     widthRequest: -1,
-    heightRequest: scaleUiSize(160),
+    heightRequest: uiScale.size(160),
   });
 
   let session: ReturnType<typeof acquireCava> = null;
@@ -44,7 +47,7 @@ export default function CavaWidget() {
 
     const SENSITIVITY = 1.5;
     const barWidth = width / vals.length;
-    const padding = scaleUi(2);
+    const padding = uiScale.value(2);
 
     if (frameCount % 60 === 0) {
       const c = _area.get_style_context().get_color();
@@ -56,7 +59,7 @@ export default function CavaWidget() {
 
     for (let i = 0; i < vals.length; i++) {
       const val = Math.min(vals[i] * SENSITIVITY, 1.0);
-      const barHeight = Math.max(val * height, scaleUi(2));
+      const barHeight = Math.max(val * height, uiScale.value(2));
       cr.rectangle(i * barWidth + padding / 2, height - barHeight, barWidth - padding, barHeight);
       cr.fill();
     }

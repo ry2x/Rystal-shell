@@ -3,7 +3,7 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import {type Timer, idle} from 'ags/time';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {createAppLauncherState} from '@/stores/application/appLauncher';
 import {
   ensureLauncherBackground,
@@ -12,7 +12,7 @@ import {
 import {AppList} from '@/widget/app-launcher/widget/AppList';
 import {SearchInput} from '@/widget/app-launcher/widget/SearchInput';
 
-function createLauncherBackground() {
+function createLauncherBackground(uiScale: UiScaleContext) {
   const picture = new Gtk.Picture({
     contentFit: Gtk.ContentFit.COVER,
     canTarget: false,
@@ -21,11 +21,11 @@ function createLauncherBackground() {
     vexpand: true,
     halign: Gtk.Align.FILL,
     valign: Gtk.Align.FILL,
-    widthRequest: scaleUiSize(1),
-    heightRequest: scaleUiSize(1),
+    widthRequest: uiScale.size(1),
+    heightRequest: uiScale.size(1),
   });
 
-  const unregister = registerLauncherBackground(picture);
+  const unregister = registerLauncherBackground(picture, uiScale);
   picture.connect('destroy', unregister);
 
   return picture;
@@ -41,8 +41,12 @@ function resetLauncherState(
   setSelectedIndex(0);
 }
 
-function focusLauncher(searchInput: Gtk.Entry, appList: Gtk.ScrolledWindow) {
-  ensureLauncherBackground();
+function focusLauncher(
+  searchInput: Gtk.Entry,
+  appList: Gtk.ScrolledWindow,
+  uiScale: UiScaleContext
+) {
+  ensureLauncherBackground(uiScale);
   return idle(() => {
     searchInput.grab_focus();
     appList.get_vadjustment()?.set_value(0);
@@ -62,14 +66,15 @@ function addEscapeHandler(window: Astal.Window) {
 
 export interface AppLauncherProps {
   monitor: Gdk.Monitor;
+  uiScale: UiScaleContext;
 }
 
-export default function AppLauncher({monitor}: AppLauncherProps) {
+export default function AppLauncher({monitor, uiScale}: AppLauncherProps) {
   const {text, setText, selectedIndex, setSelectedIndex, results} = createAppLauncherState();
   const monitorConnector = monitor.get_connector();
   let focusTimer: Timer | null = null;
 
-  const launcherBackground = createLauncherBackground();
+  const launcherBackground = createLauncherBackground(uiScale);
 
   const searchInput = SearchInput({
     text,
@@ -94,12 +99,13 @@ export default function AppLauncher({monitor}: AppLauncherProps) {
     selectedIndex,
     results,
     monitorConnector,
+    uiScale,
   });
 
   const win = (
     <window
       name={`applauncher-${monitorConnector}`}
-      class="AppLauncher"
+      class={`AppLauncher ${uiScale.cssClass}`}
       gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.OVERLAY}
@@ -113,7 +119,7 @@ export default function AppLauncher({monitor}: AppLauncherProps) {
         if (!self.visible) {
           resetLauncherState(searchInput, setText, setSelectedIndex);
         } else {
-          focusTimer = focusLauncher(searchInput, appList);
+          focusTimer = focusLauncher(searchInput, appList, uiScale);
         }
       }}
     >

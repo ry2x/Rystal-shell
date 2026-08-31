@@ -1,14 +1,15 @@
 import {Gdk, Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {toggleDateWeather} from '@/stores/shell/windowManager';
 import {clockTime, shortDate, shortDay} from '@/stores/system/time';
 
 export interface ClockProps {
   monitor: Gdk.Monitor;
+  uiScale: UiScaleContext;
 }
 
-export default function Clock({monitor}: ClockProps) {
+export default function Clock({monitor, uiScale}: ClockProps) {
   const toggleMenu = () => {
     toggleDateWeather(monitor.get_connector());
   };
@@ -17,8 +18,8 @@ export default function Clock({monitor}: ClockProps) {
     <button class="Clock" onClicked={toggleMenu}>
       <box spacing={0} orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
         <box
-          marginTop={scaleUiSize(20)}
-          marginBottom={scaleUiSize(20)}
+          marginTop={uiScale.size(20)}
+          marginBottom={uiScale.size(20)}
           halign={Gtk.Align.CENTER}
           valign={Gtk.Align.CENTER}
         >
@@ -26,8 +27,8 @@ export default function Clock({monitor}: ClockProps) {
         </box>
 
         <box
-          marginTop={scaleUiSize(14)}
-          marginBottom={scaleUiSize(14)}
+          marginTop={uiScale.size(14)}
+          marginBottom={uiScale.size(14)}
           halign={Gtk.Align.CENTER}
           valign={Gtk.Align.CENTER}
         >
@@ -35,8 +36,8 @@ export default function Clock({monitor}: ClockProps) {
         </box>
 
         <box
-          marginTop={scaleUiSize(22)}
-          marginBottom={scaleUiSize(22)}
+          marginTop={uiScale.size(22)}
+          marginBottom={uiScale.size(22)}
           halign={Gtk.Align.CENTER}
           valign={Gtk.Align.CENTER}
         >

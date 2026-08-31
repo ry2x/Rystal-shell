@@ -1,6 +1,6 @@
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {
   type CaffeineState,
   caffeineBusy,
@@ -21,7 +21,10 @@ function getCaffeineLabel(state: CaffeineState) {
   return 'Inactive';
 }
 
-export default function CaffeineToggle() {
+export interface CaffeineToggleProps {
+  uiScale: UiScaleContext;
+}
+export default function CaffeineToggle({uiScale}: CaffeineToggleProps) {
   return (
     <box
       class={caffeineState.as(
@@ -36,8 +39,13 @@ export default function CaffeineToggle() {
         onClicked={() => void toggleCaffeine().catch(() => {})}
         tooltipText="Toggle Caffeine (Disabled -> Enabled -> Remote)"
       >
-        <box spacing={scaleUiSize(12)}>
-          <LucideIcon name={caffeineState.as(getCaffeineIcon)} class="icon" pixelSize={24} />
+        <box spacing={uiScale.size(12)}>
+          <LucideIcon
+            name={caffeineState.as(getCaffeineIcon)}
+            class="icon"
+            pixelSize={24}
+            uiScale={uiScale}
+          />
           <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
             <label label="Caffeine" class="cc-toggle-title" halign={Gtk.Align.START} />
             <label

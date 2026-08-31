@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Bluetooth from 'gi://AstalBluetooth';
 import Pango from 'gi://Pango';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {getBluetoothDeviceDetail} from '@/widget/control-center/widget/Connectivity/BluetoothPage/utils';
 import {DetailMenuButton} from '@/widget/control-center/widget/Connectivity/Shared';
 
@@ -12,19 +12,21 @@ export interface ConnectedDeviceRowProps {
   device: Bluetooth.Device;
   onDisconnect: () => void;
   onForget: () => void;
+  uiScale: UiScaleContext;
 }
 
 export default function ConnectedDeviceRow({
   device,
   onDisconnect,
   onForget,
+  uiScale,
 }: ConnectedDeviceRowProps) {
   return (
-    <box class="cc-connectivity-row active" spacing={scaleUiSize(14)}>
+    <box class="cc-connectivity-row active" spacing={uiScale.size(14)}>
       <image
         class="cc-bt-device-icon"
         iconName={createBinding(device, 'icon')}
-        pixelSize={scaleUiSize(24)}
+        pixelSize={uiScale.size(24)}
       />
       <box orientation={Gtk.Orientation.VERTICAL} hexpand>
         <label
@@ -45,6 +47,7 @@ export default function ConnectedDeviceRow({
         triggerClass="cc-bt-settings-button"
         onDisconnect={onDisconnect}
         onForget={onForget}
+        uiScale={uiScale}
       />
     </box>
   );

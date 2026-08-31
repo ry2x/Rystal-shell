@@ -4,7 +4,7 @@ import {type Timer, interval} from 'ags/time';
 import GLib from 'gi://GLib';
 
 import {rystalShellConfigDir, rystalShellDataDir} from '@/lib/paths';
-import {scaleUi, scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {activeSidePanel} from '@/stores/shell/windowManager';
 
 export interface BarColors {
@@ -17,11 +17,8 @@ export interface BarBackgroundGeometry {
   bottomHeight: number;
 }
 
-export const BAR_WIDTH = scaleUiSize(50);
-const CONTROL_CENTER_WIDTH = scaleUiSize(490);
-export const DATE_WEATHER_PANEL_WIDTH = scaleUiSize(900);
-const WALLPAPER_PANEL_HEIGHT = scaleUiSize(390);
-const POWER_MENU_PANEL_HEIGHT = scaleUiSize(350);
+export const BAR_DESIGN_WIDTH = 50;
+export const DATE_WEATHER_PANEL_DESIGN_WIDTH = 900;
 const ANIMATION_INTERVAL_MS = 1000 / 60;
 const ANIMATION_SPEED = 0.22;
 const configuredThemePath = `${rystalShellConfigDir}/theme.scss`;
@@ -50,20 +47,25 @@ function readBarColors(): BarColors {
   }
 }
 
-function getTargetGeometry(panel: string, isTargetMonitor: boolean): BarBackgroundGeometry {
-  if (!isTargetMonitor) return {dx: BAR_WIDTH, bottomHeight: 0};
+function getTargetGeometry(
+  panel: string,
+  isTargetMonitor: boolean,
+  uiScale: UiScaleContext
+): BarBackgroundGeometry {
+  const barWidth = uiScale.size(BAR_DESIGN_WIDTH);
+  if (!isTargetMonitor) return {dx: barWidth, bottomHeight: 0};
 
   const dx =
     panel === 'control-center'
-      ? BAR_WIDTH + CONTROL_CENTER_WIDTH
+      ? barWidth + uiScale.size(490)
       : panel === 'date-weather'
-        ? BAR_WIDTH + DATE_WEATHER_PANEL_WIDTH
-        : BAR_WIDTH;
+        ? barWidth + uiScale.size(DATE_WEATHER_PANEL_DESIGN_WIDTH)
+        : barWidth;
   const bottomHeight =
     panel === 'wallpaper-selector'
-      ? WALLPAPER_PANEL_HEIGHT
+      ? uiScale.size(390)
       : panel === 'power-menu'
-        ? POWER_MENU_PANEL_HEIGHT
+        ? uiScale.size(350)
         : 0;
 
   return {dx, bottomHeight};
@@ -78,8 +80,8 @@ export function reloadBarColors() {
 
 const monitorGeometries = new Map<string, Accessor<BarBackgroundGeometry>>();
 
-function createMonitorGeometry(monitorConnector: string | null): Accessor<BarBackgroundGeometry> {
-  const initialGeometry = {dx: BAR_WIDTH, bottomHeight: 0};
+function createMonitorGeometry(uiScale: UiScaleContext): Accessor<BarBackgroundGeometry> {
+  const initialGeometry = {dx: uiScale.size(BAR_DESIGN_WIDTH), bottomHeight: 0};
 
   return createExternal(initialGeometry, setGeometry => {
     let currentGeometry = initialGeometry;
@@ -90,7 +92,7 @@ function createMonitorGeometry(monitorConnector: string | null): Accessor<BarBac
       const horizontalDiff = targetGeometry.dx - currentGeometry.dx;
       const bottomDiff = targetGeometry.bottomHeight - currentGeometry.bottomHeight;
 
-      if (Math.abs(horizontalDiff) < scaleUi(1) && Math.abs(bottomDiff) < scaleUi(1)) {
+      if (Math.abs(horizontalDiff) < uiScale.value(1) && Math.abs(bottomDiff) < uiScale.value(1)) {
         currentGeometry = targetGeometry;
         setGeometry(currentGeometry);
         animationTimer?.cancel();
@@ -106,7 +108,7 @@ function createMonitorGeometry(monitorConnector: string | null): Accessor<BarBac
     };
 
     const unsubscribePanel = activeSidePanel.subscribe(({panel, monitor}) => {
-      targetGeometry = getTargetGeometry(panel, monitor === monitorConnector);
+      targetGeometry = getTargetGeometry(panel, monitor === uiScale.connector, uiScale);
       animationTimer ??= interval(ANIMATION_INTERVAL_MS, animate);
     });
 
@@ -119,13 +121,13 @@ function createMonitorGeometry(monitorConnector: string | null): Accessor<BarBac
 }
 
 export function createBarBackgroundGeometry(
-  monitorConnector: string | null
+  uiScale: UiScaleContext
 ): Accessor<BarBackgroundGeometry> {
-  const key = monitorConnector ?? '';
+  const key = uiScale.connector;
   const existing = monitorGeometries.get(key);
   if (existing) return existing;
 
-  const geometry = createMonitorGeometry(monitorConnector);
+  const geometry = createMonitorGeometry(uiScale);
   monitorGeometries.set(key, geometry);
   return geometry;
 }

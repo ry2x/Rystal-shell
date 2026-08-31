@@ -2,7 +2,7 @@ import {Gtk} from 'ags/gtk4';
 
 import GLib from 'gi://GLib';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {
   type Wallpaper,
   applyWallpaper,
@@ -28,11 +28,11 @@ import {
 const VISIBLE_RADIUS = 3;
 const PREFETCH_RADIUS = 4;
 const MOVE_INTERVAL_US = 83_333;
-const VIEWPORT_HEIGHT = scaleUiSize(420);
 
 export interface CoverFlowOptions {
   onApplied: () => void;
   viewportWidth: number;
+  uiScale: UiScaleContext;
 }
 
 export default class CoverFlowController {
@@ -55,7 +55,7 @@ export default class CoverFlowController {
       hexpand: false,
       vexpand: false,
       widthRequest: options.viewportWidth,
-      heightRequest: VIEWPORT_HEIGHT,
+      heightRequest: options.uiScale.size(420),
       overflow: Gtk.Overflow.VISIBLE,
     });
 
@@ -65,7 +65,7 @@ export default class CoverFlowController {
       propagateNaturalWidth: false,
       propagateNaturalHeight: false,
       widthRequest: options.viewportWidth,
-      heightRequest: VIEWPORT_HEIGHT,
+      heightRequest: options.uiScale.size(420),
       halign: Gtk.Align.FILL,
       valign: Gtk.Align.FILL,
       child: this.fixed,
@@ -77,7 +77,7 @@ export default class CoverFlowController {
       hexpand: false,
       halign: Gtk.Align.CENTER,
       valign: Gtk.Align.END,
-      marginBottom: scaleUiSize(48),
+      marginBottom: options.uiScale.size(48),
       xalign: 0.5,
     });
 
@@ -86,7 +86,7 @@ export default class CoverFlowController {
     const coverFlowLayer = new Gtk.Overlay({
       cssClasses: ['wallpaper-coverflow'],
       widthRequest: options.viewportWidth,
-      heightRequest: VIEWPORT_HEIGHT,
+      heightRequest: options.uiScale.size(420),
       hexpand: false,
       vexpand: false,
       halign: Gtk.Align.CENTER,
@@ -94,7 +94,7 @@ export default class CoverFlowController {
       overflow: Gtk.Overflow.VISIBLE,
       child: new Gtk.Box({
         widthRequest: options.viewportWidth,
-        heightRequest: VIEWPORT_HEIGHT,
+        heightRequest: options.uiScale.size(420),
         hexpand: false,
         vexpand: false,
       }),
@@ -106,7 +106,7 @@ export default class CoverFlowController {
       <box
         class="wallpaper-selector-content"
         orientation={Gtk.Orientation.VERTICAL}
-        spacing={scaleUiSize(8)}
+        spacing={options.uiScale.size(8)}
         hexpand
         halign={Gtk.Align.FILL}
       >
@@ -225,7 +225,8 @@ export default class CoverFlowController {
         createCoverFlowTransform(
           state.currentOffset,
           this.options.viewportWidth,
-          this.animation.getEntrance()
+          this.animation.getEntrance(),
+          this.options.uiScale
         )
       );
       state.card.widget.insert_before(this.fixed, null);
@@ -278,7 +279,10 @@ export default class CoverFlowController {
 
       let state = this.cards.get(wallpaper.path);
       if (!state) {
-        const card = new WallpaperCardController(clicked => this.handleCardClicked(clicked));
+        const card = new WallpaperCardController(
+          clicked => this.handleCardClicked(clicked),
+          this.options.uiScale
+        );
         card.bind(wallpaper);
         this.fixed.put(card.widget, 0, 0);
         const spawnOffset = offset + Math.sign(offset || direction || 1) * 0.35;

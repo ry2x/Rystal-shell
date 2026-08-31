@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Network from 'gi://AstalNetwork';
 import Pango from 'gi://Pango';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {LucideIcon} from '@/widget/common/lucide';
 import {
   getSignalLabel,
@@ -14,16 +14,21 @@ import {
 export interface AvailableNetworkRowProps {
   accessPoint: Network.AccessPoint;
   onSelect: () => void;
+  uiScale: UiScaleContext;
 }
 
-export default function AvailableNetworkRow({accessPoint, onSelect}: AvailableNetworkRowProps) {
+export default function AvailableNetworkRow({
+  accessPoint,
+  onSelect,
+  uiScale,
+}: AvailableNetworkRowProps) {
   return (
     <button class="cc-connectivity-row" onClicked={onSelect}>
-      <box spacing={scaleUiSize(14)}>
+      <box spacing={uiScale.size(14)}>
         <image
           class="cc-wifi-network-icon"
           iconName={createBinding(accessPoint, 'icon_name')}
-          pixelSize={scaleUiSize(24)}
+          pixelSize={uiScale.size(24)}
         />
         <box orientation={Gtk.Orientation.VERTICAL} hexpand>
           <label
@@ -44,11 +49,11 @@ export default function AvailableNetworkRow({accessPoint, onSelect}: AvailableNe
         <button
           class="icon-btn cc-wifi-security"
           visible={createBinding(accessPoint, 'requires_password')}
-          widthRequest={scaleUiSize(44)}
+          widthRequest={uiScale.size(44)}
           hexpand={false}
           canFocus={false}
         >
-          <LucideIcon name="lock" pixelSize={16} />
+          <LucideIcon name="lock" pixelSize={16} uiScale={uiScale} />
         </button>
       </box>
     </button>

@@ -4,11 +4,8 @@ import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
 import {loadTextureFromUri} from '@/lib/image';
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import type {Wallpaper} from '@/stores/wallpaper/wallpaper';
-
-const CARD_WIDTH = scaleUiSize(384);
-const CARD_HEIGHT = scaleUiSize(252);
 
 export class WallpaperCardController {
   readonly widget: Gtk.Button;
@@ -16,14 +13,19 @@ export class WallpaperCardController {
   private readonly picture: Gtk.Picture;
   private boundWallpaper: Wallpaper | null = null;
 
-  constructor(onClicked: (card: WallpaperCardController) => void) {
+  constructor(
+    onClicked: (card: WallpaperCardController) => void,
+    private readonly uiScale: UiScaleContext
+  ) {
+    const cardWidth = uiScale.size(384);
+    const cardHeight = uiScale.size(252);
     this.picture = new Gtk.Picture({
       contentFit: Gtk.ContentFit.COVER,
       canShrink: true,
       hexpand: true,
       vexpand: true,
-      widthRequest: CARD_WIDTH,
-      heightRequest: CARD_HEIGHT,
+      widthRequest: cardWidth,
+      heightRequest: cardHeight,
     });
 
     const lightOverlay = new Gtk.Box({
@@ -40,8 +42,8 @@ export class WallpaperCardController {
       canFocus: false,
       overflow: Gtk.Overflow.HIDDEN,
       child: preview,
-      widthRequest: CARD_WIDTH,
-      heightRequest: CARD_HEIGHT,
+      widthRequest: cardWidth,
+      heightRequest: cardHeight,
     });
 
     this.widget.connect('clicked', () => onClicked(this));
@@ -66,7 +68,11 @@ export class WallpaperCardController {
       : wallpaper.path;
     try {
       this.picture.set_paintable(
-        loadTextureFromUri(Gio.File.new_for_path(imagePath).get_uri(), CARD_WIDTH, CARD_HEIGHT)
+        loadTextureFromUri(
+          Gio.File.new_for_path(imagePath).get_uri(),
+          this.uiScale.size(384),
+          this.uiScale.size(252)
+        )
       );
     } catch (error) {
       console.error(`Failed to load wallpaper image ${imagePath}:`, error);

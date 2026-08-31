@@ -3,16 +3,21 @@ import {Gtk} from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {getDirectUrl, openQuery} from '@/stores/application/query';
 import {toggleAppLauncher} from '@/stores/shell/windowManager';
 
 export interface SearchGoogleBtnProps {
   textState: Accessor<string>;
   monitorConnector: string | null;
+  uiScale: UiScaleContext;
 }
 
-export function SearchGoogleBtn({textState, monitorConnector}: SearchGoogleBtnProps): Gtk.Button {
+export function SearchGoogleBtn({
+  textState,
+  monitorConnector,
+  uiScale,
+}: SearchGoogleBtnProps): Gtk.Button {
   return (
     <button
       class="applauncher-item"
@@ -24,7 +29,7 @@ export function SearchGoogleBtn({textState, monitorConnector}: SearchGoogleBtnPr
         openQuery(t);
       }}
     >
-      <box orientation={Gtk.Orientation.HORIZONTAL} spacing={scaleUiSize(12)}>
+      <box orientation={Gtk.Orientation.HORIZONTAL} spacing={uiScale.size(12)}>
         <image iconName="web-browser" class="applauncher-item-icon" />
         <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
           <label

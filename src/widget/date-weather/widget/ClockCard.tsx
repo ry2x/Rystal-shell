@@ -1,14 +1,17 @@
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {clockDate, clockDay, clockTime, clockTz} from '@/stores/system/time';
 
-export default function ClockCard() {
+export interface ClockCardProps {
+  uiScale: UiScaleContext;
+}
+export default function ClockCard({uiScale}: ClockCardProps) {
   return (
     <box
       class="clock-card widget-card"
       orientation={Gtk.Orientation.VERTICAL}
-      spacing={scaleUiSize(8)}
+      spacing={uiScale.size(8)}
       valign={Gtk.Align.CENTER}
       hexpand
     >
@@ -19,7 +22,7 @@ export default function ClockCard() {
           <label label={clockTz} class="clock-tz" />
         </box>
       </box>
-      <box spacing={scaleUiSize(8)} halign={Gtk.Align.CENTER}>
+      <box spacing={uiScale.size(8)} halign={Gtk.Align.CENTER}>
         <label label={clockDay} class="clock-day" />
         <label label="•" class="clock-dot" />
         <label label={clockDate} class="clock-date" />

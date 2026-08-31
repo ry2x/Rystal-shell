@@ -4,7 +4,7 @@ import GLib from 'gi://GLib?version=2.0';
 
 import {appConfig} from '@/lib/config';
 import {loadTextureFromUri} from '@/lib/image';
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {getOsInfo, uptime, userName} from '@/stores/system/system';
 
 const DEFAULT_AVATAR_PATH = `${GLib.get_home_dir()}/Profile/Profile.png`;
@@ -18,14 +18,14 @@ function resolveAvatarPath(path: string | undefined) {
   return path.startsWith('~/') ? GLib.get_home_dir() + path.slice(1) : path;
 }
 
-function createProfileAvatar(path: string) {
+function createProfileAvatar(path: string, uiScale: UiScaleContext) {
   const avatar = new Gtk.Picture({
     contentFit: Gtk.ContentFit.COVER,
     canShrink: true,
   });
 
   try {
-    avatar.set_paintable(loadTextureFromUri(`file://${path}`, scaleUiSize(64), scaleUiSize(64)));
+    avatar.set_paintable(loadTextureFromUri(`file://${path}`, uiScale.size(64), uiScale.size(64)));
   } catch (error) {
     console.error('Failed to load profile avatar:', error);
   }
@@ -33,13 +33,16 @@ function createProfileAvatar(path: string) {
   return avatar;
 }
 
-export default function ProfileCard() {
-  const avatar = createProfileAvatar(resolveAvatarPath(profile.avatarPath));
+export interface ProfileCardProps {
+  uiScale: UiScaleContext;
+}
+export default function ProfileCard({uiScale}: ProfileCardProps) {
+  const avatar = createProfileAvatar(resolveAvatarPath(profile.avatarPath), uiScale);
 
   return (
     <box
       class="profile-card widget-card"
-      spacing={scaleUiSize(16)}
+      spacing={uiScale.size(16)}
       orientation={Gtk.Orientation.HORIZONTAL}
     >
       {/* Left: Avatar Area */}
@@ -51,7 +54,7 @@ export default function ProfileCard() {
       <box
         orientation={Gtk.Orientation.VERTICAL}
         valign={Gtk.Align.CENTER}
-        spacing={scaleUiSize(4)}
+        spacing={uiScale.size(4)}
       >
         <label label={profileHandle} class="profile-name" halign={Gtk.Align.START} />
         <label label={profileOs} class="profile-env" halign={Gtk.Align.START} />

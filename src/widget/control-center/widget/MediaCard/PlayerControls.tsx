@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Mpris from 'gi://AstalMpris';
 import Pango from 'gi://Pango';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {focusMediaPlayer, playNext, playPrevious, togglePlayback} from '@/stores/media/media';
 import {LucideIcon} from '@/widget/common/lucide';
 
@@ -12,9 +12,15 @@ export interface PlayerControlsProps {
   player: Mpris.Player;
   canSwitch: Accessor<boolean>;
   onSwitch: () => void;
+  uiScale: UiScaleContext;
 }
 
-export default function PlayerControls({player, canSwitch, onSwitch}: PlayerControlsProps) {
+export default function PlayerControls({
+  player,
+  canSwitch,
+  onSwitch,
+  uiScale,
+}: PlayerControlsProps) {
   return (
     <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER} hexpand>
       <button
@@ -41,9 +47,9 @@ export default function PlayerControls({player, canSwitch, onSwitch}: PlayerCont
         maxWidthChars={20}
         lines={1}
       />
-      <box class="cc-player-controls" spacing={scaleUiSize(10)} halign={Gtk.Align.START}>
+      <box class="cc-player-controls" spacing={uiScale.size(10)} halign={Gtk.Align.START}>
         <button class="icon-btn" onClicked={() => playPrevious(player)}>
-          <LucideIcon name="skip-back" pixelSize={20} />
+          <LucideIcon name="skip-back" pixelSize={20} uiScale={uiScale} />
         </button>
         <button class="icon-btn" onClicked={() => togglePlayback(player)}>
           <LucideIcon
@@ -51,14 +57,15 @@ export default function PlayerControls({player, canSwitch, onSwitch}: PlayerCont
               status === Mpris.PlaybackStatus.PLAYING ? 'pause' : 'play'
             )}
             pixelSize={20}
+            uiScale={uiScale}
           />
         </button>
         <button class="icon-btn" onClicked={() => playNext(player)}>
-          <LucideIcon name="skip-forward" pixelSize={20} />
+          <LucideIcon name="skip-forward" pixelSize={20} uiScale={uiScale} />
         </button>
         <revealer transitionType={Gtk.RevealerTransitionType.SLIDE_RIGHT} revealChild={canSwitch}>
           <button class="icon-btn" onClicked={onSwitch} tooltipText="Switch Player">
-            <LucideIcon name="arrow-right-left" pixelSize={18} />
+            <LucideIcon name="arrow-right-left" pixelSize={18} uiScale={uiScale} />
           </button>
         </revealer>
       </box>

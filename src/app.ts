@@ -2,7 +2,9 @@ import {Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import {requestHandler} from '@/ipc';
+import {appConfig} from '@/lib/config';
 import {rystalShellDataDir, rystalShellInstance} from '@/lib/paths';
+import {createUiScaleContext} from '@/lib/uiScale';
 import {cleanupRecording} from '@/stores/capture/recording';
 import {initCss} from '@/stores/shell/style';
 import AppLauncher from '@/widget/app-launcher';
@@ -30,14 +32,15 @@ app.start({
     }
 
     app.get_monitors().forEach(m => {
-      Bar({monitor: m});
-      ControlCenter({monitor: m});
-      WifiPasswordDialog({monitor: m});
-      DateWeatherPopup({monitor: m});
-      NotificationPopups({monitor: m});
-      AppLauncher({monitor: m});
-      WallpaperSelector({monitor: m});
-      PowerMenu({monitor: m});
+      const uiScale = createUiScaleContext(m.get_connector(), appConfig.ui);
+      Bar({monitor: m, uiScale});
+      ControlCenter({monitor: m, uiScale});
+      WifiPasswordDialog({monitor: m, uiScale});
+      DateWeatherPopup({monitor: m, uiScale});
+      NotificationPopups({monitor: m, uiScale});
+      AppLauncher({monitor: m, uiScale});
+      WallpaperSelector({monitor: m, uiScale});
+      PowerMenu({monitor: m, uiScale});
     });
   },
 });

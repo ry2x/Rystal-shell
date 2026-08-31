@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Network from 'gi://AstalNetwork';
 import Pango from 'gi://Pango';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {DetailMenuButton} from '@/widget/control-center/widget/Connectivity/Shared';
 import {
   getSignalLabel,
@@ -15,19 +15,21 @@ export interface ConnectedNetworkRowProps {
   accessPoint: Network.AccessPoint;
   onDisconnect: () => void;
   onForget: () => void;
+  uiScale: UiScaleContext;
 }
 
 export default function ConnectedNetworkRow({
   accessPoint,
   onDisconnect,
   onForget,
+  uiScale,
 }: ConnectedNetworkRowProps) {
   return (
-    <box class="cc-connectivity-row active" spacing={scaleUiSize(14)}>
+    <box class="cc-connectivity-row active" spacing={uiScale.size(14)}>
       <image
         class="cc-wifi-network-icon"
         iconName={createBinding(accessPoint, 'icon_name')}
-        pixelSize={scaleUiSize(26)}
+        pixelSize={uiScale.size(26)}
       />
       <box orientation={Gtk.Orientation.VERTICAL} hexpand>
         <label
@@ -50,6 +52,7 @@ export default function ConnectedNetworkRow({
         forgetLabel="Forget network"
         onDisconnect={onDisconnect}
         onForget={onForget}
+        uiScale={uiScale}
       />
     </box>
   );

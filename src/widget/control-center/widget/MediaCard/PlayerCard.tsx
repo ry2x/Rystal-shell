@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Mpris from 'gi://AstalMpris';
 import Pango from 'gi://Pango';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {createPlayerArtwork} from '@/stores/media/media';
 import CavaWidget from '@/widget/control-center/widget/MediaCard/CavaWidget';
 import PlayerArtwork from '@/widget/control-center/widget/MediaCard/PlayerArtwork';
@@ -15,31 +15,37 @@ export interface PlayerCardProps {
   player: Mpris.Player;
   canSwitch: Accessor<boolean>;
   onSwitch: () => void;
+  uiScale: UiScaleContext;
 }
 
-export default function PlayerCard({player, canSwitch, onSwitch}: PlayerCardProps) {
-  const artwork = createPlayerArtwork(player);
+export default function PlayerCard({player, canSwitch, onSwitch, uiScale}: PlayerCardProps) {
+  const artwork = createPlayerArtwork(player, uiScale);
   const mediaSource = getMediaSource(player);
 
   return (
     <overlay name={player.bus_name} cssClasses={['cc-media-card']}>
-      <box heightRequest={scaleUiSize(160)} hexpand>
-        <CavaWidget />
+      <box heightRequest={uiScale.size(160)} hexpand>
+        <CavaWidget uiScale={uiScale} />
       </box>
-      <box $type="overlay" class="cc-player-content" spacing={scaleUiSize(16)} hexpand>
-        <PlayerArtwork artwork={artwork} />
-        <PlayerControls player={player} canSwitch={canSwitch} onSwitch={onSwitch} />
+      <box $type="overlay" class="cc-player-content" spacing={uiScale.size(16)} hexpand>
+        <PlayerArtwork artwork={artwork} uiScale={uiScale} />
+        <PlayerControls
+          player={player}
+          canSwitch={canSwitch}
+          onSwitch={onSwitch}
+          uiScale={uiScale}
+        />
       </box>
       <box
         $type="overlay"
         class="cc-media-source"
-        spacing={scaleUiSize(5)}
+        spacing={uiScale.size(5)}
         halign={Gtk.Align.END}
         valign={Gtk.Align.END}
-        marginBottom={scaleUiSize(10)}
-        marginEnd={scaleUiSize(12)}
+        marginBottom={uiScale.size(10)}
+        marginEnd={uiScale.size(12)}
       >
-        <image iconName={mediaSource.iconName} pixelSize={scaleUiSize(14)} />
+        <image iconName={mediaSource.iconName} pixelSize={uiScale.size(14)} />
         <label
           label={mediaSource.name}
           ellipsize={Pango.EllipsizeMode.END}

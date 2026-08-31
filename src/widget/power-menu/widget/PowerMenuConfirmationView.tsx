@@ -1,7 +1,7 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import type {PowerItem} from '@/stores/panel/powerMenu';
 import {LucideIcon} from '@/widget/common/lucide';
 
@@ -12,6 +12,7 @@ export interface PowerMenuConfirmationViewProps {
   onSelectionChanged: (index: number) => void;
   onCancelButtonCreated: (button: Gtk.Button) => void;
   onConfirmButtonCreated: (button: Gtk.Button) => void;
+  uiScale: UiScaleContext;
 }
 
 export default function PowerMenuConfirmationView({
@@ -21,18 +22,23 @@ export default function PowerMenuConfirmationView({
   onSelectionChanged,
   onCancelButtonCreated,
   onConfirmButtonCreated,
+  uiScale,
 }: PowerMenuConfirmationViewProps) {
   return (
     <box
       class="power-menu-confirmation"
-      spacing={scaleUiSize(14)}
+      spacing={uiScale.size(14)}
       halign={Gtk.Align.CENTER}
       valign={Gtk.Align.CENTER}
     >
       <box class="power-menu-confirmation-card">
         <box orientation={Gtk.Orientation.VERTICAL} hexpand vexpand>
           <box vexpand valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}>
-            <LucideIcon name={confirmation.as(item => item?.icon ?? 'power')} pixelSize={54} />
+            <LucideIcon
+              name={confirmation.as(item => item?.icon ?? 'power')}
+              pixelSize={54}
+              uiScale={uiScale}
+            />
           </box>
           <label
             class="power-menu-label"
@@ -43,10 +49,10 @@ export default function PowerMenuConfirmationView({
           />
         </box>
       </box>
-      <box class="power-menu-confirmation-body" spacing={scaleUiSize(28)}>
+      <box class="power-menu-confirmation-body" spacing={uiScale.size(28)}>
         <box
           orientation={Gtk.Orientation.VERTICAL}
-          spacing={scaleUiSize(8)}
+          spacing={uiScale.size(8)}
           hexpand
           valign={Gtk.Align.CENTER}
         >
@@ -64,7 +70,7 @@ export default function PowerMenuConfirmationView({
         <box
           class="power-menu-confirmation-actions"
           valign={Gtk.Align.CENTER}
-          spacing={scaleUiSize(14)}
+          spacing={uiScale.size(14)}
         >
           <button class="power-menu-cancel" onClicked={onCancel} $={onCancelButtonCreated}>
             <Gtk.EventControllerFocus onEnter={() => onSelectionChanged(0)} />

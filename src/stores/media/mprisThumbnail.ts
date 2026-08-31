@@ -6,10 +6,9 @@ import Gio from 'gi://Gio';
 import Soup from 'gi://Soup?version=3.0';
 
 import {rystalShellCacheDir} from '@/lib/paths';
-import {scaleUiSize} from '@/lib/uiScale';
 
 const DOWNLOAD_TIMEOUT_SECONDS = 10;
-const THUMBNAIL_SIZE = scaleUiSize(160);
+const THUMBNAIL_SIZE = 320;
 const YOUTUBE_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
 const thumbnailSession = new Soup.Session({timeout: DOWNLOAD_TIMEOUT_SECONDS});
 

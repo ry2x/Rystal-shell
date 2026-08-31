@@ -3,13 +3,15 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import {shellMotion} from '@/lib/motion';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {createControlCenterState} from '@/stores/panel/controlCenter';
-import {BAR_WIDTH} from '@/stores/shell/barBackground';
+import {BAR_DESIGN_WIDTH} from '@/stores/shell/barBackground';
 import ClickCatcher from '@/widget/common/ClickCatcher';
 import ControlCenterPages from '@/widget/control-center/ControlCenterPages';
 
 export interface ControlCenterProps {
   monitor: Gdk.Monitor;
+  uiScale: UiScaleContext;
 }
 
 interface ControlCenterWindow extends Astal.Window {
@@ -18,7 +20,7 @@ interface ControlCenterWindow extends Astal.Window {
   show_animated: () => void;
 }
 
-export default function ControlCenter({monitor}: ControlCenterProps) {
+export default function ControlCenter({monitor, uiScale}: ControlCenterProps) {
   const connector = monitor.get_connector() ?? '';
   const state = createControlCenterState(connector);
   const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
@@ -26,12 +28,12 @@ export default function ControlCenter({monitor}: ControlCenterProps) {
   const window = (
     <window
       name={`control-center-${monitor.get_connector()}`}
-      class="ControlCenter"
+      class={`ControlCenter ${uiScale.cssClass}`}
       gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.TOP}
       anchor={TOP | BOTTOM | LEFT | RIGHT}
-      marginLeft={BAR_WIDTH}
+      marginLeft={uiScale.size(BAR_DESIGN_WIDTH)}
       marginTop={0}
       keymode={Astal.Keymode.NONE}
       application={app}
@@ -55,7 +57,7 @@ export default function ControlCenter({monitor}: ControlCenterProps) {
                   revealChild={state.revealed}
                 >
                   <box orientation={Gtk.Orientation.HORIZONTAL}>
-                    <ControlCenterPages state={state} monitorConnector={connector} />
+                    <ControlCenterPages state={state} uiScale={uiScale} />
                   </box>
                 </revealer>
               )}

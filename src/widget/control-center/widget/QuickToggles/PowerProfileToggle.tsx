@@ -3,7 +3,7 @@ import {Gtk} from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {
   cyclePowerProfile,
   getPowerIcon,
@@ -12,7 +12,10 @@ import {
 } from '@/stores/system/powerProfile';
 import {LucideIcon} from '@/widget/common/lucide';
 
-export default function PowerProfileToggle() {
+export interface PowerProfileToggleProps {
+  uiScale: UiScaleContext;
+}
+export default function PowerProfileToggle({uiScale}: PowerProfileToggleProps) {
   const power = getPowerProfile();
   if (!power) return <box visible={false} />;
 
@@ -31,8 +34,13 @@ export default function PowerProfileToggle() {
         onClicked={cyclePowerProfile}
         tooltipText="Toggle Power Profile"
       >
-        <box spacing={scaleUiSize(12)}>
-          <LucideIcon name={activeProfile.as(getPowerIcon)} class="icon" pixelSize={24} />
+        <box spacing={uiScale.size(12)}>
+          <LucideIcon
+            name={activeProfile.as(getPowerIcon)}
+            class="icon"
+            pixelSize={24}
+            uiScale={uiScale}
+          />
           <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
             <label label="Power Profile" class="cc-toggle-title" halign={Gtk.Align.START} />
             <label

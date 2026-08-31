@@ -1,7 +1,7 @@
 import {Accessor, type CCProps} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 
 type ImageProps = Omit<
   CCProps<Gtk.Image, Partial<Gtk.Image.ConstructorProps>>,
@@ -12,6 +12,7 @@ export interface LucideIconProps extends ImageProps {
   name: string | Accessor<string>;
   class?: string | Accessor<string>;
   css?: string | Accessor<string>;
+  uiScale?: UiScaleContext;
 }
 
 /**
@@ -27,11 +28,11 @@ function lucideIcon(name: string): string {
  * LucideIcon component that correctly utilizes GTK's IconTheme via iconName.
  * This allows SCSS states (like :hover, color changes) and dynamic binding updates to work perfectly.
  */
-export function LucideIcon({name, ...props}: LucideIconProps) {
+export function LucideIcon({name, uiScale, ...props}: LucideIconProps) {
   const icon = name instanceof Accessor ? name.as(lucideIcon) : lucideIcon(name);
   const imageProps =
-    typeof props.pixelSize === 'number'
-      ? {...props, pixelSize: scaleUiSize(props.pixelSize)}
+    typeof props.pixelSize === 'number' && uiScale
+      ? {...props, pixelSize: uiScale.size(props.pixelSize)}
       : props;
 
   return <image iconName={icon} {...imageProps} />;

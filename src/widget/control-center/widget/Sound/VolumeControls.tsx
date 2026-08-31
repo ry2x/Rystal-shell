@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Wp from 'gi://AstalWp';
 
 import {getVolumeIcon} from '@/lib/audio';
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {setEndpointVolume, setMicrophoneVolume, toggleEndpointMute} from '@/stores/system/audio';
 import {LucideIcon} from '@/widget/common/lucide';
 import {type SoundDeviceKind} from '@/widget/control-center/widget/Sound/types';
@@ -12,9 +12,10 @@ import {type SoundDeviceKind} from '@/widget/control-center/widget/Sound/types';
 export interface VolumeControlsProps {
   endpoint: Wp.Endpoint;
   kind: SoundDeviceKind;
+  uiScale: UiScaleContext;
 }
 
-export default function VolumeControls({endpoint, kind}: VolumeControlsProps) {
+export default function VolumeControls({endpoint, kind, uiScale}: VolumeControlsProps) {
   const volume = createBinding(endpoint, 'volume');
   const muted = createBinding(endpoint, 'mute');
   const icon =
@@ -39,8 +40,8 @@ export default function VolumeControls({endpoint, kind}: VolumeControlsProps) {
         class="cc-sound-control-label"
         halign={Gtk.Align.START}
       />
-      <box spacing={scaleUiSize(10)}>
-        <LucideIcon name={icon} class="cc-sound-volume-icon" pixelSize={19} />
+      <box spacing={uiScale.size(10)}>
+        <LucideIcon name={icon} class="cc-sound-volume-icon" pixelSize={19} uiScale={uiScale} />
         <slider
           class="volume-slider cc-sound-slider"
           hexpand
@@ -63,6 +64,7 @@ export default function VolumeControls({endpoint, kind}: VolumeControlsProps) {
           <LucideIcon
             name={kind === 'output' ? muted.as(value => (value ? 'volume-x' : 'volume-2')) : icon}
             pixelSize={19}
+            uiScale={uiScale}
           />
         </button>
       </box>

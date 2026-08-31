@@ -1,22 +1,23 @@
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {getWeatherIcon, weatherInfo} from '@/stores/system/weather';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface ForecastItemProps {
   index: number;
+  uiScale: UiScaleContext;
 }
 
 function formatForecastDay(date: string) {
   return new Date(date).toLocaleDateString('en-US', {weekday: 'short'}).toUpperCase();
 }
 
-export default function ForecastItem({index}: ForecastItemProps) {
+export default function ForecastItem({index, uiScale}: ForecastItemProps) {
   return (
     <box
       orientation={Gtk.Orientation.HORIZONTAL}
-      spacing={scaleUiSize(4)}
+      spacing={uiScale.size(4)}
       valign={Gtk.Align.CENTER}
       halign={Gtk.Align.CENTER}
       hexpand
@@ -36,6 +37,7 @@ export default function ForecastItem({index}: ForecastItemProps) {
         })}
         pixelSize={22}
         class="forecast-icon"
+        uiScale={uiScale}
       />
       <label
         label={weatherInfo.as(weather => {

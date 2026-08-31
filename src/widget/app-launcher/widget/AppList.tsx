@@ -4,7 +4,7 @@ import {type Timer, idle} from 'ags/time';
 
 import Apps from 'gi://AstalApps';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {AppItem} from '@/widget/app-launcher/widget/AppItem';
 import {SearchGoogleBtn} from '@/widget/app-launcher/widget/SearchGoogleBtn';
 
@@ -13,14 +13,19 @@ export interface AppListProps {
   selectedIndex: Accessor<number>;
   results: Accessor<Apps.Application[]>;
   monitorConnector: string | null;
+  uiScale: UiScaleContext;
 }
 
-function scrollToSelection(scrollWindow: Gtk.ScrolledWindow, targetChild: Gtk.Widget) {
+function scrollToSelection(
+  scrollWindow: Gtk.ScrolledWindow,
+  targetChild: Gtk.Widget,
+  uiScale: UiScaleContext
+) {
   const adjustment = scrollWindow.get_vadjustment();
   const viewport = scrollWindow.get_child();
   if (!adjustment || !viewport) return;
 
-  const itemHeight = targetChild.get_height() || 50;
+  const itemHeight = targetChild.get_height() || uiScale.size(50);
   const position = targetChild.translate_coordinates(viewport, 0, 0);
   if (!position[0]) return;
 
@@ -29,9 +34,9 @@ function scrollToSelection(scrollWindow: Gtk.ScrolledWindow, targetChild: Gtk.Wi
   const pageSize = adjustment.get_page_size();
 
   if (visibleY < 0) {
-    adjustment.set_value(adjustment.get_value() + visibleY - 10);
+    adjustment.set_value(adjustment.get_value() + visibleY - uiScale.size(10));
   } else if (visibleBottom > pageSize) {
-    adjustment.set_value(adjustment.get_value() + visibleBottom - pageSize + 10);
+    adjustment.set_value(adjustment.get_value() + visibleBottom - pageSize + uiScale.size(10));
   }
 }
 
@@ -41,7 +46,8 @@ function updateSelection(
   scrollWindow: Gtk.ScrolledWindow,
   selectedIndex: number,
   currentResults: Apps.Application[],
-  query: string
+  query: string,
+  uiScale: UiScaleContext
 ) {
   let targetChild: Gtk.Widget | null = null;
   let child = appList.get_first_child();
@@ -65,7 +71,7 @@ function updateSelection(
     searchGoogleBtn.remove_css_class('selected');
   }
 
-  if (targetChild) scrollToSelection(scrollWindow, targetChild);
+  if (targetChild) scrollToSelection(scrollWindow, targetChild, uiScale);
 }
 
 export function AppList({
@@ -73,10 +79,12 @@ export function AppList({
   selectedIndex,
   results,
   monitorConnector,
+  uiScale,
 }: AppListProps): Gtk.ScrolledWindow {
   const searchGoogleBtn = SearchGoogleBtn({
     textState: text,
     monitorConnector,
+    uiScale,
   });
 
   let appList!: Gtk.Box;
@@ -89,24 +97,26 @@ export function AppList({
       hscrollbarPolicy={Gtk.PolicyType.NEVER}
       vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}
       vexpand
-      minContentWidth={400}
-      minContentHeight={300}
-      maxContentHeight={600}
+      minContentWidth={uiScale.size(400)}
+      minContentHeight={uiScale.size(300)}
+      maxContentHeight={uiScale.size(600)}
       propagateNaturalHeight={false}
       $={self => (scrollWindow = self)}
     >
       <box
         orientation={Gtk.Orientation.VERTICAL}
         class="applauncher-list"
-        spacing={scaleUiSize(10)}
+        spacing={uiScale.size(10)}
       >
         <box
           orientation={Gtk.Orientation.VERTICAL}
-          spacing={scaleUiSize(10)}
+          spacing={uiScale.size(10)}
           $={self => (appList = self)}
         >
           <For each={results}>
-            {appInstance => <AppItem res={appInstance} monitorConnector={monitorConnector} />}
+            {appInstance => (
+              <AppItem res={appInstance} monitorConnector={monitorConnector} uiScale={uiScale} />
+            )}
           </For>
         </box>
         {searchGoogleBtn}
@@ -128,7 +138,8 @@ export function AppList({
         scrollWindow,
         selectedIndex.peek(),
         results.peek(),
-        text.peek().trim()
+        text.peek().trim(),
+        uiScale
       );
     });
   });

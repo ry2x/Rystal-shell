@@ -3,7 +3,7 @@ import {Gtk} from 'ags/gtk4';
 
 import Bluetooth from 'gi://AstalBluetooth';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {
   type BluetoothConfirmation,
   createBluetoothPageState,
@@ -24,21 +24,24 @@ import {type ControlCenterPage} from '@/widget/control-center/widget/Connectivit
 export interface BluetoothPageProps {
   page: Accessor<ControlCenterPage>;
   onBack: () => void;
+  uiScale: UiScaleContext;
 }
 
-export function BluetoothPage({page, onBack}: BluetoothPageProps) {
+export function BluetoothPage({page, onBack, uiScale}: BluetoothPageProps) {
   const state = createBluetoothPageState(page.as(value => value === 'bluetooth'));
   const {bluetooth, adapter} = state;
 
   if (!adapter) {
-    return <EmptyState icon="bluetooth-off" label="No Bluetooth adapter available" />;
+    return (
+      <EmptyState icon="bluetooth-off" label="No Bluetooth adapter available" uiScale={uiScale} />
+    );
   }
 
   const content = (
     <box
       class="cc-bluetooth-page"
       orientation={Gtk.Orientation.VERTICAL}
-      spacing={scaleUiSize(12)}
+      spacing={uiScale.size(12)}
       hexpand
       halign={Gtk.Align.FILL}
     >
@@ -47,15 +50,16 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
         enabled={createBinding(bluetooth, 'is_powered')}
         onToggle={() => toggleBluetooth(bluetooth.is_powered)}
         onBack={onBack}
+        uiScale={uiScale}
       />
-      <ErrorLabel error={state.error} />
+      <ErrorLabel error={state.error} uiScale={uiScale} />
       <revealer
         revealChild={createBinding(bluetooth, 'is_powered')}
         transitionType={Gtk.RevealerTransitionType.CROSSFADE}
       >
-        <box orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(10)}>
-          <box class="cc-bt-section-header" spacing={scaleUiSize(8)}>
-            <LucideIcon name="link-2" pixelSize={17} />
+        <box orientation={Gtk.Orientation.VERTICAL} spacing={uiScale.size(10)}>
+          <box class="cc-bt-section-header" spacing={uiScale.size(8)}>
+            <LucideIcon name="link-2" pixelSize={17} uiScale={uiScale} />
             <label label="Connected Devices" class="cc-section-title" halign={Gtk.Align.START} />
           </box>
           <AnimatedList
@@ -67,11 +71,12 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
                 device={device}
                 onDisconnect={() => state.requestDisconnect(device)}
                 onForget={() => state.requestForget(device)}
+                uiScale={uiScale}
               />
             )}
           />
-          <box class="cc-bt-section-header" spacing={scaleUiSize(8)}>
-            <LucideIcon name="bluetooth" pixelSize={17} />
+          <box class="cc-bt-section-header" spacing={uiScale.size(8)}>
+            <LucideIcon name="bluetooth" pixelSize={17} uiScale={uiScale} />
             <label label="Available Devices" class="cc-section-title" halign={Gtk.Align.START} />
           </box>
           <AnimatedList
@@ -82,6 +87,7 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
               <AvailableDeviceRow
                 device={device}
                 onConnect={() => void state.connectDevice(device)}
+                uiScale={uiScale}
               />
             )}
           />
@@ -92,8 +98,13 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
             onClicked={state.discover}
             sensitive={createBinding(adapter, 'discovering').as(discovering => !discovering)}
           >
-            <box spacing={scaleUiSize(8)} halign={Gtk.Align.CENTER}>
-              <LucideIcon name="refresh-cw" class="cc-bt-scan-icon" pixelSize={16} />
+            <box spacing={uiScale.size(8)} halign={Gtk.Align.CENTER}>
+              <LucideIcon
+                name="refresh-cw"
+                class="cc-bt-scan-icon"
+                pixelSize={16}
+                uiScale={uiScale}
+              />
               <label
                 label={createBinding(adapter, 'discovering').as(discovering =>
                   discovering ? 'Scanning…' : 'Refresh'
@@ -107,6 +118,7 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
         icon="bluetooth-off"
         label="Bluetooth is turned off"
         visible={createBinding(bluetooth, 'is_powered').as(value => !value)}
+        uiScale={uiScale}
       />
     </box>
   ) as Gtk.Widget;
@@ -128,6 +140,7 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
               confirmation={confirmation}
               clear={state.clearConfirmation}
               setError={state.setError}
+              uiScale={uiScale}
             />
           )}
         </For>

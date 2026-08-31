@@ -2,10 +2,10 @@ import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
 import {shellMotion} from '@/lib/motion';
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {
-  BAR_WIDTH,
-  DATE_WEATHER_PANEL_WIDTH,
+  BAR_DESIGN_WIDTH,
+  DATE_WEATHER_PANEL_DESIGN_WIDTH,
   createBarBackgroundGeometry,
 } from '@/stores/shell/barBackground';
 import ClockCard from '@/widget/date-weather/widget/ClockCard';
@@ -16,11 +16,13 @@ import WorldClockCard from '@/widget/date-weather/widget/WorldClockCard';
 
 export interface DateWeatherContentProps {
   revealed: Accessor<boolean>;
-  monitorConnector: string | null;
+  uiScale: UiScaleContext;
 }
 
-export default function DateWeatherContent({revealed, monitorConnector}: DateWeatherContentProps) {
-  const geometry = createBarBackgroundGeometry(monitorConnector);
+export default function DateWeatherContent({revealed, uiScale}: DateWeatherContentProps) {
+  const geometry = createBarBackgroundGeometry(uiScale);
+  const barWidth = uiScale.size(BAR_DESIGN_WIDTH);
+  const panelWidth = uiScale.size(DATE_WEATHER_PANEL_DESIGN_WIDTH);
 
   return (
     <revealer
@@ -34,15 +36,12 @@ export default function DateWeatherContent({revealed, monitorConnector}: DateWea
             isRevealed ? ['dw-container', 'revealed'] : ['dw-container']
           )}
           css={geometry(({dx}) => {
-            const marginLeft = Math.max(
-              -DATE_WEATHER_PANEL_WIDTH,
-              dx - BAR_WIDTH - DATE_WEATHER_PANEL_WIDTH
-            );
-            const opacity = Math.max(0, Math.min(1, (dx - BAR_WIDTH) / DATE_WEATHER_PANEL_WIDTH));
+            const marginLeft = Math.max(-panelWidth, dx - barWidth - panelWidth);
+            const opacity = Math.max(0, Math.min(1, (dx - barWidth) / panelWidth));
             return `transform: translateX(${marginLeft}px); opacity: ${opacity};`;
           })}
-          widthRequest={DATE_WEATHER_PANEL_WIDTH}
-          spacing={scaleUiSize(24)}
+          widthRequest={panelWidth}
+          spacing={uiScale.size(24)}
           hexpand={false}
           vexpand
           valign={Gtk.Align.FILL}
@@ -57,23 +56,23 @@ export default function DateWeatherContent({revealed, monitorConnector}: DateWea
           >
             <box
               orientation={Gtk.Orientation.VERTICAL}
-              spacing={scaleUiSize(16)}
+              spacing={uiScale.size(16)}
               class="left-column"
-              marginStart={scaleUiSize(12)}
-              marginEnd={scaleUiSize(12)}
+              marginStart={uiScale.size(12)}
+              marginEnd={uiScale.size(12)}
             >
-              <ClockCard />
-              <WorldClockCard />
-              <WeatherCard />
+              <ClockCard uiScale={uiScale} />
+              <WorldClockCard uiScale={uiScale} />
+              <WeatherCard uiScale={uiScale} />
               <box class="calendar-card widget-card" halign={Gtk.Align.FILL}>
                 <Gtk.Calendar halign={Gtk.Align.CENTER} hexpand />
               </box>
-              <ProfileCard />
+              <ProfileCard uiScale={uiScale} />
             </box>
           </scrolledwindow>
 
           <box class="vertical-sep" />
-          <NotificationList />
+          <NotificationList uiScale={uiScale} />
         </box>
       </box>
     </revealer>

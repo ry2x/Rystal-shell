@@ -3,14 +3,18 @@ import {Gtk} from 'ags/gtk4';
 
 import AstalTray from 'gi://AstalTray';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {TrayItemButton} from '@/widget/bar/widget/TrayItemButton';
 
 function isFcitxItem(item: AstalTray.TrayItem) {
   return item.id.toLowerCase().includes('fcitx');
 }
 
-export default function Tray() {
+export interface TrayProps {
+  uiScale: UiScaleContext;
+}
+
+export default function Tray({uiScale}: TrayProps) {
   const tray = AstalTray.get_default();
   const items = createBinding(tray, 'items');
   const primaryItem = items.as(list => list.find(isFcitxItem) ?? list[0] ?? null);
@@ -29,7 +33,7 @@ export default function Tray() {
     >
       <For each={primaryItem.as(item => (item ? [item] : []))}>
         {(item: AstalTray.TrayItem) => (
-          <image gicon={createBinding(item, 'gicon')} pixelSize={scaleUiSize(18)} />
+          <image gicon={createBinding(item, 'gicon')} pixelSize={uiScale.size(18)} />
         )}
       </For>
     </button>
@@ -39,11 +43,11 @@ export default function Tray() {
     <box
       class="tray-expander-row"
       orientation={Gtk.Orientation.HORIZONTAL}
-      spacing={scaleUiSize(4)}
+      spacing={uiScale.size(4)}
     >
       <For each={items}>
         {(item: AstalTray.TrayItem) => (
-          <TrayItemButton item={item} onActivate={() => expander?.popdown()} />
+          <TrayItemButton item={item} onActivate={() => expander?.popdown()} uiScale={uiScale} />
         )}
       </For>
     </box>

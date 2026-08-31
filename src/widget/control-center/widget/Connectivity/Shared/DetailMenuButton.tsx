@@ -1,6 +1,6 @@
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface DetailMenuButtonProps {
@@ -8,6 +8,7 @@ export interface DetailMenuButtonProps {
   onForget: () => void;
   forgetLabel?: string;
   triggerClass?: string;
+  uiScale: UiScaleContext;
 }
 
 export default function DetailMenuButton({
@@ -15,13 +16,14 @@ export default function DetailMenuButton({
   onForget,
   forgetLabel = 'Forget device',
   triggerClass,
+  uiScale,
 }: DetailMenuButtonProps) {
   const button = (
     <button
       class={triggerClass ? `icon-btn ${triggerClass}` : 'icon-btn'}
       tooltipText="Connection options"
     >
-      <LucideIcon name="settings" pixelSize={16} />
+      <LucideIcon name="settings" pixelSize={16} uiScale={uiScale} />
     </button>
   ) as Gtk.Button;
 
@@ -33,7 +35,7 @@ export default function DetailMenuButton({
   popover.set_parent(button);
   popover.set_child(
     (
-      <box orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(4)}>
+      <box orientation={Gtk.Orientation.VERTICAL} spacing={uiScale.size(4)}>
         <button
           class="cc-menu-btn"
           onClicked={() => {
@@ -41,8 +43,8 @@ export default function DetailMenuButton({
             onDisconnect();
           }}
         >
-          <box spacing={scaleUiSize(8)}>
-            <LucideIcon name="unlink" pixelSize={16} />
+          <box spacing={uiScale.size(8)}>
+            <LucideIcon name="unlink" pixelSize={16} uiScale={uiScale} />
             <label label="Disconnect" />
           </box>
         </button>
@@ -53,8 +55,8 @@ export default function DetailMenuButton({
             onForget();
           }}
         >
-          <box spacing={scaleUiSize(8)}>
-            <LucideIcon name="trash-2" pixelSize={16} />
+          <box spacing={uiScale.size(8)}>
+            <LucideIcon name="trash-2" pixelSize={16} uiScale={uiScale} />
             <label label={forgetLabel} />
           </box>
         </button>

@@ -7,7 +7,7 @@ import {type Timer, interval} from 'ags/time';
 import GLib from 'gi://GLib';
 
 import {shellMotion} from '@/lib/motion';
-import {scaleUi, scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface CircularProgressProps<T> {
@@ -17,10 +17,10 @@ export interface CircularProgressProps<T> {
   label: string;
   sublabel: string | Accessor<string>;
   cssClass: string;
+  uiScale: UiScaleContext;
 }
 
 const ANIMATION_INTERVAL_MS = 1000 / 60;
-const LINE_WIDTH = scaleUi(6);
 
 function normalize(value: number) {
   return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
@@ -61,7 +61,8 @@ class CircularProgressAnimation<T> {
   constructor(
     private readonly area: Gtk.DrawingArea,
     private readonly variable: Accessor<T>,
-    private readonly transformer: (value: T) => number
+    private readonly transformer: (value: T) => number,
+    private readonly uiScale: UiScaleContext
   ) {
     this.currentValue = normalize(transformer(variable.peek()));
     this.startValue = this.currentValue;
@@ -123,10 +124,11 @@ class CircularProgressAnimation<T> {
     const color = this.area.get_style_context().get_color();
     const centerX = width / 2;
     const centerY = height / 2;
-    const radius = Math.min(width, height) / 2 - LINE_WIDTH;
+    const lineWidth = this.uiScale.value(6);
+    const radius = Math.min(width, height) / 2 - lineWidth;
 
     context.setSourceRGBA(color.red, color.green, color.blue, 0.15);
-    context.setLineWidth(LINE_WIDTH);
+    context.setLineWidth(lineWidth);
     context.arc(centerX, centerY, radius, 0, 2 * Math.PI);
     context.stroke();
 
@@ -141,7 +143,7 @@ class CircularProgressAnimation<T> {
       color.blue
     );
     context.setSource(progressGradient);
-    context.setLineWidth(LINE_WIDTH);
+    context.setLineWidth(lineWidth);
     context.setLineCap(1);
     context.arc(
       centerX,
@@ -169,19 +171,20 @@ export default function CircularProgress<T>({
   label,
   sublabel,
   cssClass,
+  uiScale,
 }: CircularProgressProps<T>) {
   let area!: Gtk.DrawingArea;
   const areaWidget = (
     <drawingarea
       class={cssClass}
-      contentWidth={scaleUiSize(120)}
-      contentHeight={scaleUiSize(120)}
-      widthRequest={scaleUiSize(120)}
-      heightRequest={scaleUiSize(120)}
+      contentWidth={uiScale.size(120)}
+      contentHeight={uiScale.size(120)}
+      widthRequest={uiScale.size(120)}
+      heightRequest={uiScale.size(120)}
       $={self => (area = self)}
     />
   );
-  const animation = new CircularProgressAnimation(area, variable, transformer);
+  const animation = new CircularProgressAnimation(area, variable, transformer, uiScale);
   onCleanup(() => animation.dispose());
 
   return (
@@ -193,8 +196,8 @@ export default function CircularProgress<T>({
         valign={Gtk.Align.CENTER}
         halign={Gtk.Align.CENTER}
       >
-        <box spacing={scaleUiSize(6)} valign={Gtk.Align.CENTER} class={cssClass}>
-          <LucideIcon name={icon} pixelSize={14} />
+        <box spacing={uiScale.size(6)} valign={Gtk.Align.CENTER} class={cssClass}>
+          <LucideIcon name={icon} pixelSize={14} uiScale={uiScale} />
           <label label={label} class="circular-progress-label" />
         </box>
         <label label={sublabel} class="circular-progress-sublabel" />

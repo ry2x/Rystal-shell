@@ -5,7 +5,7 @@ import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 
 import {loadTextureFromUri} from '@/lib/image';
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {fetchYouTubeThumbnail} from '@/stores/media/mprisThumbnail';
 import {closeAllControlCenters, focusWindow} from '@/stores/shell/windowManager';
 
@@ -54,7 +54,10 @@ function artworkUri(path: string) {
   return null;
 }
 
-export function createPlayerArtwork(player: Mpris.Player): Accessor<Gdk.Texture | null> {
+export function createPlayerArtwork(
+  player: Mpris.Player,
+  uiScale: UiScaleContext
+): Accessor<Gdk.Texture | null> {
   const [artwork, setArtwork] = createState<Gdk.Texture | null>(null);
   let disposed = false;
   let updateGeneration = 0;
@@ -69,7 +72,7 @@ export function createPlayerArtwork(player: Mpris.Player): Accessor<Gdk.Texture 
     }
 
     try {
-      setArtwork(loadTextureFromUri(uri, scaleUiSize(160), scaleUiSize(160)));
+      setArtwork(loadTextureFromUri(uri, uiScale.size(160), uiScale.size(160)));
     } catch (error) {
       console.error(error);
       setArtwork(null);

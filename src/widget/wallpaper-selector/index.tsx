@@ -1,17 +1,15 @@
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import {scaleUiSize} from '@/lib/uiScale';
-import {BAR_WIDTH} from '@/stores/shell/barBackground';
+import {type UiScaleContext} from '@/lib/uiScale';
+import {BAR_DESIGN_WIDTH} from '@/stores/shell/barBackground';
 import {createWallpaperSelectorState} from '@/stores/wallpaper/wallpaperSelector';
 import ClickCatcher from '@/widget/common/ClickCatcher';
 import CoverFlowController from '@/widget/wallpaper-selector/widget/CoverFlow';
 
-const PANEL_HEIGHT = scaleUiSize(390);
-const CONTENT_HORIZONTAL_PADDING = scaleUiSize(56);
-
 export interface WallpaperSelectorProps {
   monitor: Gdk.Monitor;
+  uiScale: UiScaleContext;
 }
 
 type WallpaperSelectorWindow = Astal.Window & {
@@ -19,34 +17,36 @@ type WallpaperSelectorWindow = Astal.Window & {
   show_animated: () => void;
 };
 
-export default function WallpaperSelector({monitor}: WallpaperSelectorProps) {
+export default function WallpaperSelector({monitor, uiScale}: WallpaperSelectorProps) {
   const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
   const monitorWidth = monitor.get_geometry().width;
   const viewportWidth = Math.max(
-    scaleUiSize(900),
-    monitorWidth - BAR_WIDTH - CONTENT_HORIZONTAL_PADDING
+    uiScale.size(900),
+    monitorWidth - uiScale.size(BAR_DESIGN_WIDTH) - uiScale.size(56)
   );
   let coverFlow: CoverFlowController | null = null;
 
   const state = createWallpaperSelectorState({
     monitorConnector: monitor.get_connector(),
     setCoverFlowActive: active => coverFlow?.setActive(active),
+    uiScale,
   });
   coverFlow = new CoverFlowController({
     onApplied: state.hideAnimated,
     viewportWidth,
+    uiScale,
   });
 
   const window = (
     <window
       name={`wallpaper-selector-${monitor.get_connector()}`}
-      class="WallpaperSelector"
+      class={`WallpaperSelector ${uiScale.cssClass}`}
       gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.TOP}
       keymode={Astal.Keymode.EXCLUSIVE}
       anchor={TOP | BOTTOM | LEFT | RIGHT}
-      marginLeft={BAR_WIDTH}
+      marginLeft={uiScale.size(BAR_DESIGN_WIDTH)}
       application={app}
       visible={state.visible}
     >
@@ -79,10 +79,11 @@ export default function WallpaperSelector({monitor}: WallpaperSelectorProps) {
             revealed ? ['wallpaper-selector-panel', 'revealed'] : ['wallpaper-selector-panel']
           )}
           css={state.panelHeight.as(height => {
-            const progress = Math.max(0, Math.min(1, height / PANEL_HEIGHT));
-            return `transform: translateY(${PANEL_HEIGHT - height}px); opacity: ${progress};`;
+            const panelHeight = uiScale.size(390);
+            const progress = Math.max(0, Math.min(1, height / panelHeight));
+            return `transform: translateY(${panelHeight - height}px); opacity: ${progress};`;
           })}
-          heightRequest={PANEL_HEIGHT}
+          heightRequest={uiScale.size(390)}
           vexpand={false}
           vexpandSet
           valign={Gtk.Align.END}

@@ -2,6 +2,7 @@ import {For, onCleanup} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
 import {shellMotion} from '@/lib/motion';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {type ControlCenterState} from '@/stores/panel/controlCenter';
 import {createBarBackgroundGeometry} from '@/stores/shell/barBackground';
 import ControlCenterContent from '@/widget/control-center/ControlCenterContent';
@@ -11,24 +12,38 @@ import {SoundPage} from '@/widget/control-center/widget/Sound';
 
 export interface ControlCenterPagesProps {
   state: ControlCenterState;
-  monitorConnector: string;
+  uiScale: UiScaleContext;
 }
 
-export default function ControlCenterPages({state, monitorConnector}: ControlCenterPagesProps) {
-  const geometry = createBarBackgroundGeometry(monitorConnector);
-  const mainContent = (<ControlCenterContent onOpenPage={state.openPage} />) as Gtk.Widget;
+export default function ControlCenterPages({state, uiScale}: ControlCenterPagesProps) {
+  const geometry = createBarBackgroundGeometry(uiScale);
+  const mainContent = (
+    <ControlCenterContent onOpenPage={state.openPage} uiScale={uiScale} />
+  ) as Gtk.Widget;
   const main = (
-    <PageContainer revealed={state.revealed} geometry={geometry} child={mainContent} />
+    <PageContainer
+      revealed={state.revealed}
+      geometry={geometry}
+      child={mainContent}
+      uiScale={uiScale}
+    />
   ) as Gtk.Widget;
   const wifi = (
     <PageContainer
       revealed={state.revealed}
       geometry={geometry}
+      uiScale={uiScale}
       child={
         (
           <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
             <For each={state.wifiLoaded.as(loaded => (loaded ? [true] : []))}>
-              {() => <WifiPage monitorConnector={monitorConnector} onBack={state.showMainPage} />}
+              {() => (
+                <WifiPage
+                  monitorConnector={uiScale.connector}
+                  onBack={state.showMainPage}
+                  uiScale={uiScale}
+                />
+              )}
             </For>
           </box>
         ) as Gtk.Widget
@@ -39,11 +54,14 @@ export default function ControlCenterPages({state, monitorConnector}: ControlCen
     <PageContainer
       revealed={state.revealed}
       geometry={geometry}
+      uiScale={uiScale}
       child={
         (
           <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
             <For each={state.bluetoothLoaded.as(loaded => (loaded ? [true] : []))}>
-              {() => <BluetoothPage page={state.page} onBack={state.showMainPage} />}
+              {() => (
+                <BluetoothPage page={state.page} onBack={state.showMainPage} uiScale={uiScale} />
+              )}
             </For>
           </box>
         ) as Gtk.Widget
@@ -54,11 +72,12 @@ export default function ControlCenterPages({state, monitorConnector}: ControlCen
     <PageContainer
       revealed={state.revealed}
       geometry={geometry}
+      uiScale={uiScale}
       child={
         (
           <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
             <For each={state.soundLoaded.as(loaded => (loaded ? [true] : []))}>
-              {() => <SoundPage onBack={state.showMainPage} />}
+              {() => <SoundPage onBack={state.showMainPage} uiScale={uiScale} />}
             </For>
           </box>
         ) as Gtk.Widget

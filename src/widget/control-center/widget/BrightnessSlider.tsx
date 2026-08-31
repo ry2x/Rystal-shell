@@ -1,4 +1,4 @@
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {
   brightness,
   cycleBrightnessPreset,
@@ -13,17 +13,20 @@ function getBrightnessIcon(value: number) {
   return 'sun-medium';
 }
 
-export default function BrightnessSlider() {
+export interface BrightnessSliderProps {
+  uiScale: UiScaleContext;
+}
+export default function BrightnessSlider({uiScale}: BrightnessSliderProps) {
   const icon = brightness.as(getBrightnessIcon);
 
   return (
-    <box class="cc-card" spacing={scaleUiSize(16)}>
+    <box class="cc-card" spacing={uiScale.size(16)}>
       <button
         class="icon-btn"
         tooltipText="Dim to 0% / restore previous brightness"
         onClicked={toggleBrightnessDim}
       >
-        <LucideIcon name={icon} pixelSize={20} />
+        <LucideIcon name={icon} pixelSize={20} uiScale={uiScale} />
       </button>
 
       <slider

@@ -1,6 +1,6 @@
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {clockTime} from '@/stores/system/time';
 import {
   formatWorldClockLocationDetails,
@@ -11,12 +11,13 @@ import {
 export interface WorldClockRowProps {
   label: string;
   timeZone: string;
+  uiScale: UiScaleContext;
 }
 
-export default function WorldClockRow({label, timeZone}: WorldClockRowProps) {
+export default function WorldClockRow({label, timeZone, uiScale}: WorldClockRowProps) {
   return (
     <box orientation={Gtk.Orientation.HORIZONTAL} halign={Gtk.Align.FILL}>
-      <box orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(2)} hexpand>
+      <box orientation={Gtk.Orientation.VERTICAL} spacing={uiScale.size(2)} hexpand>
         <label label={label} halign={Gtk.Align.START} class="world-clock-label" />
         <label
           class="world-clock-details"
@@ -24,7 +25,7 @@ export default function WorldClockRow({label, timeZone}: WorldClockRowProps) {
           label={clockTime.as(() => formatWorldClockLocationDetails(new Date(), timeZone))}
         />
       </box>
-      <box orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(2)} halign={Gtk.Align.END}>
+      <box orientation={Gtk.Orientation.VERTICAL} spacing={uiScale.size(2)} halign={Gtk.Align.END}>
         <label
           class="world-clock-time"
           halign={Gtk.Align.END}

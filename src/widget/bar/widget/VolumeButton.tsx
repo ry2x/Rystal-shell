@@ -4,7 +4,7 @@ import {Gdk, Gtk} from 'ags/gtk4';
 import Wp from 'gi://AstalWp';
 
 import {getVolumeIcon} from '@/lib/audio';
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {toggleControlCenter} from '@/stores/shell/windowManager';
 import {adjustVolume} from '@/stores/system/audio';
 import {LucideIcon} from '@/widget/common/lucide';
@@ -12,9 +12,10 @@ import {LucideIcon} from '@/widget/common/lucide';
 export interface VolumeButtonProps {
   speaker: Wp.Endpoint;
   monitor: Gdk.Monitor;
+  uiScale: UiScaleContext;
 }
 
-export function VolumeButton({speaker, monitor}: VolumeButtonProps) {
+export function VolumeButton({speaker, monitor, uiScale}: VolumeButtonProps) {
   const volumeIcon = createBinding(speaker, 'volume_icon').as(getVolumeIcon);
 
   return (
@@ -27,7 +28,7 @@ export function VolumeButton({speaker, monitor}: VolumeButtonProps) {
           return true;
         }}
       />
-      <box spacing={scaleUiSize(4)} orientation={Gtk.Orientation.VERTICAL}>
+      <box spacing={uiScale.size(4)} orientation={Gtk.Orientation.VERTICAL}>
         <LucideIcon name={volumeIcon} class="icon" />
         <box spacing={0} orientation={Gtk.Orientation.VERTICAL}>
           <label

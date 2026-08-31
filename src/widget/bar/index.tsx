@@ -5,8 +5,8 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import {timeout} from 'ags/time';
 
-import {scaleUiSize} from '@/lib/uiScale';
-import {BAR_WIDTH} from '@/stores/shell/barBackground';
+import {type UiScaleContext} from '@/lib/uiScale';
+import {BAR_DESIGN_WIDTH} from '@/stores/shell/barBackground';
 import BarReserve from '@/widget/bar/BarReserve';
 import PanelBackground from '@/widget/bar/PanelBackground';
 import Clock from '@/widget/bar/widget/Clock';
@@ -21,12 +21,12 @@ import Workspaces from '@/widget/bar/widget/Workspaces';
 
 export interface BarProps {
   monitor: Gdk.Monitor;
+  uiScale: UiScaleContext;
 }
 
-const BORDER_WIDTH = scaleUiSize(3);
 const INPUT_REGION_DELAY_MS = 500;
 
-function setBarInputRegion(window: Astal.Window) {
+function setBarInputRegion(window: Astal.Window, uiScale: UiScaleContext) {
   const surface = window.get_native()?.get_surface();
   if (!surface) return;
 
@@ -34,21 +34,21 @@ function setBarInputRegion(window: Astal.Window) {
   region.unionRectangle({
     x: 0,
     y: 0,
-    width: BAR_WIDTH + BORDER_WIDTH,
+    width: uiScale.size(BAR_DESIGN_WIDTH) + uiScale.size(3),
     height: 9999,
   });
   surface.set_input_region(region);
 }
 
-export default function Bar({monitor}: BarProps) {
-  BarReserve({monitor});
+export default function Bar({monitor, uiScale}: BarProps) {
+  BarReserve({monitor, uiScale});
 
   const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
   const window = (
     <window
       visible
       name={`bar-${monitor.get_connector()}`}
-      cssClasses={['Bar']}
+      cssClasses={['Bar', uiScale.cssClass]}
       gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.TOP}
@@ -56,7 +56,7 @@ export default function Bar({monitor}: BarProps) {
       application={app}
     >
       <overlay hexpand vexpand>
-        <PanelBackground monitor={monitor} />
+        <PanelBackground uiScale={uiScale} />
         <box $type="overlay" halign={Gtk.Align.START}>
           <centerbox class="panel" orientation={Gtk.Orientation.VERTICAL}>
             <box
@@ -65,9 +65,9 @@ export default function Bar({monitor}: BarProps) {
               valign={Gtk.Align.START}
               class="panel-start"
               orientation={Gtk.Orientation.VERTICAL}
-              spacing={scaleUiSize(24)}
+              spacing={uiScale.size(24)}
             >
-              <Workspaces monitor={monitor} />
+              <Workspaces monitor={monitor} uiScale={uiScale} />
               <ScrollerIndicator monitor={monitor} />
             </box>
             <box
@@ -76,10 +76,10 @@ export default function Bar({monitor}: BarProps) {
               valign={Gtk.Align.CENTER}
               class="panel-center"
               orientation={Gtk.Orientation.VERTICAL}
-              spacing={scaleUiSize(8)}
+              spacing={uiScale.size(8)}
             >
               <Weather monitor={monitor} />
-              <Clock monitor={monitor} />
+              <Clock monitor={monitor} uiScale={uiScale} />
             </box>
             <box
               $type="end"
@@ -87,13 +87,13 @@ export default function Bar({monitor}: BarProps) {
               valign={Gtk.Align.END}
               class="panel-end"
               orientation={Gtk.Orientation.VERTICAL}
-              spacing={scaleUiSize(8)}
+              spacing={uiScale.size(8)}
             >
-              <RecordIndicator />
-              <Updates monitor={monitor} />
-              <SysMetrics monitor={monitor} />
-              <Volume monitor={monitor} />
-              <Tray />
+              <RecordIndicator uiScale={uiScale} />
+              <Updates monitor={monitor} uiScale={uiScale} />
+              <SysMetrics monitor={monitor} uiScale={uiScale} />
+              <Volume monitor={monitor} uiScale={uiScale} />
+              <Tray uiScale={uiScale} />
             </box>
           </centerbox>
         </box>
@@ -101,7 +101,7 @@ export default function Bar({monitor}: BarProps) {
     </window>
   ) as Astal.Window;
 
-  const inputRegionTimer = timeout(INPUT_REGION_DELAY_MS, () => setBarInputRegion(window));
+  const inputRegionTimer = timeout(INPUT_REGION_DELAY_MS, () => setBarInputRegion(window, uiScale));
   onCleanup(() => inputRegionTimer.cancel());
 
   return window;

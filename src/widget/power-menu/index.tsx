@@ -2,18 +2,18 @@ import {createEffect} from 'ags';
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import {createPowerMenuState} from '@/stores/panel/powerMenu';
-import {BAR_WIDTH} from '@/stores/shell/barBackground';
+import {BAR_DESIGN_WIDTH} from '@/stores/shell/barBackground';
 import ClickCatcher from '@/widget/common/ClickCatcher';
 import PowerMenuConfirmationView from '@/widget/power-menu/widget/PowerMenuConfirmationView';
 import PowerMenuMainView from '@/widget/power-menu/widget/PowerMenuMainView';
 
-const PANEL_HEIGHT = scaleUiSize(350);
 const CONFIRM_FADE_MS = 180;
 
 export interface PowerMenuProps {
   monitor: Gdk.Monitor;
+  uiScale: UiScaleContext;
 }
 
 type PowerMenuWindow = Astal.Window & {
@@ -21,7 +21,7 @@ type PowerMenuWindow = Astal.Window & {
   show_animated: () => void;
 };
 
-export default function PowerMenu({monitor}: PowerMenuProps) {
+export default function PowerMenu({monitor, uiScale}: PowerMenuProps) {
   const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
   const itemButtons: Gtk.Button[] = [];
   let cancelButton: Gtk.Button | null = null;
@@ -45,6 +45,7 @@ export default function PowerMenu({monitor}: PowerMenuProps) {
     onButtonCreated: (index, button) => {
       itemButtons[index] = button;
     },
+    uiScale,
   });
 
   const confirmationView = PowerMenuConfirmationView({
@@ -58,6 +59,7 @@ export default function PowerMenu({monitor}: PowerMenuProps) {
     onConfirmButtonCreated: button => {
       confirmButton = button;
     },
+    uiScale,
   });
 
   const stack = (
@@ -81,13 +83,13 @@ export default function PowerMenu({monitor}: PowerMenuProps) {
   const window = (
     <window
       name={`power-menu-${monitor.get_connector()}`}
-      class="PowerMenu"
+      class={`PowerMenu ${uiScale.cssClass}`}
       gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.TOP}
       keymode={Astal.Keymode.EXCLUSIVE}
       anchor={TOP | BOTTOM | LEFT | RIGHT}
-      marginLeft={BAR_WIDTH}
+      marginLeft={uiScale.size(BAR_DESIGN_WIDTH)}
       application={app}
       visible={state.visible}
     >
@@ -101,7 +103,7 @@ export default function PowerMenu({monitor}: PowerMenuProps) {
           cssClasses={state.revealed.as(revealed =>
             revealed ? ['power-menu-panel', 'revealed'] : ['power-menu-panel']
           )}
-          heightRequest={PANEL_HEIGHT}
+          heightRequest={uiScale.size(350)}
           vexpand={false}
           vexpandSet
           valign={Gtk.Align.END}

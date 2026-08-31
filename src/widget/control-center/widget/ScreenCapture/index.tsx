@@ -1,14 +1,17 @@
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
+import {type UiScaleContext} from '@/lib/uiScale';
 import RecordingActions from '@/widget/control-center/widget/ScreenCapture/RecordingActions';
 import ScreenshotActions from '@/widget/control-center/widget/ScreenCapture/ScreenshotActions';
 
-export default function ScreenCapture() {
+export interface ScreenCaptureProps {
+  uiScale: UiScaleContext;
+}
+export default function ScreenCapture({uiScale}: ScreenCaptureProps) {
   return (
-    <box class="cc-card" orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(12)}>
-      <ScreenshotActions />
-      <RecordingActions />
+    <box class="cc-card" orientation={Gtk.Orientation.VERTICAL} spacing={uiScale.size(12)}>
+      <ScreenshotActions uiScale={uiScale} />
+      <RecordingActions uiScale={uiScale} />
     </box>
   );
 }
