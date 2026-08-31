@@ -10,7 +10,7 @@
     @error 's() expects a unitless pixel value, received #{$pixels}';
   }
 
-  @return $pixels * $app-scale * 1px;
+  @return math.round($pixels * $app-scale) * 1px;
 }
 
 // Base colors

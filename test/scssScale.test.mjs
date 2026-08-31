@@ -47,6 +47,7 @@ describe('SCSS UI scale coverage', () => {
         assert.equal(result.status, 0, result.stderr);
         assert.match(result.stdout, new RegExp(`font-size: ${scale}em`));
         assert.match(result.stdout, new RegExp(`border-radius: ${8 * scale}px`));
+        assert.ok(result.stdout.includes(`min-width: ${Math.round(50 * scale)}px`));
       } finally {
         fs.rmSync(temporaryDirectory, {recursive: true, force: true});
       }
