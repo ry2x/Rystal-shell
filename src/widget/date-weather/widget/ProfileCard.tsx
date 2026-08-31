@@ -4,6 +4,7 @@ import GLib from 'gi://GLib?version=2.0';
 
 import {appConfig} from '@/lib/config';
 import {loadTextureFromUri} from '@/lib/image';
+import {scaleUiSize} from '@/lib/uiScale';
 import {getOsInfo, uptime, userName} from '@/stores/system/system';
 
 const DEFAULT_AVATAR_PATH = `${GLib.get_home_dir()}/Profile/Profile.png`;
@@ -24,7 +25,7 @@ function createProfileAvatar(path: string) {
   });
 
   try {
-    avatar.set_paintable(loadTextureFromUri(`file://${path}`, 64, 64));
+    avatar.set_paintable(loadTextureFromUri(`file://${path}`, scaleUiSize(64), scaleUiSize(64)));
   } catch (error) {
     console.error('Failed to load profile avatar:', error);
   }
@@ -36,14 +37,22 @@ export default function ProfileCard() {
   const avatar = createProfileAvatar(resolveAvatarPath(profile.avatarPath));
 
   return (
-    <box class="profile-card widget-card" spacing={16} orientation={Gtk.Orientation.HORIZONTAL}>
+    <box
+      class="profile-card widget-card"
+      spacing={scaleUiSize(16)}
+      orientation={Gtk.Orientation.HORIZONTAL}
+    >
       {/* Left: Avatar Area */}
       <box class="profile-avatar" overflow={Gtk.Overflow.HIDDEN}>
         {avatar}
       </box>
 
       {/* Right: Information Area */}
-      <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER} spacing={4}>
+      <box
+        orientation={Gtk.Orientation.VERTICAL}
+        valign={Gtk.Align.CENTER}
+        spacing={scaleUiSize(4)}
+      >
         <label label={profileHandle} class="profile-name" halign={Gtk.Align.START} />
         <label label={profileOs} class="profile-env" halign={Gtk.Align.START} />
         <label

@@ -1,5 +1,6 @@
 import {Gdk, Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {toggleControlCenter} from '@/stores/shell/windowManager';
 import {openUpdateManager, updatesPoll} from '@/stores/system/update';
 import {LucideIcon} from '@/widget/common/lucide';
@@ -32,7 +33,7 @@ export default function Updates({monitor}: UpdatesProps) {
               openUpdateManager();
             }}
           />
-          <box spacing={4} orientation={Gtk.Orientation.VERTICAL}>
+          <box spacing={scaleUiSize(4)} orientation={Gtk.Orientation.VERTICAL}>
             <LucideIcon name="package" class="icon" />
             <label label={updatesPoll} />
           </box>

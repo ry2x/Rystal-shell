@@ -3,6 +3,7 @@ import {Gtk} from 'ags/gtk4';
 
 import Network from 'gi://AstalNetwork';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {toggleWifi} from '@/stores/connectivity/network';
 import {type WifiConfirmation, createWifiPageState} from '@/stores/connectivity/wifiPage';
 import AnimatedList from '@/widget/common/AnimatedList';
@@ -34,7 +35,7 @@ export function WifiPage({monitorConnector, onBack}: WifiPageProps) {
     <box
       class="cc-wifi-page"
       orientation={Gtk.Orientation.VERTICAL}
-      spacing={12}
+      spacing={scaleUiSize(12)}
       hexpand
       halign={Gtk.Align.FILL}
     >
@@ -50,8 +51,8 @@ export function WifiPage({monitorConnector, onBack}: WifiPageProps) {
         revealChild={createBinding(wifi, 'enabled')}
         transitionType={Gtk.RevealerTransitionType.CROSSFADE}
       >
-        <box orientation={Gtk.Orientation.VERTICAL} spacing={10}>
-          <box class="cc-wifi-section-header" spacing={8}>
+        <box orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(10)}>
+          <box class="cc-wifi-section-header" spacing={scaleUiSize(8)}>
             <LucideIcon name="link-2" pixelSize={17} />
             <label label="Connected" class="cc-section-title" hexpand halign={Gtk.Align.START} />
           </box>
@@ -73,7 +74,7 @@ export function WifiPage({monitorConnector, onBack}: WifiPageProps) {
             visible={state.activeAccessPoint.as(accessPoint => !accessPoint)}
             halign={Gtk.Align.START}
           />
-          <box class="cc-wifi-section-header" spacing={8}>
+          <box class="cc-wifi-section-header" spacing={scaleUiSize(8)}>
             <LucideIcon name="wifi" pixelSize={17} />
             <label label="Available Networks" class="cc-section-title" halign={Gtk.Align.START} />
           </box>
@@ -95,7 +96,7 @@ export function WifiPage({monitorConnector, onBack}: WifiPageProps) {
             onClicked={state.scan}
             sensitive={createBinding(wifi, 'scanning').as(scanning => !scanning)}
           >
-            <box spacing={8} halign={Gtk.Align.CENTER}>
+            <box spacing={scaleUiSize(8)} halign={Gtk.Align.CENTER}>
               <LucideIcon name="refresh-cw" class="cc-wifi-scan-icon" pixelSize={16} />
               <label
                 label={createBinding(wifi, 'scanning').as(scanning =>

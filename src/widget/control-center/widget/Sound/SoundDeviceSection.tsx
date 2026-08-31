@@ -3,6 +3,7 @@ import {Gtk} from 'ags/gtk4';
 
 import Wp from 'gi://AstalWp';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {LucideIcon} from '@/widget/common/lucide';
 import DeviceSelector from '@/widget/control-center/widget/Sound/DeviceSelector';
 import VolumeControls from '@/widget/control-center/widget/Sound/VolumeControls';
@@ -29,16 +30,21 @@ export default function SoundDeviceSection({
 }: SoundDeviceSectionProps) {
   return (
     <>
-      <box class="cc-sound-section-header" spacing={8}>
+      <box class="cc-sound-section-header" spacing={scaleUiSize(8)}>
         <LucideIcon name={icon} pixelSize={17} />
         <label label={title} class="cc-section-title" halign={Gtk.Align.START} />
       </box>
-      <box orientation={Gtk.Orientation.VERTICAL} spacing={10} hexpand halign={Gtk.Align.FILL}>
+      <box
+        orientation={Gtk.Orientation.VERTICAL}
+        spacing={scaleUiSize(10)}
+        hexpand
+        halign={Gtk.Align.FILL}
+      >
         <For each={endpoint.as(value => (value ? [value] : []))}>
           {(value: Wp.Endpoint) => (
             <box
               orientation={Gtk.Orientation.VERTICAL}
-              spacing={10}
+              spacing={scaleUiSize(10)}
               hexpand
               halign={Gtk.Align.FILL}
             >

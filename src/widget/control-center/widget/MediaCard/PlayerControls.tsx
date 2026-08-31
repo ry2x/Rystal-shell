@@ -4,6 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Mpris from 'gi://AstalMpris';
 import Pango from 'gi://Pango';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {focusMediaPlayer, playNext, playPrevious, togglePlayback} from '@/stores/media/media';
 import {LucideIcon} from '@/widget/common/lucide';
 
@@ -40,7 +41,7 @@ export default function PlayerControls({player, canSwitch, onSwitch}: PlayerCont
         maxWidthChars={20}
         lines={1}
       />
-      <box class="cc-player-controls" spacing={10} halign={Gtk.Align.START}>
+      <box class="cc-player-controls" spacing={scaleUiSize(10)} halign={Gtk.Align.START}>
         <button class="icon-btn" onClicked={() => playPrevious(player)}>
           <LucideIcon name="skip-back" pixelSize={20} />
         </button>

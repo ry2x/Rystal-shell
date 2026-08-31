@@ -1,6 +1,7 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface EmptyStateProps {
@@ -17,7 +18,7 @@ export default function EmptyState({label, icon, visible = true, className}: Emp
     <box
       class={classes}
       visible={visible}
-      spacing={8}
+      spacing={scaleUiSize(8)}
       halign={Gtk.Align.CENTER}
       valign={Gtk.Align.CENTER}
     >

@@ -1,6 +1,7 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {POWER_ITEMS, type PowerItem} from '@/stores/panel/powerMenu';
 import PowerMenuItemButton from '@/widget/power-menu/widget/PowerMenuItemButton';
 
@@ -25,13 +26,13 @@ export default function PowerMenuMainView({
     <box
       class="power-menu-main"
       orientation={Gtk.Orientation.VERTICAL}
-      spacing={14}
+      spacing={scaleUiSize(14)}
       hexpand
       halign={Gtk.Align.FILL}
     >
       <box
         class="power-menu-items"
-        spacing={18}
+        spacing={scaleUiSize(18)}
         halign={Gtk.Align.CENTER}
         valign={Gtk.Align.CENTER}
         vexpand

@@ -3,6 +3,8 @@ import {Gtk} from 'ags/gtk4';
 
 import AstalTray from 'gi://AstalTray';
 
+import {scaleUiSize} from '@/lib/uiScale';
+
 export interface TrayItemButtonProps {
   item: AstalTray.TrayItem;
   onActivate: () => void;
@@ -26,7 +28,7 @@ export function TrayItemButton({item, onActivate}: TrayItemButtonProps) {
         }}
       />
       <Gtk.GestureClick button={3} onPressed={() => button.popup()} />
-      <image gicon={createBinding(item, 'gicon')} pixelSize={18} />
+      <image gicon={createBinding(item, 'gicon')} pixelSize={scaleUiSize(18)} />
     </menubutton>
   ) as Gtk.MenuButton;
 

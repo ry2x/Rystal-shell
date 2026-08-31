@@ -2,6 +2,7 @@ import {Gtk} from 'ags/gtk4';
 
 import Notifd from 'gi://AstalNotifd';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {
   clearNotifications,
   dismissNotification,
@@ -16,8 +17,8 @@ import {LucideIcon} from '@/widget/common/lucide';
 
 export default function NotificationList() {
   return (
-    <box orientation={Gtk.Orientation.VERTICAL} spacing={16} class="right-column">
-      <box class="notif-header" spacing={8}>
+    <box orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(16)} class="right-column">
+      <box class="notif-header" spacing={scaleUiSize(8)}>
         <LucideIcon name="bell" pixelSize={20} />
         <label label="Notifications" class="dw-title" halign={Gtk.Align.START} hexpand />
 
@@ -29,7 +30,7 @@ export default function NotificationList() {
           onClicked={toggleDoNotDisturb}
           tooltipText="Toggle Do Not Disturb"
         >
-          <box spacing={6}>
+          <box spacing={scaleUiSize(6)}>
             <LucideIcon
               name={doNotDisturb.as(enabled => (enabled ? 'bell-off' : 'bell'))}
               pixelSize={14}
@@ -40,7 +41,7 @@ export default function NotificationList() {
 
         {/* Clear All Button */}
         <button class="notif-header-btn clear-all" onClicked={clearNotifications}>
-          <box spacing={6}>
+          <box spacing={scaleUiSize(6)}>
             <LucideIcon name="trash-2" pixelSize={14} />
             <label label="Clear All" />
           </box>
@@ -55,12 +56,16 @@ export default function NotificationList() {
           hscrollbarPolicy={Gtk.PolicyType.NEVER}
           vexpand
         >
-          <box orientation={Gtk.Orientation.VERTICAL} marginStart={12} marginEnd={12}>
+          <box
+            orientation={Gtk.Orientation.VERTICAL}
+            marginStart={scaleUiSize(12)}
+            marginEnd={scaleUiSize(12)}
+          >
             <AnimatedList
               items={notifications}
               idFor={(notification: Notifd.Notification) => String(notification.id)}
               className="notif-list"
-              spacing={12}
+              spacing={scaleUiSize(12)}
               renderItem={(notification: Notifd.Notification) => (
                 <NotificationCard
                   notif={notification}

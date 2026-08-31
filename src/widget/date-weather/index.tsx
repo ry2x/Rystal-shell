@@ -2,6 +2,7 @@ import {For} from 'ags';
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {createDateWeatherPopupState} from '@/stores/panel/dateWeather';
 import ClickCatcher from '@/widget/common/ClickCatcher';
 import DateWeatherContent from '@/widget/date-weather/DateWeatherContent';
@@ -29,7 +30,7 @@ export default function DateWeatherPopup({monitor}: DateWeatherPopupProps) {
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.TOP}
       anchor={TOP | BOTTOM | LEFT | RIGHT}
-      marginLeft={47}
+      marginLeft={scaleUiSize(47)}
       marginTop={0}
       keymode={Astal.Keymode.NONE}
       application={app}

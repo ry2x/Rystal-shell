@@ -1,8 +1,10 @@
 import Graphene from 'gi://Graphene';
 import Gsk from 'gi://Gsk';
 
-const WALLPAPER_CARD_WIDTH = 384;
-const WALLPAPER_CARD_HEIGHT = 252;
+import {scaleUi, scaleUiSize} from '@/lib/uiScale';
+
+const WALLPAPER_CARD_WIDTH = scaleUiSize(384);
+const WALLPAPER_CARD_HEIGHT = scaleUiSize(252);
 
 function interpolateStops(distance: number, values: readonly number[]) {
   const clamped = Math.min(distance, values.length - 1);
@@ -22,12 +24,13 @@ export function getCoverFlowOpacity(offset: number) {
 export function createCoverFlowTransform(offset: number, containerWidth: number, entrance: number) {
   const distance = Math.abs(offset);
   const direction = Math.sign(offset);
-  const horizontal = distance <= 1 ? distance * 290 : 290 + (distance - 1) * 190;
+  const horizontal =
+    distance <= 1 ? distance * scaleUi(290) : scaleUi(290) + (distance - 1) * scaleUi(190);
   const scale = interpolateStops(distance, [1.06, 0.88, 0.76, 0.64, 0.56]);
   const skew = direction * interpolateStops(distance, [0, -9, -12, -14, -16]);
-  const arcDrop = interpolateStops(distance, [-14, 24, 62, 108, 152]);
+  const arcDrop = interpolateStops(distance, [-14, 24, 62, 108, 152].map(scaleUi));
   const x = (containerWidth - WALLPAPER_CARD_WIDTH) / 2 + direction * horizontal;
-  const y = 52 + arcDrop + (1 - entrance) * 70;
+  const y = scaleUi(52) + arcDrop + (1 - entrance) * scaleUi(70);
 
   let transform: Gsk.Transform | null = Gsk.Transform.new();
   transform = transform.translate(new Graphene.Point({x, y}));

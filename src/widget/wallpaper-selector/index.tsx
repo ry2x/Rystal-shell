@@ -1,13 +1,14 @@
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {createWallpaperSelectorState} from '@/stores/wallpaper/wallpaperSelector';
 import ClickCatcher from '@/widget/common/ClickCatcher';
 import CoverFlowController from '@/widget/wallpaper-selector/widget/CoverFlow';
 
-const PANEL_HEIGHT = 390;
-const BAR_WIDTH = 47;
-const CONTENT_HORIZONTAL_PADDING = 56;
+const PANEL_HEIGHT = scaleUiSize(390);
+const BAR_WIDTH = scaleUiSize(47);
+const CONTENT_HORIZONTAL_PADDING = scaleUiSize(56);
 
 export interface WallpaperSelectorProps {
   monitor: Gdk.Monitor;
@@ -21,7 +22,10 @@ type WallpaperSelectorWindow = Astal.Window & {
 export default function WallpaperSelector({monitor}: WallpaperSelectorProps) {
   const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
   const monitorWidth = monitor.get_geometry().width;
-  const viewportWidth = Math.max(900, monitorWidth - BAR_WIDTH - CONTENT_HORIZONTAL_PADDING);
+  const viewportWidth = Math.max(
+    scaleUiSize(900),
+    monitorWidth - BAR_WIDTH - CONTENT_HORIZONTAL_PADDING
+  );
   let coverFlow: CoverFlowController | null = null;
 
   const state = createWallpaperSelectorState({

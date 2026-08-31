@@ -4,6 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Wp from 'gi://AstalWp';
 import Pango from 'gi://Pango';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {LucideIcon} from '@/widget/common/lucide';
 import {type SoundDeviceKind} from '@/widget/control-center/widget/Sound/types';
 import {getEndpointLabel, getRouteLabel} from '@/widget/control-center/widget/Sound/utils';
@@ -19,7 +20,7 @@ export default function DeviceSelector({endpoint, endpoints, kind, onSelect}: De
   const route = createBinding(endpoint, 'route').as(() => getRouteLabel(endpoint));
   const button = (
     <button class="cc-sound-device-card" hexpand halign={Gtk.Align.FILL}>
-      <box spacing={14} hexpand>
+      <box spacing={scaleUiSize(14)} hexpand>
         <LucideIcon name={kind === 'output' ? 'speaker' : 'mic'} pixelSize={26} />
         <box orientation={Gtk.Orientation.VERTICAL} hexpand valign={Gtk.Align.CENTER}>
           <label
@@ -53,7 +54,7 @@ export default function DeviceSelector({endpoint, endpoints, kind, onSelect}: De
   popover.set_parent(button);
   popover.set_child(
     (
-      <box orientation={Gtk.Orientation.VERTICAL} spacing={2}>
+      <box orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(2)}>
         <For each={endpoints}>
           {(candidate: Wp.Endpoint) => (
             <button
@@ -66,7 +67,7 @@ export default function DeviceSelector({endpoint, endpoints, kind, onSelect}: De
                 void Promise.resolve(onSelect(candidate)).catch(console.error);
               }}
             >
-              <box spacing={10}>
+              <box spacing={scaleUiSize(10)}>
                 <LucideIcon name={kind === 'output' ? 'speaker' : 'mic'} pixelSize={18} />
                 <box orientation={Gtk.Orientation.VERTICAL} hexpand>
                   <label

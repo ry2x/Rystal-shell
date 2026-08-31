@@ -3,6 +3,7 @@ import app from 'ags/gtk4/app';
 
 import Notifd from 'gi://AstalNotifd';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {createNotificationPopupState} from '@/stores/notification/notificationPopup';
 import AnimatedList from '@/widget/common/AnimatedList';
 import NotificationCard from '@/widget/common/NotificationCard';
@@ -23,8 +24,8 @@ export default function NotificationPopups({monitor}: NotificationPopupsProps) {
       gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.IGNORE}
       anchor={TOP | RIGHT}
-      marginTop={12}
-      marginRight={12}
+      marginTop={scaleUiSize(12)}
+      marginRight={scaleUiSize(12)}
       layer={Astal.Layer.TOP}
       application={app}
       visible={visible}
@@ -33,7 +34,7 @@ export default function NotificationPopups({monitor}: NotificationPopupsProps) {
         items={popups}
         idFor={(notification: Notifd.Notification) => String(notification.id)}
         className="notification-popup-list"
-        spacing={8}
+        spacing={scaleUiSize(8)}
         renderItem={(notification: Notifd.Notification) => (
           <box halign={Gtk.Align.END}>
             <NotificationCard notif={notification} />

@@ -3,6 +3,7 @@ import Cairo from 'cairo';
 import {createEffect} from 'ags';
 import {Gdk, Gtk} from 'ags/gtk4';
 
+import {scaleUi} from '@/lib/uiScale';
 import {
   type BarBackgroundGeometry,
   type BarColors,
@@ -14,8 +15,8 @@ export interface PanelBackgroundProps {
   monitor: Gdk.Monitor;
 }
 
-const BORDER_WIDTH = 3;
-const BORDER_RADIUS = 16;
+const BORDER_WIDTH = scaleUi(3);
+const BORDER_RADIUS = scaleUi(16);
 
 function hexToRgba(hex: string): [number, number, number, number] {
   const value = hex.replace('#', '');

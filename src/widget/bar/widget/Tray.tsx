@@ -3,6 +3,7 @@ import {Gtk} from 'ags/gtk4';
 
 import AstalTray from 'gi://AstalTray';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {TrayItemButton} from '@/widget/bar/widget/TrayItemButton';
 
 function isFcitxItem(item: AstalTray.TrayItem) {
@@ -28,14 +29,18 @@ export default function Tray() {
     >
       <For each={primaryItem.as(item => (item ? [item] : []))}>
         {(item: AstalTray.TrayItem) => (
-          <image gicon={createBinding(item, 'gicon')} pixelSize={18} />
+          <image gicon={createBinding(item, 'gicon')} pixelSize={scaleUiSize(18)} />
         )}
       </For>
     </button>
   ) as Gtk.Button;
 
   const expandedItems = (
-    <box class="tray-expander-row" orientation={Gtk.Orientation.HORIZONTAL} spacing={4}>
+    <box
+      class="tray-expander-row"
+      orientation={Gtk.Orientation.HORIZONTAL}
+      spacing={scaleUiSize(4)}
+    >
       <For each={items}>
         {(item: AstalTray.TrayItem) => (
           <TrayItemButton item={item} onActivate={() => expander?.popdown()} />

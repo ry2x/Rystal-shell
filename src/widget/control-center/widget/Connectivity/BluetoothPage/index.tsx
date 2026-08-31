@@ -3,6 +3,7 @@ import {Gtk} from 'ags/gtk4';
 
 import Bluetooth from 'gi://AstalBluetooth';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {
   type BluetoothConfirmation,
   createBluetoothPageState,
@@ -37,7 +38,7 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
     <box
       class="cc-bluetooth-page"
       orientation={Gtk.Orientation.VERTICAL}
-      spacing={12}
+      spacing={scaleUiSize(12)}
       hexpand
       halign={Gtk.Align.FILL}
     >
@@ -52,8 +53,8 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
         revealChild={createBinding(bluetooth, 'is_powered')}
         transitionType={Gtk.RevealerTransitionType.CROSSFADE}
       >
-        <box orientation={Gtk.Orientation.VERTICAL} spacing={10}>
-          <box class="cc-bt-section-header" spacing={8}>
+        <box orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(10)}>
+          <box class="cc-bt-section-header" spacing={scaleUiSize(8)}>
             <LucideIcon name="link-2" pixelSize={17} />
             <label label="Connected Devices" class="cc-section-title" halign={Gtk.Align.START} />
           </box>
@@ -69,7 +70,7 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
               />
             )}
           />
-          <box class="cc-bt-section-header" spacing={8}>
+          <box class="cc-bt-section-header" spacing={scaleUiSize(8)}>
             <LucideIcon name="bluetooth" pixelSize={17} />
             <label label="Available Devices" class="cc-section-title" halign={Gtk.Align.START} />
           </box>
@@ -91,7 +92,7 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
             onClicked={state.discover}
             sensitive={createBinding(adapter, 'discovering').as(discovering => !discovering)}
           >
-            <box spacing={8} halign={Gtk.Align.CENTER}>
+            <box spacing={scaleUiSize(8)} halign={Gtk.Align.CENTER}>
               <LucideIcon name="refresh-cw" class="cc-bt-scan-icon" pixelSize={16} />
               <label
                 label={createBinding(adapter, 'discovering').as(discovering =>

@@ -3,6 +3,7 @@ import {Gtk} from 'ags/gtk4';
 import Apps from 'gi://AstalApps';
 import Pango from 'gi://Pango';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {recordAppLaunch} from '@/stores/application/applicationCatalog';
 import {toggleAppLauncher} from '@/stores/shell/windowManager';
 
@@ -36,7 +37,7 @@ export function AppItem({res, monitorConnector}: AppItemProps): Gtk.Button {
         res.launch();
       }}
     >
-      <box orientation={Gtk.Orientation.HORIZONTAL} spacing={12}>
+      <box orientation={Gtk.Orientation.HORIZONTAL} spacing={scaleUiSize(12)}>
         <image {...createImageProp(res.iconName)} />
         <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
           <label

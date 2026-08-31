@@ -4,6 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Wp from 'gi://AstalWp';
 
 import {getVolumeIcon} from '@/lib/audio';
+import {scaleUiSize} from '@/lib/uiScale';
 import {setEndpointVolume, setMicrophoneVolume, toggleEndpointMute} from '@/stores/system/audio';
 import {LucideIcon} from '@/widget/common/lucide';
 import {type SoundDeviceKind} from '@/widget/control-center/widget/Sound/types';
@@ -38,7 +39,7 @@ export default function VolumeControls({endpoint, kind}: VolumeControlsProps) {
         class="cc-sound-control-label"
         halign={Gtk.Align.START}
       />
-      <box spacing={10}>
+      <box spacing={scaleUiSize(10)}>
         <LucideIcon name={icon} class="cc-sound-volume-icon" pixelSize={19} />
         <slider
           class="volume-slider cc-sound-slider"

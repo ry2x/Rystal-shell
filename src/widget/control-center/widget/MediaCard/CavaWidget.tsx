@@ -1,5 +1,6 @@
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUi, scaleUiSize} from '@/lib/uiScale';
 import {acquireCava, isCavaAvailable} from '@/stores/media/cava';
 
 export default function CavaWidget() {
@@ -9,7 +10,7 @@ export default function CavaWidget() {
     hexpand: true,
     valign: Gtk.Align.END,
     widthRequest: -1,
-    heightRequest: 160,
+    heightRequest: scaleUiSize(160),
   });
 
   let session: ReturnType<typeof acquireCava> = null;
@@ -43,7 +44,7 @@ export default function CavaWidget() {
 
     const SENSITIVITY = 1.5;
     const barWidth = width / vals.length;
-    const padding = 2;
+    const padding = scaleUi(2);
 
     if (frameCount % 60 === 0) {
       const c = _area.get_style_context().get_color();
@@ -55,7 +56,7 @@ export default function CavaWidget() {
 
     for (let i = 0; i < vals.length; i++) {
       const val = Math.min(vals[i] * SENSITIVITY, 1.0);
-      const barHeight = Math.max(val * height, 2);
+      const barHeight = Math.max(val * height, scaleUi(2));
       cr.rectangle(i * barWidth + padding / 2, height - barHeight, barWidth - padding, barHeight);
       cr.fill();
     }

@@ -1,12 +1,13 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUi} from '@/lib/uiScale';
 import type {PowerItem} from '@/stores/panel/powerMenu';
 import {LucideIcon} from '@/widget/common/lucide';
 
-const CARD_OUTER_WIDTH = 260;
-const CARD_GAP = 18;
-const CONFIRMATION_FIRST_CARD_OFFSET = 123;
+const CARD_OUTER_WIDTH = scaleUi(260);
+const CARD_GAP = scaleUi(18);
+const CONFIRMATION_FIRST_CARD_OFFSET = scaleUi(123);
 
 export interface PowerMenuItemButtonProps {
   item: PowerItem;
@@ -36,7 +37,7 @@ export default function PowerMenuItemButton({
         if (!moving) return '';
         if (selectedIndex() === index) {
           const offset = CONFIRMATION_FIRST_CARD_OFFSET - index * (CARD_OUTER_WIDTH + CARD_GAP);
-          return `opacity: 1; transform: translateX(${offset}px) translateY(-5px);`;
+          return `opacity: 1; transform: translateX(${offset}px) translateY(${scaleUi(-5)}px);`;
         }
         return 'opacity: 0; transform: scale(0.92);';
       })}

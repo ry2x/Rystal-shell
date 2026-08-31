@@ -1,5 +1,6 @@
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface DetailMenuButtonProps {
@@ -32,7 +33,7 @@ export default function DetailMenuButton({
   popover.set_parent(button);
   popover.set_child(
     (
-      <box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
+      <box orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(4)}>
         <button
           class="cc-menu-btn"
           onClicked={() => {
@@ -40,7 +41,7 @@ export default function DetailMenuButton({
             onDisconnect();
           }}
         >
-          <box spacing={8}>
+          <box spacing={scaleUiSize(8)}>
             <LucideIcon name="unlink" pixelSize={16} />
             <label label="Disconnect" />
           </box>
@@ -52,7 +53,7 @@ export default function DetailMenuButton({
             onForget();
           }}
         >
-          <box spacing={8}>
+          <box spacing={scaleUiSize(8)}>
             <LucideIcon name="trash-2" pixelSize={16} />
             <label label={forgetLabel} />
           </box>

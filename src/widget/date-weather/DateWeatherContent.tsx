@@ -2,6 +2,7 @@ import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
 import {shellMotion} from '@/lib/motion';
+import {scaleUiSize} from '@/lib/uiScale';
 import {DATE_WEATHER_PANEL_WIDTH, createBarBackgroundGeometry} from '@/stores/shell/barBackground';
 import ClockCard from '@/widget/date-weather/widget/ClockCard';
 import NotificationList from '@/widget/date-weather/widget/NotificationList';
@@ -16,6 +17,7 @@ export interface DateWeatherContentProps {
 
 export default function DateWeatherContent({revealed, monitorConnector}: DateWeatherContentProps) {
   const geometry = createBarBackgroundGeometry(monitorConnector);
+  const barWidth = scaleUiSize(47);
 
   return (
     <revealer
@@ -31,13 +33,13 @@ export default function DateWeatherContent({revealed, monitorConnector}: DateWea
           css={geometry(({dx}) => {
             const marginLeft = Math.max(
               -DATE_WEATHER_PANEL_WIDTH,
-              dx - 47 - DATE_WEATHER_PANEL_WIDTH
+              dx - barWidth - DATE_WEATHER_PANEL_WIDTH
             );
-            const opacity = Math.max(0, Math.min(1, (dx - 47) / DATE_WEATHER_PANEL_WIDTH));
+            const opacity = Math.max(0, Math.min(1, (dx - barWidth) / DATE_WEATHER_PANEL_WIDTH));
             return `transform: translateX(${marginLeft}px); opacity: ${opacity};`;
           })}
           widthRequest={DATE_WEATHER_PANEL_WIDTH}
-          spacing={24}
+          spacing={scaleUiSize(24)}
           hexpand={false}
           vexpand
           valign={Gtk.Align.FILL}
@@ -52,10 +54,10 @@ export default function DateWeatherContent({revealed, monitorConnector}: DateWea
           >
             <box
               orientation={Gtk.Orientation.VERTICAL}
-              spacing={16}
+              spacing={scaleUiSize(16)}
               class="left-column"
-              marginStart={12}
-              marginEnd={12}
+              marginStart={scaleUiSize(12)}
+              marginEnd={scaleUiSize(12)}
             >
               <ClockCard />
               <WorldClockCard />

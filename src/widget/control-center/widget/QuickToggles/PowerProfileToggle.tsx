@@ -3,6 +3,7 @@ import {Gtk} from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {
   cyclePowerProfile,
   getPowerIcon,
@@ -30,7 +31,7 @@ export default function PowerProfileToggle() {
         onClicked={cyclePowerProfile}
         tooltipText="Toggle Power Profile"
       >
-        <box spacing={12}>
+        <box spacing={scaleUiSize(12)}>
           <LucideIcon name={activeProfile.as(getPowerIcon)} class="icon" pixelSize={24} />
           <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
             <label label="Power Profile" class="cc-toggle-title" halign={Gtk.Align.START} />

@@ -5,6 +5,7 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import {timeout} from 'ags/time';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import BarReserve from '@/widget/bar/BarReserve';
 import PanelBackground from '@/widget/bar/PanelBackground';
 import Clock from '@/widget/bar/widget/Clock';
@@ -21,8 +22,8 @@ export interface BarProps {
   monitor: Gdk.Monitor;
 }
 
-const BORDER_WIDTH = 3;
-const BAR_WIDTH = 47;
+const BORDER_WIDTH = scaleUiSize(3);
+const BAR_WIDTH = scaleUiSize(47);
 const INPUT_REGION_DELAY_MS = 500;
 
 function setBarInputRegion(window: Astal.Window) {
@@ -64,7 +65,7 @@ export default function Bar({monitor}: BarProps) {
               valign={Gtk.Align.START}
               class="panel-start"
               orientation={Gtk.Orientation.VERTICAL}
-              spacing={24}
+              spacing={scaleUiSize(24)}
             >
               <Workspaces monitor={monitor} />
               <ScrollerIndicator monitor={monitor} />
@@ -75,7 +76,7 @@ export default function Bar({monitor}: BarProps) {
               valign={Gtk.Align.CENTER}
               class="panel-center"
               orientation={Gtk.Orientation.VERTICAL}
-              spacing={8}
+              spacing={scaleUiSize(8)}
             >
               <Weather monitor={monitor} />
               <Clock monitor={monitor} />
@@ -86,7 +87,7 @@ export default function Bar({monitor}: BarProps) {
               valign={Gtk.Align.END}
               class="panel-end"
               orientation={Gtk.Orientation.VERTICAL}
-              spacing={8}
+              spacing={scaleUiSize(8)}
             >
               <RecordIndicator />
               <Updates monitor={monitor} />

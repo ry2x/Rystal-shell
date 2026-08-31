@@ -5,6 +5,7 @@ import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 
 import {loadTextureFromUri} from '@/lib/image';
+import {scaleUiSize} from '@/lib/uiScale';
 import {fetchYouTubeThumbnail} from '@/stores/media/mprisThumbnail';
 import {closeAllControlCenters, focusWindow} from '@/stores/shell/windowManager';
 
@@ -68,7 +69,7 @@ export function createPlayerArtwork(player: Mpris.Player): Accessor<Gdk.Texture 
     }
 
     try {
-      setArtwork(loadTextureFromUri(uri, 160, 160));
+      setArtwork(loadTextureFromUri(uri, scaleUiSize(160), scaleUiSize(160)));
     } catch (error) {
       console.error(error);
       setArtwork(null);

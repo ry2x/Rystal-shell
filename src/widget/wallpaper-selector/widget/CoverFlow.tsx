@@ -2,6 +2,7 @@ import {Gtk} from 'ags/gtk4';
 
 import GLib from 'gi://GLib';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {
   type Wallpaper,
   applyWallpaper,
@@ -27,7 +28,7 @@ import {
 const VISIBLE_RADIUS = 3;
 const PREFETCH_RADIUS = 4;
 const MOVE_INTERVAL_US = 83_333;
-const VIEWPORT_HEIGHT = 420;
+const VIEWPORT_HEIGHT = scaleUiSize(420);
 
 export interface CoverFlowOptions {
   onApplied: () => void;
@@ -76,7 +77,7 @@ export default class CoverFlowController {
       hexpand: false,
       halign: Gtk.Align.CENTER,
       valign: Gtk.Align.END,
-      marginBottom: 48,
+      marginBottom: scaleUiSize(48),
       xalign: 0.5,
     });
 
@@ -105,7 +106,7 @@ export default class CoverFlowController {
       <box
         class="wallpaper-selector-content"
         orientation={Gtk.Orientation.VERTICAL}
-        spacing={8}
+        spacing={scaleUiSize(8)}
         hexpand
         halign={Gtk.Align.FILL}
       >

@@ -1,5 +1,6 @@
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {openUpdateManager, updatesPoll} from '@/stores/system/update';
 import {LucideIcon} from '@/widget/common/lucide';
 
@@ -11,7 +12,7 @@ export default function UpdatesCard() {
   });
 
   return (
-    <box class="cc-card" orientation={Gtk.Orientation.HORIZONTAL} spacing={16} hexpand>
+    <box class="cc-card" orientation={Gtk.Orientation.HORIZONTAL} spacing={scaleUiSize(16)} hexpand>
       <LucideIcon name="package" pixelSize={24} class="icon updates-icon" />
       <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER} hexpand>
         <label label="System Updates" class="cc-updates-title" halign={Gtk.Align.START} />

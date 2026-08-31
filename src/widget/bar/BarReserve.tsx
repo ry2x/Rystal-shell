@@ -1,8 +1,10 @@
 import {Astal, Gdk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-const BORDER_WIDTH = 3;
-const BAR_WIDTH = 47;
+import {scaleUiSize} from '@/lib/uiScale';
+
+const BORDER_WIDTH = scaleUiSize(3);
+const BAR_WIDTH = scaleUiSize(47);
 
 export interface BarReserveProps {
   monitor: Gdk.Monitor;

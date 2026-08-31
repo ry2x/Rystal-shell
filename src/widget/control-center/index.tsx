@@ -3,6 +3,7 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import {shellMotion} from '@/lib/motion';
+import {scaleUiSize} from '@/lib/uiScale';
 import {createControlCenterState} from '@/stores/panel/controlCenter';
 import ClickCatcher from '@/widget/common/ClickCatcher';
 import ControlCenterPages from '@/widget/control-center/ControlCenterPages';
@@ -30,7 +31,7 @@ export default function ControlCenter({monitor}: ControlCenterProps) {
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.TOP}
       anchor={TOP | BOTTOM | LEFT | RIGHT}
-      marginLeft={47}
+      marginLeft={scaleUiSize(47)}
       marginTop={0}
       keymode={Astal.Keymode.NONE}
       application={app}

@@ -1,5 +1,6 @@
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {LOCATION, getWeatherIcon, weatherInfo} from '@/stores/system/weather';
 import {LucideIcon} from '@/widget/common/lucide';
 import ForecastItem from '@/widget/date-weather/widget/ForecastItem';
@@ -9,13 +10,13 @@ export default function WeatherCard() {
     <box
       class="weather-card widget-card"
       orientation={Gtk.Orientation.VERTICAL}
-      spacing={8}
+      spacing={scaleUiSize(8)}
       hexpand
       valign={Gtk.Align.CENTER}
     >
       {/* Current conditions */}
-      <box class="weather-current" spacing={8} halign={Gtk.Align.FILL}>
-        <box class="weather-primary" spacing={8} valign={Gtk.Align.CENTER} hexpand>
+      <box class="weather-current" spacing={scaleUiSize(8)} halign={Gtk.Align.FILL}>
+        <box class="weather-primary" spacing={scaleUiSize(8)} valign={Gtk.Align.CENTER} hexpand>
           <LucideIcon
             name={weatherInfo.as(w => (w ? getWeatherIcon(w.code) : 'cloud'))}
             pixelSize={48}
@@ -44,7 +45,7 @@ export default function WeatherCard() {
         <box
           class="weather-range"
           orientation={Gtk.Orientation.VERTICAL}
-          spacing={3}
+          spacing={scaleUiSize(3)}
           halign={Gtk.Align.END}
           valign={Gtk.Align.CENTER}
         >
@@ -67,19 +68,23 @@ export default function WeatherCard() {
       </box>
 
       {/* Additional info */}
-      <box spacing={28} class="weather-info" halign={Gtk.Align.CENTER}>
-        <box spacing={8}>
+      <box spacing={scaleUiSize(28)} class="weather-info" halign={Gtk.Align.CENTER}>
+        <box spacing={scaleUiSize(8)}>
           <LucideIcon name="wind" pixelSize={20} class="weather-info-icon" />
           <label label={weatherInfo.as(w => (w ? `${w.wind} km/h` : '--'))} />
         </box>
-        <box spacing={8}>
+        <box spacing={scaleUiSize(8)}>
           <LucideIcon name="droplets" pixelSize={20} class="weather-info-icon" />
           <label label={weatherInfo.as(w => (w ? `${w.humidity}%` : '--'))} />
         </box>
       </box>
 
       {/* 2-Day Forecast */}
-      <box class="weather-forecast" orientation={Gtk.Orientation.HORIZONTAL} spacing={8}>
+      <box
+        class="weather-forecast"
+        orientation={Gtk.Orientation.HORIZONTAL}
+        spacing={scaleUiSize(8)}
+      >
         <ForecastItem index={0} />
         <ForecastItem index={1} />
       </box>

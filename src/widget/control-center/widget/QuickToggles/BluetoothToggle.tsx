@@ -3,6 +3,7 @@ import {Gtk} from 'ags/gtk4';
 
 import Bluetooth from 'gi://AstalBluetooth';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {toggleBluetooth} from '@/stores/connectivity/network';
 import {LucideIcon} from '@/widget/common/lucide';
 
@@ -32,7 +33,7 @@ export default function BluetoothToggle({onOpen}: BluetoothToggleProps) {
             onOpen();
           }}
         />
-        <box spacing={12}>
+        <box spacing={scaleUiSize(12)}>
           <LucideIcon name="bluetooth" class="icon" pixelSize={24} />
           <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
             <label label="Bluetooth" class="cc-toggle-title" halign={Gtk.Align.START} />

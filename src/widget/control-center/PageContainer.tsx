@@ -1,6 +1,7 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {type BarBackgroundGeometry} from '@/stores/shell/barBackground';
 
 export interface PageContainerProps {
@@ -10,8 +11,10 @@ export interface PageContainerProps {
 }
 
 function getContainerCss(dx: number) {
-  const marginLeft = Math.max(-490, dx - 537);
-  const opacity = Math.max(0, Math.min(1, (dx - 47) / 490));
+  const panelWidth = scaleUiSize(490);
+  const barWidth = scaleUiSize(47);
+  const marginLeft = Math.max(-panelWidth, dx - barWidth - panelWidth);
+  const opacity = Math.max(0, Math.min(1, (dx - barWidth) / panelWidth));
   return `transform: translateX(${marginLeft}px); opacity: ${opacity};`;
 }
 
@@ -24,7 +27,7 @@ export default function PageContainer({revealed, geometry, child}: PageContainer
       cssClasses={revealed.as(value => (value ? ['cc-container', 'revealed'] : ['cc-container']))}
       css={geometry.as(({dx}) => getContainerCss(dx))}
       orientation={Gtk.Orientation.VERTICAL}
-      spacing={16}
+      spacing={scaleUiSize(16)}
       hexpand
       vexpand
       valign={Gtk.Align.FILL}

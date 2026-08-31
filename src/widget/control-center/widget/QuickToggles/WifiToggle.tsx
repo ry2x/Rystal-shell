@@ -4,6 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Network from 'gi://AstalNetwork';
 import Pango from 'gi://Pango';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {toggleWifi} from '@/stores/connectivity/network';
 import {LucideIcon} from '@/widget/common/lucide';
 
@@ -35,7 +36,7 @@ export default function WifiToggle({onOpen}: WifiToggleProps) {
             onOpen();
           }}
         />
-        <box spacing={12}>
+        <box spacing={scaleUiSize(12)}>
           <LucideIcon name="wifi" class="icon" pixelSize={24} />
           <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
             <label label="Wi-Fi" class="cc-toggle-title" halign={Gtk.Align.START} />

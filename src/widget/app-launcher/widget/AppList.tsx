@@ -4,6 +4,7 @@ import {type Timer, idle} from 'ags/time';
 
 import Apps from 'gi://AstalApps';
 
+import {scaleUiSize} from '@/lib/uiScale';
 import {AppItem} from '@/widget/app-launcher/widget/AppItem';
 import {SearchGoogleBtn} from '@/widget/app-launcher/widget/SearchGoogleBtn';
 
@@ -94,8 +95,16 @@ export function AppList({
       propagateNaturalHeight={false}
       $={self => (scrollWindow = self)}
     >
-      <box orientation={Gtk.Orientation.VERTICAL} class="applauncher-list" spacing={10}>
-        <box orientation={Gtk.Orientation.VERTICAL} spacing={10} $={self => (appList = self)}>
+      <box
+        orientation={Gtk.Orientation.VERTICAL}
+        class="applauncher-list"
+        spacing={scaleUiSize(10)}
+      >
+        <box
+          orientation={Gtk.Orientation.VERTICAL}
+          spacing={scaleUiSize(10)}
+          $={self => (appList = self)}
+        >
           <For each={results}>
             {appInstance => <AppItem res={appInstance} monitorConnector={monitorConnector} />}
           </For>

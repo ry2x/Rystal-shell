@@ -1,6 +1,7 @@
 import {type Accessor, createState, onCleanup} from 'ags';
 import {type Timer, interval, timeout} from 'ags/time';
 
+import {scaleUi, scaleUiSize} from '@/lib/uiScale';
 import {deactivateSidePanel} from '@/stores/shell/windowManager';
 import {
   cancelWallpaperWork,
@@ -8,7 +9,7 @@ import {
   refreshWallpapers,
 } from '@/stores/wallpaper/wallpaper';
 
-const PANEL_HEIGHT = 390;
+const PANEL_HEIGHT = scaleUiSize(390);
 const HIDE_DELAY_MS = 420;
 const ANIMATION_INTERVAL_MS = 1000 / 60;
 const ANIMATION_SPEED = 0.22;
@@ -49,7 +50,7 @@ export function createWallpaperSelectorState({
 
     animationTimer = interval(ANIMATION_INTERVAL_MS, () => {
       const difference = targetPanelHeight - currentPanelHeight;
-      if (Math.abs(difference) < 1) {
+      if (Math.abs(difference) < scaleUi(1)) {
         currentPanelHeight = targetPanelHeight;
         setPanelHeight(currentPanelHeight);
         animationTimer?.cancel();
