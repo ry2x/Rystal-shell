@@ -1,6 +1,11 @@
 {
   "ui": {
-    "scale": 1
+    "scale": 1,
+    "monitors": {
+      "DP-1": {
+        "scale": 1.25
+      }
+    }
   },
   "brightness": {
     "backend": "auto"

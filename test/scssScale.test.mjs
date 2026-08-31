@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import {spawnSync} from 'node:child_process';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import {describe, it} from 'node:test';
 import {URL} from 'node:url';
@@ -22,34 +21,39 @@ describe('SCSS UI scale coverage', () => {
     assert.deepEqual(unscaledFiles, []);
   });
 
-  it('compiles every supported scale', () => {
-    for (const scale of [0.75, 1, 1.25, 1.5, 2]) {
-      const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'rystal-scale-test-'));
-      try {
-        fs.writeFileSync(
-          path.join(temporaryDirectory, '_current-scale.scss'),
-          `$app-scale: ${scale};\n`
-        );
-        const result = spawnSync(
-          'sass',
-          [
-            '--style=expanded',
-            '--no-source-map',
-            '--load-path',
-            temporaryDirectory,
-            '--load-path',
-            defaultStyleDirectory.pathname,
-            styleEntry.pathname,
-          ],
-          {encoding: 'utf8'}
-        );
+  it('compiles all supported scales into isolated window classes', () => {
+    const result = spawnSync(
+      'sass',
+      [
+        '--style=expanded',
+        '--no-source-map',
+        '--load-path',
+        defaultStyleDirectory.pathname,
+        styleEntry.pathname,
+      ],
+      {encoding: 'utf8'}
+    );
 
-        assert.equal(result.status, 0, result.stderr);
-        assert.match(result.stdout, new RegExp(`font-size: ${scale}em`));
-        assert.match(result.stdout, new RegExp(`border-radius: ${8 * scale}px`));
-      } finally {
-        fs.rmSync(temporaryDirectory, {recursive: true, force: true});
-      }
+    assert.equal(result.status, 0, result.stderr);
+    for (const [className, scale] of [
+      ['ui-scale-075', 0.75],
+      ['ui-scale-100', 1],
+      ['ui-scale-125', 1.25],
+      ['ui-scale-150', 1.5],
+      ['ui-scale-200', 2],
+    ]) {
+      assert.match(
+        result.stdout,
+        new RegExp(`window\\.${className} \\{[^}]*font-size: ${scale}em`, 's')
+      );
+      assert.match(result.stdout, new RegExp(`window\\.${className}\\.Bar \\{`));
     }
+
+    assert.match(
+      result.stdout,
+      /window\.ui-scale-075 \.empty-state \{[^}]*border-radius: 10\.5px/s
+    );
+    assert.match(result.stdout, /window\.ui-scale-200 \.empty-state \{[^}]*border-radius: 28px/s);
+    assert.match(result.stdout, /window\.ui-scale-125\.NotificationPopups \.notif-card \{/);
   });
 });

@@ -2,13 +2,22 @@ type BrightnessBackendConfig = 'auto' | 'ddcutil' | 'brightnessctl';
 type RecorderAudioSource = 'system' | 'mic';
 type UiScale = 0.75 | 1 | 1.25 | 1.5 | 2;
 
+interface MonitorUiConfig {
+  scale: UiScale;
+}
+
+interface UiConfig {
+  scale: UiScale;
+  monitors: Record<string, MonitorUiConfig>;
+}
+
 interface WorldClockConfig {
   label: string;
   tz: string;
 }
 
-interface AppConfig {
-  ui: {scale: UiScale};
+export interface AppConfig {
+  ui: UiConfig;
   brightness: {backend: BrightnessBackendConfig};
   weather: {location: string};
   notifications: {maxCount: number};
@@ -29,7 +38,7 @@ interface AppConfig {
 type ConfigObject = Record<string, unknown>;
 
 const DEFAULT_CONFIG: AppConfig = {
-  ui: {scale: 1},
+  ui: {scale: 1, monitors: {}},
   brightness: {backend: 'auto'},
   weather: {location: ''},
   notifications: {maxCount: 30},
@@ -162,15 +171,42 @@ function resolveBrightness(root: ConfigObject): AppConfig['brightness'] {
 
 function resolveUi(root: ConfigObject): AppConfig['ui'] {
   const section = readSection(root, 'ui');
-  if (section) warnUnknownKeys('ui', section, ['scale']);
+  if (section) warnUnknownKeys('ui', section, ['scale', 'monitors']);
   const scale = section?.scale;
-  if (scale === 0.75 || scale === 1 || scale === 1.25 || scale === 1.5 || scale === 2) {
-    return {scale};
-  }
-  if (scale !== undefined) {
+  const resolvedScale = isUiScale(scale) ? scale : DEFAULT_CONFIG.ui.scale;
+  if (scale !== undefined && !isUiScale(scale)) {
     warnConfig('ui.scale', 'expected 0.75, 1, 1.25, 1.5, or 2');
   }
-  return {...DEFAULT_CONFIG.ui};
+
+  const monitorsValue = section?.monitors;
+  const monitors: Record<string, MonitorUiConfig> = {};
+  if (monitorsValue !== undefined && !isConfigObject(monitorsValue)) {
+    warnConfig('ui.monitors', 'expected an object');
+  } else if (isConfigObject(monitorsValue)) {
+    Object.entries(monitorsValue).forEach(([connector, monitorValue]) => {
+      const path = `ui.monitors.${connector}`;
+      if (connector.length === 0) {
+        warnConfig('ui.monitors', 'expected non-empty connector names');
+        return;
+      }
+      if (!isConfigObject(monitorValue)) {
+        warnConfig(path, 'expected an object');
+        return;
+      }
+      warnUnknownKeys(path, monitorValue, ['scale']);
+      if (!isUiScale(monitorValue.scale)) {
+        warnConfig(`${path}.scale`, 'expected 0.75, 1, 1.25, 1.5, or 2');
+        return;
+      }
+      monitors[connector] = {scale: monitorValue.scale};
+    });
+  }
+
+  return {scale: resolvedScale, monitors};
+}
+
+function isUiScale(value: unknown): value is UiScale {
+  return value === 0.75 || value === 1 || value === 1.25 || value === 1.5 || value === 2;
 }
 
 function resolveWeather(root: ConfigObject): AppConfig['weather'] {

@@ -4,7 +4,7 @@ import {describe, it} from 'node:test';
 import {resolveConfig} from '../src/lib/configParser.ts';
 
 const DEFAULT_CONFIG = {
-  ui: {scale: 1},
+  ui: {scale: 1, monitors: {}},
   brightness: {backend: 'auto'},
   weather: {location: ''},
   notifications: {maxCount: 30},
@@ -64,6 +64,27 @@ describe('resolveConfig', () => {
     assert.equal(resolveConfig({ui: {scale: 1.1}}).ui.scale, 1);
     assert.equal(resolveConfig({ui: {scale: '1.25'}}).ui.scale, 1);
     assert.equal(warnings.mock.callCount(), 2);
+  });
+
+  it('accepts monitor-specific UI scales', () => {
+    const config = resolveConfig({
+      ui: {scale: 1, monitors: {'DP-1': {scale: 1.25}, 'HDMI-A-1': {scale: 0.75}}},
+    });
+
+    assert.deepEqual(config.ui, {
+      scale: 1,
+      monitors: {'DP-1': {scale: 1.25}, 'HDMI-A-1': {scale: 0.75}},
+    });
+  });
+
+  it('ignores invalid monitor-specific UI scales', context => {
+    const warnings = mockWarnings(context);
+    const config = resolveConfig({
+      ui: {scale: 1.5, monitors: {'DP-1': {scale: 1.1}, '': {scale: 2}, broken: false}},
+    });
+
+    assert.deepEqual(config.ui, {scale: 1.5, monitors: {}});
+    assert.equal(warnings.mock.callCount(), 3);
   });
 
   it('falls back for invalid enum and number values', context => {
