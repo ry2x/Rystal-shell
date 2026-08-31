@@ -3,6 +3,7 @@ import {exec, execAsync} from 'ags/process';
 
 import GLib from 'gi://GLib';
 
+import {appConfig} from '@/lib/config';
 import {rystalShellConfigDir, rystalShellDataDir, rystalShellRuntimeDir} from '@/lib/paths';
 import {reloadBarColors} from '@/stores/shell/barBackground';
 
@@ -14,9 +15,19 @@ const defaultThemeDir = `${rystalShellDataDir}/styles/default`;
 const defaultCssPath = `${rystalShellDataDir}/styles/default.css`;
 const runtimeDir = rystalShellRuntimeDir;
 const cssPath = `${runtimeDir}/style.css`;
+const currentScalePath = `${runtimeDir}/_current-scale.scss`;
 
 function ensureRuntimeDir() {
   GLib.mkdir_with_parents(runtimeDir, 0o700);
+}
+
+function writeCurrentScale() {
+  const temporaryPath = `${currentScalePath}.tmp`;
+  const contents = `// Generated file. Do not edit.\n$app-scale: ${appConfig.ui.scale};\n`;
+  GLib.file_set_contents(temporaryPath, contents);
+  if (GLib.rename(temporaryPath, currentScalePath) !== 0) {
+    throw new Error(`Cannot replace generated scale file: ${currentScalePath}`);
+  }
 }
 
 function getCssHash(path: string): string {
@@ -62,6 +73,8 @@ function sassCommand() {
     '--style=expanded',
     '--no-source-map',
     '--load-path',
+    runtimeDir,
+    '--load-path',
     rystalShellConfigDir,
     '--load-path',
     defaultThemeDir,
@@ -72,6 +85,7 @@ function sassCommand() {
 
 export function compileAndReloadCss(): Promise<boolean> {
   ensureRuntimeDir();
+  writeCurrentScale();
   return execAsync(sassCommand())
     .then(() => {
       const currentHash = getCssHash(cssPath);
@@ -90,12 +104,19 @@ export function compileAndReloadCss(): Promise<boolean> {
 export function initCss() {
   ensureRuntimeDir();
   try {
+    writeCurrentScale();
     exec(sassCommand());
     reloadCss(cssPath);
     lastCompiledCssHash = getCssHash(cssPath);
   } catch (error) {
     console.error(`Error compiling initial SCSS: ${error}`);
-    const fallbackPath = GLib.file_test(cssPath, GLib.FileTest.EXISTS) ? cssPath : defaultCssPath;
+    const hasPreviousCss = GLib.file_test(cssPath, GLib.FileTest.EXISTS);
+    const fallbackPath = hasPreviousCss ? cssPath : defaultCssPath;
+    if (!hasPreviousCss && appConfig.ui.scale !== 1) {
+      console.warn(
+        `Falling back to the bundled stylesheet at scale 1; requested scale was ${appConfig.ui.scale}`
+      );
+    }
     reloadCss(fallbackPath);
     lastCompiledCssHash = getCssHash(fallbackPath);
   }

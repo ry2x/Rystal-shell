@@ -34,6 +34,9 @@ cp ./config.json.template \
 
 ```jsonc
 {
+  "ui": {
+    "scale": "<Global Rystal-shell UI scale: 0.75, 1, 1.25, 1.5, or 2. default: 1; restart required>"
+  },
   "weather": {
     "location": "<Your preferred location; if left blank, the location will be determined from your IP address. e.g., 'New York, NY' ,'東京都練馬区'>"
   },

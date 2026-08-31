@@ -1,5 +1,6 @@
 type BrightnessBackendConfig = 'auto' | 'ddcutil' | 'brightnessctl';
 type RecorderAudioSource = 'system' | 'mic';
+type UiScale = 0.75 | 1 | 1.25 | 1.5 | 2;
 
 interface WorldClockConfig {
   label: string;
@@ -7,6 +8,7 @@ interface WorldClockConfig {
 }
 
 interface AppConfig {
+  ui: {scale: UiScale};
   brightness: {backend: BrightnessBackendConfig};
   weather: {location: string};
   notifications: {maxCount: number};
@@ -27,6 +29,7 @@ interface AppConfig {
 type ConfigObject = Record<string, unknown>;
 
 const DEFAULT_CONFIG: AppConfig = {
+  ui: {scale: 1},
   brightness: {backend: 'auto'},
   weather: {location: ''},
   notifications: {maxCount: 30},
@@ -157,6 +160,19 @@ function resolveBrightness(root: ConfigObject): AppConfig['brightness'] {
   return {...DEFAULT_CONFIG.brightness};
 }
 
+function resolveUi(root: ConfigObject): AppConfig['ui'] {
+  const section = readSection(root, 'ui');
+  if (section) warnUnknownKeys('ui', section, ['scale']);
+  const scale = section?.scale;
+  if (scale === 0.75 || scale === 1 || scale === 1.25 || scale === 1.5 || scale === 2) {
+    return {scale};
+  }
+  if (scale !== undefined) {
+    warnConfig('ui.scale', 'expected 0.75, 1, 1.25, 1.5, or 2');
+  }
+  return {...DEFAULT_CONFIG.ui};
+}
+
 function resolveWeather(root: ConfigObject): AppConfig['weather'] {
   const section = readSection(root, 'weather');
   if (section) warnUnknownKeys('weather', section, ['location']);
@@ -232,6 +248,7 @@ export function resolveConfig(value: unknown): AppConfig {
   }
 
   warnUnknownKeys('root', value, [
+    'ui',
     'brightness',
     'weather',
     'notifications',
@@ -241,6 +258,7 @@ export function resolveConfig(value: unknown): AppConfig {
   ]);
 
   return {
+    ui: resolveUi(value),
     brightness: resolveBrightness(value),
     weather: resolveWeather(value),
     notifications: resolveNotifications(value),

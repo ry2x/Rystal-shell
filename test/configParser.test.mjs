@@ -4,6 +4,7 @@ import {describe, it} from 'node:test';
 import {resolveConfig} from '../src/lib/configParser.ts';
 
 const DEFAULT_CONFIG = {
+  ui: {scale: 1},
   brightness: {backend: 'auto'},
   weather: {location: ''},
   notifications: {maxCount: 30},
@@ -49,6 +50,20 @@ describe('resolveConfig', () => {
       handle: '@rystal',
       os: undefined,
     });
+  });
+
+  it('accepts supported UI scales', () => {
+    for (const scale of [0.75, 1, 1.25, 1.5, 2]) {
+      assert.equal(resolveConfig({ui: {scale}}).ui.scale, scale);
+    }
+  });
+
+  it('falls back for unsupported UI scales', context => {
+    const warnings = mockWarnings(context);
+
+    assert.equal(resolveConfig({ui: {scale: 1.1}}).ui.scale, 1);
+    assert.equal(resolveConfig({ui: {scale: '1.25'}}).ui.scale, 1);
+    assert.equal(warnings.mock.callCount(), 2);
   });
 
   it('falls back for invalid enum and number values', context => {
