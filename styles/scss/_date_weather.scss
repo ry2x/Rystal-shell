@@ -6,420 +6,430 @@ $glass-edge-soft: rgba($on-surface, 0.07);
 $glass-shadow: rgba(0, 0, 0, 0.28);
 
 // Date & Weather popup
-window.DateWeatherPopup {
-  background: transparent;
-  color: $text;
-  font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
-
-  .dw-container {
-    background-color: transparent;
-    background-image: none;
-    margin: 0;
-    border: none;
-    border-radius: 0;
-    padding: s(24);
-    box-shadow: none;
-    min-width: s(830);
-    min-height: s(600);
-  }
-
-  .left-column {
-    min-width: s(320);
-  }
-  .right-column {
-    min-width: s(450);
-  }
-
-  .widget-card {
-    background-color: rgba($surface, 0.3);
-    background-image: linear-gradient(
-      145deg,
-      rgba($on-surface, 0.095),
-      rgba($on-surface, 0.035) 48%,
-      rgba($surface, 0.14)
-    );
-    border: s(1) solid $glass-edge;
-    border-radius: s(16);
-    padding: s(16);
-    box-shadow:
-      inset 0 s(1) rgba($on-surface, 0.07),
-      0 s(10) s(28) $glass-shadow;
-    transition: all $motion-standard $motion-ease;
-    &:hover {
-      background-color: rgba($surface, 0.38);
-      border-color: rgba($primary, 0.22);
-      box-shadow:
-        inset 0 s(1) rgba($on-surface, 0.1),
-        0 s(12) s(32) rgba(0, 0, 0, 0.34),
-        0 0 s(18) rgba($primary, 0.07);
-    }
-  }
-
-  .calendar-card {
-    background-color: rgba($surface, 0.42);
-    background-image: linear-gradient(
-      145deg,
-      rgba($on-surface, 0.085),
-      rgba($on-surface, 0.025) 46%,
-      rgba($surface, 0.18)
-    );
-    border-color: $glass-edge;
-    padding: s(16);
-    box-shadow:
-      inset 0 s(1) rgba($on-surface, 0.075),
-      0 s(10) s(30) rgba(0, 0, 0, 0.28);
-    calendar {
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      color: $text;
-      font-size: 1.1em;
-      header {
+@mixin styles($root, $scale) {
+  @include with-scale($scale) {
+    #{$root} {
+      &.DateWeatherPopup {
         background: transparent;
-        border: none;
-        border-bottom: s(1) solid rgba($on-surface, 0.1);
-        padding: 0 0 s(10);
-        margin-bottom: s(10);
-        box-shadow: 0 s(1) s(8) rgba($primary, 0.045);
-        button {
-          background-color: rgba($surface, 0.18);
+        color: $text;
+        font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
+
+        .dw-container {
+          background-color: transparent;
+          background-image: none;
+          margin: 0;
+          border: none;
+          border-radius: 0;
+          padding: s(24);
+          box-shadow: none;
+          min-width: s(830);
+          min-height: s(600);
+        }
+
+        .left-column {
+          min-width: s(320);
+        }
+        .right-column {
+          min-width: s(450);
+        }
+
+        .widget-card {
+          background-color: rgba($surface, 0.3);
+          background-image: linear-gradient(
+            145deg,
+            rgba($on-surface, 0.095),
+            rgba($on-surface, 0.035) 48%,
+            rgba($surface, 0.14)
+          );
+          border: s(1) solid $glass-edge;
+          border-radius: s(16);
+          padding: s(16);
+          box-shadow:
+            inset 0 s(1) rgba($on-surface, 0.07),
+            0 s(10) s(28) $glass-shadow;
+          transition: all $motion-standard $motion-ease;
+          &:hover {
+            background-color: rgba($surface, 0.38);
+            border-color: rgba($primary, 0.22);
+            box-shadow:
+              inset 0 s(1) rgba($on-surface, 0.1),
+              0 s(12) s(32) rgba(0, 0, 0, 0.34),
+              0 0 s(18) rgba($primary, 0.07);
+          }
+        }
+
+        .calendar-card {
+          background-color: rgba($surface, 0.42);
+          background-image: linear-gradient(
+            145deg,
+            rgba($on-surface, 0.085),
+            rgba($on-surface, 0.025) 46%,
+            rgba($surface, 0.18)
+          );
+          border-color: $glass-edge;
+          padding: s(16);
+          box-shadow:
+            inset 0 s(1) rgba($on-surface, 0.075),
+            0 s(10) s(30) rgba(0, 0, 0, 0.28);
+          calendar {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            color: $text;
+            font-size: 1.1em;
+            header {
+              background: transparent;
+              border: none;
+              border-bottom: s(1) solid rgba($on-surface, 0.1);
+              padding: 0 0 s(10);
+              margin-bottom: s(10);
+              box-shadow: 0 s(1) s(8) rgba($primary, 0.045);
+              button {
+                background-color: rgba($surface, 0.18);
+                background-image: linear-gradient(
+                  to bottom,
+                  rgba($on-surface, 0.11),
+                  rgba($on-surface, 0.025)
+                );
+                border: s(1) solid rgba($on-surface, 0.1);
+                box-shadow:
+                  inset 0 s(1) rgba($on-surface, 0.11),
+                  0 s(4) s(10) rgba(0, 0, 0, 0.2);
+                border-radius: 50%;
+                min-width: s(26);
+                min-height: s(26);
+                padding: s(2);
+                color: $text;
+                transition: all $motion-standard $motion-ease;
+                &:hover {
+                  background-color: rgba($primary-container, 0.28);
+                  background-image: linear-gradient(
+                    to bottom,
+                    rgba($primary, 0.18),
+                    rgba($primary, 0.06)
+                  );
+                  border-color: rgba($primary, 0.38);
+                  color: $primary;
+                  box-shadow:
+                    inset 0 s(1) rgba($on-surface, 0.14),
+                    0 0 s(14) rgba($primary, 0.14);
+                }
+                &:active {
+                  background-color: rgba($primary-container, 0.38);
+                  box-shadow: inset 0 s(2) s(5) rgba(0, 0, 0, 0.28);
+                }
+              }
+              label.year,
+              stack.month {
+                font-size: 1.1em;
+                font-weight: 800;
+                color: $primary;
+              }
+            }
+            grid {
+              label:nth-child(7n + 1) {
+                color: $error;
+              }
+              label:nth-child(7n) {
+                color: $secondary;
+              }
+              label.day-name {
+                font-size: 0.9em;
+                font-weight: 700;
+                margin-bottom: s(8);
+                opacity: 0.7;
+              }
+              label.day-number {
+                padding: s(5) 0;
+                border: s(1) solid transparent;
+                border-radius: 1em;
+                transition: all $motion-standard $motion-ease;
+                &:hover {
+                  background-color: rgba($on-surface, 0.08);
+                  background-image: linear-gradient(
+                    to bottom,
+                    rgba($on-surface, 0.09),
+                    rgba($on-surface, 0.025)
+                  );
+                  border-color: rgba($on-surface, 0.12);
+                  box-shadow: inset 0 s(1) rgba($on-surface, 0.08);
+                }
+                &:selected {
+                  background-color: rgba($primary-container, 0.32);
+                  background-image: linear-gradient(
+                    to bottom,
+                    rgba($primary, 0.22),
+                    rgba($primary, 0.08)
+                  );
+                  border-color: rgba($primary, 0.55);
+                  color: $text;
+                  box-shadow:
+                    inset 0 s(1) rgba($on-surface, 0.15),
+                    0 0 s(12) rgba($primary, 0.16);
+                }
+              }
+              label.other-month {
+                opacity: 0.25;
+              }
+              label.today {
+                background-color: rgba($primary, 0.72);
+                background-image: linear-gradient(
+                  to bottom,
+                  rgba($primary-fixed, 0.72),
+                  rgba($primary, 0.54)
+                );
+                border: s(1) solid rgba($primary-fixed, 0.76);
+                color: $on-primary-fixed;
+                font-weight: 800;
+                box-shadow:
+                  inset 0 s(1) rgba($on-surface, 0.35),
+                  0 s(4) s(14) rgba($primary, 0.34);
+                &:hover {
+                  background-color: rgba(color.adjust($primary, $lightness: 5%), 0.82);
+                  border-color: $primary-fixed;
+                }
+              }
+            }
+          }
+        }
+
+        .vertical-sep {
+          min-width: s(1);
+          background-color: transparent;
           background-image: linear-gradient(
             to bottom,
-            rgba($on-surface, 0.11),
+            transparent,
+            rgba($on-surface, 0.12) 8%,
+            rgba($primary, 0.18) 50%,
+            rgba($on-surface, 0.12) 92%,
+            transparent
+          );
+          margin: s(8) 0;
+          box-shadow: s(1) 0 s(12) rgba($primary, 0.08);
+        }
+        .notif-header {
+          background-color: rgba($surface, 0.22);
+          background-image: linear-gradient(
+            110deg,
+            rgba($on-surface, 0.075),
             rgba($on-surface, 0.025)
           );
-          border: s(1) solid rgba($on-surface, 0.1);
+          border: s(1) solid $glass-edge-soft;
+          border-radius: s(14);
+          padding: s(8) s(10);
           box-shadow:
-            inset 0 s(1) rgba($on-surface, 0.11),
-            0 s(4) s(10) rgba(0, 0, 0, 0.2);
-          border-radius: 50%;
-          min-width: s(26);
-          min-height: s(26);
-          padding: s(2);
-          color: $text;
-          transition: all $motion-standard $motion-ease;
-          &:hover {
-            background-color: rgba($primary-container, 0.28);
-            background-image: linear-gradient(
-              to bottom,
-              rgba($primary, 0.18),
-              rgba($primary, 0.06)
-            );
-            border-color: rgba($primary, 0.38);
-            color: $primary;
-            box-shadow:
-              inset 0 s(1) rgba($on-surface, 0.14),
-              0 0 s(14) rgba($primary, 0.14);
-          }
-          &:active {
-            background-color: rgba($primary-container, 0.38);
-            box-shadow: inset 0 s(2) s(5) rgba(0, 0, 0, 0.28);
-          }
+            inset 0 s(1) rgba($on-surface, 0.06),
+            0 s(8) s(22) rgba(0, 0, 0, 0.2);
         }
-        label.year,
-        stack.month {
-          font-size: 1.1em;
-          font-weight: 800;
-          color: $primary;
-        }
-      }
-      grid {
-        label:nth-child(7n + 1) {
-          color: $error;
-        }
-        label:nth-child(7n) {
-          color: $secondary;
-        }
-        label.day-name {
-          font-size: 0.9em;
-          font-weight: 700;
-          margin-bottom: s(8);
-          opacity: 0.7;
-        }
-        label.day-number {
-          padding: s(5) 0;
-          border: s(1) solid transparent;
-          border-radius: 1em;
-          transition: all $motion-standard $motion-ease;
-          &:hover {
-            background-color: rgba($on-surface, 0.08);
-            background-image: linear-gradient(
-              to bottom,
-              rgba($on-surface, 0.09),
-              rgba($on-surface, 0.025)
-            );
-            border-color: rgba($on-surface, 0.12);
-            box-shadow: inset 0 s(1) rgba($on-surface, 0.08);
-          }
-          &:selected {
-            background-color: rgba($primary-container, 0.32);
-            background-image: linear-gradient(
-              to bottom,
-              rgba($primary, 0.22),
-              rgba($primary, 0.08)
-            );
-            border-color: rgba($primary, 0.55);
-            color: $text;
-            box-shadow:
-              inset 0 s(1) rgba($on-surface, 0.15),
-              0 0 s(12) rgba($primary, 0.16);
-          }
-        }
-        label.other-month {
-          opacity: 0.25;
-        }
-        label.today {
-          background-color: rgba($primary, 0.72);
+        .notif-header-btn {
+          background-color: rgba($surface, 0.22);
           background-image: linear-gradient(
             to bottom,
-            rgba($primary-fixed, 0.72),
-            rgba($primary, 0.54)
+            rgba($on-surface, 0.12),
+            rgba($on-surface, 0.045) 48%,
+            rgba($surface, 0.16)
           );
-          border: s(1) solid rgba($primary-fixed, 0.76);
-          color: $on-primary-fixed;
-          font-weight: 800;
+          border: s(1) solid rgba($on-surface, 0.14);
+          border-radius: s(10);
+          padding: s(7) s(13);
+          color: rgba($text, 0.84);
           box-shadow:
-            inset 0 s(1) rgba($on-surface, 0.35),
-            0 s(4) s(14) rgba($primary, 0.34);
-          &:hover {
-            background-color: rgba(color.adjust($primary, $lightness: 5%), 0.82);
-            border-color: $primary-fixed;
+            inset 0 s(1) rgba($on-surface, 0.13),
+            inset 0 s(-1) rgba(0, 0, 0, 0.16),
+            0 s(6) s(16) rgba(0, 0, 0, 0.24);
+          transition: all $motion-standard $motion-ease;
+          label {
+            font-size: 0.8em;
+            font-weight: 600;
           }
+          &.clear-all:hover {
+            background-color: rgba($error-container, 0.22);
+            background-image: linear-gradient(to bottom, rgba($error, 0.18), rgba($error, 0.07));
+            border-color: rgba($error, 0.42);
+            color: $error;
+            box-shadow:
+              inset 0 s(1) rgba($on-surface, 0.14),
+              0 s(6) s(18) rgba(0, 0, 0, 0.28),
+              0 0 s(16) rgba($error, 0.14);
+          }
+          &.dnd:hover {
+            background-color: rgba($primary, 0.08);
+            border-color: rgba($primary, 0.28);
+            color: $primary;
+            box-shadow:
+              inset 0 s(1) rgba($on-surface, 0.16),
+              0 s(6) s(18) rgba(0, 0, 0, 0.28),
+              0 0 s(14) rgba($primary, 0.1);
+          }
+          &.dnd.active {
+            background-color: rgba($primary-container, 0.32);
+            background-image: linear-gradient(to bottom, rgba($primary, 0.2), rgba($primary, 0.08));
+            border-color: rgba($primary, 0.46);
+            color: $primary;
+            box-shadow:
+              inset 0 s(1) rgba($on-surface, 0.18),
+              inset 0 s(-1) rgba($primary, 0.08),
+              0 s(6) s(18) rgba(0, 0, 0, 0.28),
+              0 0 s(18) rgba($primary, 0.18);
+          }
+        }
+        .notif-scroll {
+          min-height: s(500);
+        }
+        .dw-title {
+          font-size: 1.1em;
+          font-weight: 700;
+          color: $text;
+          text-shadow: 0 s(1) s(10) rgba(0, 0, 0, 0.45);
+        }
+
+        .click-catcher {
+          background-color: rgba(0, 0, 0, 0.01);
+          border: none;
+          box-shadow: none;
+          background-image: none;
+          outline: none;
+          min-width: 0;
+          min-height: 0;
+          padding: 0;
+          margin: 0;
+          &:hover,
+          &:active,
+          &:focus {
+            background-color: rgba(0, 0, 0, 0.01);
+            background-image: none;
+            border: none;
+            box-shadow: none;
+            outline: none;
+          }
+        }
+
+        &.urgency-2 {
+          border: s(1) solid rgba($error, 0.5);
+          background: rgba($error, 0.05);
+        }
+      }
+
+      .clock-time {
+        font-size: 3.5em;
+        font-weight: 800;
+        color: $primary;
+      }
+      .clock-day {
+        font-size: 1.1em;
+        font-weight: 700;
+        color: $text;
+      }
+      .clock-dot {
+        font-size: 1.1em;
+        color: rgba($text, 0.5);
+      }
+      .clock-date {
+        font-size: 1.1em;
+        color: rgba($text, 0.8);
+      }
+      .clock-tz {
+        font-size: 1.2em;
+        font-weight: 700;
+        color: $primary;
+        margin-bottom: s(8);
+        margin-left: s(8);
+      }
+
+      .weather-icon {
+        color: $primary;
+        -gtk-icon-shadow: 0 0 s(18) rgba($primary, 0.2);
+      }
+      .weather-temp {
+        font-size: 2.65em;
+        font-weight: 800;
+        color: $primary;
+        text-shadow: 0 0 s(18) rgba($primary, 0.15);
+      }
+      .weather-desc {
+        font-size: 0.9em;
+        color: rgba($text, 0.7);
+      }
+      .weather-region {
+        color: $text;
+        font-size: 1.05em;
+        font-weight: 800;
+        margin-bottom: s(3);
+      }
+      .weather-range {
+        min-width: s(62);
+      }
+      .weather-high,
+      .weather-low {
+        color: rgba($text, 0.78);
+        font-size: 0.86em;
+        font-weight: 650;
+      }
+      .weather-forecast {
+        margin-top: s(5);
+      }
+      .weather-info {
+        font-size: 0.95em;
+        color: rgba($text, 0.72);
+      }
+      .weather-info-icon {
+        color: $primary;
+        -gtk-icon-shadow: 0 0 s(10) rgba($primary, 0.16);
+      }
+      .forecast-day {
+        font-size: 0.86em;
+        font-weight: 800;
+        min-width: s(30);
+        color: $text;
+      }
+      .forecast-icon {
+        color: $primary;
+        -gtk-icon-shadow: 0 0 s(10) rgba($primary, 0.14);
+      }
+      .forecast-temps {
+        font-size: 0.76em;
+        font-weight: 650;
+        color: rgba($text, 0.72);
+      }
+
+      .world-clock-card .world-clock-label {
+        font-weight: 700;
+        color: $primary;
+      }
+      .world-clock-time {
+        font-size: 1.1em;
+        font-weight: 700;
+      }
+      .world-clock-details {
+        color: rgba($text, 0.7);
+        font-size: 0.85em;
+      }
+
+      .profile-card {
+        padding: s(16);
+        .profile-avatar {
+          border-radius: 50%;
+          border: s(2) solid $primary;
+          min-height: s(64);
+          min-width: s(64);
+          box-shadow:
+            0 0 s(8) rgba($primary, 0.8),
+            0 0 s(16) rgba($primary, 0.4);
+        }
+        .profile-name {
+          font-size: 1.2em;
+          font-weight: bold;
+          color: $primary;
+        }
+        .profile-env {
+          font-size: 0.9em;
+          color: rgba($text, 0.7);
+        }
+        .profile-uptime {
+          font-size: 0.8em;
+          color: rgba($text, 0.5);
         }
       }
     }
-  }
-
-  .vertical-sep {
-    min-width: s(1);
-    background-color: transparent;
-    background-image: linear-gradient(
-      to bottom,
-      transparent,
-      rgba($on-surface, 0.12) 8%,
-      rgba($primary, 0.18) 50%,
-      rgba($on-surface, 0.12) 92%,
-      transparent
-    );
-    margin: s(8) 0;
-    box-shadow: s(1) 0 s(12) rgba($primary, 0.08);
-  }
-  .notif-header {
-    background-color: rgba($surface, 0.22);
-    background-image: linear-gradient(110deg, rgba($on-surface, 0.075), rgba($on-surface, 0.025));
-    border: s(1) solid $glass-edge-soft;
-    border-radius: s(14);
-    padding: s(8) s(10);
-    box-shadow:
-      inset 0 s(1) rgba($on-surface, 0.06),
-      0 s(8) s(22) rgba(0, 0, 0, 0.2);
-  }
-  .notif-header-btn {
-    background-color: rgba($surface, 0.22);
-    background-image: linear-gradient(
-      to bottom,
-      rgba($on-surface, 0.12),
-      rgba($on-surface, 0.045) 48%,
-      rgba($surface, 0.16)
-    );
-    border: s(1) solid rgba($on-surface, 0.14);
-    border-radius: s(10);
-    padding: s(7) s(13);
-    color: rgba($text, 0.84);
-    box-shadow:
-      inset 0 s(1) rgba($on-surface, 0.13),
-      inset 0 s(-1) rgba(0, 0, 0, 0.16),
-      0 s(6) s(16) rgba(0, 0, 0, 0.24);
-    transition: all $motion-standard $motion-ease;
-    label {
-      font-size: 0.8em;
-      font-weight: 600;
-    }
-    &.clear-all:hover {
-      background-color: rgba($error-container, 0.22);
-      background-image: linear-gradient(to bottom, rgba($error, 0.18), rgba($error, 0.07));
-      border-color: rgba($error, 0.42);
-      color: $error;
-      box-shadow:
-        inset 0 s(1) rgba($on-surface, 0.14),
-        0 s(6) s(18) rgba(0, 0, 0, 0.28),
-        0 0 s(16) rgba($error, 0.14);
-    }
-    &.dnd:hover {
-      background-color: rgba($primary, 0.08);
-      border-color: rgba($primary, 0.28);
-      color: $primary;
-      box-shadow:
-        inset 0 s(1) rgba($on-surface, 0.16),
-        0 s(6) s(18) rgba(0, 0, 0, 0.28),
-        0 0 s(14) rgba($primary, 0.1);
-    }
-    &.dnd.active {
-      background-color: rgba($primary-container, 0.32);
-      background-image: linear-gradient(to bottom, rgba($primary, 0.2), rgba($primary, 0.08));
-      border-color: rgba($primary, 0.46);
-      color: $primary;
-      box-shadow:
-        inset 0 s(1) rgba($on-surface, 0.18),
-        inset 0 s(-1) rgba($primary, 0.08),
-        0 s(6) s(18) rgba(0, 0, 0, 0.28),
-        0 0 s(18) rgba($primary, 0.18);
-    }
-  }
-  .notif-scroll {
-    min-height: s(500);
-  }
-  .dw-title {
-    font-size: 1.1em;
-    font-weight: 700;
-    color: $text;
-    text-shadow: 0 s(1) s(10) rgba(0, 0, 0, 0.45);
-  }
-
-  .click-catcher {
-    background-color: rgba(0, 0, 0, 0.01);
-    border: none;
-    box-shadow: none;
-    background-image: none;
-    outline: none;
-    min-width: 0;
-    min-height: 0;
-    padding: 0;
-    margin: 0;
-    &:hover,
-    &:active,
-    &:focus {
-      background-color: rgba(0, 0, 0, 0.01);
-      background-image: none;
-      border: none;
-      box-shadow: none;
-      outline: none;
-    }
-  }
-
-  &.urgency-2 {
-    border: s(1) solid rgba($error, 0.5);
-    background: rgba($error, 0.05);
-  }
-}
-
-.clock-time {
-  font-size: 3.5em;
-  font-weight: 800;
-  color: $primary;
-}
-.clock-day {
-  font-size: 1.1em;
-  font-weight: 700;
-  color: $text;
-}
-.clock-dot {
-  font-size: 1.1em;
-  color: rgba($text, 0.5);
-}
-.clock-date {
-  font-size: 1.1em;
-  color: rgba($text, 0.8);
-}
-.clock-tz {
-  font-size: 1.2em;
-  font-weight: 700;
-  color: $primary;
-  margin-bottom: s(8);
-  margin-left: s(8);
-}
-
-.weather-icon {
-  color: $primary;
-  -gtk-icon-shadow: 0 0 s(18) rgba($primary, 0.2);
-}
-.weather-temp {
-  font-size: 2.65em;
-  font-weight: 800;
-  color: $primary;
-  text-shadow: 0 0 s(18) rgba($primary, 0.15);
-}
-.weather-desc {
-  font-size: 0.9em;
-  color: rgba($text, 0.7);
-}
-.weather-region {
-  color: $text;
-  font-size: 1.05em;
-  font-weight: 800;
-  margin-bottom: s(3);
-}
-.weather-range {
-  min-width: s(62);
-}
-.weather-high,
-.weather-low {
-  color: rgba($text, 0.78);
-  font-size: 0.86em;
-  font-weight: 650;
-}
-.weather-forecast {
-  margin-top: s(5);
-}
-.weather-info {
-  font-size: 0.95em;
-  color: rgba($text, 0.72);
-}
-.weather-info-icon {
-  color: $primary;
-  -gtk-icon-shadow: 0 0 s(10) rgba($primary, 0.16);
-}
-.forecast-day {
-  font-size: 0.86em;
-  font-weight: 800;
-  min-width: s(30);
-  color: $text;
-}
-.forecast-icon {
-  color: $primary;
-  -gtk-icon-shadow: 0 0 s(10) rgba($primary, 0.14);
-}
-.forecast-temps {
-  font-size: 0.76em;
-  font-weight: 650;
-  color: rgba($text, 0.72);
-}
-
-.world-clock-card .world-clock-label {
-  font-weight: 700;
-  color: $primary;
-}
-.world-clock-time {
-  font-size: 1.1em;
-  font-weight: 700;
-}
-.world-clock-details {
-  color: rgba($text, 0.7);
-  font-size: 0.85em;
-}
-
-.profile-card {
-  padding: s(16);
-  .profile-avatar {
-    border-radius: 50%;
-    border: s(2) solid $primary;
-    min-height: s(64);
-    min-width: s(64);
-    box-shadow:
-      0 0 s(8) rgba($primary, 0.8),
-      0 0 s(16) rgba($primary, 0.4);
-  }
-  .profile-name {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: $primary;
-  }
-  .profile-env {
-    font-size: 0.9em;
-    color: rgba($text, 0.7);
-  }
-  .profile-uptime {
-    font-size: 0.8em;
-    color: rgba($text, 0.5);
   }
 }

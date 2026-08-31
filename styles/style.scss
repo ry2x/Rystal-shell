@@ -1,4 +1,4 @@
-@use 'scss/variables';
+@use 'configured-scales';
 @use 'scss/common';
 @use 'scss/bar';
 @use 'scss/control_center';
@@ -9,3 +9,20 @@
 @use 'scss/applauncher';
 @use 'scss/wallpaper_selector';
 @use 'scss/power_menu';
+
+@each $class, $scale in configured-scales.$app-scales {
+  $root: 'window.#{$class}';
+
+  @include common.styles($root, $scale);
+  @include bar.styles($root, $scale);
+  @include control_center.styles($root, $scale);
+  @include connectivity.styles($root, $scale);
+  @include sound.styles($root, $scale);
+  @include date_weather.styles($root, $scale);
+  @include notifications.styles($root, $scale);
+  @include applauncher.styles($root, $scale);
+  @include wallpaper_selector.styles($root, $scale);
+  @include power_menu.styles($root, $scale);
+}
+
+@include common.tooltip-styles(configured-scales.$app-fallback-scale);

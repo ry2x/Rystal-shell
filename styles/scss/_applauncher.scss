@@ -1,176 +1,182 @@
 @use 'variables' as *;
 
-window.AppLauncher {
-  background: transparent;
-  font-size: s(16); /* Scales up everything using em units */
-}
+@mixin styles($root, $scale) {
+  @include with-scale($scale) {
+    #{$root} {
+      &.AppLauncher {
+        background: transparent;
+        font-size: s(16); /* Scales up everything using em units */
+      }
 
-.applauncher-window {
-  margin: 3em;
-  background-color: rgba($surface, 0.58);
-  background-image: linear-gradient(
-    145deg,
-    rgba($on-surface, 0.08),
-    rgba($on-surface, 0.025) 46%,
-    rgba($surface, 0.2)
-  );
-  border: s(3) solid $primary;
-  border-radius: s(16);
-  box-shadow:
-    inset 0 s(1) rgba($on-surface, 0.12),
-    inset 0 s(-1) rgba(0, 0, 0, 0.2),
-    0 s(22) s(54) rgba(0, 0, 0, 0.42),
-    0 0 s(32) rgba($primary, 0.08);
-  padding: 0.75em;
-}
+      .applauncher-window {
+        margin: 3em;
+        background-color: rgba($surface, 0.58);
+        background-image: linear-gradient(
+          145deg,
+          rgba($on-surface, 0.08),
+          rgba($on-surface, 0.025) 46%,
+          rgba($surface, 0.2)
+        );
+        border: s(3) solid $primary;
+        border-radius: s(16);
+        box-shadow:
+          inset 0 s(1) rgba($on-surface, 0.12),
+          inset 0 s(-1) rgba(0, 0, 0, 0.2),
+          0 s(22) s(54) rgba(0, 0, 0, 0.42),
+          0 0 s(32) rgba($primary, 0.08);
+        padding: 0.75em;
+      }
 
-.applauncher-box-wrapper {
-  background-color: rgba($surface, 0.4);
-  background-image: linear-gradient(
-    135deg,
-    rgba($on-surface, 0.045),
-    rgba($on-surface, 0.012) 48%,
-    rgba($surface, 0.1)
-  );
-  border: s(1) solid rgba($on-surface, 0.12);
-  border-radius: 0.85em;
-  box-shadow:
-    inset 0 s(1) rgba($on-surface, 0.09),
-    inset 0 s(-1) rgba(0, 0, 0, 0.16),
-    0 s(8) s(24) rgba(0, 0, 0, 0.18);
-  padding: 0;
-  min-width: 66em;
-  min-height: 34em;
-}
+      .applauncher-box-wrapper {
+        background-color: rgba($surface, 0.4);
+        background-image: linear-gradient(
+          135deg,
+          rgba($on-surface, 0.045),
+          rgba($on-surface, 0.012) 48%,
+          rgba($surface, 0.1)
+        );
+        border: s(1) solid rgba($on-surface, 0.12);
+        border-radius: 0.85em;
+        box-shadow:
+          inset 0 s(1) rgba($on-surface, 0.09),
+          inset 0 s(-1) rgba(0, 0, 0, 0.16),
+          0 s(8) s(24) rgba(0, 0, 0, 0.18);
+        padding: 0;
+        min-width: 66em;
+        min-height: 34em;
+      }
 
-.applauncher-left-panel {
-  background: transparent;
-  border: none;
-  border-radius: 0.85em 0 0 0.85em;
-  box-shadow: none;
-  min-width: 32em;
-}
+      .applauncher-left-panel {
+        background: transparent;
+        border: none;
+        border-radius: 0.85em 0 0 0.85em;
+        box-shadow: none;
+        min-width: 32em;
+      }
 
-.applauncher-search-container {
-  padding: s(6) s(12);
-}
+      .applauncher-search-container {
+        padding: s(6) s(12);
+      }
 
-.applauncher-input,
-.applauncher-input:hover,
-.applauncher-input:focus,
-.applauncher-input:focus-visible,
-.applauncher-input:focus-within {
-  caret-color: $accent;
-  background-color: rgba($primary-container, 0.42);
-  background-image: linear-gradient(
-    to bottom,
-    rgba($on-surface, 0.18),
-    rgba($primary, 0.12) 48%,
-    rgba($surface, 0.24)
-  );
-  color: $text;
-  padding: s(8) s(16);
-  font-family: 'GeistMono Nerd Font', monospace;
-  font-weight: bold;
-  margin: 0 6em 1em 0;
-  border: s(1) solid rgba($primary, 0.56);
-  border-radius: 0.5em;
-  box-shadow:
-    inset 0 s(1) rgba($on-surface, 0.17),
-    inset 0 s(-1) rgba(0, 0, 0, 0.16),
-    0 s(8) s(22) rgba(0, 0, 0, 0.3),
-    0 0 s(18) rgba($primary, 0.15);
-  outline: none;
-  transition: none;
-}
+      .applauncher-input,
+      .applauncher-input:hover,
+      .applauncher-input:focus,
+      .applauncher-input:focus-visible,
+      .applauncher-input:focus-within {
+        caret-color: $accent;
+        background-color: rgba($primary-container, 0.42);
+        background-image: linear-gradient(
+          to bottom,
+          rgba($on-surface, 0.18),
+          rgba($primary, 0.12) 48%,
+          rgba($surface, 0.24)
+        );
+        color: $text;
+        padding: s(8) s(16);
+        font-family: 'GeistMono Nerd Font', monospace;
+        font-weight: bold;
+        margin: 0 6em 1em 0;
+        border: s(1) solid rgba($primary, 0.56);
+        border-radius: 0.5em;
+        box-shadow:
+          inset 0 s(1) rgba($on-surface, 0.17),
+          inset 0 s(-1) rgba(0, 0, 0, 0.16),
+          0 s(8) s(22) rgba(0, 0, 0, 0.3),
+          0 0 s(18) rgba($primary, 0.15);
+        outline: none;
+        transition: none;
+      }
 
-.applauncher-input text,
-.applauncher-input text:hover,
-.applauncher-input text:focus {
-  background: transparent;
-  color: $text;
-  caret-color: $accent;
-  outline: none;
+      .applauncher-input text,
+      .applauncher-input text:hover,
+      .applauncher-input text:focus {
+        background: transparent;
+        color: $text;
+        caret-color: $accent;
+        outline: none;
 
-  selection {
-    background-color: rgba($primary, 0.38);
-    color: $on-primary-container;
+        selection {
+          background-color: rgba($primary, 0.38);
+          color: $on-primary-container;
+        }
+
+        placeholder {
+          color: rgba($text, 0.86);
+          opacity: 1;
+        }
+      }
+
+      .applauncher-right-panel {
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        min-width: 32em;
+      }
+
+      .applauncher-scroll {
+        min-width: 32em;
+        margin-top: s(24);
+        margin-bottom: s(24);
+      }
+
+      .applauncher-list {
+        color: $text;
+        padding: s(0) s(32) s(0) s(32);
+        margin: s(0) s(8) s(0) s(0);
+      }
+
+      .applauncher-item {
+        border-radius: 0.5em;
+        padding: 0.6em 0.5em 0.6em 1.2em;
+        margin: s(1) 0;
+        min-height: 2.8em;
+        background-color: transparent;
+        background-image: none;
+        border: s(1) solid transparent;
+        box-shadow: none;
+        color: $text;
+        transition: all $motion-standard $motion-ease;
+      }
+      .applauncher-item:hover,
+      .applauncher-item:focus,
+      .applauncher-item.selected {
+        background-color: rgba($primary-container, 0.3);
+        background-image: linear-gradient(
+          100deg,
+          rgba($on-surface, 0.14),
+          rgba($primary, 0.11) 58%,
+          rgba($surface, 0.12)
+        );
+        border-color: rgba($primary, 0.4);
+        color: $primary-fixed;
+        box-shadow:
+          inset 0 s(1) rgba($on-surface, 0.16),
+          inset 0 s(-1) rgba($primary, 0.07),
+          0 s(8) s(20) rgba(0, 0, 0, 0.24),
+          0 0 s(16) rgba($primary, 0.12);
+      }
+      .applauncher-item:hover label,
+      .applauncher-item:focus label,
+      .applauncher-item.selected label {
+        color: $primary-fixed;
+      }
+
+      .applauncher-item-icon {
+        font-size: 1.5em;
+        -gtk-icon-size: 1.5em;
+        margin-right: 0.8em;
+      }
+
+      .applauncher-item-name {
+        font-weight: normal;
+        font-size: 1em;
+      }
+
+      .applauncher-item-desc {
+        font-size: 0.75em;
+        opacity: 0.7;
+      }
+    }
   }
-
-  placeholder {
-    color: rgba($text, 0.86);
-    opacity: 1;
-  }
-}
-
-.applauncher-right-panel {
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  min-width: 32em;
-}
-
-.applauncher-scroll {
-  min-width: 32em;
-  margin-top: s(24);
-  margin-bottom: s(24);
-}
-
-.applauncher-list {
-  color: $text;
-  padding: s(0) s(32) s(0) s(32);
-  margin: s(0) s(8) s(0) s(0);
-}
-
-.applauncher-item {
-  border-radius: 0.5em;
-  padding: 0.6em 0.5em 0.6em 1.2em;
-  margin: s(1) 0;
-  min-height: 2.8em;
-  background-color: transparent;
-  background-image: none;
-  border: s(1) solid transparent;
-  box-shadow: none;
-  color: $text;
-  transition: all $motion-standard $motion-ease;
-}
-.applauncher-item:hover,
-.applauncher-item:focus,
-.applauncher-item.selected {
-  background-color: rgba($primary-container, 0.3);
-  background-image: linear-gradient(
-    100deg,
-    rgba($on-surface, 0.14),
-    rgba($primary, 0.11) 58%,
-    rgba($surface, 0.12)
-  );
-  border-color: rgba($primary, 0.4);
-  color: $primary-fixed;
-  box-shadow:
-    inset 0 s(1) rgba($on-surface, 0.16),
-    inset 0 s(-1) rgba($primary, 0.07),
-    0 s(8) s(20) rgba(0, 0, 0, 0.24),
-    0 0 s(16) rgba($primary, 0.12);
-}
-.applauncher-item:hover label,
-.applauncher-item:focus label,
-.applauncher-item.selected label {
-  color: $primary-fixed;
-}
-
-.applauncher-item-icon {
-  font-size: 1.5em;
-  -gtk-icon-size: 1.5em;
-  margin-right: 0.8em;
-}
-
-.applauncher-item-name {
-  font-weight: normal;
-  font-size: 1em;
-}
-
-.applauncher-item-desc {
-  font-size: 0.75em;
-  opacity: 0.7;
 }

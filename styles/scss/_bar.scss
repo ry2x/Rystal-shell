@@ -20,483 +20,501 @@ $bar-content-counter-scale: 1.3158;
 //========================
 // Bar Styling
 //========================
-window.Bar {
-  background: transparent;
-  color: $text;
-  font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
-
-  // Dummy elements: CSS color → JS/Cairo bridge (read via get_color())
-  .bar-color-bg {
-    color: $bg;
-  }
-  .bar-color-accent {
-    color: $accent;
-  }
-
-  // The main floating bar container
-  .panel {
-    padding: s(12) 0;
-    min-width: s(50);
-
-    .panel-start,
-    .panel-center,
-    .panel-end {
-      padding: s(4) 0;
-    }
-  }
-
-  // Separators between modules
-  .sep {
-    background: $border;
-    min-height: s(1);
-    min-width: s(12);
-    margin: s(6) 0;
-    border-radius: s(2);
-  }
-
-  // Workspace module
-  .Workspaces {
-    margin: 0;
-    padding: s(16) 0;
-    @include bar-card-surface;
-    border-radius: s(14);
-    transform: scaleX($bar-capsule-scale);
-
-    > box {
-      transform: scaleX($bar-content-counter-scale);
-    }
-
-    button.workspace {
-      background-color: rgba($surface, 0.34);
-      background-image: linear-gradient(
-        145deg,
-        rgba($on-surface, 0.44),
-        rgba($on-surface, 0.16) 48%,
-        rgba($surface, 0.2)
-      );
-      border-radius: s(99);
-      border: s(1) solid rgba($on-surface, 0.16);
-      padding: 0;
-      min-width: s(8);
-      min-height: s(8);
-      margin: 0;
-      box-shadow:
-        inset 0 s(1) rgba($on-surface, 0.22),
-        inset 0 s(-1) rgba(0, 0, 0, 0.2),
-        0 s(2) s(5) rgba(0, 0, 0, 0.18);
-      transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
-
-      &:hover {
-        background-color: rgba($primary-container, 0.32);
-        background-image: linear-gradient(
-          145deg,
-          rgba($on-surface, 0.58),
-          rgba($primary, 0.26) 48%,
-          rgba($surface, 0.18)
-        );
-        border-color: rgba($primary, 0.48);
-        box-shadow:
-          inset 0 s(1) rgba($on-surface, 0.42),
-          inset 0 s(-1) rgba($primary, 0.12),
-          0 0 s(11) rgba($primary, 0.24);
-        transform: scale(1.08);
-      }
-
-      &.active {
+@mixin styles($root, $scale) {
+  @include with-scale($scale) {
+    #{$root} {
+      &.Bar {
         background: transparent;
-        border-color: transparent;
-        box-shadow: none;
-        transform: scale(1);
-      }
-    }
+        color: $text;
+        font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
 
-    .active-indicator {
-      // Counter the workspace capsule's scaleX(0.76) so this renders as a circle.
-      min-width: s(17);
-      min-height: s(13);
-      transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        // Dummy elements: CSS color → JS/Cairo bridge (read via get_color())
+        .bar-color-bg {
+          color: $bg;
+        }
+        .bar-color-accent {
+          color: $accent;
+        }
 
-      .active-indicator-dot {
-        background-color: $accent;
-        background-image: none;
-        border: none;
-        border-radius: 50%;
-        min-width: s(17);
-        min-height: s(13);
-        box-shadow: none;
-        transform: scaleY(1);
-        transition: transform 190ms cubic-bezier(0.25, 1, 0.5, 1);
-      }
+        // The main floating bar container
+        .panel {
+          padding: s(12) 0;
+          min-width: s(50);
 
-      &.moving .active-indicator-dot {
-        border-radius: s(99);
-        transform: scaleY(1.55);
-      }
-    }
-  }
+          .panel-start,
+          .panel-center,
+          .panel-end {
+            padding: s(4) 0;
+          }
+        }
 
-  // general styling for bar modules
-  .Volume,
-  .Clock,
-  .SysMetrics,
-  .ScrollerIndicator,
-  .Updates,
-  .Weather,
-  .Wifi,
-  .network-btn {
-    margin: 0;
-    padding: s(11) 0;
-    border-radius: s(10);
-    transition: all 200ms cubic-bezier(0.25, 1, 0.5, 1);
-    min-height: s(22);
-    min-width: 0;
-    @include bar-card-surface;
-    border: none;
-    transform: scaleX($bar-capsule-scale);
+        // Separators between modules
+        .sep {
+          background: $border;
+          min-height: s(1);
+          min-width: s(12);
+          margin: s(6) 0;
+          border-radius: s(2);
+        }
 
-    > box {
-      transform: scaleX($bar-content-counter-scale);
-      transition: transform 200ms ease;
-    }
+        // Workspace module
+        .Workspaces {
+          margin: 0;
+          padding: s(16) 0;
+          @include bar-card-surface;
+          border-radius: s(14);
+          transform: scaleX($bar-capsule-scale);
 
-    &:hover {
-      background-color: rgba($primary-container, 0.17);
-      background-image: linear-gradient(
-        145deg,
-        rgba($on-surface, 0.14),
-        rgba($primary, 0.075) 46%,
-        rgba($surface, 0.11)
-      );
-      box-shadow:
-        inset 0 0 0 s(1) rgba($primary, 0.34),
-        inset 0 s(1) rgba($on-surface, 0.18),
-        inset 0 s(-1) rgba($primary, 0.08),
-        inset 0 0 s(9) rgba($primary, 0.055);
+          > box {
+            transform: scaleX($bar-content-counter-scale);
+          }
 
-      > box {
-        transform: scaleX($bar-content-counter-scale);
-      }
+          button.workspace {
+            background-color: rgba($surface, 0.34);
+            background-image: linear-gradient(
+              145deg,
+              rgba($on-surface, 0.44),
+              rgba($on-surface, 0.16) 48%,
+              rgba($surface, 0.2)
+            );
+            border-radius: s(99);
+            border: s(1) solid rgba($on-surface, 0.16);
+            padding: 0;
+            min-width: s(8);
+            min-height: s(8);
+            margin: 0;
+            box-shadow:
+              inset 0 s(1) rgba($on-surface, 0.22),
+              inset 0 s(-1) rgba(0, 0, 0, 0.2),
+              0 s(2) s(5) rgba(0, 0, 0, 0.18);
+            transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
 
-      image {
-        color: $primary-fixed;
-        -gtk-icon-shadow: 0 0 s(10) rgba($primary, 0.3);
-      }
+            &:hover {
+              background-color: rgba($primary-container, 0.32);
+              background-image: linear-gradient(
+                145deg,
+                rgba($on-surface, 0.58),
+                rgba($primary, 0.26) 48%,
+                rgba($surface, 0.18)
+              );
+              border-color: rgba($primary, 0.48);
+              box-shadow:
+                inset 0 s(1) rgba($on-surface, 0.42),
+                inset 0 s(-1) rgba($primary, 0.12),
+                0 0 s(11) rgba($primary, 0.24);
+              transform: scale(1.08);
+            }
 
-      label {
-        text-shadow: 0 0 s(8) rgba($primary, 0.14);
-      }
-    }
+            &.active {
+              background: transparent;
+              border-color: transparent;
+              box-shadow: none;
+              transform: scale(1);
+            }
+          }
 
-    &:active {
-      background-color: rgba($primary-container, 0.24);
-      background-image: linear-gradient(
-        145deg,
-        rgba($primary, 0.21),
-        rgba($primary, 0.06) 60%,
-        rgba($surface, 0.1)
-      );
-      box-shadow:
-        inset 0 0 0 s(1) rgba($primary, 0.4),
-        inset 0 s(2) s(5) rgba(0, 0, 0, 0.2),
-        inset 0 0 s(8) rgba($primary, 0.07);
-    }
+          .active-indicator {
+            // Counter the workspace capsule's scaleX(0.76) so this renders as a circle.
+            min-width: s(17);
+            min-height: s(13);
+            transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
-    // Unify all icons
-    image {
-      color: $accent;
-    }
+            .active-indicator-dot {
+              background-color: $accent;
+              background-image: none;
+              border: none;
+              border-radius: 50%;
+              min-width: s(17);
+              min-height: s(13);
+              box-shadow: none;
+              transform: scaleY(1);
+              transition: transform 190ms cubic-bezier(0.25, 1, 0.5, 1);
+            }
 
-    // Unify all standard labels
-    label {
-      font-size: 0.85em;
-      font-weight: 600;
-      color: $text;
-    }
-  }
+            &.moving .active-indicator-dot {
+              border-radius: s(99);
+              transform: scaleY(1.55);
+            }
+          }
+        }
 
-  // Clock
-  .Clock {
-    padding: s(7) 0;
+        // general styling for bar modules
+        .Volume,
+        .Clock,
+        .SysMetrics,
+        .ScrollerIndicator,
+        .Updates,
+        .Weather,
+        .Wifi,
+        .network-btn {
+          margin: 0;
+          padding: s(11) 0;
+          border-radius: s(10);
+          transition: all 200ms cubic-bezier(0.25, 1, 0.5, 1);
+          min-height: s(22);
+          min-width: 0;
+          @include bar-card-surface;
+          border: none;
+          transform: scaleX($bar-capsule-scale);
 
-    .time {
-      font-weight: 800;
-      color: $on-surface;
-      font-size: 1.2em;
-      margin: 0 s(-22);
-      transform: rotate(90deg);
-      text-shadow: 0 s(1) s(9) rgba(0, 0, 0, 0.5);
-    }
-    .date {
-      color: $accent;
-      font-size: 1.1em;
-      font-weight: 700;
-      margin: 0 s(-18);
-      transform: rotate(90deg);
-      text-shadow: 0 0 s(9) rgba($primary, 0.16);
-    }
-    .day {
-      color: rgba($text, 0.7);
-      font-size: 0.95em;
-      font-weight: 600;
-      margin: 0 s(-12);
-      text-transform: uppercase;
-      transform: rotate(90deg);
-    }
-  }
+          > box {
+            transform: scaleX($bar-content-counter-scale);
+            transition: transform 200ms ease;
+          }
 
-  .Volume .volume-unit {
-    font-size: 0.85em;
-  }
+          &:hover {
+            background-color: rgba($primary-container, 0.17);
+            background-image: linear-gradient(
+              145deg,
+              rgba($on-surface, 0.14),
+              rgba($primary, 0.075) 46%,
+              rgba($surface, 0.11)
+            );
+            box-shadow:
+              inset 0 0 0 s(1) rgba($primary, 0.34),
+              inset 0 s(1) rgba($on-surface, 0.18),
+              inset 0 s(-1) rgba($primary, 0.08),
+              inset 0 0 s(9) rgba($primary, 0.055);
 
-  .SysMetrics {
-    .metric-icon {
-      margin-bottom: s(4);
-    }
-    .metric-value {
-      font-size: 0.9em;
-    }
-    .metric-unit {
-      font-size: 0.75em;
-    }
-  }
+            > box {
+              transform: scaleX($bar-content-counter-scale);
+            }
 
-  .Weather {
-    .bar-weather-icon {
-      margin-bottom: s(4);
-    }
-    .bar-weather-value {
-      font-weight: 800;
-    }
-    .bar-weather-unit {
-      font-size: 0.85em;
-      font-weight: 800;
-    }
-  }
+            image {
+              color: $primary-fixed;
+              -gtk-icon-shadow: 0 0 s(10) rgba($primary, 0.3);
+            }
 
-  // Record Indicator
-  .RecordIndicator {
-    margin: 0;
-    min-width: 0;
-    background-color: rgba($error-container, 0.26);
-    background-image: linear-gradient(to bottom, rgba($error, 0.18), rgba($error, 0.055));
-    border: none;
-    border-radius: s(10);
-    color: $error;
-    box-shadow:
-      inset 0 0 0 s(1) rgba($error, 0.38),
-      inset 0 s(1) rgba($on-surface, 0.12);
-    transform: scaleX($bar-capsule-scale);
-    animation: pulse-record 2s infinite;
+            label {
+              text-shadow: 0 0 s(8) rgba($primary, 0.14);
+            }
+          }
 
-    &:hover {
-      background-color: rgba($error-container, 0.36);
-      box-shadow:
-        inset 0 0 0 s(1) rgba($error, 0.5),
-        inset 0 s(1) rgba($on-surface, 0.15),
-        inset 0 0 s(8) rgba($error, 0.1);
-    }
+          &:active {
+            background-color: rgba($primary-container, 0.24);
+            background-image: linear-gradient(
+              145deg,
+              rgba($primary, 0.21),
+              rgba($primary, 0.06) 60%,
+              rgba($surface, 0.1)
+            );
+            box-shadow:
+              inset 0 0 0 s(1) rgba($primary, 0.4),
+              inset 0 s(2) s(5) rgba(0, 0, 0, 0.2),
+              inset 0 0 s(8) rgba($primary, 0.07);
+          }
 
-    .record-indicator-content {
-      padding: s(4);
-      transform: scaleX($bar-content-counter-scale);
-    }
-  }
+          // Unify all icons
+          image {
+            color: $accent;
+          }
 
-  @keyframes pulse-record {
-    0% {
-      box-shadow:
-        inset 0 0 0 s(1) rgba($error, 0.38),
-        inset 0 s(1) rgba($on-surface, 0.12),
-        0 s(3) s(10) rgba(0, 0, 0, 0.2),
-        0 0 0 0 rgba($error, 0.42);
-    }
-    70% {
-      box-shadow:
-        inset 0 0 0 s(1) rgba($error, 0.42),
-        inset 0 s(1) rgba($on-surface, 0.12),
-        0 s(3) s(10) rgba(0, 0, 0, 0.2),
-        0 0 0 s(6) rgba($error, 0);
-    }
-    100% {
-      box-shadow:
-        inset 0 0 0 s(1) rgba($error, 0.38),
-        inset 0 s(1) rgba($on-surface, 0.12),
-        0 s(3) s(10) rgba(0, 0, 0, 0.2),
-        0 0 0 0 rgba($error, 0);
-    }
-  }
+          // Unify all standard labels
+          label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: $text;
+          }
+        }
 
-  .ScrollerIndicator {
-    .scroller-icon {
-      margin-bottom: s(4);
-    }
-    .scroller-count {
-      font-weight: 800;
-    }
-    .separator {
-      background-color: $accent;
-      border-radius: s(2);
-      margin: s(2) 0;
-      min-height: s(3);
-      min-width: s(12);
-    }
-  }
+        // Clock
+        .Clock {
+          padding: s(7) 0;
 
-  // Tray
-  .Tray {
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    box-shadow: none;
+          .time {
+            font-weight: 800;
+            color: $on-surface;
+            font-size: 1.2em;
+            margin: 0 s(-22);
+            transform: rotate(90deg);
+            text-shadow: 0 s(1) s(9) rgba(0, 0, 0, 0.5);
+          }
+          .date {
+            color: $accent;
+            font-size: 1.1em;
+            font-weight: 700;
+            margin: 0 s(-18);
+            transform: rotate(90deg);
+            text-shadow: 0 0 s(9) rgba($primary, 0.16);
+          }
+          .day {
+            color: rgba($text, 0.7);
+            font-size: 0.95em;
+            font-weight: 600;
+            margin: 0 s(-12);
+            text-transform: uppercase;
+            transform: rotate(90deg);
+          }
+        }
 
-    .tray-primary {
-      min-width: s(32);
-      min-height: s(32);
-      padding: 0;
-      border: none;
-      border-radius: s(8);
-      background-color: rgba($surface, 0.16);
-      background-image: linear-gradient(145deg, rgba($on-surface, 0.1), rgba($on-surface, 0.025));
-      box-shadow:
-        inset 0 0 0 s(1) rgba($on-surface, 0.1),
-        inset 0 s(1) rgba($on-surface, 0.09),
-        inset 0 s(-1) rgba(0, 0, 0, 0.12);
-      transform: none;
-      transition: all $motion-standard $motion-ease;
+        .Volume .volume-unit {
+          font-size: 0.85em;
+        }
 
-      &:hover {
-        background-color: rgba($primary-container, 0.24);
-        box-shadow:
-          inset 0 0 0 s(1) rgba($primary, 0.32),
-          inset 0 s(1) rgba($on-surface, 0.15),
-          inset 0 0 s(7) rgba($primary, 0.06);
+        .SysMetrics {
+          .metric-icon {
+            margin-bottom: s(4);
+          }
+          .metric-value {
+            font-size: 0.9em;
+          }
+          .metric-unit {
+            font-size: 0.75em;
+          }
+        }
 
-        image {
-          color: $primary-fixed;
-          -gtk-icon-shadow: 0 0 s(9) rgba($primary, 0.28);
+        .Weather {
+          .bar-weather-icon {
+            margin-bottom: s(4);
+          }
+          .bar-weather-value {
+            font-weight: 800;
+          }
+          .bar-weather-unit {
+            font-size: 0.85em;
+            font-weight: 800;
+          }
+        }
+
+        // Record Indicator
+        .RecordIndicator {
+          margin: 0;
+          min-width: 0;
+          background-color: rgba($error-container, 0.26);
+          background-image: linear-gradient(to bottom, rgba($error, 0.18), rgba($error, 0.055));
+          border: none;
+          border-radius: s(10);
+          color: $error;
+          box-shadow:
+            inset 0 0 0 s(1) rgba($error, 0.38),
+            inset 0 s(1) rgba($on-surface, 0.12);
+          transform: scaleX($bar-capsule-scale);
+          animation: pulse-record 2s infinite;
+
+          &:hover {
+            background-color: rgba($error-container, 0.36);
+            box-shadow:
+              inset 0 0 0 s(1) rgba($error, 0.5),
+              inset 0 s(1) rgba($on-surface, 0.15),
+              inset 0 0 s(8) rgba($error, 0.1);
+          }
+
+          .record-indicator-content {
+            padding: s(4);
+            transform: scaleX($bar-content-counter-scale);
+          }
+        }
+
+        @keyframes pulse-record {
+          0% {
+            box-shadow:
+              inset 0 0 0 s(1) rgba($error, 0.38),
+              inset 0 s(1) rgba($on-surface, 0.12),
+              0 s(3) s(10) rgba(0, 0, 0, 0.2),
+              0 0 0 0 rgba($error, 0.42);
+          }
+          70% {
+            box-shadow:
+              inset 0 0 0 s(1) rgba($error, 0.42),
+              inset 0 s(1) rgba($on-surface, 0.12),
+              0 s(3) s(10) rgba(0, 0, 0, 0.2),
+              0 0 0 s(6) rgba($error, 0);
+          }
+          100% {
+            box-shadow:
+              inset 0 0 0 s(1) rgba($error, 0.38),
+              inset 0 s(1) rgba($on-surface, 0.12),
+              0 s(3) s(10) rgba(0, 0, 0, 0.2),
+              0 0 0 0 rgba($error, 0);
+          }
+        }
+
+        .ScrollerIndicator {
+          .scroller-icon {
+            margin-bottom: s(4);
+          }
+          .scroller-count {
+            font-weight: 800;
+          }
+          .separator {
+            background-color: $accent;
+            border-radius: s(2);
+            margin: s(2) 0;
+            min-height: s(3);
+            min-width: s(12);
+          }
+        }
+
+        // Tray
+        .Tray {
+          margin: 0;
+          padding: 0;
+          background: transparent;
+          box-shadow: none;
+
+          .tray-primary {
+            min-width: s(32);
+            min-height: s(32);
+            padding: 0;
+            border: none;
+            border-radius: s(8);
+            background-color: rgba($surface, 0.16);
+            background-image: linear-gradient(
+              145deg,
+              rgba($on-surface, 0.1),
+              rgba($on-surface, 0.025)
+            );
+            box-shadow:
+              inset 0 0 0 s(1) rgba($on-surface, 0.1),
+              inset 0 s(1) rgba($on-surface, 0.09),
+              inset 0 s(-1) rgba(0, 0, 0, 0.12);
+            transform: none;
+            transition: all $motion-standard $motion-ease;
+
+            &:hover {
+              background-color: rgba($primary-container, 0.24);
+              box-shadow:
+                inset 0 0 0 s(1) rgba($primary, 0.32),
+                inset 0 s(1) rgba($on-surface, 0.15),
+                inset 0 0 s(7) rgba($primary, 0.06);
+
+              image {
+                color: $primary-fixed;
+                -gtk-icon-shadow: 0 0 s(9) rgba($primary, 0.28);
+              }
+            }
+          }
         }
       }
-    }
-  }
-}
 
-//========================
-// Tray Popover Styling
-//========================
-popover.tray-menu,
+      //========================
+      // Tray Popover Styling
+      //========================
+      popover.tray-menu,
 popover.tray-expander,
 popover.tray-item-menu,
 // Gtk creates nested submenu popovers internally, so only their `.menu`
 // class is available to style them.
 popover.menu {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  margin: 0;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
 
-  > contents {
-    background-color: rgba($surface, 0.68);
-    background-image: linear-gradient(
-      145deg,
-      rgba($on-surface, 0.11),
-      rgba($on-surface, 0.035),
-      rgba($surface, 0.26)
-    );
-    border: s(1) solid rgba($on-surface, 0.17);
-    border-radius: s(14);
-    box-shadow:
-      inset 0 s(1) rgba($on-surface, 0.1),
-      0 s(12) s(32) rgba(0, 0, 0, 0.4);
-    padding: s(6);
-  }
-}
+        > contents {
+          background-color: rgba($surface, 0.68);
+          background-image: linear-gradient(
+            145deg,
+            rgba($on-surface, 0.11),
+            rgba($on-surface, 0.035),
+            rgba($surface, 0.26)
+          );
+          border: s(1) solid rgba($on-surface, 0.17);
+          border-radius: s(14);
+          box-shadow:
+            inset 0 s(1) rgba($on-surface, 0.1),
+            0 s(12) s(32) rgba(0, 0, 0, 0.4);
+          padding: s(6);
+        }
+      }
 
-popover.tray-menu {
-  .tray-menu-btn {
-    background: transparent;
-    border: 0;
-    border-radius: s(9);
-    box-shadow: none;
-    padding: s(7) s(10);
+      popover.tray-menu {
+        .tray-menu-btn {
+          background: transparent;
+          border: 0;
+          border-radius: s(9);
+          box-shadow: none;
+          padding: s(7) s(10);
 
-    &:hover {
-      background-color: rgba($on-surface, 0.075);
-      background-image: linear-gradient(to right, rgba($on-surface, 0.055), transparent);
-      box-shadow: inset 0 s(1) rgba($on-surface, 0.055);
+          &:hover {
+            background-color: rgba($on-surface, 0.075);
+            background-image: linear-gradient(to right, rgba($on-surface, 0.055), transparent);
+            box-shadow: inset 0 s(1) rgba($on-surface, 0.055);
+          }
+        }
+      }
+
+      popover.tray-expander {
+        > contents {
+          margin-left: s(8);
+        }
+
+        menubutton.tray-item {
+          background: transparent;
+          border: none;
+          box-shadow: none;
+          padding: 0;
+        }
+
+        button.tray-item,
+        menubutton.tray-item > button.toggle {
+          min-width: s(24);
+          min-height: s(24);
+          background-color: rgba($surface, 0.22);
+          background-image: linear-gradient(
+            to bottom,
+            rgba($on-surface, 0.13),
+            rgba($on-surface, 0.045) 48%,
+            rgba($surface, 0.16)
+          );
+          border: s(1) solid rgba($on-surface, 0.14);
+          border-radius: s(9);
+          box-shadow:
+            inset 0 s(1) rgba($on-surface, 0.14),
+            inset 0 s(-1) rgba(0, 0, 0, 0.16),
+            0 s(4) s(12) rgba(0, 0, 0, 0.22);
+          padding: s(4);
+          transition: all $motion-standard $motion-ease;
+
+          &:hover {
+            background-color: rgba($primary-container, 0.28);
+            background-image: linear-gradient(
+              to bottom,
+              rgba($primary, 0.18),
+              rgba($primary, 0.06)
+            );
+            border-color: rgba($primary, 0.42);
+            box-shadow:
+              inset 0 s(1) rgba($on-surface, 0.17),
+              0 s(5) s(14) rgba(0, 0, 0, 0.26),
+              0 0 s(15) rgba($primary, 0.14);
+          }
+
+          &:active {
+            background-color: rgba($primary-container, 0.38);
+            background-image: linear-gradient(
+              to bottom,
+              rgba($primary, 0.14),
+              rgba($surface, 0.12)
+            );
+            border-color: rgba($primary, 0.34);
+            box-shadow:
+              inset 0 s(2) s(4) rgba(0, 0, 0, 0.28),
+              0 s(2) s(7) rgba(0, 0, 0, 0.18);
+          }
+        }
+      }
+
+      popover.tray-item-menu button.model,
+      popover.menu button.model {
+        background: transparent;
+        border: 0;
+        border-radius: s(9);
+        box-shadow: none;
+        padding: s(7) s(10);
+
+        &:hover {
+          background-color: rgba($on-surface, 0.075);
+          background-image: linear-gradient(to right, rgba($on-surface, 0.055), transparent);
+          box-shadow: inset 0 s(1) rgba($on-surface, 0.055);
+        }
+      }
+
+      .tray-menu-placeholder {
+        color: rgba($text, 0.7);
+        padding: s(8) s(12);
+      }
     }
   }
-}
-
-popover.tray-expander {
-  > contents {
-    margin-left: s(8);
-  }
-
-  menubutton.tray-item {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-  }
-
-  button.tray-item,
-  menubutton.tray-item > button.toggle {
-    min-width: s(24);
-    min-height: s(24);
-    background-color: rgba($surface, 0.22);
-    background-image: linear-gradient(
-      to bottom,
-      rgba($on-surface, 0.13),
-      rgba($on-surface, 0.045) 48%,
-      rgba($surface, 0.16)
-    );
-    border: s(1) solid rgba($on-surface, 0.14);
-    border-radius: s(9);
-    box-shadow:
-      inset 0 s(1) rgba($on-surface, 0.14),
-      inset 0 s(-1) rgba(0, 0, 0, 0.16),
-      0 s(4) s(12) rgba(0, 0, 0, 0.22);
-    padding: s(4);
-    transition: all $motion-standard $motion-ease;
-
-    &:hover {
-      background-color: rgba($primary-container, 0.28);
-      background-image: linear-gradient(to bottom, rgba($primary, 0.18), rgba($primary, 0.06));
-      border-color: rgba($primary, 0.42);
-      box-shadow:
-        inset 0 s(1) rgba($on-surface, 0.17),
-        0 s(5) s(14) rgba(0, 0, 0, 0.26),
-        0 0 s(15) rgba($primary, 0.14);
-    }
-
-    &:active {
-      background-color: rgba($primary-container, 0.38);
-      background-image: linear-gradient(to bottom, rgba($primary, 0.14), rgba($surface, 0.12));
-      border-color: rgba($primary, 0.34);
-      box-shadow:
-        inset 0 s(2) s(4) rgba(0, 0, 0, 0.28),
-        0 s(2) s(7) rgba(0, 0, 0, 0.18);
-    }
-  }
-}
-
-popover.tray-item-menu button.model,
-popover.menu button.model {
-  background: transparent;
-  border: 0;
-  border-radius: s(9);
-  box-shadow: none;
-  padding: s(7) s(10);
-
-  &:hover {
-    background-color: rgba($on-surface, 0.075);
-    background-image: linear-gradient(to right, rgba($on-surface, 0.055), transparent);
-    box-shadow: inset 0 s(1) rgba($on-surface, 0.055);
-  }
-}
-
-.tray-menu-placeholder {
-  color: rgba($text, 0.7);
-  padding: s(8) s(12);
 }

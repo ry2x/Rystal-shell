@@ -1,239 +1,245 @@
 @use 'variables' as *;
 
-window.PowerMenu {
-  background: transparent;
-  color: $text;
-  font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
+@mixin styles($root, $scale) {
+  @include with-scale($scale) {
+    #{$root} {
+      &.PowerMenu {
+        background: transparent;
+        color: $text;
+        font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
 
-  .click-catcher {
-    background: rgba(0, 0, 0, 0.01);
-    border: none;
-    box-shadow: none;
-  }
-}
+        .click-catcher {
+          background: rgba(0, 0, 0, 0.01);
+          border: none;
+          box-shadow: none;
+        }
+      }
 
-.power-menu-panel {
-  padding: 0 s(42);
-  background: transparent;
-  opacity: 0;
-  transform: translateY(s(350));
-  transition:
-    transform $motion-panel $motion-ease,
-    opacity $motion-standard $motion-ease;
+      .power-menu-panel {
+        padding: 0 s(42);
+        background: transparent;
+        opacity: 0;
+        transform: translateY(s(350));
+        transition:
+          transform $motion-panel $motion-ease,
+          opacity $motion-standard $motion-ease;
 
-  &.revealed {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+        &.revealed {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-.power-menu-main,
-.power-menu-confirmation {
-  min-height: s(284);
-}
+      .power-menu-main,
+      .power-menu-confirmation {
+        min-height: s(284);
+      }
 
-.power-menu-main {
-  transform: translateY(s(20));
-}
+      .power-menu-main {
+        transform: translateY(s(20));
+      }
 
-.power-menu-items {
-  min-height: s(250);
-}
+      .power-menu-items {
+        min-height: s(250);
+      }
 
-.power-menu-item {
-  min-width: s(220);
-  min-height: s(250);
-  padding: s(24) s(18) s(28);
-  color: $text;
-  background-color: rgba($surface, 0.3);
-  background-image: linear-gradient(
-    145deg,
-    rgba($on-surface, 0.095),
-    rgba($on-surface, 0.035) 48%,
-    rgba($surface, 0.14)
-  );
-  border: s(1) solid rgba($on-surface, 0.13);
-  border-radius: s(24);
-  box-shadow:
-    inset 0 s(1) rgba($on-surface, 0.07),
-    inset 0 s(-1) rgba(0, 0, 0, 0.14),
-    0 s(10) s(28) rgba(0, 0, 0, 0.28);
-  outline: none;
-  transition: all $motion-panel $motion-ease;
+      .power-menu-item {
+        min-width: s(220);
+        min-height: s(250);
+        padding: s(24) s(18) s(28);
+        color: $text;
+        background-color: rgba($surface, 0.3);
+        background-image: linear-gradient(
+          145deg,
+          rgba($on-surface, 0.095),
+          rgba($on-surface, 0.035) 48%,
+          rgba($surface, 0.14)
+        );
+        border: s(1) solid rgba($on-surface, 0.13);
+        border-radius: s(24);
+        box-shadow:
+          inset 0 s(1) rgba($on-surface, 0.07),
+          inset 0 s(-1) rgba(0, 0, 0, 0.14),
+          0 s(10) s(28) rgba(0, 0, 0, 0.28);
+        outline: none;
+        transition: all $motion-panel $motion-ease;
 
-  image {
-    color: $text;
-    transition:
-      color $motion-standard $motion-ease,
-      transform $motion-panel $motion-ease;
-  }
+        image {
+          color: $text;
+          transition:
+            color $motion-standard $motion-ease,
+            transform $motion-panel $motion-ease;
+        }
 
-  &:focus,
-  &.selected,
-  &:hover {
-    color: $primary-fixed;
-    background-color: rgba($primary-container, 0.34);
-    background-image: linear-gradient(
-      145deg,
-      rgba($on-surface, 0.17),
-      rgba($primary, 0.13) 48%,
-      rgba($surface, 0.16)
-    );
-    border: s(1) solid rgba($primary, 0.46);
-    box-shadow:
-      inset 0 s(1) rgba($on-surface, 0.18),
-      inset 0 s(-1) rgba($primary, 0.09),
-      inset 0 0 s(28) rgba($primary, 0.055),
-      0 s(14) s(34) rgba(0, 0, 0, 0.32),
-      0 0 s(24) rgba($primary, 0.18);
-    transform: translateY(s(-5));
+        &:focus,
+        &.selected,
+        &:hover {
+          color: $primary-fixed;
+          background-color: rgba($primary-container, 0.34);
+          background-image: linear-gradient(
+            145deg,
+            rgba($on-surface, 0.17),
+            rgba($primary, 0.13) 48%,
+            rgba($surface, 0.16)
+          );
+          border: s(1) solid rgba($primary, 0.46);
+          box-shadow:
+            inset 0 s(1) rgba($on-surface, 0.18),
+            inset 0 s(-1) rgba($primary, 0.09),
+            inset 0 0 s(28) rgba($primary, 0.055),
+            0 s(14) s(34) rgba(0, 0, 0, 0.32),
+            0 0 s(24) rgba($primary, 0.18);
+          transform: translateY(s(-5));
 
-    image {
-      color: $primary-fixed;
-      -gtk-icon-shadow: 0 0 s(20) rgba($primary, 0.32);
-      transform: scale(2.35);
+          image {
+            color: $primary-fixed;
+            -gtk-icon-shadow: 0 0 s(20) rgba($primary, 0.32);
+            transform: scale(2.35);
+          }
+        }
+      }
+
+      .power-menu-label {
+        font-family: 'GeistMono Nerd Font', monospace;
+        font-size: 1em;
+        font-weight: 700;
+      }
+
+      .power-menu-error {
+        min-height: s(20);
+        color: transparent;
+        font-size: 0.82em;
+        font-weight: 700;
+
+        &.visible {
+          color: $error;
+        }
+      }
+
+      .power-menu-confirmation {
+        min-width: s(1080);
+        min-height: s(250);
+        padding: 0;
+        transform: translateY(s(-1));
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+
+        image {
+          color: $primary-fixed;
+          -gtk-icon-shadow: 0 0 s(20) rgba($primary, 0.32);
+        }
+      }
+
+      .power-menu-confirmation-card {
+        min-width: s(220);
+        min-height: s(250);
+        padding: s(24) s(18) s(28);
+        color: $primary-fixed;
+        background-color: rgba($primary-container, 0.34);
+        background-image: linear-gradient(
+          145deg,
+          rgba($on-surface, 0.17),
+          rgba($primary, 0.13) 48%,
+          rgba($surface, 0.16)
+        );
+        border: s(1) solid rgba($primary, 0.46);
+        border-radius: s(24);
+        box-shadow:
+          inset 0 s(1) rgba($on-surface, 0.18),
+          inset 0 s(-1) rgba($primary, 0.09),
+          inset 0 0 s(28) rgba($primary, 0.055),
+          0 s(14) s(34) rgba(0, 0, 0, 0.32),
+          0 0 s(24) rgba($primary, 0.18);
+
+        image {
+          transform: scale(2.35);
+        }
+      }
+
+      .power-menu-confirmation-body {
+        min-width: s(780);
+        padding: s(32) s(34);
+        background-color: rgba($surface, 0.42);
+        background-image: linear-gradient(
+          145deg,
+          rgba($on-surface, 0.095),
+          rgba($on-surface, 0.03) 48%,
+          rgba($surface, 0.18)
+        );
+        border: s(1) solid rgba($on-surface, 0.13);
+        border-radius: s(24);
+        box-shadow:
+          inset 0 s(1) rgba($on-surface, 0.075),
+          inset 0 s(-1) rgba(0, 0, 0, 0.14),
+          0 s(12) s(36) rgba(0, 0, 0, 0.3);
+      }
+
+      .power-menu-confirmation-title {
+        color: $on-surface;
+        font-size: 1.55em;
+        font-weight: 800;
+      }
+
+      .power-menu-confirmation-copy {
+        color: rgba($text, 0.75);
+        font-family: 'GeistMono Nerd Font', monospace;
+        font-size: 0.88em;
+      }
+
+      .power-menu-cancel,
+      .power-menu-confirm {
+        min-width: s(150);
+        min-height: s(64);
+        padding: s(12) s(20);
+        color: $text;
+        background-color: rgba($surface, 0.24);
+        background-image: linear-gradient(
+          to bottom,
+          rgba($on-surface, 0.13),
+          rgba($on-surface, 0.045) 48%,
+          rgba($surface, 0.16)
+        );
+        border: s(1) solid rgba($on-surface, 0.14);
+        border-radius: s(12);
+        font-weight: 750;
+        outline: none;
+        box-shadow:
+          inset 0 s(1) rgba($on-surface, 0.14),
+          inset 0 s(-1) rgba(0, 0, 0, 0.16),
+          0 s(6) s(16) rgba(0, 0, 0, 0.24);
+        transition: all $motion-standard $motion-ease;
+      }
+
+      .power-menu-cancel {
+        &:hover,
+        &:focus {
+          color: $primary-fixed;
+          background-color: rgba($primary-container, 0.3);
+          background-image: linear-gradient(to bottom, rgba($primary, 0.18), rgba($primary, 0.06));
+          border-color: rgba($primary, 0.42);
+          box-shadow:
+            inset 0 s(1) rgba($on-surface, 0.17),
+            0 s(7) s(18) rgba(0, 0, 0, 0.28),
+            0 0 s(18) rgba($primary, 0.15);
+          transform: translateY(s(-2));
+        }
+      }
+
+      .power-menu-confirm {
+        &:hover,
+        &:focus {
+          color: $error;
+          background-color: rgba($error-container, 0.32);
+          background-image: linear-gradient(to bottom, rgba($error, 0.2), rgba($error, 0.065));
+          border-color: rgba($error, 0.46);
+          box-shadow:
+            inset 0 s(1) rgba($on-surface, 0.16),
+            0 s(7) s(18) rgba(0, 0, 0, 0.28),
+            0 0 s(18) rgba($error, 0.18);
+          transform: translateY(s(-2));
+        }
+      }
     }
-  }
-}
-
-.power-menu-label {
-  font-family: 'GeistMono Nerd Font', monospace;
-  font-size: 1em;
-  font-weight: 700;
-}
-
-.power-menu-error {
-  min-height: s(20);
-  color: transparent;
-  font-size: 0.82em;
-  font-weight: 700;
-
-  &.visible {
-    color: $error;
-  }
-}
-
-.power-menu-confirmation {
-  min-width: s(1080);
-  min-height: s(250);
-  padding: 0;
-  transform: translateY(s(-1));
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-
-  image {
-    color: $primary-fixed;
-    -gtk-icon-shadow: 0 0 s(20) rgba($primary, 0.32);
-  }
-}
-
-.power-menu-confirmation-card {
-  min-width: s(220);
-  min-height: s(250);
-  padding: s(24) s(18) s(28);
-  color: $primary-fixed;
-  background-color: rgba($primary-container, 0.34);
-  background-image: linear-gradient(
-    145deg,
-    rgba($on-surface, 0.17),
-    rgba($primary, 0.13) 48%,
-    rgba($surface, 0.16)
-  );
-  border: s(1) solid rgba($primary, 0.46);
-  border-radius: s(24);
-  box-shadow:
-    inset 0 s(1) rgba($on-surface, 0.18),
-    inset 0 s(-1) rgba($primary, 0.09),
-    inset 0 0 s(28) rgba($primary, 0.055),
-    0 s(14) s(34) rgba(0, 0, 0, 0.32),
-    0 0 s(24) rgba($primary, 0.18);
-
-  image {
-    transform: scale(2.35);
-  }
-}
-
-.power-menu-confirmation-body {
-  min-width: s(780);
-  padding: s(32) s(34);
-  background-color: rgba($surface, 0.42);
-  background-image: linear-gradient(
-    145deg,
-    rgba($on-surface, 0.095),
-    rgba($on-surface, 0.03) 48%,
-    rgba($surface, 0.18)
-  );
-  border: s(1) solid rgba($on-surface, 0.13);
-  border-radius: s(24);
-  box-shadow:
-    inset 0 s(1) rgba($on-surface, 0.075),
-    inset 0 s(-1) rgba(0, 0, 0, 0.14),
-    0 s(12) s(36) rgba(0, 0, 0, 0.3);
-}
-
-.power-menu-confirmation-title {
-  color: $on-surface;
-  font-size: 1.55em;
-  font-weight: 800;
-}
-
-.power-menu-confirmation-copy {
-  color: rgba($text, 0.75);
-  font-family: 'GeistMono Nerd Font', monospace;
-  font-size: 0.88em;
-}
-
-.power-menu-cancel,
-.power-menu-confirm {
-  min-width: s(150);
-  min-height: s(64);
-  padding: s(12) s(20);
-  color: $text;
-  background-color: rgba($surface, 0.24);
-  background-image: linear-gradient(
-    to bottom,
-    rgba($on-surface, 0.13),
-    rgba($on-surface, 0.045) 48%,
-    rgba($surface, 0.16)
-  );
-  border: s(1) solid rgba($on-surface, 0.14);
-  border-radius: s(12);
-  font-weight: 750;
-  outline: none;
-  box-shadow:
-    inset 0 s(1) rgba($on-surface, 0.14),
-    inset 0 s(-1) rgba(0, 0, 0, 0.16),
-    0 s(6) s(16) rgba(0, 0, 0, 0.24);
-  transition: all $motion-standard $motion-ease;
-}
-
-.power-menu-cancel {
-  &:hover,
-  &:focus {
-    color: $primary-fixed;
-    background-color: rgba($primary-container, 0.3);
-    background-image: linear-gradient(to bottom, rgba($primary, 0.18), rgba($primary, 0.06));
-    border-color: rgba($primary, 0.42);
-    box-shadow:
-      inset 0 s(1) rgba($on-surface, 0.17),
-      0 s(7) s(18) rgba(0, 0, 0, 0.28),
-      0 0 s(18) rgba($primary, 0.15);
-    transform: translateY(s(-2));
-  }
-}
-
-.power-menu-confirm {
-  &:hover,
-  &:focus {
-    color: $error;
-    background-color: rgba($error-container, 0.32);
-    background-image: linear-gradient(to bottom, rgba($error, 0.2), rgba($error, 0.065));
-    border-color: rgba($error, 0.46);
-    box-shadow:
-      inset 0 s(1) rgba($on-surface, 0.16),
-      0 s(7) s(18) rgba(0, 0, 0, 0.28),
-      0 0 s(18) rgba($error, 0.18);
-    transform: translateY(s(-2));
   }
 }

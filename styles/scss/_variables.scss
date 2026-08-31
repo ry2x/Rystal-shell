@@ -1,9 +1,14 @@
 @forward 'theme';
-@forward 'current-scale';
 @use 'sass:color';
 @use 'sass:math';
-@use 'current-scale' as *;
 @use 'theme' as *;
+
+$app-scale: 1;
+
+@mixin with-scale($scale) {
+  $app-scale: $scale !global;
+  @content;
+}
 
 @function s($pixels) {
   @if not math.is-unitless($pixels) {
