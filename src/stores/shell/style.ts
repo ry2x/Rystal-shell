@@ -5,6 +5,7 @@ import GLib from 'gi://GLib';
 
 import {appConfig} from '@/lib/config';
 import {rystalShellConfigDir, rystalShellDataDir, rystalShellRuntimeDir} from '@/lib/paths';
+import {uiScaleClass} from '@/lib/uiScale';
 import {reloadBarColors} from '@/stores/shell/barBackground';
 
 let cssProvider: Gtk.CssProvider | null = null;
@@ -15,7 +16,7 @@ const defaultThemeDir = `${rystalShellDataDir}/styles/default`;
 const defaultCssPath = `${rystalShellDataDir}/styles/default.css`;
 const runtimeDir = rystalShellRuntimeDir;
 const cssPath = `${runtimeDir}/style.css`;
-const currentScalePath = `${runtimeDir}/_current-scale.scss`;
+const configuredScalesPath = `${runtimeDir}/_configured-scales.scss`;
 
 interface CompiledCss {
   path: string;
@@ -26,12 +27,27 @@ function ensureRuntimeDir() {
   GLib.mkdir_with_parents(runtimeDir, 0o700);
 }
 
-function writeCurrentScale() {
-  const temporaryPath = `${currentScalePath}.tmp`;
-  const contents = `// Generated file. Do not edit.\n$app-scale: ${appConfig.ui.scale};\n`;
+function writeConfiguredScales() {
+  const temporaryPath = `${configuredScalesPath}.tmp`;
+  const scales = new Set([
+    appConfig.ui.scale,
+    ...Object.values(appConfig.ui.monitors).map(monitor => monitor.scale),
+  ]);
+  const entries = [...scales]
+    .sort((left, right) => left - right)
+    .map(scale => `  '${uiScaleClass(scale)}': ${scale},`)
+    .join('\n');
+  const contents = [
+    '// Generated file. Do not edit.',
+    '$app-scales: (',
+    entries,
+    ');',
+    `$app-fallback-scale: ${appConfig.ui.scale};`,
+    '',
+  ].join('\n');
   GLib.file_set_contents(temporaryPath, contents);
-  if (GLib.rename(temporaryPath, currentScalePath) !== 0) {
-    throw new Error(`Cannot replace generated scale file: ${currentScalePath}`);
+  if (GLib.rename(temporaryPath, configuredScalesPath) !== 0) {
+    throw new Error(`Cannot replace generated scale file: ${configuredScalesPath}`);
   }
 }
 
@@ -117,7 +133,7 @@ function compileCssAsync(useConfiguredTheme: boolean): Promise<CompiledCss> {
 
 export function compileAndReloadCss(): Promise<boolean> {
   ensureRuntimeDir();
-  writeCurrentScale();
+  writeConfiguredScales();
   return compileCssAsync(true)
     .then(compiledCss => {
       if (compiledCss.hash === lastCompiledCssHash) {
@@ -138,7 +154,7 @@ export function compileAndReloadCss(): Promise<boolean> {
 
 export function initCss() {
   ensureRuntimeDir();
-  writeCurrentScale();
+  writeConfiguredScales();
   let compiledCss: CompiledCss;
 
   try {
@@ -150,12 +166,7 @@ export function initCss() {
       console.warn(`Using the default theme at UI scale ${appConfig.ui.scale}`);
     } catch (defaultThemeError) {
       console.error(`Error compiling default SCSS: ${defaultThemeError}`);
-      if (appConfig.ui.scale !== 1) {
-        throw new Error(
-          `Cannot initialize CSS at requested UI scale ${appConfig.ui.scale}: ${defaultThemeError}`,
-          {cause: defaultThemeError}
-        );
-      }
+      console.warn('Using the bundled default theme with all supported UI scales');
       reloadCss(defaultCssPath);
       lastCompiledCssHash = getCssHash(defaultCssPath);
       return;
