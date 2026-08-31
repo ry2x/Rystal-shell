@@ -29,9 +29,16 @@ function ensureRuntimeDir() {
 function writeCurrentScale() {
   const temporaryPath = `${currentScalePath}.tmp`;
   const contents = `// Generated file. Do not edit.\n$app-scale: ${appConfig.ui.scale};\n`;
-  GLib.file_set_contents(temporaryPath, contents);
-  if (GLib.rename(temporaryPath, currentScalePath) !== 0) {
-    throw new Error(`Cannot replace generated scale file: ${currentScalePath}`);
+  try {
+    if (!GLib.file_set_contents(temporaryPath, contents)) {
+      throw new Error(`Cannot write generated scale file: ${temporaryPath}`);
+    }
+    if (GLib.rename(temporaryPath, currentScalePath) !== 0) {
+      throw new Error(`Cannot replace generated scale file: ${currentScalePath}`);
+    }
+  } catch (error) {
+    removeFile(temporaryPath);
+    throw error;
   }
 }
 
