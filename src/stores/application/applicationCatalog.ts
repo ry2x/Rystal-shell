@@ -3,8 +3,24 @@ import Apps from 'gi://AstalApps';
 import {ApplicationHistory} from '@/stores/application/applicationHistory';
 
 const MAX_APP_RESULTS = 30;
-const applications = new Apps.Apps();
-const history = new ApplicationHistory(applications);
+
+interface ApplicationCatalog {
+  applications: Apps.Apps;
+  history: ApplicationHistory;
+}
+
+let catalog: ApplicationCatalog | null = null;
+
+function getCatalog() {
+  if (catalog) return catalog;
+
+  const applications = new Apps.Apps();
+  catalog = {
+    applications,
+    history: new ApplicationHistory(applications),
+  };
+  return catalog;
+}
 
 function getResultKey(application: Apps.Application) {
   return application.name + (application.description || '') + (application.iconName || '');
@@ -27,6 +43,7 @@ function getUniqueResults(applicationList: Apps.Application[]) {
 }
 
 function getApplicationList() {
+  const {applications, history} = getCatalog();
   return applications.get_list().sort((applicationA, applicationB) => {
     const scoreA = history.getScore(applicationA);
     const scoreB = history.getScore(applicationB);
@@ -36,10 +53,11 @@ function getApplicationList() {
 }
 
 export function recordAppLaunch(application: Apps.Application) {
-  history.recordLaunch(application);
+  getCatalog().history.recordLaunch(application);
 }
 
 export function searchApps(query: string) {
+  const {history} = getCatalog();
   const allApplications = getApplicationList();
   if (query === '') return getUniqueResults(allApplications);
   const keywords = query.split(/\s+/);
