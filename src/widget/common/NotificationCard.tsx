@@ -1,22 +1,17 @@
-import system from 'system';
-
 import {onCleanup} from 'ags';
 import {Gtk} from 'ags/gtk4';
-import {type Timer, timeout} from 'ags/time';
 
 import Notifd from 'gi://AstalNotifd';
 import Pango from 'gi://Pango';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {type SharedTexture, acquireNotificationTexture} from '@/stores/notification/imageCache';
+import {NotificationImageResources} from '@/stores/notification/notificationImage';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface NotificationCardProps {
   notif: Notifd.Notification;
   onDismiss?: () => void;
 }
-
-const IMAGE_RELEASE_DELAY_MS = 300;
 
 function resolveImage(image: string | null) {
   if (!image) return null;
@@ -25,73 +20,8 @@ function resolveImage(image: string | null) {
   return null;
 }
 
-function collectGarbage() {
-  try {
-    system.gc();
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-class NotificationImageResources {
-  appIconPicture: Gtk.Picture | null = null;
-  imagePicture: Gtk.Picture | null = null;
-  private appIconTexture: SharedTexture | null = null;
-  private imageTexture: SharedTexture | null = null;
-
-  private releaseTimer: Timer | null = null;
-  private disposed = false;
-  private readonly resolvedHook: number;
-
-  constructor(private readonly notification: Notifd.Notification) {
-    this.resolvedHook = notification.connect('resolved', () => this.scheduleRelease());
-  }
-
-  private scheduleRelease() {
-    this.releaseTimer?.cancel();
-    this.releaseTimer = timeout(IMAGE_RELEASE_DELAY_MS, () => {
-      this.releaseTimer = null;
-      this.releaseImages();
-      collectGarbage();
-    });
-  }
-
-  private releaseImages() {
-    this.appIconPicture?.set_paintable(null);
-    this.imagePicture?.set_paintable(null);
-    this.appIconPicture = null;
-    this.imagePicture = null;
-    this.appIconTexture?.release();
-    this.imageTexture?.release();
-    this.appIconTexture = null;
-    this.imageTexture = null;
-  }
-
-  setAppIcon(picture: Gtk.Picture, uri: string) {
-    this.appIconPicture = picture;
-    this.appIconTexture = acquireNotificationTexture(uri, scaleUiSize(64), scaleUiSize(64));
-    picture.set_paintable(this.appIconTexture.texture);
-  }
-
-  setImage(picture: Gtk.Picture, uri: string) {
-    this.imagePicture = picture;
-    this.imageTexture = acquireNotificationTexture(uri, scaleUiSize(760), scaleUiSize(280));
-    picture.set_paintable(this.imageTexture.texture);
-  }
-
-  dispose() {
-    if (this.disposed) return;
-    this.disposed = true;
-    this.releaseTimer?.cancel();
-    this.releaseTimer = null;
-    this.releaseImages();
-    this.notification.disconnect(this.resolvedHook);
-    collectGarbage();
-  }
-}
-
 export default function NotificationCard({notif, onDismiss}: NotificationCardProps) {
-  const appIcon = notif.app_icon || notif.desktop_entry || notif.image;
+  const appIcon = notif.app_icon || notif.desktop_entry;
   const appIconPath = resolveImage(appIcon);
   const imageToDisplay = resolveImage(notif.image);
   const time = new Date(notif.time * 1000).toLocaleTimeString([], {
@@ -122,11 +52,7 @@ export default function NotificationCard({notif, onDismiss}: NotificationCardPro
                   canShrink
                   contentFit={Gtk.ContentFit.CONTAIN}
                   $={picture => {
-                    try {
-                      resources.setAppIcon(picture, appIconPath);
-                    } catch (error) {
-                      console.error(error);
-                    }
+                    resources.bindPicture(picture, appIconPath, scaleUiSize(32), scaleUiSize(32));
                   }}
                 />
               </overlay>
@@ -196,11 +122,13 @@ export default function NotificationCard({notif, onDismiss}: NotificationCardPro
               canShrink
               contentFit={Gtk.ContentFit.COVER}
               $={picture => {
-                try {
-                  resources.setImage(picture, imageToDisplay);
-                } catch (error) {
-                  console.error(error);
-                }
+                resources.bindPicture(
+                  picture,
+                  imageToDisplay,
+                  scaleUiSize(380),
+                  scaleUiSize(140),
+                  true
+                );
               }}
             />
           </overlay>
