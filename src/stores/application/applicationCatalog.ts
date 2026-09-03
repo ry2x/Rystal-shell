@@ -1,3 +1,5 @@
+import {createExternal} from 'ags';
+
 import Apps from 'gi://AstalApps';
 
 import {ApplicationHistory} from '@/stores/application/applicationHistory';
@@ -21,6 +23,15 @@ function getCatalog() {
   };
   return catalog;
 }
+
+export const applicationCatalogRevision = createExternal(0, setRevision => {
+  const {applications} = getCatalog();
+  const hook = applications.connect('notify::list', () => {
+    setRevision(revision => revision + 1);
+  });
+
+  return () => applications.disconnect(hook);
+});
 
 function getResultKey(application: Apps.Application) {
   return application.name + (application.description || '') + (application.iconName || '');
