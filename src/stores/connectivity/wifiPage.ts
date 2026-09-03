@@ -35,6 +35,16 @@ export interface WifiPageState {
   setError: (message: string) => void;
 }
 
+function isAuthenticationFailure(reason: NM.DeviceStateReason) {
+  return [
+    NM.DeviceStateReason.NO_SECRETS,
+    NM.DeviceStateReason.SUPPLICANT_DISCONNECT,
+    NM.DeviceStateReason.SUPPLICANT_CONFIG_FAILED,
+    NM.DeviceStateReason.SUPPLICANT_FAILED,
+    NM.DeviceStateReason.SUPPLICANT_TIMEOUT,
+  ].includes(reason);
+}
+
 export function createWifiPageState(monitorConnector: string): WifiPageState {
   const network = Network.get_default();
   const wifi = network.wifi;
@@ -181,19 +191,32 @@ export function createWifiPageState(monitorConnector: string): WifiPageState {
       ]
     : [];
   const deviceHook = wifi
-    ? wifi.device.connect('state-changed', (_device, state: NM.DeviceState) => {
-        const pending = pendingAccessPoint;
-        if (!pending) return;
-        if (state === NM.DeviceState.ACTIVATED) {
-          pendingAccessPoint = null;
-        } else if (state === NM.DeviceState.NEED_AUTH || state === NM.DeviceState.FAILED) {
-          pendingAccessPoint = null;
-          retryAccessPoint = pending;
-          setError(
-            `Could not connect to ${pending.ssid || 'this network'}. Enter the password and retry.`
-          );
+    ? wifi.device.connect(
+        'state-changed',
+        (
+          _device,
+          state: NM.DeviceState,
+          _oldState: NM.DeviceState,
+          reason: NM.DeviceStateReason
+        ) => {
+          const pending = pendingAccessPoint;
+          if (!pending) return;
+          if (state === NM.DeviceState.ACTIVATED) {
+            pendingAccessPoint = null;
+          } else if (state === NM.DeviceState.FAILED) {
+            pendingAccessPoint = null;
+            if (pending.requires_password && isAuthenticationFailure(reason)) {
+              retryAccessPoint = pending;
+              setError(
+                `Could not connect to ${pending.ssid || 'this network'}. Enter the password and retry.`
+              );
+            } else {
+              retryAccessPoint = null;
+              setError(`Could not connect to ${pending.ssid || 'this network'}.`);
+            }
+          }
         }
-      })
+      )
     : null;
 
   if (wifi) scan();

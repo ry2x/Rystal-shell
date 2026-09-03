@@ -141,7 +141,7 @@ export function createBluetoothPageState(active: Accessor<boolean>): BluetoothPa
   };
 
   const discover = () => {
-    if (!adapter) return;
+    if (!adapter || !bluetooth.is_powered) return;
 
     updateError('');
     stopDiscovery();
@@ -154,6 +154,16 @@ export function createBluetoothPageState(active: Accessor<boolean>): BluetoothPa
     } catch (reason) {
       updateError(String(reason));
     }
+  };
+
+  const syncDiscovery = () => {
+    if (active.peek() && bluetooth.is_powered) {
+      discover();
+      return;
+    }
+
+    updateError('');
+    stopDiscovery();
   };
 
   const connectDevice = async (device: Bluetooth.Device) => {
@@ -199,13 +209,11 @@ export function createBluetoothPageState(active: Accessor<boolean>): BluetoothPa
     bluetooth.connect('notify::devices', refreshDevices),
     bluetooth.connect('device-added', refreshDevices),
     bluetooth.connect('device-removed', refreshDevices),
+    bluetooth.connect('notify::is-powered', syncDiscovery),
   ];
-  const unsubscribeActive = active.subscribe(() => {
-    if (active.peek()) discover();
-    else stopDiscovery();
-  });
+  const unsubscribeActive = active.subscribe(syncDiscovery);
 
-  if (active.peek()) discover();
+  syncDiscovery();
   refreshDevices();
 
   onCleanup(() => {
