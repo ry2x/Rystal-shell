@@ -1,53 +1,12 @@
-import {onCleanup} from 'ags';
+import {For, onCleanup} from 'ags';
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import {type Timer, idle} from 'ags/time';
 
-import {scaleUiSize} from '@/lib/uiScale';
 import {createAppLauncherState} from '@/stores/application/appLauncher';
-import {
-  ensureLauncherBackground,
-  registerLauncherBackground,
-} from '@/stores/application/launcherBackground';
-import {AppList} from '@/widget/app-launcher/widget/AppList';
-import {SearchInput} from '@/widget/app-launcher/widget/SearchInput';
-
-function createLauncherBackground() {
-  const picture = new Gtk.Picture({
-    contentFit: Gtk.ContentFit.COVER,
-    canTarget: false,
-    canShrink: true,
-    hexpand: true,
-    vexpand: true,
-    halign: Gtk.Align.FILL,
-    valign: Gtk.Align.FILL,
-    widthRequest: scaleUiSize(1),
-    heightRequest: scaleUiSize(1),
-  });
-
-  const unregister = registerLauncherBackground(picture);
-  picture.connect('destroy', unregister);
-
-  return picture;
-}
-
-function resetLauncherState(
-  searchInput: Gtk.Entry,
-  setText: (text: string) => void,
-  setSelectedIndex: (index: number) => void
-) {
-  searchInput.set_text('');
-  setText('');
-  setSelectedIndex(0);
-}
-
-function focusLauncher(searchInput: Gtk.Entry, appList: Gtk.ScrolledWindow) {
-  ensureLauncherBackground();
-  return idle(() => {
-    searchInput.grab_focus();
-    appList.get_vadjustment()?.set_value(0);
-  });
-}
+import AppLauncherContent, {
+  type AppLauncherContentHandle,
+} from '@/widget/app-launcher/AppLauncherContent';
 
 function addEscapeHandler(window: Astal.Window) {
   const controller = new Gtk.EventControllerKey();
@@ -65,36 +24,10 @@ export interface AppLauncherProps {
 }
 
 export default function AppLauncher({monitor}: AppLauncherProps) {
-  const {text, setText, selectedIndex, setSelectedIndex, results} = createAppLauncherState();
+  const state = createAppLauncherState();
   const monitorConnector = monitor.get_connector();
+  let content: AppLauncherContentHandle | null = null;
   let focusTimer: Timer | null = null;
-
-  const launcherBackground = createLauncherBackground();
-
-  const searchInput = SearchInput({
-    text,
-    setText,
-    selectedIndex,
-    setSelectedIndex,
-    results,
-    monitorConnector,
-  });
-
-  const launcherContent = (
-    <box orientation={Gtk.Orientation.VERTICAL} vexpand>
-      <box vexpand />
-      <box class="applauncher-search-container" hexpand>
-        {searchInput}
-      </box>
-    </box>
-  ) as Gtk.Box;
-
-  const appList = AppList({
-    text,
-    selectedIndex,
-    results,
-    monitorConnector,
-  });
 
   const win = (
     <window
@@ -111,46 +44,26 @@ export default function AppLauncher({monitor}: AppLauncherProps) {
         focusTimer = null;
 
         if (!self.visible) {
-          resetLauncherState(searchInput, setText, setSelectedIndex);
-        } else {
-          focusTimer = focusLauncher(searchInput, appList);
+          content?.reset();
+          return;
         }
+
+        state.loadContent();
+        focusTimer = idle(() => {
+          focusTimer = null;
+          content?.focus();
+        });
       }}
     >
-      <box class="applauncher-window" halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER}>
-        <box
-          class="applauncher-box-wrapper"
-          halign={Gtk.Align.CENTER}
-          valign={Gtk.Align.CENTER}
-          overflow={Gtk.Overflow.HIDDEN}
-        >
-          {/* Left Panel */}
-          <box
-            class="applauncher-left-panel"
-            orientation={Gtk.Orientation.VERTICAL}
-            vexpand
-            overflow={Gtk.Overflow.HIDDEN}
-          >
-            <overlay
-              hexpand
-              vexpand
-              $={(self: Gtk.Overlay) => {
-                self.set_child(launcherBackground);
-                self.add_overlay(launcherContent);
-              }}
-            />
-          </box>
-
-          {/* Right Panel */}
-          <box
-            class="applauncher-right-panel"
-            orientation={Gtk.Orientation.VERTICAL}
-            hexpand={false}
-          >
-            {appList}
-          </box>
-        </box>
-      </box>
+      <For each={state.contentLoaded.as(loaded => (loaded ? [true] : []))}>
+        {() => (
+          <AppLauncherContent
+            monitorConnector={monitorConnector}
+            state={state}
+            register={handle => (content = handle)}
+          />
+        )}
+      </For>
     </window>
   ) as Astal.Window;
 

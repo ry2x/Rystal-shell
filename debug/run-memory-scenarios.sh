@@ -13,7 +13,7 @@ usage() {
 Usage: run-memory-scenarios.sh [OPTIONS]
 
 Options:
-  --scenario NAME       launcher, launcher-no-theme, wallpaper, wallpaper-no-theme, power-menu, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, notifications-date-weather, notifications-date-weather-repeat, notifications-date-weather-close-wait, or all (runs every scenario with AGS restart between each; default: all)
+  --scenario NAME       launcher, launcher-no-theme, wallpaper, wallpaper-no-theme, power-menu, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, notifications-date-weather, notifications-date-weather-repeat, notifications-date-weather-close-wait, notifications-date-weather-hide-retained, or all (runs every scenario with AGS restart between each; default: all)
   --iterations N        Panel open/theme-change/close repetitions (default: 30)
   --notifications N     Number of random image notifications (default: 30)
   --settle-seconds N    Delay after UI and wallpaper operations (default: 2)
@@ -50,7 +50,7 @@ while (($#)); do
   esac
 done
 
-case "$scenario" in launcher|launcher-no-theme|wallpaper|wallpaper-no-theme|power-menu|theme-only|css-only|cc|cc-no-theme|date-weather|date-weather-no-theme|date-weather-css-only|notifications|notifications-date-weather|notifications-date-weather-repeat|notifications-date-weather-close-wait|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
+case "$scenario" in launcher|launcher-no-theme|wallpaper|wallpaper-no-theme|power-menu|theme-only|css-only|cc|cc-no-theme|date-weather|date-weather-no-theme|date-weather-css-only|notifications|notifications-date-weather|notifications-date-weather-repeat|notifications-date-weather-close-wait|notifications-date-weather-hide-retained|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
 [[ $iterations =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--iterations must be a positive integer' >&2; exit 2; }
 [[ $notification_count =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--notifications must be a positive integer' >&2; exit 2; }
 [[ $settle_seconds =~ ^[0-9]+$ && $gc_wait_seconds =~ ^[0-9]+$ ]] || { printf '%s\n' 'wait values must be non-negative integers' >&2; exit 2; }
@@ -159,6 +159,7 @@ run_named_scenario() {
     notifications-date-weather) run_notification_scenario true ;;
     notifications-date-weather-repeat) run_notification_scenario true 2 ;;
     notifications-date-weather-close-wait) run_notification_scenario true 1 true ;;
+    notifications-date-weather-hide-retained) run_notification_scenario true 1 false true ;;
     *) printf 'Invalid scenario: %s\n' "$1" >&2; exit 2 ;;
   esac
 }
@@ -182,6 +183,7 @@ run_all_scenarios() {
     notifications-date-weather
     notifications-date-weather-repeat
     notifications-date-weather-close-wait
+    notifications-date-weather-hide-retained
   )
 
   for scenario_name in "${scenarios[@]}"; do
@@ -265,6 +267,7 @@ run_notification_scenario() {
   local with_date_weather=${1:-false}
   local batch_count=${2:-1}
   local observe_close=${3:-false}
+  local hide_with_notifications=${4:-false}
   local scenario_name=notifications
   local -a images=()
   local image size i batch added_phase cleared_phase settled_phase
@@ -275,6 +278,9 @@ run_notification_scenario() {
   fi
   if "$observe_close"; then
     scenario_name=notifications-date-weather-close-wait
+  fi
+  if "$hide_with_notifications"; then
+    scenario_name=notifications-date-weather-hide-retained
   fi
 
   image_count=$(find "$HOME/Pictures" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) -print | wc -l)
@@ -319,6 +325,24 @@ run_notification_scenario() {
     fi
     wait_for_settle "$settle_seconds"
     snapshot "$scenario_name" "$batch" "$added_phase"
+    if "$hide_with_notifications"; then
+      ags_request toggle-notif
+      snapshot "$scenario_name" "$batch" date_weather_close_requested
+      wait_for_settle 1
+      snapshot "$scenario_name" "$batch" date_weather_hidden_1s
+      wait_for_settle 4
+      snapshot "$scenario_name" "$batch" date_weather_hidden_5s
+      wait_for_settle 10
+      snapshot "$scenario_name" "$batch" date_weather_hidden_15s
+      wait_for_settle 15
+      snapshot "$scenario_name" "$batch" date_weather_hidden_30s
+      ags_request clear-notifications
+      wait_for_settle "$settle_seconds"
+      snapshot "$scenario_name" "$batch" cleared_after_hide
+      wait_for_settle "$gc_wait_seconds"
+      snapshot "$scenario_name" "$batch" cleared_gc_settled
+      return
+    fi
     ags_request clear-notifications
     wait_for_settle "$settle_seconds"
     snapshot "$scenario_name" "$batch" "$cleared_phase"
