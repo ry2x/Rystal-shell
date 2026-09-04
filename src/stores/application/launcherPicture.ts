@@ -33,7 +33,7 @@ export function registerLauncherImage(picture: Gtk.Picture) {
 function replaceLauncherImage() {
   texture = loadImage();
   for (const picture of pictures) {
-    picture.set_paintable(texture ?? (null as unknown as Gdk.Paintable));
+    picture.set_paintable(texture ?? null);
   }
   return texture !== null;
 }
