@@ -4,8 +4,8 @@ import {Gtk} from 'ags/gtk4';
 import Pango from 'gi://Pango';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {getDirectUrl, openQuery} from '@/stores/application/websearch';
-import {toggleAppLauncher} from '@/stores/shell/windowManager';
+import {openLauncherQuery} from '@/stores/application/appLauncherAction';
+import {getDirectUrl} from '@/stores/application/appLauncherAction';
 
 export interface SearchGoogleBtnProps {
   textState: Accessor<string>;
@@ -20,8 +20,7 @@ export function SearchGoogleBtn({textState, monitorConnector}: SearchGoogleBtnPr
       visible={textState.as((t: string) => (t || '').trim() !== '')}
       onClicked={() => {
         const t = textState.peek() || '';
-        toggleAppLauncher(monitorConnector);
-        openQuery(t);
+        openLauncherQuery(t, monitorConnector);
       }}
     >
       <box orientation={Gtk.Orientation.HORIZONTAL} spacing={scaleUiSize(12)}>

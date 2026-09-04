@@ -4,8 +4,7 @@ import Apps from 'gi://AstalApps';
 import Pango from 'gi://Pango';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {recordAppLaunch} from '@/stores/application/applicationRegistry';
-import {toggleAppLauncher} from '@/stores/shell/windowManager';
+import {launchApplication} from '@/stores/application/appLauncherAction';
 
 export interface AppItemProps {
   res: Apps.Application;
@@ -31,11 +30,7 @@ export function AppItem({res, monitorConnector}: AppItemProps): Gtk.Button {
     <button
       class="applauncher-item"
       canFocus={false}
-      onClicked={() => {
-        toggleAppLauncher(monitorConnector);
-        recordAppLaunch(res);
-        res.launch();
-      }}
+      onClicked={() => launchApplication(res, monitorConnector)}
     >
       <box orientation={Gtk.Orientation.HORIZONTAL} spacing={scaleUiSize(12)}>
         <image {...createImageProp(res.iconName)} />

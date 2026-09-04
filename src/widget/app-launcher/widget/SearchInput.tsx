@@ -3,9 +3,7 @@ import {Gdk, Gtk} from 'ags/gtk4';
 
 import Apps from 'gi://AstalApps';
 
-import {recordAppLaunch} from '@/stores/application/applicationRegistry';
-import {openQuery} from '@/stores/application/websearch';
-import {toggleAppLauncher} from '@/stores/shell/windowManager';
+import {launchApplication, openLauncherQuery} from '@/stores/application/appLauncherAction';
 
 export interface SearchInputProps {
   text: Accessor<string>;
@@ -53,13 +51,9 @@ export function SearchInput({
     if (keyval === Gdk.KEY_Return || keyval === Gdk.KEY_KP_Enter) {
       const idx = selectedIndex.peek();
       if (idx === appResults.length) {
-        const searchQuery = text.peek();
-        toggleAppLauncher(monitorConnector);
-        openQuery(searchQuery);
+        openLauncherQuery(text.peek(), monitorConnector);
       } else if (idx < appResults.length) {
-        toggleAppLauncher(monitorConnector);
-        recordAppLaunch(appResults[idx]);
-        appResults[idx].launch();
+        launchApplication(appResults[idx], monitorConnector);
       }
       return true;
     }

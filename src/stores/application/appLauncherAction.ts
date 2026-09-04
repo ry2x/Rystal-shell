@@ -1,5 +1,11 @@
 import {execAsync} from 'ags/process';
 
+import Apps from 'gi://AstalApps';
+
+import {toggleAppLauncher} from '@/stores/shell/windowManager';
+
+import {recordAppLaunch} from './applicationRegistry';
+
 const DOMAIN_PATTERN =
   /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}(?::\d{1,5})?(?:[/?#][^\s]*)?$/i;
 const HTTP_URL_PATTERN = /^https?:\/\/[^\s]+$/i;
@@ -18,7 +24,7 @@ export function getDirectUrl(value: string) {
   return DOMAIN_PATTERN.test(query) ? `https://${query}` : null;
 }
 
-export function openQuery(value: string) {
+function openQuery(value: string) {
   const url = getDirectUrl(value);
   if (url) {
     execAsync(['xdg-open', url]).catch(console.error);
@@ -26,4 +32,15 @@ export function openQuery(value: string) {
   }
   searchWeb(value);
   return 'search' as const;
+}
+
+export function launchApplication(application: Apps.Application, monitorConnector: string | null) {
+  toggleAppLauncher(monitorConnector);
+  recordAppLaunch(application);
+  application.launch();
+}
+
+export function openLauncherQuery(query: string, monitorConnector: string | null) {
+  toggleAppLauncher(monitorConnector);
+  openQuery(query);
 }
