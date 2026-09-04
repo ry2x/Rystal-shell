@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {resolveConfig} from '../src/lib/configParser.ts';
+import {resolveConfig} from '../src/lib/config/parser.ts';
 
 const DEFAULT_CONFIG = {
   ui: {scale: 1},

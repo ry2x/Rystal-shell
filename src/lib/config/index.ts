@@ -1,7 +1,8 @@
 import GLib from 'gi://GLib?version=2.0';
 
-import {resolveConfig} from '@/lib/configParser';
 import {rystalShellConfigDir} from '@/lib/paths';
+
+import {resolveConfig} from './parser';
 
 function loadConfig() {
   const configPath = `${rystalShellConfigDir}/config.json`;
