@@ -62,6 +62,12 @@ function updateSelection(
   if (targetChild) scrollToSelection(scrollWindow, targetChild);
 }
 
+function getApplicationId(application: Apps.Application) {
+  return (
+    application.entry || `${application.name}\0${application.executable}\0${application.iconName}`
+  );
+}
+
 export interface AppListProps {
   text: Accessor<string>;
   selectedIndex: Accessor<number>;
@@ -106,8 +112,8 @@ export function AppList({
           spacing={scaleUiSize(10)}
           $={self => (appList = self)}
         >
-          <For each={results}>
-            {appInstance => <AppItem res={appInstance} monitorConnector={monitorConnector} />}
+          <For each={results} id={getApplicationId}>
+            {application => <AppItem res={application} monitorConnector={monitorConnector} />}
           </For>
         </box>
         {searchGoogleBtn}
