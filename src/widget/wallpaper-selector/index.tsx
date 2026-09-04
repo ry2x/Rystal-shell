@@ -1,13 +1,12 @@
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
+import {shellGeometry} from '@/lib/shellGeometry';
 import {scaleUiSize} from '@/lib/uiScale';
-import {BAR_WIDTH} from '@/stores/shell/barBackground';
 import {createWallpaperSelectorState} from '@/stores/wallpaper/wallpaperSelector';
 import ClickCatcher from '@/widget/common/ClickCatcher';
 import CoverFlowController from '@/widget/wallpaper-selector/widget/CoverFlow';
 
-const PANEL_HEIGHT = scaleUiSize(390);
 const CONTENT_HORIZONTAL_PADDING = scaleUiSize(56);
 
 export interface WallpaperSelectorProps {
@@ -24,7 +23,7 @@ export default function WallpaperSelector({monitor}: WallpaperSelectorProps) {
   const monitorWidth = monitor.get_geometry().width;
   const viewportWidth = Math.max(
     scaleUiSize(900),
-    monitorWidth - BAR_WIDTH - CONTENT_HORIZONTAL_PADDING
+    monitorWidth - shellGeometry.barWidth - CONTENT_HORIZONTAL_PADDING
   );
   let coverFlow: CoverFlowController | null = null;
 
@@ -46,7 +45,7 @@ export default function WallpaperSelector({monitor}: WallpaperSelectorProps) {
       layer={Astal.Layer.TOP}
       keymode={Astal.Keymode.EXCLUSIVE}
       anchor={TOP | BOTTOM | LEFT | RIGHT}
-      marginLeft={BAR_WIDTH}
+      marginLeft={shellGeometry.barWidth}
       application={app}
       visible={state.visible}
     >
@@ -79,10 +78,10 @@ export default function WallpaperSelector({monitor}: WallpaperSelectorProps) {
             revealed ? ['wallpaper-selector-panel', 'revealed'] : ['wallpaper-selector-panel']
           )}
           css={state.panelHeight.as(height => {
-            const progress = Math.max(0, Math.min(1, height / PANEL_HEIGHT));
-            return `transform: translateY(${PANEL_HEIGHT - height}px); opacity: ${progress};`;
+            const progress = Math.max(0, Math.min(1, height / shellGeometry.wallpaperPanelHeight));
+            return `transform: translateY(${shellGeometry.wallpaperPanelHeight - height}px); opacity: ${progress};`;
           })}
-          heightRequest={PANEL_HEIGHT}
+          heightRequest={shellGeometry.wallpaperPanelHeight}
           vexpand={false}
           vexpandSet
           valign={Gtk.Align.END}

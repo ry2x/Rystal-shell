@@ -1,8 +1,9 @@
 import {type Accessor} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
+import {shellGeometry} from '@/lib/shellGeometry';
 import {scaleUiSize} from '@/lib/uiScale';
-import {BAR_WIDTH, type BarBackgroundGeometry} from '@/stores/shell/barBackground';
+import {type BarBackgroundGeometry} from '@/stores/shell/barBackground';
 
 export interface PageContainerProps {
   revealed: Accessor<boolean>;
@@ -11,9 +12,9 @@ export interface PageContainerProps {
 }
 
 function getContainerCss(dx: number) {
-  const panelWidth = scaleUiSize(490);
-  const marginLeft = Math.max(-panelWidth, dx - BAR_WIDTH - panelWidth);
-  const opacity = Math.max(0, Math.min(1, (dx - BAR_WIDTH) / panelWidth));
+  const panelWidth = shellGeometry.controlCenterWidth;
+  const marginLeft = Math.max(-panelWidth, dx - shellGeometry.barWidth - panelWidth);
+  const opacity = Math.max(0, Math.min(1, (dx - shellGeometry.barWidth) / panelWidth));
   return `transform: translateX(${marginLeft}px); opacity: ${opacity};`;
 }
 

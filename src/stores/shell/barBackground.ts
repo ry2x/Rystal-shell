@@ -4,8 +4,12 @@ import {type Timer, interval} from 'ags/time';
 import GLib from 'gi://GLib';
 
 import {rystalShellConfigDir, rystalShellDataDir} from '@/lib/paths';
-import {scaleUi, scaleUiSize} from '@/lib/uiScale';
+import {shellGeometry} from '@/lib/shellGeometry';
+import {scaleUi} from '@/lib/uiScale';
 import {activeSidePanel} from '@/stores/shell/windowManager';
+
+const ANIMATION_INTERVAL_MS = 1000 / 60;
+const ANIMATION_SPEED = 0.22;
 
 export interface BarColors {
   surface: string;
@@ -17,17 +21,9 @@ export interface BarBackgroundGeometry {
   bottomHeight: number;
 }
 
-export const BAR_WIDTH = scaleUiSize(50);
-const CONTROL_CENTER_WIDTH = scaleUiSize(490);
-export const DATE_WEATHER_PANEL_WIDTH = scaleUiSize(900);
-const WALLPAPER_PANEL_HEIGHT = scaleUiSize(390);
-const POWER_MENU_PANEL_HEIGHT = scaleUiSize(350);
-const ANIMATION_INTERVAL_MS = 1000 / 60;
-const ANIMATION_SPEED = 0.22;
-const configuredThemePath = `${rystalShellConfigDir}/theme.scss`;
-const defaultThemePath = `${rystalShellDataDir}/styles/default/theme.scss`;
-
 function readBarColors(): BarColors {
+  const configuredThemePath = `${rystalShellConfigDir}/theme.scss`;
+  const defaultThemePath = `${rystalShellDataDir}/styles/default/theme.scss`;
   try {
     const themePath = GLib.file_test(configuredThemePath, GLib.FileTest.EXISTS)
       ? configuredThemePath
@@ -51,19 +47,19 @@ function readBarColors(): BarColors {
 }
 
 function getTargetGeometry(panel: string, isTargetMonitor: boolean): BarBackgroundGeometry {
-  if (!isTargetMonitor) return {dx: BAR_WIDTH, bottomHeight: 0};
+  if (!isTargetMonitor) return {dx: shellGeometry.barWidth, bottomHeight: 0};
 
   const dx =
     panel === 'control-center'
-      ? BAR_WIDTH + CONTROL_CENTER_WIDTH
+      ? shellGeometry.barWidth + shellGeometry.controlCenterWidth
       : panel === 'date-weather'
-        ? BAR_WIDTH + DATE_WEATHER_PANEL_WIDTH
-        : BAR_WIDTH;
+        ? shellGeometry.barWidth + shellGeometry.dateWeatherPanelWidth
+        : shellGeometry.barWidth;
   const bottomHeight =
     panel === 'wallpaper-selector'
-      ? WALLPAPER_PANEL_HEIGHT
+      ? shellGeometry.wallpaperPanelHeight
       : panel === 'power-menu'
-        ? POWER_MENU_PANEL_HEIGHT
+        ? shellGeometry.powerMenuPanelHeight
         : 0;
 
   return {dx, bottomHeight};
@@ -79,7 +75,7 @@ export function reloadBarColors() {
 const monitorGeometries = new Map<string, Accessor<BarBackgroundGeometry>>();
 
 function createMonitorGeometry(monitorConnector: string | null): Accessor<BarBackgroundGeometry> {
-  const initialGeometry = {dx: BAR_WIDTH, bottomHeight: 0};
+  const initialGeometry = {dx: shellGeometry.barWidth, bottomHeight: 0};
 
   return createExternal(initialGeometry, setGeometry => {
     let currentGeometry = initialGeometry;

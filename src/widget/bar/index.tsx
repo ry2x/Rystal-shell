@@ -5,8 +5,8 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import {timeout} from 'ags/time';
 
+import {shellGeometry} from '@/lib/shellGeometry';
 import {scaleUiSize} from '@/lib/uiScale';
-import {BAR_WIDTH} from '@/stores/shell/barBackground';
 import BarReserve from '@/widget/bar/BarReserve';
 import PanelBackground from '@/widget/bar/PanelBackground';
 import Clock from '@/widget/bar/widget/Clock';
@@ -19,11 +19,6 @@ import Volume from '@/widget/bar/widget/Volume';
 import Weather from '@/widget/bar/widget/Weather';
 import Workspaces from '@/widget/bar/widget/Workspaces';
 
-export interface BarProps {
-  monitor: Gdk.Monitor;
-}
-
-const BORDER_WIDTH = scaleUiSize(3);
 const INPUT_REGION_DELAY_MS = 500;
 
 function setBarInputRegion(window: Astal.Window) {
@@ -34,10 +29,14 @@ function setBarInputRegion(window: Astal.Window) {
   region.unionRectangle({
     x: 0,
     y: 0,
-    width: BAR_WIDTH + BORDER_WIDTH,
+    width: shellGeometry.barWidth + shellGeometry.frameBorderWidth,
     height: 9999,
   });
   surface.set_input_region(region);
+}
+
+export interface BarProps {
+  monitor: Gdk.Monitor;
 }
 
 export default function Bar({monitor}: BarProps) {

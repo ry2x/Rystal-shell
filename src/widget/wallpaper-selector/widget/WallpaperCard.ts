@@ -4,11 +4,8 @@ import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
 import {loadTextureFromUri} from '@/lib/image';
-import {scaleUiSize} from '@/lib/uiScale';
+import {shellGeometry} from '@/lib/shellGeometry';
 import type {Wallpaper} from '@/stores/wallpaper/wallpaper';
-
-const CARD_WIDTH = scaleUiSize(384);
-const CARD_HEIGHT = scaleUiSize(252);
 
 export class WallpaperCardController {
   readonly widget: Gtk.Button;
@@ -22,8 +19,8 @@ export class WallpaperCardController {
       canShrink: true,
       hexpand: true,
       vexpand: true,
-      widthRequest: CARD_WIDTH,
-      heightRequest: CARD_HEIGHT,
+      widthRequest: shellGeometry.wallpaperCardWidth,
+      heightRequest: shellGeometry.wallpaperCardHeight,
     });
 
     const lightOverlay = new Gtk.Box({
@@ -40,8 +37,8 @@ export class WallpaperCardController {
       canFocus: false,
       overflow: Gtk.Overflow.HIDDEN,
       child: preview,
-      widthRequest: CARD_WIDTH,
-      heightRequest: CARD_HEIGHT,
+      widthRequest: shellGeometry.wallpaperCardWidth,
+      heightRequest: shellGeometry.wallpaperCardHeight,
     });
 
     this.widget.connect('clicked', () => onClicked(this));
@@ -66,7 +63,11 @@ export class WallpaperCardController {
       : wallpaper.path;
     try {
       this.picture.set_paintable(
-        loadTextureFromUri(Gio.File.new_for_path(imagePath).get_uri(), CARD_WIDTH, CARD_HEIGHT)
+        loadTextureFromUri(
+          Gio.File.new_for_path(imagePath).get_uri(),
+          shellGeometry.wallpaperCardWidth,
+          shellGeometry.wallpaperCardHeight
+        )
       );
     } catch (error) {
       console.error(`Failed to load wallpaper image ${imagePath}:`, error);

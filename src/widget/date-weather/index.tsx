@@ -2,8 +2,8 @@ import {For} from 'ags';
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
+import {shellGeometry} from '@/lib/shellGeometry';
 import {createDateWeatherPopupState} from '@/stores/panel/dateWeather';
-import {BAR_WIDTH} from '@/stores/shell/barBackground';
 import ClickCatcher from '@/widget/common/ClickCatcher';
 import DateWeatherContent from '@/widget/date-weather/DateWeatherContent';
 
@@ -30,7 +30,7 @@ export default function DateWeatherPopup({monitor}: DateWeatherPopupProps) {
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.TOP}
       anchor={TOP | BOTTOM | LEFT | RIGHT}
-      marginLeft={BAR_WIDTH}
+      marginLeft={shellGeometry.barWidth}
       marginTop={0}
       keymode={Astal.Keymode.NONE}
       application={app}
