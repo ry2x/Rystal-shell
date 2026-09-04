@@ -18,4 +18,4 @@ export const DEFAULT_CONFIG: AppConfig = {
     audioSource: 'system',
   },
   profile: {avatarPath: '~/Profile/Profile.png'},
-};
+} as const;

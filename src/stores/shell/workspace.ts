@@ -2,12 +2,6 @@ import {type Accessor, createBinding, createComputed, createExternal} from 'ags'
 
 import Hyprland from 'gi://AstalHyprland';
 
-export interface MonitorWorkspaceState {
-  workspaces: Accessor<Hyprland.Workspace[]>;
-  activeIndex: Accessor<number>;
-  focusedWorkspaceId: Accessor<number>;
-}
-
 const hyprland = Hyprland.get_default();
 const focusedWorkspace = createBinding(hyprland, 'focused_workspace');
 
@@ -17,6 +11,12 @@ function getMonitorWorkspaces(connector: string | null) {
     .filter(workspace => workspace.monitor?.name === connector)
     .filter(workspace => !workspace.name.startsWith('special'))
     .sort((workspaceA, workspaceB) => workspaceA.id - workspaceB.id);
+}
+
+export interface MonitorWorkspaceState {
+  workspaces: Accessor<Hyprland.Workspace[]>;
+  activeIndex: Accessor<number>;
+  focusedWorkspaceId: Accessor<number>;
 }
 
 export function createMonitorWorkspaceState(connector: string | null): MonitorWorkspaceState {

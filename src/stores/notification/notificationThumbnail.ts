@@ -9,6 +9,7 @@ const THUMBNAIL_VERSION = 'v1';
 const MAX_THUMBNAIL_WORKERS = 2;
 const MAX_CACHE_FILES = 128;
 const CACHE_FILE_ATTRIBUTES = 'standard::name,time::modified';
+
 const cacheRoot = `${rystalShellCacheDir}/notifications/thumbnails`;
 const textEncoder = new TextEncoder();
 

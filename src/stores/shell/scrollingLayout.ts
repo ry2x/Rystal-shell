@@ -2,6 +2,8 @@ import {type Accessor, createExternal} from 'ags';
 
 import Hyprland from 'gi://AstalHyprland';
 
+const UPDATE_DELAY_MS = 10;
+
 export interface ScrollingLayoutInfo {
   visible: boolean;
   current: number;
@@ -12,7 +14,6 @@ interface HyprlandLayoutOption {
   str?: string;
 }
 
-const UPDATE_DELAY_MS = 10;
 const hyprland = Hyprland.get_default();
 
 export function createScrollingLayoutInfo(connector: string | null): Accessor<ScrollingLayoutInfo> {

@@ -2,6 +2,7 @@ import {createExternal} from 'ags';
 import {type Timer, timeout} from 'ags/time';
 
 const MINUTE_MS = 60_000;
+
 const now = createExternal(Temporal.Now.zonedDateTimeISO(), setNow => {
   let updateTimer: Timer | null = null;
 

@@ -11,6 +11,7 @@ export const LOCATION = appConfig.weather.location;
 
 const NORMAL_INTERVAL_MS = 30 * 60_000;
 const RETRY_INTERVAL_MS = 60_000;
+
 const weatherSession = new Soup.Session();
 const textDecoder = new TextDecoder('utf-8');
 

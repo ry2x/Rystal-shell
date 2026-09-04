@@ -7,10 +7,12 @@ import GSound from 'gi://GSound';
 
 import {closeAllControlCenters} from '@/stores/shell/windowManager';
 
+const DEVICE_REFRESH_DELAY_MS = 150;
+
 let volumeContext: GSound.Context | null = null;
 let lastVolumeSoundAt = 0;
+
 const audio = Wp.get_default().audio;
-const DEVICE_REFRESH_DELAY_MS = 150;
 
 export const defaultSpeaker = createBinding(audio, 'default_speaker');
 

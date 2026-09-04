@@ -16,7 +16,8 @@ const CONNECTIVITY_CHECK_URLS = [
   'http://detectportal.firefox.com/success.txt',
   'https://connectivitycheck.gstatic.com/generate_204',
   'http://captive.apple.com/hotspot-detect.html',
-];
+] as const;
+
 const connectivitySession = new Soup.Session({timeout: 5});
 
 function sendAndRead(message: Soup.Message, cancellable: Gio.Cancellable): Promise<GLib.Bytes> {
