@@ -5,7 +5,7 @@ set -euo pipefail
 output_file="$(mktemp)"
 trap 'rm -f "$output_file"' EXIT
 
-if pnpm exec tsc --noEmit --pretty false >"$output_file" 2>&1; then
+if pnpm exec tsc --pretty false >"$output_file" 2>&1; then
     cat "$output_file"
     exit 0
 fi
