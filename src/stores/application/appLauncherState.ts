@@ -2,7 +2,7 @@ import {type Accessor, type Setter, createComputed, createState} from 'ags';
 
 import Apps from 'gi://AstalApps';
 
-import {applicationCatalogRevision, searchApps} from '@/stores/application/applicationCatalog';
+import {applicationRegistryRevision, searchApps} from '@/stores/application/applicationList';
 
 export interface AppLauncherState {
   contentLoaded: Accessor<boolean>;
@@ -20,7 +20,7 @@ export function createAppLauncherState(): AppLauncherState {
   const [selectedIndex, setSelectedIndex] = createState(0);
   const results = createComputed<Apps.Application[]>(() => {
     if (!contentLoaded()) return [];
-    applicationCatalogRevision();
+    applicationRegistryRevision();
     return searchApps(text().trim().toLowerCase());
   });
 

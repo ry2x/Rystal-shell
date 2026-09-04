@@ -6,51 +6,50 @@ import {loadTextureFromUri} from '@/lib/image';
 import {rystalShellConfigDir, rystalShellDataDir} from '@/lib/paths';
 import {scaleUiSize} from '@/lib/uiScale';
 
-const configuredBackgroundPath = `${rystalShellConfigDir}/assets/launcher_bg.png`;
-const defaultBackgroundPath = `${rystalShellDataDir}/assets/icon.png`;
 const pictures = new Set<Gtk.Picture>();
 let texture: Gdk.Texture | null = null;
-let backgroundDirty = true;
+let isImageDirty = true;
 
-function loadBackground() {
+function loadImage() {
+  const imagePath = `${rystalShellConfigDir}/assets/launcher_bg.png`;
+  const defaultImagePath = `${rystalShellDataDir}/assets/icon.png`;
+
   try {
-    const path = GLib.file_test(configuredBackgroundPath, GLib.FileTest.EXISTS)
-      ? configuredBackgroundPath
-      : defaultBackgroundPath;
+    const path = GLib.file_test(imagePath, GLib.FileTest.EXISTS) ? imagePath : defaultImagePath;
     return loadTextureFromUri(`file://${path}`, scaleUiSize(500), scaleUiSize(500));
   } catch (error) {
-    console.error('Failed to load launcher background:', error);
+    console.error('Failed to load launcher background image:', error);
     return null;
   }
 }
 
-export function registerLauncherBackground(picture: Gtk.Picture) {
+export function registerLauncherImage(picture: Gtk.Picture) {
   pictures.add(picture);
   if (texture) picture.set_paintable(texture);
 
   return () => pictures.delete(picture);
 }
 
-function replaceBackground() {
-  texture = loadBackground();
+function replaceLauncherImage() {
+  texture = loadImage();
   for (const picture of pictures) {
     picture.set_paintable(texture ?? (null as unknown as Gdk.Paintable));
   }
   return texture !== null;
 }
 
-export function reloadLauncherBackground() {
+export function reloadLauncherImage() {
   const hasVisibleLauncher = [...pictures].some(picture => picture.get_mapped());
   if (!hasVisibleLauncher) {
-    backgroundDirty = true;
+    isImageDirty = true;
     return;
   }
 
-  backgroundDirty = !replaceBackground();
+  isImageDirty = !replaceLauncherImage();
 }
 
-export function ensureLauncherBackground() {
-  if (!backgroundDirty && texture) return;
+export function ensureLauncherImage() {
+  if (!isImageDirty && texture) return;
 
-  backgroundDirty = !replaceBackground();
+  isImageDirty = !replaceLauncherImage();
 }

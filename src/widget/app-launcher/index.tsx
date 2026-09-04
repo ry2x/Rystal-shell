@@ -3,7 +3,7 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import {type Timer, idle} from 'ags/time';
 
-import {createAppLauncherState} from '@/stores/application/appLauncher';
+import {createAppLauncherState} from '@/stores/application/appLauncherState';
 import AppLauncherContent, {
   type AppLauncherContentHandle,
 } from '@/widget/app-launcher/AppLauncherContent';

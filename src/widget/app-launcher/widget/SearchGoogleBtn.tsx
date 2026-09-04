@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Pango from 'gi://Pango';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {getDirectUrl, openQuery} from '@/stores/application/query';
+import {getDirectUrl, openQuery} from '@/stores/application/websearch';
 import {toggleAppLauncher} from '@/stores/shell/windowManager';
 
 export interface SearchGoogleBtnProps {

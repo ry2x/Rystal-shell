@@ -1,14 +1,12 @@
 import {onCleanup} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
-import {scaleUiSize} from '@/lib/uiScale';
-import {type AppLauncherState} from '@/stores/application/appLauncher';
-import {
-  ensureLauncherBackground,
-  registerLauncherBackground,
-} from '@/stores/application/launcherBackground';
-import {AppList} from '@/widget/app-launcher/widget/AppList';
-import {SearchInput} from '@/widget/app-launcher/widget/SearchInput';
+import {type AppLauncherState} from '@/stores/application/appLauncherState';
+import {ensureLauncherImage} from '@/stores/application/launcherPicture';
+
+import {AppList} from './widget/AppList';
+import {LauncherBackgroundImage} from './widget/BackgroundImage';
+import {SearchInput} from './widget/SearchInput';
 
 export interface AppLauncherContentHandle {
   focus: () => void;
@@ -21,36 +19,18 @@ export interface AppLauncherContentProps {
   register: (content: AppLauncherContentHandle | null) => void;
 }
 
-function createLauncherBackground() {
-  const picture = new Gtk.Picture({
-    contentFit: Gtk.ContentFit.COVER,
-    canTarget: false,
-    canShrink: true,
-    hexpand: true,
-    vexpand: true,
-    halign: Gtk.Align.FILL,
-    valign: Gtk.Align.FILL,
-    widthRequest: scaleUiSize(1),
-    heightRequest: scaleUiSize(1),
-  });
-
-  const unregister = registerLauncherBackground(picture);
-  picture.connect('destroy', unregister);
-  return picture;
-}
-
 export default function AppLauncherContent({
   monitorConnector,
   state,
   register,
 }: AppLauncherContentProps) {
-  const launcherBackground = createLauncherBackground();
+  const launcherBackground = LauncherBackgroundImage();
   const searchInput = SearchInput({...state, monitorConnector});
   const appList = AppList({...state, monitorConnector});
 
   const handle: AppLauncherContentHandle = {
     focus: () => {
-      ensureLauncherBackground();
+      ensureLauncherImage();
       searchInput.grab_focus();
       appList.get_vadjustment()?.set_value(0);
     },
