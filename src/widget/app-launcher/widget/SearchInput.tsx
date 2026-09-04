@@ -3,7 +3,7 @@ import {Gdk, Gtk} from 'ags/gtk4';
 
 import Apps from 'gi://AstalApps';
 
-import {recordAppLaunch} from '@/stores/application/applicationList';
+import {recordAppLaunch} from '@/stores/application/applicationRegistry';
 import {openQuery} from '@/stores/application/websearch';
 import {toggleAppLauncher} from '@/stores/shell/windowManager';
 

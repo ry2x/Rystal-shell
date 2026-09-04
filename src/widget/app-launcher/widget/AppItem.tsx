@@ -4,7 +4,7 @@ import Apps from 'gi://AstalApps';
 import Pango from 'gi://Pango';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {recordAppLaunch} from '@/stores/application/applicationList';
+import {recordAppLaunch} from '@/stores/application/applicationRegistry';
 import {toggleAppLauncher} from '@/stores/shell/windowManager';
 
 export interface AppItemProps {
