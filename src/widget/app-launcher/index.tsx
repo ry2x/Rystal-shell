@@ -8,17 +8,6 @@ import AppLauncherContent, {
   type AppLauncherContentHandle,
 } from '@/widget/app-launcher/AppLauncherContent';
 
-function addEscapeHandler(window: Astal.Window) {
-  const controller = new Gtk.EventControllerKey();
-  controller.connect('key-pressed', (_, keyval) => {
-    if (keyval !== Gdk.KEY_Escape) return false;
-
-    window.set_visible(false);
-    return true;
-  });
-  window.add_controller(controller);
-}
-
 export interface AppLauncherProps {
   monitor: Gdk.Monitor;
 }
@@ -28,9 +17,16 @@ export default function AppLauncher({monitor}: AppLauncherProps) {
   const monitorConnector = monitor.get_connector();
   let content: AppLauncherContentHandle | null = null;
   let focusTimer: Timer | null = null;
+  let window: Astal.Window | null = null;
 
-  const win = (
+  onCleanup(() => {
+    focusTimer?.cancel();
+    focusTimer = null;
+  });
+
+  return (
     <window
+      $={self => (window = self)}
       name={`applauncher-${monitorConnector}`}
       class="AppLauncher"
       gdkmonitor={monitor}
@@ -55,6 +51,14 @@ export default function AppLauncher({monitor}: AppLauncherProps) {
         });
       }}
     >
+      <Gtk.EventControllerKey
+        onKeyPressed={(_, keyval) => {
+          if (keyval !== Gdk.KEY_Escape) return false;
+
+          window?.set_visible(false);
+          return true;
+        }}
+      />
       <For each={state.contentLoaded.as(loaded => (loaded ? [true] : []))}>
         {() => (
           <AppLauncherContent
@@ -65,13 +69,5 @@ export default function AppLauncher({monitor}: AppLauncherProps) {
         )}
       </For>
     </window>
-  ) as Astal.Window;
-
-  addEscapeHandler(win);
-  onCleanup(() => {
-    focusTimer?.cancel();
-    focusTimer = null;
-  });
-
-  return win;
+  );
 }
