@@ -170,23 +170,26 @@ export default function CircularProgress<T>({
   sublabel,
   cssClass,
 }: CircularProgressProps<T>) {
-  let area!: Gtk.DrawingArea;
-  const areaWidget = (
-    <drawingarea
-      class={cssClass}
-      contentWidth={scaleUiSize(120)}
-      contentHeight={scaleUiSize(120)}
-      widthRequest={scaleUiSize(120)}
-      heightRequest={scaleUiSize(120)}
-      $={self => (area = self)}
-    />
-  );
-  const animation = new CircularProgressAnimation(area, variable, transformer);
-  onCleanup(() => animation.dispose());
+  let animation: CircularProgressAnimation<T> | null = null;
+
+  onCleanup(() => {
+    animation?.dispose();
+    animation = null;
+  });
 
   return (
     <overlay>
-      {areaWidget}
+      <drawingarea
+        $={self => {
+          animation?.dispose();
+          animation = new CircularProgressAnimation(self, variable, transformer);
+        }}
+        class={cssClass}
+        contentWidth={scaleUiSize(120)}
+        contentHeight={scaleUiSize(120)}
+        widthRequest={scaleUiSize(120)}
+        heightRequest={scaleUiSize(120)}
+      />
       <box
         $type="overlay"
         orientation={Gtk.Orientation.VERTICAL}
