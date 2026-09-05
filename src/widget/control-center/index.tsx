@@ -12,19 +12,20 @@ export interface ControlCenterProps {
   monitor: Gdk.Monitor;
 }
 
-interface ControlCenterWindow extends Astal.Window {
-  hide_animated: () => void;
-  hide_immediately: () => void;
-  show_animated: () => void;
-}
-
 export default function ControlCenter({monitor}: ControlCenterProps) {
   const connector = monitor.get_connector() ?? '';
   const state = createControlCenterState(connector);
   const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
 
-  const window = (
+  return (
     <window
+      $={self => {
+        Object.assign(self, {
+          hide_animated: state.hideAnimated,
+          hide_immediately: state.hideImmediately,
+          show_animated: state.showAnimated,
+        });
+      }}
       name={`control-center-${monitor.get_connector()}`}
       class="ControlCenter"
       gdkmonitor={monitor}
@@ -65,11 +66,5 @@ export default function ControlCenter({monitor}: ControlCenterProps) {
         </box>
       </box>
     </window>
-  ) as ControlCenterWindow;
-
-  window.hide_animated = state.hideAnimated;
-  window.hide_immediately = state.hideImmediately;
-  window.show_animated = state.showAnimated;
-
-  return window;
+  );
 }

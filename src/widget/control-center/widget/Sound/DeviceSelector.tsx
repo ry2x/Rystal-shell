@@ -18,8 +18,15 @@ export interface DeviceSelectorProps {
 
 export default function DeviceSelector({endpoint, endpoints, kind, onSelect}: DeviceSelectorProps) {
   const route = createBinding(endpoint, 'route').as(() => getRouteLabel(endpoint));
-  const button = (
-    <button class="cc-sound-device-card" hexpand halign={Gtk.Align.FILL}>
+  let popover: Gtk.Popover | null = null;
+
+  return (
+    <menubutton
+      class="cc-sound-device-card"
+      direction={Gtk.ArrowType.DOWN}
+      hexpand
+      halign={Gtk.Align.FILL}
+    >
       <box spacing={scaleUiSize(14)} hexpand>
         <LucideIcon name={kind === 'output' ? 'speaker' : 'mic'} pixelSize={26} />
         <box orientation={Gtk.Orientation.VERTICAL} hexpand valign={Gtk.Align.CENTER}>
@@ -43,69 +50,52 @@ export default function DeviceSelector({endpoint, endpoints, kind, onSelect}: De
         </box>
         <LucideIcon name="chevron-down" class="cc-sound-device-chevron" pixelSize={20} />
       </box>
-    </button>
-  ) as Gtk.Button;
-
-  const popover = new Gtk.Popover({
-    hasArrow: false,
-    cssClasses: ['cc-sound-device-menu'],
-  });
-
-  popover.set_parent(button);
-  popover.set_child(
-    (
-      <box orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(2)}>
-        <For each={endpoints}>
-          {(candidate: Wp.Endpoint) => (
-            <button
-              class={createBinding(candidate, 'is_default').as(active =>
-                active ? 'cc-sound-device-option active' : 'cc-sound-device-option'
-              )}
-              tooltipText={candidate.name || undefined}
-              onClicked={() => {
-                popover.popdown();
-                void Promise.resolve(onSelect(candidate)).catch(console.error);
-              }}
-            >
-              <box spacing={scaleUiSize(10)}>
-                <LucideIcon name={kind === 'output' ? 'speaker' : 'mic'} pixelSize={18} />
-                <box orientation={Gtk.Orientation.VERTICAL} hexpand>
-                  <label
-                    label={getEndpointLabel(candidate)}
-                    halign={Gtk.Align.START}
-                    ellipsize={Pango.EllipsizeMode.END}
-                    maxWidthChars={30}
-                    lines={1}
-                  />
-                  <label
-                    label={getRouteLabel(candidate)}
-                    visible={Boolean(getRouteLabel(candidate))}
-                    class="cc-sound-device-option-route"
-                    halign={Gtk.Align.START}
-                    ellipsize={Pango.EllipsizeMode.END}
-                    maxWidthChars={30}
-                    lines={1}
+      <popover $={self => (popover = self)} hasArrow={false} cssClasses={['cc-sound-device-menu']}>
+        <box orientation={Gtk.Orientation.VERTICAL} spacing={scaleUiSize(2)}>
+          <For each={endpoints}>
+            {(candidate: Wp.Endpoint) => (
+              <button
+                class={createBinding(candidate, 'is_default').as(active =>
+                  active ? 'cc-sound-device-option active' : 'cc-sound-device-option'
+                )}
+                tooltipText={candidate.name || undefined}
+                onClicked={() => {
+                  popover?.popdown();
+                  void Promise.resolve(onSelect(candidate)).catch(console.error);
+                }}
+              >
+                <box spacing={scaleUiSize(10)}>
+                  <LucideIcon name={kind === 'output' ? 'speaker' : 'mic'} pixelSize={18} />
+                  <box orientation={Gtk.Orientation.VERTICAL} hexpand>
+                    <label
+                      label={getEndpointLabel(candidate)}
+                      halign={Gtk.Align.START}
+                      ellipsize={Pango.EllipsizeMode.END}
+                      maxWidthChars={30}
+                      lines={1}
+                    />
+                    <label
+                      label={getRouteLabel(candidate)}
+                      visible={Boolean(getRouteLabel(candidate))}
+                      class="cc-sound-device-option-route"
+                      halign={Gtk.Align.START}
+                      ellipsize={Pango.EllipsizeMode.END}
+                      maxWidthChars={30}
+                      lines={1}
+                    />
+                  </box>
+                  <LucideIcon
+                    name="check"
+                    class="cc-sound-device-check"
+                    visible={createBinding(candidate, 'is_default')}
+                    pixelSize={17}
                   />
                 </box>
-                <LucideIcon
-                  name="check"
-                  class="cc-sound-device-check"
-                  visible={createBinding(candidate, 'is_default')}
-                  pixelSize={17}
-                />
-              </box>
-            </button>
-          )}
-        </For>
-      </box>
-    ) as Gtk.Widget
+              </button>
+            )}
+          </For>
+        </box>
+      </popover>
+    </menubutton>
   );
-
-  button.connect('clicked', () => popover.popup());
-  button.connect('destroy', () => {
-    popover.popdown();
-    if (popover.get_parent()) popover.unparent();
-  });
-
-  return button;
 }

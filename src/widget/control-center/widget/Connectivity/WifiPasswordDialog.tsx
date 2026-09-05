@@ -1,3 +1,4 @@
+import {onCleanup} from 'ags';
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 import {type Timer, idle} from 'ags/time';
@@ -16,10 +17,25 @@ export default function WifiPasswordDialog({monitor}: WifiPasswordDialogProps) {
   const connector = monitor.get_connector() ?? '';
   const state = createWifiPasswordDialogState(connector);
   let entry: Gtk.Entry | null = null;
+  let focusTimer: Timer | null = null;
 
   const submit = () => void state.submit(entry?.get_text() ?? '');
+  const unsubscribe = state.activation.subscribe(() => {
+    entry?.set_text('');
+    focusTimer?.cancel();
+    focusTimer = idle(() => {
+      focusTimer = null;
+      entry?.grab_focus();
+    });
+  });
 
-  const win = (
+  onCleanup(() => {
+    unsubscribe();
+    focusTimer?.cancel();
+    focusTimer = null;
+  });
+
+  return (
     <window
       name={`wifi-password-${connector}`}
       class="WifiPasswordDialog"
@@ -35,23 +51,15 @@ export default function WifiPasswordDialog({monitor}: WifiPasswordDialogProps) {
       keymode={Astal.Keymode.EXCLUSIVE}
       application={app}
       visible={state.visible}
-      $={(self: Astal.Window) => {
-        let focusTimer: Timer | null = null;
-        const unsubscribe = state.activation.subscribe(() => {
-          entry?.set_text('');
-          focusTimer?.cancel();
-          focusTimer = idle(() => {
-            focusTimer = null;
-            entry?.grab_focus();
-          });
-        });
-        self.connect('destroy', () => {
-          unsubscribe();
-          focusTimer?.cancel();
-          focusTimer = null;
-        });
-      }}
     >
+      <Gtk.EventControllerKey
+        onKeyPressed={(_, keyval) => {
+          if (keyval !== Gdk.KEY_Escape) return false;
+
+          state.close();
+          return true;
+        }}
+      />
       <box hexpand vexpand>
         <box
           class="cc-modal cc-password-modal"
@@ -113,16 +121,5 @@ export default function WifiPasswordDialog({monitor}: WifiPasswordDialogProps) {
         </box>
       </box>
     </window>
-  ) as Astal.Window;
-
-  const keyController = new Gtk.EventControllerKey();
-  keyController.connect('key-pressed', (_, keyval) => {
-    if (keyval === Gdk.KEY_Escape) {
-      state.close();
-      return true;
-    }
-    return false;
-  });
-  win.add_controller(keyController);
-  return win;
+  );
 }
