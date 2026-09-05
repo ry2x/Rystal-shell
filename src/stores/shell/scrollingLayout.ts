@@ -1,6 +1,8 @@
-import {type Accessor, createExternal} from 'ags';
+import {type Accessor} from 'ags';
 
 import Hyprland from 'gi://AstalHyprland';
+
+import {createLazyAccessor} from '@/stores/common/lazyAccessor';
 
 const UPDATE_DELAY_MS = 10;
 
@@ -19,7 +21,7 @@ const hyprland = Hyprland.get_default();
 export function createScrollingLayoutInfo(connector: string | null): Accessor<ScrollingLayoutInfo> {
   const initialInfo: ScrollingLayoutInfo = {visible: false, current: 0, total: 0};
 
-  return createExternal(initialInfo, setInfo => {
+  return createLazyAccessor(initialInfo, setInfo => {
     let currentLayout = 'scrolling';
     let updateTimer: ReturnType<typeof setTimeout> | null = null;
     let disposed = false;
