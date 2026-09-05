@@ -1,4 +1,4 @@
-import {type Accessor} from 'ags';
+import {type Accessor, onCleanup} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
 import {scaleUi} from '@/lib/uiScale';
@@ -16,7 +16,7 @@ export interface PowerMenuItemButtonProps {
   confirmationMotion: Accessor<boolean>;
   onRequestAction: (item: PowerItem) => void;
   onItemFocused: (index: number) => void;
-  onButtonCreated: (index: number, button: Gtk.Button) => void;
+  register: (button: Gtk.Button | null) => void;
 }
 
 export default function PowerMenuItemButton({
@@ -26,8 +26,10 @@ export default function PowerMenuItemButton({
   confirmationMotion,
   onRequestAction,
   onItemFocused,
-  onButtonCreated,
+  register,
 }: PowerMenuItemButtonProps) {
+  onCleanup(() => register(null));
+
   return (
     <button
       cssClasses={selectedIndex.as(selected =>
@@ -42,7 +44,7 @@ export default function PowerMenuItemButton({
         return 'opacity: 0; transform: scale(0.92);';
       })}
       onClicked={() => onRequestAction(item)}
-      $={self => onButtonCreated(index, self)}
+      $={register}
     >
       <Gtk.EventControllerFocus onEnter={() => onItemFocused(index)} />
       <box orientation={Gtk.Orientation.VERTICAL} vexpand>

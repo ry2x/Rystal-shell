@@ -5,8 +5,12 @@ import app from 'ags/gtk4/app';
 import {shellGeometry} from '@/lib/shellGeometry';
 import {createPowerMenuState} from '@/stores/panel/powerMenu';
 import ClickCatcher from '@/widget/common/ClickCatcher';
-import PowerMenuConfirmationView from '@/widget/power-menu/widget/PowerMenuConfirmationView';
-import PowerMenuMainView from '@/widget/power-menu/widget/PowerMenuMainView';
+import PowerMenuConfirmationView, {
+  type PowerMenuConfirmationViewHandle,
+} from '@/widget/power-menu/widget/PowerMenuConfirmationView';
+import PowerMenuMainView, {
+  type PowerMenuMainViewHandle,
+} from '@/widget/power-menu/widget/PowerMenuMainView';
 
 const CONFIRM_FADE_MS = 180;
 
@@ -14,69 +18,18 @@ export interface PowerMenuProps {
   monitor: Gdk.Monitor;
 }
 
-type PowerMenuWindow = Astal.Window & {
-  hide_animated: () => void;
-  show_animated: () => void;
-};
-
 export default function PowerMenu({monitor}: PowerMenuProps) {
   const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
-  const itemButtons: Gtk.Button[] = [];
-  let cancelButton: Gtk.Button | null = null;
-  let confirmButton: Gtk.Button | null = null;
+  let mainView: PowerMenuMainViewHandle | null = null;
+  let confirmationView: PowerMenuConfirmationViewHandle | null = null;
 
   const state = createPowerMenuState({
     monitorConnector: monitor.get_connector(),
-    focusItem: index => itemButtons[index]?.grab_focus(),
-    focusConfirmation: index => {
-      if (index === 0) cancelButton?.grab_focus();
-      else confirmButton?.grab_focus();
-    },
+    focusItem: index => mainView?.focusItem(index),
+    focusConfirmation: index => confirmationView?.focusButton(index),
   });
 
-  const mainView = PowerMenuMainView({
-    selectedIndex: state.selectedIndex,
-    confirmationMotion: state.confirmationMotion,
-    errorMessage: state.errorMessage,
-    onRequestAction: state.requestAction,
-    onItemFocused: state.selectItem,
-    onButtonCreated: (index, button) => {
-      itemButtons[index] = button;
-    },
-  });
-
-  const confirmationView = PowerMenuConfirmationView({
-    confirmation: state.confirmation,
-    onCancel: state.hideAnimated,
-    onConfirm: state.confirmAction,
-    onSelectionChanged: state.selectConfirmation,
-    onCancelButtonCreated: button => {
-      cancelButton = button;
-    },
-    onConfirmButtonCreated: button => {
-      confirmButton = button;
-    },
-  });
-
-  const stack = (
-    <stack
-      transitionType={Gtk.StackTransitionType.CROSSFADE}
-      transitionDuration={CONFIRM_FADE_MS}
-      hexpand
-      vexpand
-      halign={Gtk.Align.FILL}
-      valign={Gtk.Align.FILL}
-      $={self => {
-        self.add_named(mainView, 'main');
-        self.add_named(confirmationView, 'confirmation');
-        createEffect(() => {
-          self.set_visible_child_name(state.confirmation() ? 'confirmation' : 'main');
-        });
-      }}
-    />
-  ) as Gtk.Stack;
-
-  const window = (
+  return (
     <window
       name={`power-menu-${monitor.get_connector()}`}
       class="PowerMenu"
@@ -88,6 +41,12 @@ export default function PowerMenu({monitor}: PowerMenuProps) {
       marginLeft={shellGeometry.barWidth}
       application={app}
       visible={state.visible}
+      $={self => {
+        Object.assign(self, {
+          hide_animated: state.hideAnimated,
+          show_animated: state.showAnimated,
+        });
+      }}
     >
       <Gtk.EventControllerKey
         propagationPhase={Gtk.PropagationPhase.CAPTURE}
@@ -105,13 +64,39 @@ export default function PowerMenu({monitor}: PowerMenuProps) {
           valign={Gtk.Align.END}
           overflow={Gtk.Overflow.HIDDEN}
         >
-          {stack}
+          <stack
+            transitionType={Gtk.StackTransitionType.CROSSFADE}
+            transitionDuration={CONFIRM_FADE_MS}
+            hexpand
+            vexpand
+            halign={Gtk.Align.FILL}
+            valign={Gtk.Align.FILL}
+            $={self => {
+              createEffect(() => {
+                self.set_visible_child_name(state.confirmation() ? 'confirmation' : 'main');
+              });
+            }}
+          >
+            <PowerMenuMainView
+              $type="named"
+              selectedIndex={state.selectedIndex}
+              confirmationMotion={state.confirmationMotion}
+              errorMessage={state.errorMessage}
+              onRequestAction={state.requestAction}
+              onItemFocused={state.selectItem}
+              register={handle => (mainView = handle)}
+            />
+            <PowerMenuConfirmationView
+              $type="named"
+              confirmation={state.confirmation}
+              onCancel={state.hideAnimated}
+              onConfirm={state.confirmAction}
+              onSelectionChanged={state.selectConfirmation}
+              register={handle => (confirmationView = handle)}
+            />
+          </stack>
         </box>
       </box>
     </window>
-  ) as PowerMenuWindow;
-
-  window.hide_animated = state.hideAnimated;
-  window.show_animated = state.showAnimated;
-  return window;
+  );
 }

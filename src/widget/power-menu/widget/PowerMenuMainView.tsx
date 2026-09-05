@@ -1,4 +1,4 @@
-import {type Accessor} from 'ags';
+import {type Accessor, onCleanup} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
 import {scaleUiSize} from '@/lib/uiScale';
@@ -11,7 +11,11 @@ export interface PowerMenuMainViewProps {
   errorMessage: Accessor<string>;
   onRequestAction: (item: PowerItem) => void;
   onItemFocused: (index: number) => void;
-  onButtonCreated: (index: number, button: Gtk.Button) => void;
+  register: (handle: PowerMenuMainViewHandle | null) => void;
+}
+
+export interface PowerMenuMainViewHandle {
+  focusItem: (index: number) => void;
 }
 
 export default function PowerMenuMainView({
@@ -20,15 +24,23 @@ export default function PowerMenuMainView({
   errorMessage,
   onRequestAction,
   onItemFocused,
-  onButtonCreated,
+  register,
 }: PowerMenuMainViewProps) {
+  const itemButtons: (Gtk.Button | null)[] = [];
+  const handle: PowerMenuMainViewHandle = {
+    focusItem: index => itemButtons[index]?.grab_focus(),
+  };
+  onCleanup(() => register(null));
+
   return (
     <box
+      name="main"
       class="power-menu-main"
       orientation={Gtk.Orientation.VERTICAL}
       spacing={scaleUiSize(14)}
       hexpand
       halign={Gtk.Align.FILL}
+      $={() => register(handle)}
     >
       <box
         class="power-menu-items"
@@ -45,7 +57,7 @@ export default function PowerMenuMainView({
             confirmationMotion={confirmationMotion}
             onRequestAction={onRequestAction}
             onItemFocused={onItemFocused}
-            onButtonCreated={onButtonCreated}
+            register={button => (itemButtons[index] = button)}
           />
         ))}
       </box>
@@ -57,5 +69,5 @@ export default function PowerMenuMainView({
         ellipsize={3}
       />
     </box>
-  ) as Gtk.Box;
+  );
 }
