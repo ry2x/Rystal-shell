@@ -6,7 +6,7 @@ import {
   applicationHistoryRevision,
   applicationRegistryRevision,
   searchApps,
-} from './applicationRegistry';
+} from '@/stores/application/applicationRegistry';
 
 export interface AppLauncherState {
   contentLoaded: Accessor<boolean>;

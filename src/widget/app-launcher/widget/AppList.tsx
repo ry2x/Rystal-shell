@@ -5,9 +5,8 @@ import {type Timer, idle} from 'ags/time';
 import Apps from 'gi://AstalApps';
 
 import {scaleUiSize} from '@/lib/uiScale';
-
-import {AppItem} from './AppItem';
-import {SearchGoogleBtn} from './SearchGoogleBtn';
+import {AppItem} from '@/widget/app-launcher/widget/AppItem';
+import {SearchGoogleBtn} from '@/widget/app-launcher/widget/SearchGoogleBtn';
 
 function scrollToSelection(scrollWindow: Gtk.ScrolledWindow, targetChild: Gtk.Widget) {
   const adjustment = scrollWindow.get_vadjustment();

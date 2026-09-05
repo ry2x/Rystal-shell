@@ -3,10 +3,9 @@ import {Gtk} from 'ags/gtk4';
 
 import {type AppLauncherState} from '@/stores/application/appLauncherState';
 import {ensureLauncherImage} from '@/stores/application/launcherPicture';
-
-import {AppList, type AppListHandle} from './widget/AppList';
-import {LauncherBackgroundImage} from './widget/BackgroundImage';
-import {SearchInput, type SearchInputHandle} from './widget/SearchInput';
+import {AppList, type AppListHandle} from '@/widget/app-launcher/widget/AppList';
+import {LauncherBackgroundImage} from '@/widget/app-launcher/widget/BackgroundImage';
+import {SearchInput, type SearchInputHandle} from '@/widget/app-launcher/widget/SearchInput';
 
 export interface AppLauncherContentHandle {
   focus: () => void;

@@ -2,9 +2,8 @@ import {execAsync} from 'ags/process';
 
 import Apps from 'gi://AstalApps';
 
+import {recordAppLaunch} from '@/stores/application/applicationRegistry';
 import {toggleAppLauncher} from '@/stores/shell/windowManager';
-
-import {recordAppLaunch} from './applicationRegistry';
 
 const DOMAIN_PATTERN =
   /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}(?::\d{1,5})?(?:[/?#][^\s]*)?$/i;
