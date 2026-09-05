@@ -1,9 +1,10 @@
-import {createExternal} from 'ags';
 import {type Timer, timeout} from 'ags/time';
+
+import {createLazyAccessor} from '@/stores/common/lazyAccessor';
 
 const MINUTE_MS = 60_000;
 
-const now = createExternal(Temporal.Now.zonedDateTimeISO(), setNow => {
+const now = createLazyAccessor(Temporal.Now.zonedDateTimeISO(), setNow => {
   let updateTimer: Timer | null = null;
 
   const scheduleNextMinute = () => {
