@@ -30,7 +30,7 @@ export default function DateWeatherContent({revealed, monitorConnector}: DateWea
           cssClasses={revealed.as(isRevealed =>
             isRevealed ? ['dw-container', 'revealed'] : ['dw-container']
           )}
-          css={geometry(({dx}) => {
+          css={geometry.as(({dx}) => {
             const marginLeft = Math.max(
               -shellGeometry.dateWeatherPanelWidth,
               dx - shellGeometry.barWidth - shellGeometry.dateWeatherPanelWidth

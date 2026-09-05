@@ -76,6 +76,18 @@ export default tseslint.config(
       'no-extend-native': 'error',
       'no-extra-bind': 'error',
       'no-extra-label': 'error',
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'ags',
+              importNames: ['createConnection', 'createExternal'],
+              message: 'Use a project-owned store lifecycle instead.',
+            },
+          ],
+        },
+      ],
       'no-iterator': 'error',
       'no-label-var': 'error',
       'no-loop-func': 'error',
