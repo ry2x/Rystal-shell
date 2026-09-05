@@ -1,4 +1,4 @@
-import type {Accessor, Setter} from 'ags';
+import {type Accessor, type Setter, onCleanup} from 'ags';
 import {Gdk, Gtk} from 'ags/gtk4';
 
 import Apps from 'gi://AstalApps';
@@ -12,6 +12,12 @@ export interface SearchInputProps {
   setSelectedIndex: Setter<number>;
   results: Accessor<Apps.Application[]>;
   monitorConnector: string | null;
+  register: (handle: SearchInputHandle | null) => void;
+}
+
+export interface SearchInputHandle {
+  focus: () => void;
+  reset: () => void;
 }
 
 export function SearchInput({
@@ -21,45 +27,61 @@ export function SearchInput({
   setSelectedIndex,
   results,
   monitorConnector,
-}: SearchInputProps): Gtk.Entry {
-  const searchEntry = (
-    <entry class="applauncher-input" placeholderText="Search apps..." hexpand />
-  ) as Gtk.Entry;
+  register,
+}: SearchInputProps) {
+  let searchEntry: Gtk.Entry | null = null;
+  const handle: SearchInputHandle = {
+    focus: () => searchEntry?.grab_focus(),
+    reset: () => {
+      searchEntry?.set_text('');
+      setText('');
+      setSelectedIndex(0);
+    },
+  };
+  onCleanup(() => register(null));
 
-  searchEntry.connect('changed', () => {
-    setText(searchEntry.get_text());
-    setSelectedIndex(0);
-  });
+  return (
+    <entry
+      class="applauncher-input"
+      placeholderText="Search apps..."
+      hexpand
+      $={self => {
+        searchEntry = self;
+        self.connect('changed', () => {
+          setText(self.get_text());
+          setSelectedIndex(0);
+        });
+        register(handle);
+      }}
+    >
+      <Gtk.EventControllerKey
+        propagationPhase={Gtk.PropagationPhase.CAPTURE}
+        onKeyPressed={(_controller, keyval) => {
+          const appResults = results.peek();
+          const hasQuery = text.peek().trim() !== '';
+          const maxIndex = hasQuery ? appResults.length : appResults.length - 1;
+          if (maxIndex < 0) return false;
 
-  const entryKeyCtrl = new Gtk.EventControllerKey();
-  entryKeyCtrl.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
-  entryKeyCtrl.connect('key-pressed', (_, keyval) => {
-    const appResults = results.peek();
-    const maxIndex = (text.peek() || '').trim() !== '' ? appResults.length : appResults.length - 1;
-    if (maxIndex < 0) return false;
-
-    if (keyval === Gdk.KEY_Down) {
-      const newIndex = Math.min(selectedIndex.peek() + 1, maxIndex);
-      setSelectedIndex(newIndex);
-      return true;
-    }
-    if (keyval === Gdk.KEY_Up) {
-      const newIndex = Math.max(selectedIndex.peek() - 1, 0);
-      setSelectedIndex(newIndex);
-      return true;
-    }
-    if (keyval === Gdk.KEY_Return || keyval === Gdk.KEY_KP_Enter) {
-      const idx = selectedIndex.peek();
-      if (idx === appResults.length) {
-        openLauncherQuery(text.peek(), monitorConnector);
-      } else if (idx < appResults.length) {
-        launchApplication(appResults[idx], monitorConnector);
-      }
-      return true;
-    }
-    return false;
-  });
-  searchEntry.add_controller(entryKeyCtrl);
-
-  return searchEntry;
+          if (keyval === Gdk.KEY_Down) {
+            setSelectedIndex(Math.min(selectedIndex.peek() + 1, maxIndex));
+            return true;
+          }
+          if (keyval === Gdk.KEY_Up) {
+            setSelectedIndex(Math.max(selectedIndex.peek() - 1, 0));
+            return true;
+          }
+          if (keyval === Gdk.KEY_Return || keyval === Gdk.KEY_KP_Enter) {
+            const index = selectedIndex.peek();
+            if (index === appResults.length) {
+              openLauncherQuery(text.peek(), monitorConnector);
+            } else if (index < appResults.length) {
+              launchApplication(appResults[index], monitorConnector);
+            }
+            return true;
+          }
+          return false;
+        }}
+      />
+    </entry>
+  );
 }

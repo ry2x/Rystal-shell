@@ -73,22 +73,21 @@ export interface AppListProps {
   selectedIndex: Accessor<number>;
   results: Accessor<Apps.Application[]>;
   monitorConnector: string | null;
+  register: (handle: AppListHandle | null) => void;
 }
 
-export function AppList({
-  text,
-  selectedIndex,
-  results,
-  monitorConnector,
-}: AppListProps): Gtk.ScrolledWindow {
-  const searchGoogleBtn = SearchGoogleBtn({
-    textState: text,
-    monitorConnector,
-  });
+export interface AppListHandle {
+  resetScroll: () => void;
+}
 
-  let appList!: Gtk.Box;
-  let scrollWindow!: Gtk.ScrolledWindow;
+export function AppList({text, selectedIndex, results, monitorConnector, register}: AppListProps) {
+  let appList: Gtk.Box | null = null;
+  let searchGoogleBtn: Gtk.Button | null = null;
+  let scrollWindow: Gtk.ScrolledWindow | null = null;
   let selectionTimer: Timer | null = null;
+  const handle: AppListHandle = {
+    resetScroll: () => scrollWindow?.get_vadjustment()?.set_value(0),
+  };
 
   const widget = (
     <scrolledwindow
@@ -100,7 +99,10 @@ export function AppList({
       minContentHeight={300}
       maxContentHeight={600}
       propagateNaturalHeight={false}
-      $={self => (scrollWindow = self)}
+      $={self => {
+        scrollWindow = self;
+        register(handle);
+      }}
     >
       <box
         orientation={Gtk.Orientation.VERTICAL}
@@ -116,10 +118,14 @@ export function AppList({
             {application => <AppItem res={application} monitorConnector={monitorConnector} />}
           </For>
         </box>
-        {searchGoogleBtn}
+        <SearchGoogleBtn
+          textState={text}
+          monitorConnector={monitorConnector}
+          register={button => (searchGoogleBtn = button)}
+        />
       </box>
     </scrolledwindow>
-  ) as Gtk.ScrolledWindow;
+  );
 
   createEffect(() => {
     selectedIndex();
@@ -129,6 +135,7 @@ export function AppList({
     selectionTimer?.cancel();
     selectionTimer = idle(() => {
       selectionTimer = null;
+      if (!appList || !searchGoogleBtn || !scrollWindow) return;
       updateSelection(
         appList,
         searchGoogleBtn,
@@ -143,6 +150,7 @@ export function AppList({
   onCleanup(() => {
     selectionTimer?.cancel();
     selectionTimer = null;
+    register(null);
   });
 
   return widget;

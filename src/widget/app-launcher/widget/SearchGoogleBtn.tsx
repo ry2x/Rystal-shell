@@ -1,4 +1,4 @@
-import type {Accessor} from 'ags';
+import {type Accessor, onCleanup} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
@@ -10,14 +10,18 @@ import {getDirectUrl} from '@/stores/application/appLauncherAction';
 export interface SearchGoogleBtnProps {
   textState: Accessor<string>;
   monitorConnector: string | null;
+  register: (button: Gtk.Button | null) => void;
 }
 
-export function SearchGoogleBtn({textState, monitorConnector}: SearchGoogleBtnProps): Gtk.Button {
+export function SearchGoogleBtn({textState, monitorConnector, register}: SearchGoogleBtnProps) {
+  onCleanup(() => register(null));
+
   return (
     <button
       class="applauncher-item"
       canFocus={false}
       visible={textState.as((t: string) => (t || '').trim() !== '')}
+      $={register}
       onClicked={() => {
         const t = textState.peek() || '';
         openLauncherQuery(t, monitorConnector);
@@ -44,5 +48,5 @@ export function SearchGoogleBtn({textState, monitorConnector}: SearchGoogleBtnPr
         </box>
       </box>
     </button>
-  ) as Gtk.Button;
+  );
 }
