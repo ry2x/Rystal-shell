@@ -6,9 +6,10 @@ import {scaleUiSize} from '@/lib/uiScale';
 import {type BarBackgroundGeometry} from '@/stores/shell/barBackground';
 
 export interface PageContainerProps {
+  name: string;
   revealed: Accessor<boolean>;
   geometry: Accessor<BarBackgroundGeometry>;
-  child: Gtk.Widget;
+  children: JSX.Element;
 }
 
 function getContainerCss(dx: number) {
@@ -18,12 +19,10 @@ function getContainerCss(dx: number) {
   return `transform: translateX(${marginLeft}px); opacity: ${opacity};`;
 }
 
-export default function PageContainer({revealed, geometry, child}: PageContainerProps) {
-  child.set_hexpand(true);
-  child.set_halign(Gtk.Align.FILL);
-
+export default function PageContainer({name, revealed, geometry, children}: PageContainerProps) {
   return (
     <box
+      name={name}
       cssClasses={revealed.as(value => (value ? ['cc-container', 'revealed'] : ['cc-container']))}
       css={geometry.as(({dx}) => getContainerCss(dx))}
       orientation={Gtk.Orientation.VERTICAL}
@@ -33,7 +32,7 @@ export default function PageContainer({revealed, geometry, child}: PageContainer
       valign={Gtk.Align.FILL}
       halign={Gtk.Align.FILL}
     >
-      {child}
+      {children}
     </box>
   );
 }
