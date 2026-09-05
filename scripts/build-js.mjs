@@ -1,7 +1,7 @@
-import { build } from 'esbuild';
+import {build} from 'esbuild';
 
 await build({
-  entryPoints: ['src/app.ts'],
+  entryPoints: ['src/app.tsx'],
   outfile: 'dist/app.js',
   bundle: true,
   external: ['gi://*', 'resource://*', 'cairo', 'console', 'system'],

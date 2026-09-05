@@ -7,7 +7,6 @@ import {timeout} from 'ags/time';
 
 import {shellGeometry} from '@/lib/shellGeometry';
 import {scaleUiSize} from '@/lib/uiScale';
-import BarReserve from '@/widget/bar/BarReserve';
 import PanelBackground from '@/widget/bar/PanelBackground';
 import Clock from '@/widget/bar/widget/Clock';
 import RecordIndicator from '@/widget/bar/widget/RecordIndicator';
@@ -40,8 +39,6 @@ export interface BarProps {
 }
 
 export default function Bar({monitor}: BarProps) {
-  BarReserve({monitor});
-
   const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
   const window = (
     <window
