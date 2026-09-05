@@ -101,10 +101,13 @@ function createMonitorGeometry(monitorConnector: string | null): Accessor<BarBac
       setGeometry(currentGeometry);
     };
 
-    const unsubscribePanel = activeSidePanel.subscribe(({panel, monitor}) => {
+    const updateTarget = () => {
+      const {panel, monitor} = activeSidePanel.peek();
       targetGeometry = getTargetGeometry(panel, monitor === monitorConnector);
       animationTimer ??= interval(ANIMATION_INTERVAL_MS, animate);
-    });
+    };
+    const unsubscribePanel = activeSidePanel.subscribe(updateTarget);
+    updateTarget();
 
     return () => {
       unsubscribePanel();

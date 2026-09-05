@@ -202,7 +202,7 @@ export function createPowerMenuState({
       if (disposed) return;
       const message = error instanceof Error ? error.message : String(error);
       console.error(`[PowerMenu] ${item.label} failed: ${message}`);
-      const active = activeSidePanel.get();
+      const active = activeSidePanel.peek();
       if (active.panel !== 'power-menu' || active.monitor !== monitorConnector) return;
       setConfirmation(null);
       setErrorMessage(`${item.label} failed: ${message}`);
