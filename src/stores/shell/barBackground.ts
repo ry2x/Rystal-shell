@@ -1,4 +1,4 @@
-import {type Accessor, createExternal, createState} from 'ags';
+import {type Accessor, createState} from 'ags';
 import {type Timer, interval} from 'ags/time';
 
 import GLib from 'gi://GLib';
@@ -6,6 +6,7 @@ import GLib from 'gi://GLib';
 import {rystalShellConfigDir, rystalShellDataDir} from '@/lib/paths';
 import {shellGeometry} from '@/lib/shellGeometry';
 import {scaleUi} from '@/lib/uiScale';
+import {createLazyAccessor} from '@/stores/common/lazyAccessor';
 import {activeSidePanel} from '@/stores/shell/windowManager';
 
 const ANIMATION_INTERVAL_MS = 1000 / 60;
@@ -77,7 +78,7 @@ const monitorGeometries = new Map<string, Accessor<BarBackgroundGeometry>>();
 function createMonitorGeometry(monitorConnector: string | null): Accessor<BarBackgroundGeometry> {
   const initialGeometry = {dx: shellGeometry.barWidth, bottomHeight: 0};
 
-  return createExternal(initialGeometry, setGeometry => {
+  return createLazyAccessor(initialGeometry, setGeometry => {
     let currentGeometry = initialGeometry;
     let targetGeometry = initialGeometry;
     let animationTimer: Timer | null = null;
