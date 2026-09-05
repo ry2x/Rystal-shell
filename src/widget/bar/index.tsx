@@ -3,7 +3,7 @@ import Cairo from 'cairo';
 import {onCleanup} from 'ags';
 import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
-import {timeout} from 'ags/time';
+import {type Timer, timeout} from 'ags/time';
 
 import {shellGeometry} from '@/lib/shellGeometry';
 import {scaleUiSize} from '@/lib/uiScale';
@@ -40,8 +40,18 @@ export interface BarProps {
 
 export default function Bar({monitor}: BarProps) {
   const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
-  const window = (
+  let inputRegionTimer: Timer | null = null;
+
+  onCleanup(() => {
+    inputRegionTimer?.cancel();
+    inputRegionTimer = null;
+  });
+
+  return (
     <window
+      $={self => {
+        inputRegionTimer = timeout(INPUT_REGION_DELAY_MS, () => setBarInputRegion(self));
+      }}
       visible
       name={`bar-${monitor.get_connector()}`}
       cssClasses={['Bar']}
@@ -95,10 +105,5 @@ export default function Bar({monitor}: BarProps) {
         </box>
       </overlay>
     </window>
-  ) as Astal.Window;
-
-  const inputRegionTimer = timeout(INPUT_REGION_DELAY_MS, () => setBarInputRegion(window));
-  onCleanup(() => inputRegionTimer.cancel());
-
-  return window;
+  );
 }

@@ -1,4 +1,4 @@
-import {For, createBinding, onCleanup} from 'ags';
+import {For, createBinding} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
 import AstalTray from 'gi://AstalTray';
@@ -17,49 +17,6 @@ export default function Tray() {
 
   let expander: Gtk.Popover | null = null;
 
-  const trigger = (
-    <button
-      class="tray-primary"
-      halign={Gtk.Align.CENTER}
-      tooltipMarkup={primaryItem.as(item => item?.tooltip_markup ?? '')}
-      onClicked={() => {
-        if (expander?.get_visible()) expander.popdown();
-        else expander?.popup();
-      }}
-    >
-      <For each={primaryItem.as(item => (item ? [item] : []))}>
-        {(item: AstalTray.TrayItem) => (
-          <image gicon={createBinding(item, 'gicon')} pixelSize={scaleUiSize(18)} />
-        )}
-      </For>
-    </button>
-  ) as Gtk.Button;
-
-  const expandedItems = (
-    <box
-      class="tray-expander-row"
-      orientation={Gtk.Orientation.HORIZONTAL}
-      spacing={scaleUiSize(4)}
-    >
-      <For each={items}>
-        {(item: AstalTray.TrayItem) => (
-          <TrayItemButton item={item} onActivate={() => expander?.popdown()} />
-        )}
-      </For>
-    </box>
-  ) as Gtk.Box;
-
-  expander = new Gtk.Popover({
-    hasArrow: false,
-    position: Gtk.PositionType.RIGHT,
-    cssClasses: ['tray-expander'],
-  });
-
-  expander.set_parent(trigger);
-  expander.set_child(expandedItems);
-
-  onCleanup(() => expander?.unparent());
-
   return (
     <revealer
       transitionType={Gtk.RevealerTransitionType.SLIDE_RIGHT}
@@ -67,7 +24,37 @@ export default function Tray() {
       revealChild={primaryItem.as(item => item !== null)}
     >
       <box class="Tray" orientation={Gtk.Orientation.VERTICAL}>
-        {trigger}
+        <menubutton
+          class="tray-primary"
+          hasFrame={false}
+          direction={Gtk.ArrowType.RIGHT}
+          halign={Gtk.Align.CENTER}
+          tooltipMarkup={primaryItem.as(item => item?.tooltip_markup ?? '')}
+        >
+          <For each={primaryItem.as(item => (item ? [item] : []))}>
+            {(item: AstalTray.TrayItem) => (
+              <image gicon={createBinding(item, 'gicon')} pixelSize={scaleUiSize(18)} />
+            )}
+          </For>
+          <popover
+            $={self => (expander = self)}
+            hasArrow={false}
+            position={Gtk.PositionType.RIGHT}
+            cssClasses={['tray-expander']}
+          >
+            <box
+              class="tray-expander-row"
+              orientation={Gtk.Orientation.HORIZONTAL}
+              spacing={scaleUiSize(4)}
+            >
+              <For each={items}>
+                {(item: AstalTray.TrayItem) => (
+                  <TrayItemButton item={item} onActivate={() => expander?.popdown()} />
+                )}
+              </For>
+            </box>
+          </popover>
+        </menubutton>
       </box>
     </revealer>
   );

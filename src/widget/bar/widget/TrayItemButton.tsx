@@ -11,8 +11,19 @@ export interface TrayItemButtonProps {
 }
 
 export function TrayItemButton({item, onActivate}: TrayItemButtonProps) {
-  const button = (
+  const menuModel = item.menu_model;
+  const menu = menuModel
+    ? Gtk.PopoverMenu.new_from_model_full(menuModel, Gtk.PopoverMenuFlags.NESTED)
+    : null;
+
+  menu?.set_has_arrow(false);
+  menu?.set_position(Gtk.PositionType.RIGHT);
+  menu?.add_css_class('tray-item-menu');
+
+  let button!: Gtk.MenuButton;
+  const buttonNode = (
     <menubutton
+      $={self => (button = self)}
       class="tray-item"
       hasFrame={false}
       direction={Gtk.ArrowType.LEFT}
@@ -29,31 +40,23 @@ export function TrayItemButton({item, onActivate}: TrayItemButtonProps) {
       />
       <Gtk.GestureClick button={3} onPressed={() => button.popup()} />
       <image gicon={createBinding(item, 'gicon')} pixelSize={scaleUiSize(18)} />
-    </menubutton>
-  ) as Gtk.MenuButton;
-
-  const menuModel = item.menu_model;
-  const menu = menuModel
-    ? Gtk.PopoverMenu.new_from_model_full(menuModel, Gtk.PopoverMenuFlags.NESTED)
-    : new Gtk.Popover({
-        child: (
+      {menu ?? (
+        <popover hasArrow={false} position={Gtk.PositionType.RIGHT} cssClasses={['tray-item-menu']}>
           <label
             class="tray-menu-placeholder"
             label="No menu available"
             wrap
             justify={Gtk.Justification.CENTER}
           />
-        ) as Gtk.Widget,
-      });
-  menu.set_has_arrow(false);
-  menu.set_position(Gtk.PositionType.RIGHT);
-  menu.add_css_class('tray-item-menu');
-  button.set_popover(menu);
+        </popover>
+      )}
+    </menubutton>
+  );
 
   if (menuModel) {
     const actionGroup = createBinding(item, 'action_group');
     createEffect(() => button.insert_action_group('dbusmenu', actionGroup()));
   }
 
-  return button;
+  return buttonNode;
 }
