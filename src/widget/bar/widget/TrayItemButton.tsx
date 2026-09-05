@@ -20,10 +20,17 @@ export function TrayItemButton({item, onActivate}: TrayItemButtonProps) {
   menu?.set_position(Gtk.PositionType.RIGHT);
   menu?.add_css_class('tray-item-menu');
 
-  let button!: Gtk.MenuButton;
-  const buttonNode = (
+  const actionGroup = menuModel ? createBinding(item, 'action_group') : null;
+  let button: Gtk.MenuButton | null = null;
+
+  return (
     <menubutton
-      $={self => (button = self)}
+      $={self => {
+        button = self;
+        if (actionGroup) {
+          createEffect(() => self.insert_action_group('dbusmenu', actionGroup()));
+        }
+      }}
       class="tray-item"
       hasFrame={false}
       direction={Gtk.ArrowType.LEFT}
@@ -38,7 +45,7 @@ export function TrayItemButton({item, onActivate}: TrayItemButtonProps) {
           onActivate();
         }}
       />
-      <Gtk.GestureClick button={3} onPressed={() => button.popup()} />
+      <Gtk.GestureClick button={3} onPressed={() => button?.popup()} />
       <image gicon={createBinding(item, 'gicon')} pixelSize={scaleUiSize(18)} />
       {menu ?? (
         <popover hasArrow={false} position={Gtk.PositionType.RIGHT} cssClasses={['tray-item-menu']}>
@@ -52,11 +59,4 @@ export function TrayItemButton({item, onActivate}: TrayItemButtonProps) {
       )}
     </menubutton>
   );
-
-  if (menuModel) {
-    const actionGroup = createBinding(item, 'action_group');
-    createEffect(() => button.insert_action_group('dbusmenu', actionGroup()));
-  }
-
-  return buttonNode;
 }
