@@ -5,18 +5,15 @@ import {shellGeometry} from '@/lib/shellGeometry';
 import {scaleUiSize} from '@/lib/uiScale';
 import {createWallpaperSelectorState} from '@/stores/wallpaper/wallpaperSelector';
 import ClickCatcher from '@/widget/common/ClickCatcher';
-import CoverFlowController from '@/widget/wallpaper-selector/widget/CoverFlow';
+import CoverFlowView, {
+  type CoverFlowViewHandle,
+} from '@/widget/wallpaper-selector/widget/CoverFlowView';
 
 const CONTENT_HORIZONTAL_PADDING = scaleUiSize(56);
 
 export interface WallpaperSelectorProps {
   monitor: Gdk.Monitor;
 }
-
-type WallpaperSelectorWindow = Astal.Window & {
-  hide_animated: () => void;
-  show_animated: () => void;
-};
 
 export default function WallpaperSelector({monitor}: WallpaperSelectorProps) {
   const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
@@ -25,19 +22,20 @@ export default function WallpaperSelector({monitor}: WallpaperSelectorProps) {
     scaleUiSize(900),
     monitorWidth - shellGeometry.barWidth - CONTENT_HORIZONTAL_PADDING
   );
-  let coverFlow: CoverFlowController | null = null;
+  let coverFlow: CoverFlowViewHandle | null = null;
 
   const state = createWallpaperSelectorState({
     monitorConnector: monitor.get_connector(),
     setCoverFlowActive: active => coverFlow?.setActive(active),
   });
-  coverFlow = new CoverFlowController({
-    onApplied: state.hideAnimated,
-    viewportWidth,
-  });
-
-  const window = (
+  return (
     <window
+      $={self => {
+        Object.assign(self, {
+          hide_animated: state.hideAnimated,
+          show_animated: state.showAnimated,
+        });
+      }}
       name={`wallpaper-selector-${monitor.get_connector()}`}
       class="WallpaperSelector"
       gdkmonitor={monitor}
@@ -57,15 +55,15 @@ export default function WallpaperSelector({monitor}: WallpaperSelectorProps) {
             return true;
           }
           if (keyval === Gdk.KEY_Left || keyval === Gdk.KEY_Up) {
-            coverFlow.moveSelection(-1);
+            coverFlow?.moveSelection(-1);
             return true;
           }
           if (keyval === Gdk.KEY_Right || keyval === Gdk.KEY_Down) {
-            coverFlow.moveSelection(1);
+            coverFlow?.moveSelection(1);
             return true;
           }
           if (keyval === Gdk.KEY_Return || keyval === Gdk.KEY_KP_Enter) {
-            coverFlow.activateSelection();
+            coverFlow?.activateSelection();
             return true;
           }
           return false;
@@ -87,13 +85,13 @@ export default function WallpaperSelector({monitor}: WallpaperSelectorProps) {
           valign={Gtk.Align.END}
           overflow={Gtk.Overflow.HIDDEN}
         >
-          {coverFlow.widget}
+          <CoverFlowView
+            onApplied={state.hideAnimated}
+            register={handle => (coverFlow = handle)}
+            viewportWidth={viewportWidth}
+          />
         </box>
       </box>
     </window>
-  ) as WallpaperSelectorWindow;
-
-  window.hide_animated = state.hideAnimated;
-  window.show_animated = state.showAnimated;
-  return window;
+  );
 }
