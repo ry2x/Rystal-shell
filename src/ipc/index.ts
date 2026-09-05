@@ -1,28 +1,21 @@
-import {handleBrightness} from '@/ipc/brightness';
-import {handleReloadCss} from '@/ipc/css';
-import {notificationCommandHandlers} from '@/ipc/notifications';
-import {panelCommandHandlers} from '@/ipc/panels';
-import {handlePowerProfile} from '@/ipc/powerProfile';
-import {handleRecord} from '@/ipc/recording';
-import {type IpcCommandHandler, type ResponseCallback} from '@/ipc/types';
+import {brightnessCommands} from '@/ipc/brightness';
+import {cssCommands} from '@/ipc/css';
+import {notificationCommands} from '@/ipc/notifications';
+import {panelCommands} from '@/ipc/panels';
+import {powerProfileCommands} from '@/ipc/powerProfile';
+import {recordingCommands} from '@/ipc/recording';
+import {type ResponseCallback} from '@/ipc/types';
+import {type IpcCommand, executeIpcRequest} from '@/lib/ipcCommand';
 
-const commandHandlers: ReadonlyMap<string, IpcCommandHandler> = new Map<string, IpcCommandHandler>([
-  ...panelCommandHandlers,
-  ...notificationCommandHandlers,
-  ['reload-css', handleReloadCss],
-  ['power-profile', handlePowerProfile],
-  ['record', handleRecord],
-  ['brightness', handleBrightness],
-]);
+const commands: readonly IpcCommand[] = [
+  ...panelCommands,
+  ...notificationCommands,
+  ...cssCommands,
+  ...powerProfileCommands,
+  ...recordingCommands,
+  ...brightnessCommands,
+];
 
 export function requestHandler(request: string[], response: ResponseCallback) {
-  const [command, ...args] = request;
-  const handler = commandHandlers.get(command ?? '');
-
-  if (handler) {
-    handler(args, response);
-    return;
-  }
-
-  response(`Unknown command: ${request.join(' ')}`);
+  void executeIpcRequest(commands, request).then(response);
 }
