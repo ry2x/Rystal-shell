@@ -7,7 +7,14 @@ import Pango from 'gi://Pango';
 import {scaleUiSize} from '@/lib/uiScale';
 import {LucideIcon} from '@/widget/common/lucide';
 import {type SoundDeviceKind} from '@/widget/control-center/widget/Sound/types';
-import {getEndpointLabel, getRouteLabel} from '@/widget/control-center/widget/Sound/utils';
+
+function getEndpointLabel(endpoint: Wp.Endpoint) {
+  return endpoint.description || endpoint.name || 'Unknown device';
+}
+
+function getRouteLabel(endpoint: Wp.Endpoint) {
+  return endpoint.route?.description || endpoint.route?.name || '';
+}
 
 export interface DeviceSelectorProps {
   endpoint: Wp.Endpoint;
