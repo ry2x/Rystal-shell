@@ -6,6 +6,7 @@ import {powerProfileCommands} from '@/ipc/powerProfile';
 import {recordingCommands} from '@/ipc/recording';
 import {type ResponseCallback} from '@/ipc/types';
 import {type IpcCommand, executeIpcRequest} from '@/lib/ipcCommand';
+import {rystalShellInstance} from '@/lib/paths';
 
 const commands: readonly IpcCommand[] = [
   ...panelCommands,
@@ -17,5 +18,5 @@ const commands: readonly IpcCommand[] = [
 ];
 
 export function requestHandler(request: string[], response: ResponseCallback) {
-  void executeIpcRequest(commands, request).then(response);
+  void executeIpcRequest(commands, request, rystalShellInstance).then(response);
 }

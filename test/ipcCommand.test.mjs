@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {IpcUsageError, executeIpcRequest} from '../src/lib/ipcCommand.ts';
+import {IpcUsageError, executeIpcRequest as executeRequest} from '../src/lib/ipcCommand.ts';
+
+const INSTANCE_NAME = 'test-shell';
+
+function executeIpcRequest(commands, request) {
+  return executeRequest(commands, request, INSTANCE_NAME);
+}
 
 function createCommands() {
   return [
@@ -43,7 +49,7 @@ describe('executeIpcRequest', () => {
     );
 
     assert.deepEqual(explicitHelp, [emptyHelp, emptyHelp, emptyHelp]);
-    assert.match(emptyHelp, /Usage: ags request "<command> \[arguments\]"/);
+    assert.match(emptyHelp, /Usage: ags request -i test-shell "<command> \[arguments\]"/);
     assert.match(emptyHelp, /status\s+Show status\./);
     assert.match(emptyHelp, /group\s+Manage values\./);
   });
@@ -59,7 +65,7 @@ describe('executeIpcRequest', () => {
     assert.equal(flagHelp, groupHelp);
     assert.match(groupHelp, /get\s+Get the value\. \[default\]/);
     assert.match(groupHelp, /set \(s\)\s+Set the value\./);
-    assert.match(leafHelp, /Usage: ags request "group set <value>"/);
+    assert.match(leafHelp, /Usage: ags request -i test-shell "group set <value>"/);
     assert.match(leafHelp, /Aliases: s/);
   });
 
@@ -85,7 +91,7 @@ describe('executeIpcRequest', () => {
     assert.match(unknownRoot, /^Error: Unknown command "missing"\./);
     assert.match(unknownRoot, /Commands:\n\s+status/);
     assert.match(unknownChild, /^Error: Unknown command "missing" for "group"\./);
-    assert.match(unknownChild, /Usage: ags request "group \[command\]"/);
+    assert.match(unknownChild, /Usage: ags request -i test-shell "group \[command\]"/);
   });
 
   it('adds leaf help to argument and value validation errors', async () => {
@@ -108,9 +114,9 @@ describe('executeIpcRequest', () => {
     );
 
     assert.match(missingArgument, /^Error: Expected 1 argument\./);
-    assert.match(missingArgument, /Usage: ags request "group set <value>"/);
+    assert.match(missingArgument, /Usage: ags request -i test-shell "group set <value>"/);
     assert.match(invalidValue, /^Error: Invalid value\./);
-    assert.match(invalidValue, /Usage: ags request "validate <value>"/);
+    assert.match(invalidValue, /Usage: ags request -i test-shell "validate <value>"/);
   });
 
   it('normalizes asynchronous results and runtime errors', async () => {

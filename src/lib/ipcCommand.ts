@@ -64,12 +64,20 @@ function formatCommandList(commands: readonly IpcCommand[], defaultSubcommand?: 
   });
 }
 
-function formatCommandHelp(command: IpcCommand, parentNames: readonly string[]) {
+function formatInvocation(instanceName: string, command: string) {
+  return `ags request -i ${instanceName} "${command}"`;
+}
+
+function formatCommandHelp(
+  command: IpcCommand,
+  parentNames: readonly string[],
+  instanceName: string
+) {
   const commandNames = [...parentNames, command.name];
 
   if (isCommandGroup(command)) {
     return [
-      `Usage: ags request "${commandNames.join(' ')} [command]"`,
+      `Usage: ${formatInvocation(instanceName, `${commandNames.join(' ')} [command]`)}`,
       '',
       command.description,
       '',
@@ -79,19 +87,19 @@ function formatCommandHelp(command: IpcCommand, parentNames: readonly string[]) 
   }
 
   const usage = [...commandNames, command.usage].filter(Boolean).join(' ');
-  const lines = [`Usage: ags request "${usage}"`, '', command.description];
+  const lines = [`Usage: ${formatInvocation(instanceName, usage)}`, '', command.description];
   if (command.aliases?.length) lines.push('', `Aliases: ${command.aliases.join(', ')}`);
   return lines.join('\n');
 }
 
-function formatRootHelp(commands: readonly IpcCommand[]) {
+function formatRootHelp(commands: readonly IpcCommand[], instanceName: string) {
   return [
-    'Usage: ags request "<command> [arguments]"',
+    `Usage: ${formatInvocation(instanceName, '<command> [arguments]')}`,
     '',
     'Commands:',
     ...formatCommandList(commands),
     '',
-    'Run `ags request "help <command>"` for command details.',
+    `Run \`${formatInvocation(instanceName, 'help <command>')}\` for command details.`,
   ].join('\n');
 }
 
@@ -99,7 +107,8 @@ function resolveHelp(
   commands: readonly IpcCommand[],
   names: readonly string[],
   parentNames: readonly string[],
-  fallbackHelp: string
+  fallbackHelp: string,
+  instanceName: string
 ): string {
   if (names.length === 0) return fallbackHelp;
 
@@ -110,12 +119,18 @@ function resolveHelp(
     return `Error: Unknown command "${name}"${scope}.\n\n${fallbackHelp}`;
   }
 
-  const commandHelp = formatCommandHelp(command, parentNames);
+  const commandHelp = formatCommandHelp(command, parentNames, instanceName);
   if (remaining.length === 0 || !isCommandGroup(command)) {
-    return formatCommandHelp(command, parentNames);
+    return commandHelp;
   }
 
-  return resolveHelp(command.subcommands, remaining, [...parentNames, command.name], commandHelp);
+  return resolveHelp(
+    command.subcommands,
+    remaining,
+    [...parentNames, command.name],
+    commandHelp,
+    instanceName
+  );
 }
 
 function validateArgumentCount(command: IpcLeafCommand, args: readonly string[]) {
@@ -132,9 +147,10 @@ function validateArgumentCount(command: IpcLeafCommand, args: readonly string[])
 async function executeCommand(
   command: IpcCommand,
   args: readonly string[],
-  parentNames: readonly string[]
+  parentNames: readonly string[],
+  instanceName: string
 ): Promise<string> {
-  if (isHelpToken(args[0])) return formatCommandHelp(command, parentNames);
+  if (isHelpToken(args[0])) return formatCommandHelp(command, parentNames, instanceName);
 
   if (isCommandGroup(command)) {
     const [subcommandName, ...remaining] = args;
@@ -145,13 +161,15 @@ async function executeCommand(
     if (!subcommand) {
       return `Error: Unknown command "${subcommandName}" for "${[...parentNames, command.name].join(
         ' '
-      )}".\n\n${formatCommandHelp(command, parentNames)}`;
+      )}".\n\n${formatCommandHelp(command, parentNames, instanceName)}`;
     }
 
-    return executeCommand(subcommand, subcommandName ? remaining : [], [
-      ...parentNames,
-      command.name,
-    ]);
+    return executeCommand(
+      subcommand,
+      subcommandName ? remaining : [],
+      [...parentNames, command.name],
+      instanceName
+    );
   }
 
   try {
@@ -159,7 +177,7 @@ async function executeCommand(
     return await command.execute(args);
   } catch (error) {
     if (error instanceof IpcUsageError) {
-      return `Error: ${error.message}\n\n${formatCommandHelp(command, parentNames)}`;
+      return `Error: ${error.message}\n\n${formatCommandHelp(command, parentNames, instanceName)}`;
     }
     const message = error instanceof Error ? error.message : String(error);
     return `Error: ${message}`;
@@ -168,16 +186,19 @@ async function executeCommand(
 
 export async function executeIpcRequest(
   commands: readonly IpcCommand[],
-  request: readonly string[]
+  request: readonly string[],
+  instanceName: string
 ): Promise<string> {
   const [commandName, ...args] = tokenizeRequest(request);
-  if (!commandName) return formatRootHelp(commands);
-  if (isHelpToken(commandName)) return resolveHelp(commands, args, [], formatRootHelp(commands));
+  if (!commandName) return formatRootHelp(commands, instanceName);
+  if (isHelpToken(commandName)) {
+    return resolveHelp(commands, args, [], formatRootHelp(commands, instanceName), instanceName);
+  }
 
   const command = findCommand(commands, commandName);
   if (!command) {
-    return `Error: Unknown command "${commandName}".\n\n${formatRootHelp(commands)}`;
+    return `Error: Unknown command "${commandName}".\n\n${formatRootHelp(commands, instanceName)}`;
   }
 
-  return executeCommand(command, args, []);
+  return executeCommand(command, args, [], instanceName);
 }
