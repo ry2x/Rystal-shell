@@ -1,9 +1,9 @@
-import {createExternal} from 'ags';
 import {execAsync} from 'ags/process';
 import {idle, interval} from 'ags/time';
 
 import GLib from 'gi://GLib?version=2.0';
 
+import {createLazyAccessor} from '@/stores/common/lazyAccessor';
 import {closeAllControlCenters} from '@/stores/shell/windowManager';
 
 export const userName = '@' + GLib.get_user_name();
@@ -132,7 +132,7 @@ function readUptime() {
   return Number.isFinite(seconds) && seconds >= 0 ? formatUptime(seconds) : null;
 }
 
-const systemMetrics = createExternal(INITIAL_METRICS, setMetrics => {
+const systemMetrics = createLazyAccessor(INITIAL_METRICS, setMetrics => {
   let previousCpuCounters = readCpuCounters();
 
   function updateMetrics() {
@@ -163,7 +163,7 @@ export const cpuUsage = systemMetrics.as(metrics => metrics.cpu);
 export const ramUsage = systemMetrics.as(metrics => metrics.ram);
 export const gpuUsage = systemMetrics.as(metrics => metrics.gpu);
 
-export const uptime = createExternal('0m', setUptime => {
+export const uptime = createLazyAccessor('0m', setUptime => {
   function updateUptime() {
     const value = readUptime();
     if (value !== null) setUptime(value);
