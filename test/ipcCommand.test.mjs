@@ -76,11 +76,36 @@ describe('executeIpcRequest', () => {
     assert.equal(await executeIpcRequest(commands, ['group', 's', 'next']), 'set:next');
   });
 
-  it('accepts quoted command lines and separate arguments', async () => {
+  it('accepts packed command lines and separate arguments', async () => {
     const commands = createCommands();
 
     assert.equal(await executeIpcRequest(commands, ['group set next']), 'set:next');
     assert.equal(await executeIpcRequest(commands, ['group', 'set', 'next']), 'set:next');
+  });
+
+  it('preserves argv boundaries and parses quoted packed arguments', async () => {
+    const commands = createCommands();
+
+    assert.equal(
+      await executeIpcRequest(commands, ['group', 'set', 'hello world']),
+      'set:hello world'
+    );
+    assert.equal(await executeIpcRequest(commands, ['group set "hello world"']), 'set:hello world');
+    assert.equal(await executeIpcRequest(commands, ["group set 'hello world'"]), 'set:hello world');
+    assert.equal(await executeIpcRequest(commands, ['group set hello\\ world']), 'set:hello world');
+    assert.equal(await executeIpcRequest(commands, ['group set ""']), 'set:');
+    assert.equal(await executeIpcRequest(commands, ['group', 'set', '']), 'set:');
+  });
+
+  it('returns root help for malformed packed command lines', async () => {
+    const commands = createCommands();
+    const unterminatedQuote = await executeIpcRequest(commands, ['group set "hello world']);
+    const trailingEscape = await executeIpcRequest(commands, ['group set hello\\']);
+
+    assert.match(unterminatedQuote, /^Error: Invalid request: Unterminated double quote\./);
+    assert.match(trailingEscape, /^Error: Invalid request: Trailing escape character\./);
+    assert.match(unterminatedQuote, /Commands:\n\s+status/);
+    assert.match(trailingEscape, /Usage: ags request -i test-shell/);
   });
 
   it('returns scoped help for unknown commands', async () => {

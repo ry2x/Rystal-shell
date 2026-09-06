@@ -31,14 +31,72 @@ export class IpcUsageError extends Error {
   }
 }
 
+class IpcRequestError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'IpcRequestError';
+  }
+}
+
 const HELP_TOKENS = new Set(['help', '--help', '-h']);
 
 function isHelpToken(value: string | undefined) {
   return value !== undefined && HELP_TOKENS.has(value);
 }
 
+function tokenizeCommandLine(commandLine: string) {
+  const tokens: string[] = [];
+  let token = '';
+  let quote: "'" | '"' | null = null;
+  let tokenStarted = false;
+
+  for (let index = 0; index < commandLine.length; index++) {
+    const character = commandLine[index];
+
+    if (quote) {
+      if (character === quote) {
+        quote = null;
+      } else if (character === '\\' && quote === '"') {
+        if (index + 1 === commandLine.length) {
+          throw new IpcRequestError('Trailing escape character.');
+        }
+        token += commandLine[++index];
+      } else {
+        token += character;
+      }
+      continue;
+    }
+
+    if (character === "'" || character === '"') {
+      quote = character;
+      tokenStarted = true;
+    } else if (character === '\\') {
+      if (index + 1 === commandLine.length) {
+        throw new IpcRequestError('Trailing escape character.');
+      }
+      token += commandLine[++index];
+      tokenStarted = true;
+    } else if (/\s/.test(character)) {
+      if (tokenStarted) {
+        tokens.push(token);
+        token = '';
+        tokenStarted = false;
+      }
+    } else {
+      token += character;
+      tokenStarted = true;
+    }
+  }
+
+  if (quote) {
+    throw new IpcRequestError(`Unterminated ${quote === "'" ? 'single' : 'double'} quote.`);
+  }
+  if (tokenStarted) tokens.push(token);
+  return tokens;
+}
+
 function tokenizeRequest(request: readonly string[]) {
-  return request.flatMap(argument => argument.trim().split(/\s+/).filter(Boolean));
+  return request.length === 1 ? tokenizeCommandLine(request[0]) : [...request];
 }
 
 function findCommand(commands: readonly IpcCommand[], name: string) {
@@ -189,7 +247,15 @@ export async function executeIpcRequest(
   request: readonly string[],
   instanceName: string
 ): Promise<string> {
-  const [commandName, ...args] = tokenizeRequest(request);
+  let tokens: string[];
+  try {
+    tokens = tokenizeRequest(request);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return `Error: Invalid request: ${message}\n\n${formatRootHelp(commands, instanceName)}`;
+  }
+
+  const [commandName, ...args] = tokens;
   if (!commandName) return formatRootHelp(commands, instanceName);
   if (isHelpToken(commandName)) {
     return resolveHelp(commands, args, [], formatRootHelp(commands, instanceName), instanceName);
