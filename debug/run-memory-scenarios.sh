@@ -113,9 +113,9 @@ ags_request() {
 
 randomize_theme() {
   if "$dry_run"; then
-    printf '+ theme-switch.sh random\n'
+    printf '+ direnv exec %q theme-switch.sh random\n' "$ROOT_DIR"
   else
-    theme-switch.sh random
+    direnv exec "$ROOT_DIR" theme-switch.sh random
   fi
 }
 
@@ -368,7 +368,11 @@ run_notification_scenario() {
   fi
 }
 
-for command in ags theme-switch.sh notify-send pgrep ps awk find shuf stat killall; do require_command "$command"; done
+for command in ags direnv notify-send pgrep ps awk find shuf stat killall; do require_command "$command"; done
+[[ -x $ROOT_DIR/theme-switcher/theme-switch.sh ]] || {
+  printf 'Bundled theme switcher is not executable: %s\n' "$ROOT_DIR/theme-switcher/theme-switch.sh" >&2
+  exit 1
+}
 [[ -x $COLLECTOR ]] || { printf 'Collector is not executable: %s\n' "$COLLECTOR" >&2; exit 1; }
 
 if "$dry_run"; then

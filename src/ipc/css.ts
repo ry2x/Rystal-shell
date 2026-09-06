@@ -7,8 +7,8 @@ export const cssCommands: readonly IpcCommand[] = [
     name: 'reload-css',
     description: 'Compile and reload the shell stylesheet.',
     async execute() {
-      const reloaded = await compileAndReloadCss();
-      if (reloaded) reloadLauncherImage();
+      await compileAndReloadCss();
+      reloadLauncherImage();
       return 'CSS Reloaded Successfully';
     },
   },
