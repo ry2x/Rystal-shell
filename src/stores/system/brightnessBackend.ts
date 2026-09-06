@@ -4,9 +4,9 @@ import GLib from 'gi://GLib';
 
 import {appConfig} from '@/lib/config';
 
-export type BrightnessBackend = 'ddcutil' | 'brightnessctl';
-
 const DDC_VCP_BRIGHTNESS = '10';
+
+export type BrightnessBackend = 'ddcutil' | 'brightnessctl';
 
 function clampPercent(value: number) {
   return Math.max(0, Math.min(100, Math.round(value)));

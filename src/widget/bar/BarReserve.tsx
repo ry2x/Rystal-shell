@@ -1,10 +1,7 @@
 import {Astal, Gdk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
-import {scaleUiSize} from '@/lib/uiScale';
-import {BAR_WIDTH} from '@/stores/shell/barBackground';
-
-const BORDER_WIDTH = scaleUiSize(3);
+import {shellGeometry} from '@/lib/shellGeometry';
 
 export interface BarReserveProps {
   monitor: Gdk.Monitor;
@@ -24,7 +21,7 @@ export default function BarReserve({monitor}: BarReserveProps) {
       anchor={TOP | BOTTOM | LEFT}
       application={app}
     >
-      <box widthRequest={BAR_WIDTH + BORDER_WIDTH} />
+      <box widthRequest={shellGeometry.barWidth + shellGeometry.frameBorderWidth} />
     </window>
   );
 }

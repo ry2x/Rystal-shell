@@ -1,7 +1,8 @@
 import {type Accessor, createState, onCleanup} from 'ags';
 import {type Timer, interval, timeout} from 'ags/time';
 
-import {scaleUi, scaleUiSize} from '@/lib/uiScale';
+import {shellGeometry} from '@/lib/shellGeometry';
+import {scaleUi} from '@/lib/uiScale';
 import {deactivateSidePanel} from '@/stores/shell/windowManager';
 import {
   cancelWallpaperWork,
@@ -9,7 +10,6 @@ import {
   refreshWallpapers,
 } from '@/stores/wallpaper/wallpaper';
 
-const PANEL_HEIGHT = scaleUiSize(390);
 const HIDE_DELAY_MS = 420;
 const ANIMATION_INTERVAL_MS = 1000 / 60;
 const ANIMATION_SPEED = 0.22;
@@ -84,7 +84,7 @@ export function createWallpaperSelectorState({
     setVisible(true);
     setCoverFlowActive(true);
     setRevealed(true);
-    animatePanelTo(PANEL_HEIGHT);
+    animatePanelTo(shellGeometry.wallpaperPanelHeight);
     void refreshWallpapers();
   }
 

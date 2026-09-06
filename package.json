@@ -20,7 +20,7 @@
     "lint": "eslint .",
     "format": "prettier --write \"./**/*.{js,ts,tsx,json,css,scss,md,html}\" \"./*.{js,ts,tsx,json}\" \"./test/**/*.mjs\"",
     "format:check": "prettier --check \"./**/*.{js,ts,tsx,json,css,scss,md,html}\" \"./*.{js,ts,tsx,json}\" \"./test/**/*.mjs\"",
-    "tsc": "tsc --noEmit",
+    "tsc": "tsc",
     "typecheck": "bash scripts/typecheck.sh",
     "knip": "knip",
     "test": "node --test --test-isolation=none",

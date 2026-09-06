@@ -113,7 +113,7 @@ export function WifiPage({monitorConnector, onBack}: WifiPageProps) {
         visible={createBinding(wifi, 'enabled').as(value => !value)}
       />
     </box>
-  ) as Gtk.Widget;
+  );
 
   return (
     <overlay>

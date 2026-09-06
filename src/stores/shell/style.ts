@@ -7,15 +7,15 @@ import {appConfig} from '@/lib/config';
 import {rystalShellConfigDir, rystalShellDataDir, rystalShellRuntimeDir} from '@/lib/paths';
 import {reloadBarColors} from '@/stores/shell/barBackground';
 
-let cssProvider: Gtk.CssProvider | null = null;
-let lastCompiledCssHash: string | null = null;
-
 const styleEntry = `${rystalShellDataDir}/styles/style.scss`;
 const defaultThemeDir = `${rystalShellDataDir}/styles/default`;
 const defaultCssPath = `${rystalShellDataDir}/styles/default.css`;
 const runtimeDir = rystalShellRuntimeDir;
 const cssPath = `${runtimeDir}/style.css`;
 const currentScalePath = `${runtimeDir}/_current-scale.scss`;
+
+let cssProvider: Gtk.CssProvider | null = null;
+let lastCompiledCssHash: string | null = null;
 
 interface CompiledCss {
   path: string;

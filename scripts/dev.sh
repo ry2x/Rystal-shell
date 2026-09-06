@@ -29,4 +29,4 @@ if [[ ! -e "$RYSTAL_SHELL_CONFIG_DIR/config.json" ]]; then
     cp "$repo_dir/config/config.json.template" "$RYSTAL_SHELL_CONFIG_DIR/config.json"
 fi
 
-exec ags run "$repo_dir/src/app.ts" "$@"
+exec ags run "$repo_dir/src/app.tsx" "$@"

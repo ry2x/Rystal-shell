@@ -1,17 +1,41 @@
-import {type IpcCommandHandler} from '@/ipc/types';
+import {type IpcCommand, IpcUsageError} from '@/lib/ipcCommand';
 import {getPowerProfile, setPowerProfile} from '@/stores/system/powerProfile';
 
-export const handlePowerProfile: IpcCommandHandler = (args, response) => {
+function requirePowerProfile() {
   const power = getPowerProfile();
-  if (!power) {
-    response('Error: AstalPowerProfiles not available');
-    return;
-  }
-  if (args[0] === 'get' || !args[0]) {
-    response(`Current mode: ${power.activeProfile}`);
-  } else if (args[0] === 'set' && args[1]) {
-    response(setPowerProfile(args[1]));
-  } else {
-    response('Usage: ags request "power-profile [get | set <mode>]"');
-  }
+  if (!power) throw new Error('AstalPowerProfiles not available');
+  return power;
+}
+
+const powerProfileCommand: IpcCommand = {
+  name: 'power-profile',
+  description: 'Get or change the active power profile.',
+  defaultSubcommand: 'get',
+  subcommands: [
+    {
+      name: 'get',
+      description: 'Show the current power profile.',
+      execute: () => `Current mode: ${requirePowerProfile().activeProfile}`,
+    },
+    {
+      name: 'set',
+      description: 'Set the active power profile.',
+      usage: '<mode>',
+      minArgs: 1,
+      maxArgs: 1,
+      execute([mode]) {
+        const profiles = requirePowerProfile()
+          .get_profiles()
+          .map(profile => profile.profile);
+        if (!profiles.includes(mode)) {
+          throw new IpcUsageError(
+            `Invalid power profile "${mode}". Available: ${profiles.join(', ')}.`
+          );
+        }
+        return setPowerProfile(mode);
+      },
+    },
+  ],
 };
+
+export const powerProfileCommands: readonly IpcCommand[] = [powerProfileCommand];

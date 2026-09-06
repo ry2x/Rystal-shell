@@ -1,4 +1,3 @@
-import {createExternal} from 'ags';
 import {type Timer, timeout} from 'ags/time';
 
 import GLib from 'gi://GLib?version=2.0';
@@ -6,11 +5,13 @@ import Gio from 'gi://Gio';
 import Soup from 'gi://Soup?version=3.0';
 
 import {appConfig} from '@/lib/config';
+import {createLazyAccessor} from '@/stores/common/lazyAccessor';
 
 export const LOCATION = appConfig.weather.location;
 
 const NORMAL_INTERVAL_MS = 30 * 60_000;
 const RETRY_INTERVAL_MS = 60_000;
+
 const weatherSession = new Soup.Session();
 const textDecoder = new TextDecoder('utf-8');
 
@@ -77,7 +78,7 @@ function sendAndRead(message: Soup.Message, cancellable: Gio.Cancellable): Promi
   });
 }
 
-const weatherJson = createExternal('{}', setWeatherJson => {
+const weatherJson = createLazyAccessor('{}', setWeatherJson => {
   let refreshTimer: Timer | null = null;
   let refreshPromise: Promise<void> | null = null;
   let requestCancellable: Gio.Cancellable | null = null;

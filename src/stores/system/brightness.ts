@@ -9,7 +9,7 @@ import {
 
 const KEYBOARD_STEP = 10;
 const DEFAULT_RESTORE_BRIGHTNESS = 0.25;
-const BRIGHTNESS_PRESETS = [0, 0.25, 0.5, 0.75, 1];
+const BRIGHTNESS_PRESETS = [0, 0.25, 0.5, 0.75, 1] as const;
 
 const [brightnessState, setBrightnessState] = createState(0.5);
 export const brightness = brightnessState;

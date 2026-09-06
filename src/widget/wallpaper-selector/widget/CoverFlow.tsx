@@ -2,7 +2,6 @@ import {Gtk} from 'ags/gtk4';
 
 import GLib from 'gi://GLib';
 
-import {scaleUiSize} from '@/lib/uiScale';
 import {
   type Wallpaper,
   applyWallpaper,
@@ -28,19 +27,20 @@ import {
 const VISIBLE_RADIUS = 3;
 const PREFETCH_RADIUS = 4;
 const MOVE_INTERVAL_US = 83_333;
-const VIEWPORT_HEIGHT = scaleUiSize(420);
-
 export interface CoverFlowOptions {
+  fixed: Gtk.Fixed;
   onApplied: () => void;
+  positionLabel: Gtk.Label;
+  statusLabel: Gtk.Label;
   viewportWidth: number;
+  widget: Gtk.Box;
 }
 
 export default class CoverFlowController {
-  readonly widget: Gtk.Box;
-
   private readonly fixed: Gtk.Fixed;
   private readonly positionLabel: Gtk.Label;
   private readonly statusLabel: Gtk.Label;
+  private readonly widget: Gtk.Box;
   private readonly cards = new Map<string, CoverFlowCardState>();
   private readonly disposers: (() => void)[];
   private readonly animation: CoverFlowAnimation;
@@ -51,69 +51,10 @@ export default class CoverFlowController {
   private lastMoveAt = 0;
 
   constructor(private readonly options: CoverFlowOptions) {
-    this.fixed = new Gtk.Fixed({
-      hexpand: false,
-      vexpand: false,
-      widthRequest: options.viewportWidth,
-      heightRequest: VIEWPORT_HEIGHT,
-      overflow: Gtk.Overflow.VISIBLE,
-    });
-
-    const viewport = new Gtk.ScrolledWindow({
-      hscrollbarPolicy: Gtk.PolicyType.NEVER,
-      vscrollbarPolicy: Gtk.PolicyType.NEVER,
-      propagateNaturalWidth: false,
-      propagateNaturalHeight: false,
-      widthRequest: options.viewportWidth,
-      heightRequest: VIEWPORT_HEIGHT,
-      halign: Gtk.Align.FILL,
-      valign: Gtk.Align.FILL,
-      child: this.fixed,
-    });
-
-    this.positionLabel = new Gtk.Label({
-      cssClasses: ['wallpaper-path'],
-      canTarget: false,
-      hexpand: false,
-      halign: Gtk.Align.CENTER,
-      valign: Gtk.Align.END,
-      marginBottom: scaleUiSize(48),
-      xalign: 0.5,
-    });
-
-    this.statusLabel = new Gtk.Label({cssClasses: ['wallpaper-status'], xalign: 0.5});
-
-    const coverFlowLayer = new Gtk.Overlay({
-      cssClasses: ['wallpaper-coverflow'],
-      widthRequest: options.viewportWidth,
-      heightRequest: VIEWPORT_HEIGHT,
-      hexpand: false,
-      vexpand: false,
-      halign: Gtk.Align.CENTER,
-      valign: Gtk.Align.CENTER,
-      overflow: Gtk.Overflow.VISIBLE,
-      child: new Gtk.Box({
-        widthRequest: options.viewportWidth,
-        heightRequest: VIEWPORT_HEIGHT,
-        hexpand: false,
-        vexpand: false,
-      }),
-    });
-    coverFlowLayer.add_overlay(viewport);
-    coverFlowLayer.add_overlay(this.positionLabel);
-
-    this.widget = (
-      <box
-        class="wallpaper-selector-content"
-        orientation={Gtk.Orientation.VERTICAL}
-        spacing={scaleUiSize(8)}
-        hexpand
-        halign={Gtk.Align.FILL}
-      >
-        {coverFlowLayer}
-        {this.statusLabel}
-      </box>
-    ) as Gtk.Box;
+    this.fixed = options.fixed;
+    this.positionLabel = options.positionLabel;
+    this.statusLabel = options.statusLabel;
+    this.widget = options.widget;
 
     this.animation = new CoverFlowAnimation({
       fixed: this.fixed,

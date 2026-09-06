@@ -18,23 +18,16 @@ function resolveAvatarPath(path: string | undefined) {
   return path.startsWith('~/') ? GLib.get_home_dir() + path.slice(1) : path;
 }
 
-function createProfileAvatar(path: string) {
-  const avatar = new Gtk.Picture({
-    contentFit: Gtk.ContentFit.COVER,
-    canShrink: true,
-  });
-
+function loadProfileAvatar(avatar: Gtk.Picture, path: string) {
   try {
     avatar.set_paintable(loadTextureFromUri(`file://${path}`, scaleUiSize(64), scaleUiSize(64)));
   } catch (error) {
     console.error('Failed to load profile avatar:', error);
   }
-
-  return avatar;
 }
 
 export default function ProfileCard() {
-  const avatar = createProfileAvatar(resolveAvatarPath(profile.avatarPath));
+  const avatarPath = resolveAvatarPath(profile.avatarPath);
 
   return (
     <box
@@ -44,7 +37,11 @@ export default function ProfileCard() {
     >
       {/* Left: Avatar Area */}
       <box class="profile-avatar" overflow={Gtk.Overflow.HIDDEN}>
-        {avatar}
+        <Gtk.Picture
+          $={self => loadProfileAvatar(self, avatarPath)}
+          contentFit={Gtk.ContentFit.COVER}
+          canShrink
+        />
       </box>
 
       {/* Right: Information Area */}

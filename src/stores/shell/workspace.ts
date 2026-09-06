@@ -1,12 +1,8 @@
-import {type Accessor, createBinding, createComputed, createExternal} from 'ags';
+import {type Accessor, createBinding, createMemo} from 'ags';
 
 import Hyprland from 'gi://AstalHyprland';
 
-export interface MonitorWorkspaceState {
-  workspaces: Accessor<Hyprland.Workspace[]>;
-  activeIndex: Accessor<number>;
-  focusedWorkspaceId: Accessor<number>;
-}
+import {createLazyAccessor} from '@/stores/common/lazyAccessor';
 
 const hyprland = Hyprland.get_default();
 const focusedWorkspace = createBinding(hyprland, 'focused_workspace');
@@ -19,8 +15,14 @@ function getMonitorWorkspaces(connector: string | null) {
     .sort((workspaceA, workspaceB) => workspaceA.id - workspaceB.id);
 }
 
+export interface MonitorWorkspaceState {
+  workspaces: Accessor<Hyprland.Workspace[]>;
+  activeIndex: Accessor<number>;
+  focusedWorkspaceId: Accessor<number>;
+}
+
 export function createMonitorWorkspaceState(connector: string | null): MonitorWorkspaceState {
-  const workspaces = createExternal(getMonitorWorkspaces(connector), setWorkspaces => {
+  const workspaces = createLazyAccessor(getMonitorWorkspaces(connector), setWorkspaces => {
     const update = () => setWorkspaces(getMonitorWorkspaces(connector));
     const hooks = [
       hyprland.connect('workspace-added', update),
@@ -31,7 +33,7 @@ export function createMonitorWorkspaceState(connector: string | null): MonitorWo
     return () => hooks.forEach(hook => hyprland.disconnect(hook));
   });
   const focusedWorkspaceId = focusedWorkspace.as(workspace => workspace?.id ?? -1);
-  const activeIndex = createComputed(() => {
+  const activeIndex = createMemo(() => {
     const index = workspaces().findIndex(workspace => workspace.id === focusedWorkspaceId());
     return Math.max(index, 0);
   });

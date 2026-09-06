@@ -109,7 +109,7 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
         visible={createBinding(bluetooth, 'is_powered').as(value => !value)}
       />
     </box>
-  ) as Gtk.Widget;
+  );
 
   return (
     <overlay>

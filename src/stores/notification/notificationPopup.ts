@@ -6,6 +6,8 @@ import Notifd from 'gi://AstalNotifd';
 
 import {shellMotion} from '@/lib/motion';
 
+const POPUP_TIMEOUT_MS = 5000;
+
 export interface NotificationPopupState {
   popups: Accessor<Notifd.Notification[]>;
   visible: Accessor<boolean>;
@@ -16,7 +18,6 @@ interface PendingTransientRelease {
   timer: Timer;
 }
 
-const POPUP_TIMEOUT_MS = 5000;
 const hyprland = Hyprland.get_default();
 const notifd = Notifd.get_default();
 

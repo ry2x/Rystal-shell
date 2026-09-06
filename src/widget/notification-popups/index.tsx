@@ -12,6 +12,18 @@ export interface NotificationPopupsProps {
   monitor: Gdk.Monitor;
 }
 
+function getNotificationId(notification: Notifd.Notification) {
+  return String(notification.id);
+}
+
+function renderNotification(notification: Notifd.Notification) {
+  return (
+    <box halign={Gtk.Align.END}>
+      <NotificationCard notif={notification} />
+    </box>
+  );
+}
+
 export default function NotificationPopups({monitor}: NotificationPopupsProps) {
   const {TOP, RIGHT} = Astal.WindowAnchor;
   const connector = monitor.get_connector();
@@ -32,14 +44,10 @@ export default function NotificationPopups({monitor}: NotificationPopupsProps) {
     >
       <AnimatedList
         items={popups}
-        idFor={(notification: Notifd.Notification) => String(notification.id)}
+        idFor={getNotificationId}
         className="notification-popup-list"
         spacing={scaleUiSize(8)}
-        renderItem={(notification: Notifd.Notification) => (
-          <box halign={Gtk.Align.END}>
-            <NotificationCard notif={notification} />
-          </box>
-        )}
+        renderItem={renderNotification}
       />
     </window>
   );

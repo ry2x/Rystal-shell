@@ -4,9 +4,10 @@ import Notifd from 'gi://AstalNotifd';
 
 import {appConfig} from '@/lib/config';
 
+const MAX_NOTIFICATIONS = appConfig.notifications.maxCount;
+
 const notifd = Notifd.get_default();
 export const doNotDisturb = createBinding(notifd, 'dontDisturb');
-const MAX_NOTIFICATIONS = appConfig.notifications.maxCount;
 
 function uniqueNotifications(notifications: Notifd.Notification[]) {
   const seenIds = new Set<number>();

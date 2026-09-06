@@ -7,6 +7,7 @@ import {type IdleDaemon, idleDaemonAdapter} from '@/stores/system/idleDaemon';
 
 const RUNTIME_DIR = rystalShellRuntimeDir;
 const CAFFEINE_REMOTE_FILE = `${RUNTIME_DIR}/caffeine-remote`;
+
 export type CaffeineState = 'disabled' | 'enabled' | 'remote';
 
 const [caffeineStateValue, setCaffeineState] = createState<CaffeineState>('disabled');

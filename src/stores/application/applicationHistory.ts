@@ -4,8 +4,7 @@ import Gio from 'gi://Gio';
 
 import {rystalShellStateDir} from '@/lib/paths';
 
-const STATE_DIR = rystalShellStateDir;
-const HISTORY_FILE = `${STATE_DIR}/app-history.json`;
+const HISTORY_FILE = `${rystalShellStateDir}/app-history.json`;
 const LEGACY_HISTORY_FILE = `${GLib.get_user_cache_dir()}/ags/app_history.json`;
 const MAX_HISTORY_ENTRIES = 100;
 

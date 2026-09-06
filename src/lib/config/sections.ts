@@ -1,109 +1,14 @@
-type BrightnessBackendConfig = 'auto' | 'ddcutil' | 'brightnessctl';
-type RecorderAudioSource = 'system' | 'mic';
-type UiScale = 0.75 | 1 | 1.25 | 1.5 | 2;
-
-interface WorldClockConfig {
-  label: string;
-  tz: string;
-}
-
-interface AppConfig {
-  ui: {scale: UiScale};
-  brightness: {backend: BrightnessBackendConfig};
-  weather: {location: string};
-  notifications: {maxCount: number};
-  worldClocks: WorldClockConfig[];
-  recorder: {
-    savePath: string;
-    filenameFormat: string;
-    recordAudio: boolean;
-    audioSource: RecorderAudioSource;
-  };
-  profile: {
-    avatarPath: string;
-    handle?: string;
-    os?: string;
-  };
-}
-
-type ConfigObject = Record<string, unknown>;
-
-const DEFAULT_CONFIG: AppConfig = {
-  ui: {scale: 1},
-  brightness: {backend: 'auto'},
-  weather: {location: ''},
-  notifications: {maxCount: 30},
-  worldClocks: [
-    {label: 'London', tz: 'Europe/London'},
-    {label: 'Brisbane', tz: 'Australia/Brisbane'},
-    {label: 'New York', tz: 'America/New_York'},
-    {label: 'Los Angeles', tz: 'America/Los_Angeles'},
-  ],
-  recorder: {
-    savePath: '~/Videos',
-    filenameFormat: 'recording_%Y-%m-%d_%H.%M.%S.mp4',
-    recordAudio: true,
-    audioSource: 'system',
-  },
-  profile: {avatarPath: '~/Profile/Profile.png'},
-};
-
-function isConfigObject(value: unknown): value is ConfigObject {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function warnConfig(path: string, message: string) {
-  console.warn(`Invalid config at '${path}': ${message}`);
-}
-
-function warnUnknownKeys(path: string, value: ConfigObject, allowedKeys: readonly string[]) {
-  const allowed = new Set(allowedKeys);
-  Object.keys(value)
-    .filter(key => !allowed.has(key))
-    .forEach(key => console.warn(`Unknown config key '${path}.${key}'`));
-}
-
-function readSection(root: ConfigObject, key: string): ConfigObject | undefined {
-  const value = root[key];
-  if (value === undefined) return undefined;
-  if (isConfigObject(value)) return value;
-  warnConfig(key, 'expected an object');
-  return undefined;
-}
-
-function readString(
-  section: ConfigObject | undefined,
-  key: string,
-  path: string,
-  fallback: string
-) {
-  const value = section?.[key];
-  if (value === undefined) return fallback;
-  if (typeof value === 'string') return value;
-  warnConfig(`${path}.${key}`, 'expected a string');
-  return fallback;
-}
-
-function readNonBlankString(
-  section: ConfigObject | undefined,
-  key: string,
-  path: string,
-  fallback: string
-) {
-  const value = section?.[key];
-  if (value === undefined) return fallback;
-  if (typeof value === 'string' && value.trim().length > 0) return value;
-  warnConfig(`${path}.${key}`, 'expected a non-empty string');
-  return fallback;
-}
-
-function readOptionalString(section: ConfigObject | undefined, key: string, path: string) {
-  const value = section?.[key];
-  if (value === undefined) return undefined;
-  if (typeof value === 'string') return value;
-  warnConfig(`${path}.${key}`, 'expected a string');
-  return undefined;
-}
+import {DEFAULT_CONFIG} from './defaults.ts';
+import {
+  isConfigObject,
+  readNonBlankString,
+  readOptionalString,
+  readSection,
+  readString,
+  warnConfig,
+  warnUnknownKeys,
+} from './reader.ts';
+import type {AppConfig, ConfigObject, WorldClockConfig} from './types';
 
 function defaultWorldClocks() {
   return DEFAULT_CONFIG.worldClocks.map(clock => ({...clock}));
@@ -241,29 +146,14 @@ function resolveProfile(root: ConfigObject): AppConfig['profile'] {
   };
 }
 
-export function resolveConfig(value: unknown): AppConfig {
-  if (!isConfigObject(value)) {
-    warnConfig('root', 'expected an object');
-    return resolveConfig({});
-  }
-
-  warnUnknownKeys('root', value, [
-    'ui',
-    'brightness',
-    'weather',
-    'notifications',
-    'worldClocks',
-    'recorder',
-    'profile',
-  ]);
-
+export function resolveSections(root: ConfigObject): AppConfig {
   return {
-    ui: resolveUi(value),
-    brightness: resolveBrightness(value),
-    weather: resolveWeather(value),
-    notifications: resolveNotifications(value),
-    worldClocks: resolveWorldClocks(value.worldClocks),
-    recorder: resolveRecorder(value),
-    profile: resolveProfile(value),
+    ui: resolveUi(root),
+    brightness: resolveBrightness(root),
+    weather: resolveWeather(root),
+    notifications: resolveNotifications(root),
+    worldClocks: resolveWorldClocks(root.worldClocks),
+    recorder: resolveRecorder(root),
+    profile: resolveProfile(root),
   };
 }

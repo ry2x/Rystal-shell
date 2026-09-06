@@ -1,21 +1,18 @@
-import {type IpcCommandHandler} from '@/ipc/types';
+import {type IpcCommand} from '@/lib/ipcCommand';
 import {clearNotifications, toggleDoNotDisturb} from '@/stores/notification/notification';
 
-export const notificationCommandHandlers: ReadonlyMap<string, IpcCommandHandler> = new Map<
-  string,
-  IpcCommandHandler
->([
-  [
-    'toggle-dnd',
-    (_args, response) => {
-      response(`DND toggled to ${toggleDoNotDisturb()}`);
-    },
-  ],
-  [
-    'clear-notifications',
-    (_args, response) => {
+export const notificationCommands: readonly IpcCommand[] = [
+  {
+    name: 'toggle-dnd',
+    description: 'Toggle do-not-disturb mode.',
+    execute: () => `DND toggled to ${toggleDoNotDisturb()}`,
+  },
+  {
+    name: 'clear-notifications',
+    description: 'Clear all notifications.',
+    execute() {
       clearNotifications();
-      response('Cleared Notifications');
+      return 'Cleared Notifications';
     },
-  ],
-]);
+  },
+];

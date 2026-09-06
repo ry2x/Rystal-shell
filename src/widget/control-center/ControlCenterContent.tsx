@@ -21,7 +21,9 @@ export default function ControlCenterContent({onOpenPage}: ControlCenterContentP
       class="cc-main-panel"
       orientation={Gtk.Orientation.VERTICAL}
       spacing={scaleUiSize(11)}
+      hexpand
       vexpand
+      halign={Gtk.Align.FILL}
     >
       <box class="cc-main-header" spacing={scaleUiSize(12)} hexpand>
         <LucideIcon name="settings-2" pixelSize={24} />

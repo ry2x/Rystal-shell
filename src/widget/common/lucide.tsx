@@ -1,4 +1,4 @@
-import {Accessor, type CCProps} from 'ags';
+import {type Accessor, type CCProps} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
 import {scaleUiSize} from '@/lib/uiScale';
@@ -28,7 +28,7 @@ function lucideIcon(name: string): string {
  * This allows SCSS states (like :hover, color changes) and dynamic binding updates to work perfectly.
  */
 export function LucideIcon({name, ...props}: LucideIconProps) {
-  const icon = name instanceof Accessor ? name.as(lucideIcon) : lucideIcon(name);
+  const icon = typeof name === 'string' ? lucideIcon(name) : name.as(lucideIcon);
   const imageProps =
     typeof props.pixelSize === 'number'
       ? {...props, pixelSize: scaleUiSize(props.pixelSize)}

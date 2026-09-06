@@ -1,54 +1,68 @@
-import {type IpcCommandHandler, type ResponseCallback} from '@/ipc/types';
-import {isRecording, startRecord, stopRecord} from '@/stores/capture/recording';
+import {type IpcCommand, IpcUsageError} from '@/lib/ipcCommand';
+import {type RecordingMode, isRecording, startRecord, stopRecord} from '@/stores/capture/recording';
 
-async function start(mode: 'monitor' | 'slurp', response: ResponseCallback) {
+function parseRecordingMode(value: string | undefined): RecordingMode {
+  if (value === undefined || value === 'monitor' || value === 'slurp') return value ?? 'monitor';
+  throw new IpcUsageError('Recording mode must be "monitor" or "slurp".');
+}
+
+async function start(mode: RecordingMode) {
   const result = await startRecord(mode);
   switch (result.status) {
     case 'started':
-      response(`Started recording in ${mode} mode: ${result.path}`);
-      break;
+      return `Started recording in ${mode} mode: ${result.path}`;
     case 'already-active':
-      response('Recording is already active or starting');
-      break;
+      return 'Recording is already active or starting';
     case 'cancelled':
-      response('Recording cancelled');
-      break;
+      return 'Recording cancelled';
     case 'failed':
-      response(`Failed to start recording: ${result.error}`);
-      break;
+      return `Failed to start recording: ${result.error}`;
   }
+  throw new Error('Unknown recording start result');
 }
 
-function stop(response: ResponseCallback) {
+function stop() {
   const result = stopRecord();
   switch (result.status) {
     case 'stopping':
-      response('Stopping recording');
-      break;
+      return 'Stopping recording';
     case 'not-recording':
-      response('No recording is active');
-      break;
+      return 'No recording is active';
     case 'already-stopping':
-      response('Recording is already stopping');
-      break;
+      return 'Recording is already stopping';
     case 'failed':
-      response(`Failed to stop recording: ${result.error}`);
-      break;
+      return `Failed to stop recording: ${result.error}`;
   }
+  throw new Error('Unknown recording stop result');
 }
 
-export const handleRecord: IpcCommandHandler = (args, response) => {
-  const action = args[0] ?? 'toggle';
-  const mode = args[1] === 'slurp' ? 'slurp' : 'monitor';
-
-  if (action === 'stop') {
-    stop(response);
-  } else if (action === 'start') {
-    void start(mode, response);
-  } else if (action === 'toggle') {
-    if (isRecording()) stop(response);
-    else void start(mode, response);
-  } else {
-    response('Usage: ags request "record [start|stop|toggle] [monitor|slurp]"');
-  }
+const recordingCommand: IpcCommand = {
+  name: 'record',
+  description: 'Start, stop, or toggle screen recording.',
+  defaultSubcommand: 'toggle',
+  subcommands: [
+    {
+      name: 'start',
+      description: 'Start screen recording.',
+      usage: '[monitor|slurp]',
+      maxArgs: 1,
+      execute: args => start(parseRecordingMode(args[0])),
+    },
+    {
+      name: 'stop',
+      description: 'Stop the active recording.',
+      execute: stop,
+    },
+    {
+      name: 'toggle',
+      description: 'Start recording or stop the active recording.',
+      usage: '[monitor|slurp]',
+      maxArgs: 1,
+      execute(args) {
+        return isRecording() ? stop() : start(parseRecordingMode(args[0]));
+      },
+    },
+  ],
 };
+
+export const recordingCommands: readonly IpcCommand[] = [recordingCommand];

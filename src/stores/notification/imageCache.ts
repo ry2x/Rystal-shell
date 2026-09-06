@@ -2,6 +2,8 @@ import Gdk from 'gi://Gdk';
 import GdkPixbuf from 'gi://GdkPixbuf?version=2.0';
 import Gio from 'gi://Gio';
 
+const CACHE_FILE_ATTRIBUTES = 'standard::size,time::modified,time::modified-usec';
+
 interface CachedTexture {
   texture: Gdk.Texture;
   references: number;
@@ -13,7 +15,6 @@ export interface SharedTexture {
 }
 
 const textures = new Map<string, CachedTexture>();
-const CACHE_FILE_ATTRIBUTES = 'standard::size,time::modified,time::modified-usec';
 
 function getTextureKey(file: Gio.File, uri: string, maxWidth: number, maxHeight: number) {
   const info = file.query_info(CACHE_FILE_ATTRIBUTES, Gio.FileQueryInfoFlags.NONE, null);

@@ -2,7 +2,7 @@ import app from 'ags/gtk4/app';
 
 import Hyprland from 'gi://AstalHyprland';
 
-import {type IpcCommandHandler} from '@/ipc/types';
+import {type IpcCommand} from '@/lib/ipcCommand';
 import {
   toggleAppLauncher,
   toggleControlCenter,
@@ -11,57 +11,58 @@ import {
   toggleWallpaperSelector,
 } from '@/stores/shell/windowManager';
 
-export const panelCommandHandlers: ReadonlyMap<string, IpcCommandHandler> = new Map<
-  string,
-  IpcCommandHandler
->([
-  [
-    'toggle-notif',
-    (_args, response) => {
+export const panelCommands: readonly IpcCommand[] = [
+  {
+    name: 'toggle-notif',
+    description: 'Toggle the notification and weather panel.',
+    execute() {
       toggleDateWeather();
-      response('Toggled Notification Center');
+      return 'Toggled Notification Center';
     },
-  ],
-  [
-    'toggle-cc',
-    (_args, response) => {
+  },
+  {
+    name: 'toggle-cc',
+    description: 'Toggle the control center.',
+    execute() {
       toggleControlCenter();
-      response('Toggled Control Center');
+      return 'Toggled Control Center';
     },
-  ],
-  [
-    'toggle-launcher',
-    (_args, response) => {
+  },
+  {
+    name: 'toggle-launcher',
+    description: 'Toggle the application launcher.',
+    execute() {
       toggleAppLauncher();
-      response('Toggled App Launcher');
+      return 'Toggled App Launcher';
     },
-  ],
-  [
-    'toggle-wallpaper',
-    (_args, response) => {
+  },
+  {
+    name: 'toggle-wallpaper',
+    description: 'Toggle the wallpaper selector.',
+    execute() {
       toggleWallpaperSelector();
-      response('Toggled Wallpaper Selector');
+      return 'Toggled Wallpaper Selector';
     },
-  ],
-  [
-    'toggle-power-menu',
-    (_args, response) => {
+  },
+  {
+    name: 'toggle-power-menu',
+    description: 'Toggle the power menu.',
+    execute() {
       togglePowerMenu();
-      response('Toggled Power Menu');
+      return 'Toggled Power Menu';
     },
-  ],
-  [
-    'list-windows',
-    (_args, response) => {
+  },
+  {
+    name: 'list-windows',
+    description: 'List shell windows and the focused monitor.',
+    execute() {
       const focusedMonitor = Hyprland.get_default().get_focused_monitor().name;
       const dateWeather = app.get_window(`date-weather-popup-${focusedMonitor}`);
       const windows = app
         .get_windows()
         .map(window => window.name)
         .join(', ');
-      response(
-        `Focused: ${focusedMonitor} | dw visible: ${dateWeather?.get_visible()} | Windows: ${windows}`
-      );
+      return `Focused: ${focusedMonitor} | dw visible: ${dateWeather?.get_visible()} | Windows: ${windows}`;
     },
-  ],
-]);
+  },
+];

@@ -1,12 +1,15 @@
-import {type IpcCommandHandler} from '@/ipc/types';
-import {reloadLauncherBackground} from '@/stores/application/launcherBackground';
+import {type IpcCommand} from '@/lib/ipcCommand';
+import {reloadLauncherImage} from '@/stores/application/launcherPicture';
 import {compileAndReloadCss} from '@/stores/shell/style';
 
-export const handleReloadCss: IpcCommandHandler = (_args, response) => {
-  compileAndReloadCss()
-    .then(reloaded => {
-      if (reloaded) reloadLauncherBackground();
-      response('CSS Reloaded Successfully');
-    })
-    .catch(error => response(`Error: ${String(error)}`));
-};
+export const cssCommands: readonly IpcCommand[] = [
+  {
+    name: 'reload-css',
+    description: 'Compile and reload the shell stylesheet.',
+    async execute() {
+      await compileAndReloadCss();
+      reloadLauncherImage();
+      return 'CSS Reloaded Successfully';
+    },
+  },
+];

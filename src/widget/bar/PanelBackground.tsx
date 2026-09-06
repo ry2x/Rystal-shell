@@ -93,9 +93,15 @@ function drawBackground(
 
 export default function PanelBackground({monitor}: PanelBackgroundProps) {
   const geometry = createBarBackgroundGeometry(monitor.get_connector());
-  let drawingArea!: Gtk.DrawingArea;
+  let drawingArea: Gtk.DrawingArea | null = null;
 
-  const widget = (
+  createEffect(() => {
+    geometry();
+    barColors();
+    drawingArea?.queue_draw();
+  });
+
+  return (
     <drawingarea
       hexpand
       vexpand
@@ -109,13 +115,5 @@ export default function PanelBackground({monitor}: PanelBackgroundProps) {
         });
       }}
     />
-  ) as Gtk.DrawingArea;
-
-  createEffect(() => {
-    geometry();
-    barColors();
-    drawingArea.queue_draw();
-  });
-
-  return widget;
+  );
 }

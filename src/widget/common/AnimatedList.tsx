@@ -44,5 +44,5 @@ export default function AnimatedList<T>({
         )}
       </For>
     </box>
-  ) as Gtk.Box;
+  );
 }

@@ -11,6 +11,7 @@ import {scaleUiSize} from '@/lib/uiScale';
 const DOWNLOAD_TIMEOUT_SECONDS = 10;
 const THUMBNAIL_SIZE = scaleUiSize(160);
 const YOUTUBE_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
+
 const thumbnailSession = new Soup.Session({timeout: DOWNLOAD_TIMEOUT_SECONDS});
 
 function getYouTubeVideoId(url: string) {

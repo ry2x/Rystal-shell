@@ -1,4 +1,4 @@
-import {createExternal} from 'ags';
+import {createState} from 'ags';
 
 import Apps from 'gi://AstalApps';
 
@@ -6,32 +6,32 @@ import {ApplicationHistory} from '@/stores/application/applicationHistory';
 
 const MAX_APP_RESULTS = 30;
 
-interface ApplicationCatalog {
+interface ApplicationRegistry {
   applications: Apps.Apps;
   history: ApplicationHistory;
 }
 
-let catalog: ApplicationCatalog | null = null;
+let applicationRegistry: ApplicationRegistry | null = null;
 
-function getCatalog() {
-  if (catalog) return catalog;
+const [applicationRegistryRevisionState, setApplicationRegistryRevision] = createState(0);
+const [applicationHistoryRevisionState, setApplicationHistoryRevision] = createState(0);
+
+export const applicationRegistryRevision = applicationRegistryRevisionState;
+export const applicationHistoryRevision = applicationHistoryRevisionState;
+
+function getApplicationRegistry() {
+  if (applicationRegistry) return applicationRegistry;
 
   const applications = new Apps.Apps();
-  catalog = {
+  applications.connect('notify::list', () => {
+    setApplicationRegistryRevision(revision => revision + 1);
+  });
+  applicationRegistry = {
     applications,
     history: new ApplicationHistory(applications),
   };
-  return catalog;
+  return applicationRegistry;
 }
-
-export const applicationCatalogRevision = createExternal(0, setRevision => {
-  const {applications} = getCatalog();
-  const hook = applications.connect('notify::list', () => {
-    setRevision(revision => revision + 1);
-  });
-
-  return () => applications.disconnect(hook);
-});
 
 function getResultKey(application: Apps.Application) {
   return application.name + (application.description || '') + (application.iconName || '');
@@ -54,7 +54,7 @@ function getUniqueResults(applicationList: Apps.Application[]) {
 }
 
 function getApplicationList() {
-  const {applications, history} = getCatalog();
+  const {applications, history} = getApplicationRegistry();
   return applications.get_list().sort((applicationA, applicationB) => {
     const scoreA = history.getScore(applicationA);
     const scoreB = history.getScore(applicationB);
@@ -64,11 +64,12 @@ function getApplicationList() {
 }
 
 export function recordAppLaunch(application: Apps.Application) {
-  getCatalog().history.recordLaunch(application);
+  getApplicationRegistry().history.recordLaunch(application);
+  setApplicationHistoryRevision(revision => revision + 1);
 }
 
 export function searchApps(query: string) {
-  const {history} = getCatalog();
+  const {history} = getApplicationRegistry();
   const allApplications = getApplicationList();
   if (query === '') return getUniqueResults(allApplications);
   const keywords = query.split(/\s+/);

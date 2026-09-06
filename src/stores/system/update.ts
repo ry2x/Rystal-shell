@@ -1,4 +1,3 @@
-import {createExternal} from 'ags';
 import {type Process, execAsync, subprocess} from 'ags/process';
 import {type Timer, timeout} from 'ags/time';
 
@@ -6,6 +5,7 @@ import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 import Soup from 'gi://Soup?version=3.0';
 
+import {createLazyAccessor} from '@/stores/common/lazyAccessor';
 import {closeAllControlCenters} from '@/stores/shell/windowManager';
 
 const NORMAL_INTERVAL_MS = 30 * 60_000;
@@ -16,7 +16,8 @@ const CONNECTIVITY_CHECK_URLS = [
   'http://detectportal.firefox.com/success.txt',
   'https://connectivitycheck.gstatic.com/generate_204',
   'http://captive.apple.com/hotspot-detect.html',
-];
+] as const;
+
 const connectivitySession = new Soup.Session({timeout: 5});
 
 function sendAndRead(message: Soup.Message, cancellable: Gio.Cancellable): Promise<GLib.Bytes> {
@@ -65,7 +66,7 @@ export function openUpdateManager() {
     .catch(console.error);
 }
 
-export const updatesPoll = createExternal('0', setUpdates => {
+export const updatesPoll = createLazyAccessor('0', setUpdates => {
   const updateProcesses = new Set<Process>();
   let refreshTimer: Timer | null = null;
   let refreshPromise: Promise<void> | null = null;

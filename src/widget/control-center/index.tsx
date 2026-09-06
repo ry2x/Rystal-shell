@@ -3,8 +3,8 @@ import {Astal, Gdk, Gtk} from 'ags/gtk4';
 import app from 'ags/gtk4/app';
 
 import {shellMotion} from '@/lib/motion';
+import {shellGeometry} from '@/lib/shellGeometry';
 import {createControlCenterState} from '@/stores/panel/controlCenter';
-import {BAR_WIDTH} from '@/stores/shell/barBackground';
 import ClickCatcher from '@/widget/common/ClickCatcher';
 import ControlCenterPages from '@/widget/control-center/ControlCenterPages';
 
@@ -12,26 +12,27 @@ export interface ControlCenterProps {
   monitor: Gdk.Monitor;
 }
 
-interface ControlCenterWindow extends Astal.Window {
-  hide_animated: () => void;
-  hide_immediately: () => void;
-  show_animated: () => void;
-}
-
 export default function ControlCenter({monitor}: ControlCenterProps) {
   const connector = monitor.get_connector() ?? '';
   const state = createControlCenterState(connector);
   const {TOP, BOTTOM, LEFT, RIGHT} = Astal.WindowAnchor;
 
-  const window = (
+  return (
     <window
+      $={self => {
+        Object.assign(self, {
+          hide_animated: state.hideAnimated,
+          hide_immediately: state.hideImmediately,
+          show_animated: state.showAnimated,
+        });
+      }}
       name={`control-center-${monitor.get_connector()}`}
       class="ControlCenter"
       gdkmonitor={monitor}
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.TOP}
       anchor={TOP | BOTTOM | LEFT | RIGHT}
-      marginLeft={BAR_WIDTH}
+      marginLeft={shellGeometry.barWidth}
       marginTop={0}
       keymode={Astal.Keymode.NONE}
       application={app}
@@ -65,11 +66,5 @@ export default function ControlCenter({monitor}: ControlCenterProps) {
         </box>
       </box>
     </window>
-  ) as ControlCenterWindow;
-
-  window.hide_animated = state.hideAnimated;
-  window.hide_immediately = state.hideImmediately;
-  window.show_animated = state.showAnimated;
-
-  return window;
+  );
 }

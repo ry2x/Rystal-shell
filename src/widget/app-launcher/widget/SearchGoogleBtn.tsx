@@ -1,27 +1,30 @@
-import type {Accessor} from 'ags';
+import {type Accessor, onCleanup} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
 import Pango from 'gi://Pango';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {getDirectUrl, openQuery} from '@/stores/application/query';
-import {toggleAppLauncher} from '@/stores/shell/windowManager';
+import {openLauncherQuery} from '@/stores/application/appLauncherAction';
+import {getDirectUrl} from '@/stores/application/appLauncherAction';
 
 export interface SearchGoogleBtnProps {
   textState: Accessor<string>;
   monitorConnector: string | null;
+  register: (button: Gtk.Button | null) => void;
 }
 
-export function SearchGoogleBtn({textState, monitorConnector}: SearchGoogleBtnProps): Gtk.Button {
+export function SearchGoogleBtn({textState, monitorConnector, register}: SearchGoogleBtnProps) {
+  onCleanup(() => register(null));
+
   return (
     <button
       class="applauncher-item"
       canFocus={false}
       visible={textState.as((t: string) => (t || '').trim() !== '')}
+      $={register}
       onClicked={() => {
         const t = textState.peek() || '';
-        toggleAppLauncher(monitorConnector);
-        openQuery(t);
+        openLauncherQuery(t, monitorConnector);
       }}
     >
       <box orientation={Gtk.Orientation.HORIZONTAL} spacing={scaleUiSize(12)}>
@@ -45,5 +48,5 @@ export function SearchGoogleBtn({textState, monitorConnector}: SearchGoogleBtnPr
         </box>
       </box>
     </button>
-  ) as Gtk.Button;
+  );
 }
