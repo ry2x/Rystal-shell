@@ -61,12 +61,6 @@ function updateSelection(
   if (targetChild) scrollToSelection(scrollWindow, targetChild);
 }
 
-function getApplicationId(application: Apps.Application) {
-  return (
-    application.entry || `${application.name}\0${application.executable}\0${application.iconName}`
-  );
-}
-
 export interface AppListProps {
   text: Accessor<string>;
   selectedIndex: Accessor<number>;
@@ -113,7 +107,8 @@ export function AppList({text, selectedIndex, results, monitorConnector, registe
           spacing={scaleUiSize(10)}
           $={self => (appList = self)}
         >
-          <For each={results} id={getApplicationId}>
+          {/* Gnim v1 cannot replace a keyed row's captured item, so use GObject identity. */}
+          <For each={results}>
             {application => <AppItem res={application} monitorConnector={monitorConnector} />}
           </For>
         </box>
