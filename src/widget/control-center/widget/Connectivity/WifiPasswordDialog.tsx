@@ -28,12 +28,18 @@ export default function WifiPasswordDialog({monitor}: WifiPasswordDialogProps) {
       entry?.grab_focus();
     });
   });
-
-  onCleanup(() => {
+  let disposed = false;
+  const cleanup = () => {
+    if (disposed) return;
+    disposed = true;
     unsubscribe();
+    state.dispose();
     focusTimer?.cancel();
     focusTimer = null;
-  });
+    entry = null;
+  };
+
+  onCleanup(cleanup);
 
   return (
     <window
@@ -51,6 +57,7 @@ export default function WifiPasswordDialog({monitor}: WifiPasswordDialogProps) {
       keymode={Astal.Keymode.EXCLUSIVE}
       application={app}
       visible={state.visible}
+      onDestroy={cleanup}
     >
       <Gtk.EventControllerKey
         onKeyPressed={(_, keyval) => {

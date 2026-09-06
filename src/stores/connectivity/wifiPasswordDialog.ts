@@ -15,6 +15,7 @@ export interface WifiPasswordDialogState {
   activation: Accessor<number>;
   submit: (password: string) => Promise<void>;
   close: () => void;
+  dispose: () => void;
 }
 
 const [wifiPasswordRequestState, setWifiPasswordRequest] = createState<WifiPasswordRequest | null>(
@@ -67,8 +68,14 @@ export function createWifiPasswordDialogState(monitorConnector: string): WifiPas
   };
 
   const close = () => closeWifiPasswordDialog(monitorConnector);
+  let disposed = false;
+  const dispose = () => {
+    if (disposed) return;
+    disposed = true;
+    unsubscribe();
+  };
 
-  onCleanup(unsubscribe);
+  onCleanup(dispose);
 
-  return {visible, ssid, connectLabel, busy, error, activation, submit, close};
+  return {visible, ssid, connectLabel, busy, error, activation, submit, close, dispose};
 }
