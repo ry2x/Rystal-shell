@@ -144,6 +144,38 @@ describe('executeIpcRequest', () => {
     assert.match(invalidValue, /Usage: ags request -i test-shell "validate <value>"/);
   });
 
+  it('supports independently bounded argument counts', async () => {
+    const commands = [
+      {
+        name: 'minimum',
+        description: 'Accept one or more values.',
+        minArgs: 1,
+        execute: args => args.join(','),
+      },
+      {
+        name: 'maximum',
+        description: 'Accept up to one value.',
+        maxArgs: 1,
+        execute: args => args.join(','),
+      },
+    ];
+
+    assert.equal(await executeIpcRequest(commands, ['minimum', 'one', 'two']), 'one,two');
+    assert.match(
+      await executeIpcRequest(commands, ['minimum']),
+      /^Error: Expected at least 1 argument\./
+    );
+    assert.equal(await executeIpcRequest(commands, ['maximum']), '');
+    assert.match(
+      await executeIpcRequest(commands, ['maximum', 'one', 'two']),
+      /^Error: Expected at most 1 argument\./
+    );
+    assert.match(
+      await executeIpcRequest(createCommands(), ['status', 'unexpected']),
+      /^Error: Expected 0 arguments\./
+    );
+  });
+
   it('normalizes asynchronous results and runtime errors', async () => {
     const asyncResult = await executeIpcRequest(
       [{name: 'async', description: 'Run async work.', execute: async () => 'done'}],

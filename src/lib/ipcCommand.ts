@@ -193,11 +193,17 @@ function resolveHelp(
 
 function validateArgumentCount(command: IpcLeafCommand, args: readonly string[]) {
   const minArgs = command.minArgs ?? 0;
-  const maxArgs = command.maxArgs ?? 0;
+  const maxArgs = command.maxArgs ?? (command.minArgs === undefined ? 0 : Number.POSITIVE_INFINITY);
   if (args.length >= minArgs && args.length <= maxArgs) return;
 
   if (minArgs === maxArgs) {
     throw new IpcUsageError(`Expected ${minArgs} argument${minArgs === 1 ? '' : 's'}.`);
+  }
+  if (!Number.isFinite(maxArgs)) {
+    throw new IpcUsageError(`Expected at least ${minArgs} argument${minArgs === 1 ? '' : 's'}.`);
+  }
+  if (minArgs === 0) {
+    throw new IpcUsageError(`Expected at most ${maxArgs} argument${maxArgs === 1 ? '' : 's'}.`);
   }
   throw new IpcUsageError(`Expected between ${minArgs} and ${maxArgs} arguments.`);
 }

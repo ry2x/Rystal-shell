@@ -18,5 +18,8 @@ const commands: readonly IpcCommand[] = [
 ];
 
 export function requestHandler(request: string[], response: ResponseCallback) {
-  void executeIpcRequest(commands, request, rystalShellInstance).then(response);
+  void executeIpcRequest(commands, request, rystalShellInstance).then(response, error => {
+    const message = error instanceof Error ? error.message : String(error);
+    response(`Error: ${message}`);
+  });
 }
