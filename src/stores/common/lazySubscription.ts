@@ -32,10 +32,18 @@ export function createLazySubscription<T>(
   };
 
   function subscribe(callback: () => void): Dispose {
-    if (subscribers.size === 0) stopProducer = producer(setValue);
-
     const notify = () => callback();
     subscribers.add(notify);
+
+    if (subscribers.size === 1) {
+      try {
+        stopProducer = producer(setValue);
+      } catch (error) {
+        subscribers.delete(notify);
+        throw error;
+      }
+    }
+
     let subscribed = true;
 
     return () => {

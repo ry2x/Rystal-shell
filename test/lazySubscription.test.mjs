@@ -52,6 +52,37 @@ describe('createLazySubscription', () => {
     assert.equal(source.get(), 3);
   });
 
+  it('notifies the first subscriber about synchronous producer updates', () => {
+    let notifications = 0;
+    const source = createLazySubscription(0, setValue => {
+      setValue(1);
+      return () => {};
+    });
+
+    const unsubscribe = source.subscribe(() => {
+      notifications += 1;
+    });
+
+    assert.equal(source.get(), 1);
+    assert.equal(notifications, 1);
+    unsubscribe();
+  });
+
+  it('removes the first subscriber when producer startup fails', () => {
+    let starts = 0;
+    const source = createLazySubscription(0, () => {
+      starts += 1;
+      if (starts === 1) throw new Error('failed');
+      return () => {};
+    });
+
+    assert.throws(() => source.subscribe(() => {}), /failed/);
+    const unsubscribe = source.subscribe(() => {});
+
+    assert.equal(starts, 2);
+    unsubscribe();
+  });
+
   it('notifies only when Object.is considers the value changed', () => {
     let setValue;
     let notifications = 0;
