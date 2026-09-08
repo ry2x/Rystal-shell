@@ -7,11 +7,19 @@ export interface WorldClockConfig {
   tz: string;
 }
 
+interface ExternalAppsConfig {
+  audioControl: string;
+  bluetoothSettings: string;
+  wifiSettings: string;
+  updateManager: string;
+}
+
 export interface AppConfig {
   ui: {scale: UiScale};
   brightness: {backend: BrightnessBackendConfig};
   weather: {location: string};
   notifications: {maxCount: number};
+  externalApps: ExternalAppsConfig;
   worldClocks: WorldClockConfig[];
   recorder: {
     savePath: string;

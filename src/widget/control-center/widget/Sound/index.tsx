@@ -1,7 +1,7 @@
 import {Gtk} from 'ags/gtk4';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {openAudioControl} from '@/stores/application/externalApps';
+import {audioControlAppName, openAudioControl} from '@/stores/application/externalApps';
 import {createSoundPageState} from '@/stores/system/audio';
 import {LucideIcon} from '@/widget/common/lucide';
 import AdvancedSettingsButton from '@/widget/control-center/widget/AdvancedSettingsButton';
@@ -50,7 +50,7 @@ export function SoundPage({onBack}: SoundPageProps) {
 
       <AdvancedSettingsButton
         title="More Sound Settings"
-        subtitle="Open pavucontrol"
+        subtitle={`Open ${audioControlAppName}`}
         onOpen={openAudioControl}
       />
     </box>

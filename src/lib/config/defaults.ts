@@ -5,6 +5,12 @@ export const DEFAULT_CONFIG: AppConfig = {
   brightness: {backend: 'auto'},
   weather: {location: ''},
   notifications: {maxCount: 30},
+  externalApps: {
+    audioControl: 'pavucontrol',
+    bluetoothSettings: 'blueman-manager',
+    wifiSettings: 'nm-connection-editor',
+    updateManager: 'kitty --title PacUpdate par_tui',
+  },
   worldClocks: [
     {label: 'London', tz: 'Europe/London'},
     {label: 'Brisbane', tz: 'Australia/Brisbane'},

@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Network from 'gi://AstalNetwork';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {openWifiSettings} from '@/stores/application/externalApps';
+import {openWifiSettings, wifiSettingsAppName} from '@/stores/application/externalApps';
 import {toggleWifi} from '@/stores/connectivity/network';
 import {type WifiConfirmation, createWifiPageState} from '@/stores/connectivity/wifiPage';
 import AnimatedList from '@/widget/common/AnimatedList';
@@ -116,7 +116,7 @@ export function WifiPage({monitorConnector, onBack}: WifiPageProps) {
       />
       <AdvancedSettingsButton
         title="More Wi-Fi Settings"
-        subtitle="Open nm-connection-editor"
+        subtitle={`Open ${wifiSettingsAppName}`}
         onOpen={openWifiSettings}
       />
     </box>

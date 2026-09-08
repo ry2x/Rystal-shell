@@ -99,6 +99,45 @@ function resolveNotifications(root: ConfigObject): AppConfig['notifications'] {
   return {...DEFAULT_CONFIG.notifications};
 }
 
+function resolveExternalApps(root: ConfigObject): AppConfig['externalApps'] {
+  const section = readSection(root, 'externalApps');
+  if (section) {
+    warnUnknownKeys('externalApps', section, [
+      'audioControl',
+      'bluetoothSettings',
+      'wifiSettings',
+      'updateManager',
+    ]);
+  }
+
+  return {
+    audioControl: readNonBlankString(
+      section,
+      'audioControl',
+      'externalApps',
+      DEFAULT_CONFIG.externalApps.audioControl
+    ),
+    bluetoothSettings: readNonBlankString(
+      section,
+      'bluetoothSettings',
+      'externalApps',
+      DEFAULT_CONFIG.externalApps.bluetoothSettings
+    ),
+    wifiSettings: readNonBlankString(
+      section,
+      'wifiSettings',
+      'externalApps',
+      DEFAULT_CONFIG.externalApps.wifiSettings
+    ),
+    updateManager: readNonBlankString(
+      section,
+      'updateManager',
+      'externalApps',
+      DEFAULT_CONFIG.externalApps.updateManager
+    ),
+  };
+}
+
 function resolveRecorder(root: ConfigObject): AppConfig['recorder'] {
   const section = readSection(root, 'recorder');
   if (section) {
@@ -152,6 +191,7 @@ export function resolveSections(root: ConfigObject): AppConfig {
     brightness: resolveBrightness(root),
     weather: resolveWeather(root),
     notifications: resolveNotifications(root),
+    externalApps: resolveExternalApps(root),
     worldClocks: resolveWorldClocks(root.worldClocks),
     recorder: resolveRecorder(root),
     profile: resolveProfile(root),

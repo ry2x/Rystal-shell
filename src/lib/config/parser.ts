@@ -13,6 +13,7 @@ export function resolveConfig(value: unknown): AppConfig {
     'brightness',
     'weather',
     'notifications',
+    'externalApps',
     'worldClocks',
     'recorder',
     'profile',

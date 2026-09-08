@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Bluetooth from 'gi://AstalBluetooth';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {openBluetoothSettings} from '@/stores/application/externalApps';
+import {bluetoothSettingsAppName, openBluetoothSettings} from '@/stores/application/externalApps';
 import {
   type BluetoothConfirmation,
   createBluetoothPageState,
@@ -112,7 +112,7 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
       />
       <AdvancedSettingsButton
         title="More Bluetooth Settings"
-        subtitle="Open blueman-manager"
+        subtitle={`Open ${bluetoothSettingsAppName}`}
         onOpen={openBluetoothSettings}
       />
     </box>

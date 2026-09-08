@@ -2,13 +2,9 @@ import {execAsync} from 'ags/process';
 
 import GLib from 'gi://GLib';
 
+import {appConfig} from '@/lib/config';
 import {sendNotification} from '@/stores/notification/send';
 import {closeAllControlCenters} from '@/stores/shell/windowManager';
-
-const AUDIO_SETTING = 'pavucontrol';
-const BLUETOOTH_SETTING = 'blueman-manager';
-const WIFI_SETTING = 'nm-connection-editor';
-const UPDATE_APP = 'kitty --title PacUpdate par_tui';
 
 function notifyLaunchFailure(app: string, detail: string) {
   sendNotification({
@@ -22,6 +18,18 @@ function parseCommand(command: string) {
   if (!argv?.[0]) throw new Error('The configured command is empty.');
   return argv;
 }
+
+function getAppName(command: string) {
+  try {
+    return GLib.path_get_basename(parseCommand(command)[0]);
+  } catch {
+    return 'configured app';
+  }
+}
+
+export const audioControlAppName = getAppName(appConfig.externalApps.audioControl);
+export const bluetoothSettingsAppName = getAppName(appConfig.externalApps.bluetoothSettings);
+export const wifiSettingsAppName = getAppName(appConfig.externalApps.wifiSettings);
 
 function openExternalApp(command: string, onExit?: () => void) {
   closeAllControlCenters();
@@ -55,17 +63,17 @@ function openExternalApp(command: string, onExit?: () => void) {
 }
 
 export function openAudioControl() {
-  openExternalApp(AUDIO_SETTING);
+  openExternalApp(appConfig.externalApps.audioControl);
 }
 
 export function openBluetoothSettings() {
-  openExternalApp(BLUETOOTH_SETTING);
+  openExternalApp(appConfig.externalApps.bluetoothSettings);
 }
 
 export function openWifiSettings() {
-  openExternalApp(WIFI_SETTING);
+  openExternalApp(appConfig.externalApps.wifiSettings);
 }
 
 export function openUpdateApp(onExit: () => void) {
-  openExternalApp(UPDATE_APP, onExit);
+  openExternalApp(appConfig.externalApps.updateManager, onExit);
 }

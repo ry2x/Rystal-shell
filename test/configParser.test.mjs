@@ -8,6 +8,12 @@ const DEFAULT_CONFIG = {
   brightness: {backend: 'auto'},
   weather: {location: ''},
   notifications: {maxCount: 30},
+  externalApps: {
+    audioControl: 'pavucontrol',
+    bluetoothSettings: 'blueman-manager',
+    wifiSettings: 'nm-connection-editor',
+    updateManager: 'kitty --title PacUpdate par_tui',
+  },
   worldClocks: [
     {label: 'London', tz: 'Europe/London'},
     {label: 'Brisbane', tz: 'Australia/Brisbane'},
@@ -39,11 +45,16 @@ describe('resolveConfig', () => {
   it('fills missing properties within configured sections', () => {
     const config = resolveConfig({
       weather: {location: 'Tokyo'},
+      externalApps: {audioControl: 'pwvucontrol'},
       recorder: {recordAudio: false},
       profile: {handle: '@rystal'},
     });
 
     assert.equal(config.weather.location, 'Tokyo');
+    assert.deepEqual(config.externalApps, {
+      ...DEFAULT_CONFIG.externalApps,
+      audioControl: 'pwvucontrol',
+    });
     assert.deepEqual(config.recorder, {...DEFAULT_CONFIG.recorder, recordAudio: false});
     assert.deepEqual(config.profile, {
       avatarPath: DEFAULT_CONFIG.profile.avatarPath,
@@ -91,6 +102,29 @@ describe('resolveConfig', () => {
     assert.equal(warnings.mock.callCount(), 2);
   });
 
+  it('accepts external app commands with arguments and quotes', () => {
+    const updateManager = "kitty --title 'System Updates' par_tui";
+
+    assert.equal(
+      resolveConfig({externalApps: {updateManager}}).externalApps.updateManager,
+      updateManager
+    );
+  });
+
+  it('falls back for invalid external app commands', context => {
+    const warnings = mockWarnings(context);
+    const config = resolveConfig({
+      externalApps: {
+        audioControl: '',
+        bluetoothSettings: '   ',
+        wifiSettings: 42,
+      },
+    });
+
+    assert.deepEqual(config.externalApps, DEFAULT_CONFIG.externalApps);
+    assert.equal(warnings.mock.callCount(), 3);
+  });
+
   it('replaces world clocks as a complete array', () => {
     const worldClocks = [{label: 'Tokyo', tz: 'Asia/Tokyo'}];
 
@@ -116,10 +150,14 @@ describe('resolveConfig', () => {
   it('reports unknown keys', context => {
     const warnings = mockWarnings(context);
 
-    resolveConfig({weather: {location: 'Tokyo', typo: true}});
+    resolveConfig({
+      weather: {location: 'Tokyo', typo: true},
+      externalApps: {audioControl: 'pavucontrol', typo: true},
+    });
 
-    assert.equal(warnings.mock.callCount(), 1);
+    assert.equal(warnings.mock.callCount(), 2);
     assert.match(warnings.mock.calls[0].arguments[0], /weather\.typo/);
+    assert.match(warnings.mock.calls[1].arguments[0], /externalApps\.typo/);
   });
 
   it('returns defaults for a non-object root', context => {
