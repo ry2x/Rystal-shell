@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Network from 'gi://AstalNetwork';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {openWifiSettings} from '@/stores/application/externalSettings';
+import {openWifiSettings} from '@/stores/application/externalApps';
 import {toggleWifi} from '@/stores/connectivity/network';
 import {type WifiConfirmation, createWifiPageState} from '@/stores/connectivity/wifiPage';
 import AnimatedList from '@/widget/common/AnimatedList';

@@ -4,7 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Bluetooth from 'gi://AstalBluetooth';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {openBluetoothSettings} from '@/stores/application/externalSettings';
+import {openBluetoothSettings} from '@/stores/application/externalApps';
 import {
   type BluetoothConfirmation,
   createBluetoothPageState,
