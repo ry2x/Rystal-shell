@@ -5,8 +5,6 @@ import {type Timer, timeout} from 'ags/time';
 import Wp from 'gi://AstalWp';
 import GSound from 'gi://GSound';
 
-import {closeAllControlCenters} from '@/stores/shell/windowManager';
-
 const DEVICE_REFRESH_DELAY_MS = 150;
 
 let volumeContext: GSound.Context | null = null;
@@ -129,9 +127,4 @@ export function createSoundPageState(): SoundPageState {
   });
 
   return {speaker, microphone, speakers, microphones, selectSpeaker, selectMicrophone};
-}
-
-export function openAudioControl() {
-  closeAllControlCenters();
-  execAsync('pavucontrol').catch(console.error);
 }

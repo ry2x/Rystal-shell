@@ -241,33 +241,6 @@ popover.cc-sound-device-menu {
     0 s(10) s(28) $sound-glass-shadow;
 }
 
-.cc-sound-advanced {
-  padding: s(12) s(14);
-  background-color: rgba($surface, 0.3);
-  background-image: linear-gradient(
-    145deg,
-    rgba($on-surface, 0.09),
-    rgba($on-surface, 0.028) 48%,
-    rgba($surface, 0.16)
-  );
-  border: s(1) solid $sound-glass-edge;
-  border-radius: s(16);
-  box-shadow:
-    inset 0 s(1) rgba($on-surface, 0.07),
-    0 s(9) s(26) $sound-glass-shadow;
-  color: $text;
-
-  &:hover {
-    background-color: rgba($primary-container, 0.2);
-    border-color: rgba($primary, 0.34);
-    color: $primary;
-    box-shadow:
-      inset 0 s(1) rgba($on-surface, 0.11),
-      0 s(11) s(30) rgba(0, 0, 0, 0.32),
-      0 0 s(17) rgba($primary, 0.11);
-  }
-}
-
 .cc-sound-page .cc-sound-slider {
   trough {
     background-color: rgba($surface, 0.32);
@@ -293,9 +266,4 @@ popover.cc-sound-device-menu {
         0 0 s(10) rgba($primary, 0.2);
     }
   }
-}
-
-.cc-sound-advanced-subtitle {
-  color: rgba($text, 0.6);
-  font-size: 0.78em;
 }

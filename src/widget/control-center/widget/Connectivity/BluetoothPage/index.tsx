@@ -4,6 +4,7 @@ import {Gtk} from 'ags/gtk4';
 import Bluetooth from 'gi://AstalBluetooth';
 
 import {scaleUiSize} from '@/lib/uiScale';
+import {openBluetoothSettings} from '@/stores/application/externalSettings';
 import {
   type BluetoothConfirmation,
   createBluetoothPageState,
@@ -12,6 +13,7 @@ import {toggleBluetooth} from '@/stores/connectivity/network';
 import AnimatedList from '@/widget/common/AnimatedList';
 import EmptyState from '@/widget/common/EmptyState';
 import {LucideIcon} from '@/widget/common/lucide';
+import AdvancedSettingsButton from '@/widget/control-center/widget/AdvancedSettingsButton';
 import AvailableDeviceRow from '@/widget/control-center/widget/Connectivity/BluetoothPage/AvailableDeviceRow';
 import ConnectedDeviceRow from '@/widget/control-center/widget/Connectivity/BluetoothPage/ConnectedDeviceRow';
 import {
@@ -107,6 +109,11 @@ export function BluetoothPage({page, onBack}: BluetoothPageProps) {
         icon="bluetooth-off"
         label="Bluetooth is turned off"
         visible={createBinding(bluetooth, 'is_powered').as(value => !value)}
+      />
+      <AdvancedSettingsButton
+        title="More Bluetooth Settings"
+        subtitle="Open blueman-manager"
+        onOpen={openBluetoothSettings}
       />
     </box>
   );

@@ -4,11 +4,13 @@ import {Gtk} from 'ags/gtk4';
 import Network from 'gi://AstalNetwork';
 
 import {scaleUiSize} from '@/lib/uiScale';
+import {openWifiSettings} from '@/stores/application/externalSettings';
 import {toggleWifi} from '@/stores/connectivity/network';
 import {type WifiConfirmation, createWifiPageState} from '@/stores/connectivity/wifiPage';
 import AnimatedList from '@/widget/common/AnimatedList';
 import EmptyState from '@/widget/common/EmptyState';
 import {LucideIcon} from '@/widget/common/lucide';
+import AdvancedSettingsButton from '@/widget/control-center/widget/AdvancedSettingsButton';
 import {
   ConfirmOverlay,
   ErrorLabel,
@@ -111,6 +113,11 @@ export function WifiPage({monitorConnector, onBack}: WifiPageProps) {
         icon="wifi-off"
         label="Wi-Fi is turned off"
         visible={createBinding(wifi, 'enabled').as(value => !value)}
+      />
+      <AdvancedSettingsButton
+        title="More Wi-Fi Settings"
+        subtitle="Open nm-connection-editor"
+        onOpen={openWifiSettings}
       />
     </box>
   );

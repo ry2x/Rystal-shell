@@ -40,9 +40,15 @@ Individual shell features may require their corresponding system tools, such as
 `brightnessctl` or `ddcutil`, NetworkManager, BlueZ, PipeWire/WirePlumber, `slurp`, and
 `wf-recorder`.
 
+The detailed settings shortcuts in Control Center use these external applications:
+
+- `pavucontrol` for sound
+- `blueman-manager` from `blueman` for Bluetooth
+- `nm-connection-editor` for Wi-Fi
+
 ```sh
 # for Arch Linux
-paru -S aylurs-gtk-shell-git libastal-meta dart-sass imagemagick awww matugen util-linux pnpm webp-pixbuf-loader gsound
+paru -S aylurs-gtk-shell-git libastal-meta dart-sass imagemagick awww matugen util-linux pnpm webp-pixbuf-loader gsound pavucontrol blueman nm-connection-editor
 ```
 
 ### Build, Deploy, and Start

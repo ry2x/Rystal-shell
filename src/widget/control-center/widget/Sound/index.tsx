@@ -1,8 +1,10 @@
 import {Gtk} from 'ags/gtk4';
 
 import {scaleUiSize} from '@/lib/uiScale';
-import {createSoundPageState, openAudioControl} from '@/stores/system/audio';
+import {openAudioControl} from '@/stores/application/externalSettings';
+import {createSoundPageState} from '@/stores/system/audio';
 import {LucideIcon} from '@/widget/common/lucide';
+import AdvancedSettingsButton from '@/widget/control-center/widget/AdvancedSettingsButton';
 import SoundDeviceSection from '@/widget/control-center/widget/Sound/SoundDeviceSection';
 
 export interface SoundPageProps {
@@ -46,28 +48,11 @@ export function SoundPage({onBack}: SoundPageProps) {
         onSelect={state.selectMicrophone}
       />
 
-      <box class="cc-sound-section-header" spacing={scaleUiSize(8)}>
-        <LucideIcon name="settings" pixelSize={17} />
-        <label label="Advanced" class="cc-section-title" halign={Gtk.Align.START} />
-      </box>
-      <button
-        class="cc-sound-advanced"
-        hexpand
-        halign={Gtk.Align.FILL}
-        onClicked={openAudioControl}
-      >
-        <box spacing={scaleUiSize(12)} hexpand>
-          <box orientation={Gtk.Orientation.VERTICAL} hexpand>
-            <label label="More Sound Settings" halign={Gtk.Align.START} />
-            <label
-              label="Open pavucontrol"
-              class="cc-sound-advanced-subtitle"
-              halign={Gtk.Align.START}
-            />
-          </box>
-          <LucideIcon name="chevron-right" pixelSize={20} />
-        </box>
-      </button>
+      <AdvancedSettingsButton
+        title="More Sound Settings"
+        subtitle="Open pavucontrol"
+        onOpen={openAudioControl}
+      />
     </box>
   );
 }
