@@ -45,6 +45,12 @@ cp ./config.json.template \
   "notifications": {
     "maxCount": "<Maximum number of persistent notifications; positive integer. default: 30>"
   },
+  "externalApps": {
+    "audioControl": "<Sound settings command. default: pavucontrol>",
+    "bluetoothSettings": "<Bluetooth settings command. default: blueman-manager>",
+    "wifiSettings": "<Wi-Fi settings command. default: nm-connection-editor>",
+    "updateManager": "<Update manager command. default: kitty --title PacUpdate par_tui>"
+  },
   "worldClocks": [
     { "label": "<Your preferred location>", "tz": "<Timezone of that location>" },
     ... // default has 4 locations: London, Brisbane, New York, Los Angeles. You can add more or remove them as you want.
@@ -63,6 +69,10 @@ cp ./config.json.template \
   }
 }
 ```
+
+External application commands are parsed into an argument array without invoking a shell. Quoted
+arguments and backslash escapes are supported, but shell features such as pipes, redirects, and
+environment-variable expansion are not. Restart Rystal-shell after changing these commands.
 
 > [!NOTE]
 > If you'd like to add new settings, feel free to open an issue or submit a pull request!
