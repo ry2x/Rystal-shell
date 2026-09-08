@@ -1,12 +1,12 @@
-import {type Process, execAsync, subprocess} from 'ags/process';
+import {type Process, subprocess} from 'ags/process';
 import {type Timer, timeout} from 'ags/time';
 
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 import Soup from 'gi://Soup?version=3.0';
 
+import {openUpdateApp} from '@/stores/application/externalApps';
 import {createLazyAccessor} from '@/stores/common/lazyAccessor';
-import {closeAllControlCenters} from '@/stores/shell/windowManager';
 
 const NORMAL_INTERVAL_MS = 30 * 60_000;
 const RETRY_INTERVAL_MS = 60_000;
@@ -60,10 +60,7 @@ function countOutputLines(output: string) {
 let requestRefresh: (() => Promise<void>) | null = null;
 
 export function openUpdateManager() {
-  closeAllControlCenters();
-  execAsync(['kitty', '--title', 'PacUpdate', 'par_tui'])
-    .then(() => requestRefresh?.())
-    .catch(console.error);
+  openUpdateApp(() => void requestRefresh?.());
 }
 
 export const updatesPoll = createLazyAccessor('0', setUpdates => {
