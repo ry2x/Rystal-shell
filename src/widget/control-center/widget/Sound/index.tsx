@@ -9,9 +9,10 @@ import SoundDeviceSection from '@/widget/control-center/widget/Sound/SoundDevice
 
 export interface SoundPageProps {
   onBack: () => void;
+  monitorConnector: string;
 }
 
-export function SoundPage({onBack}: SoundPageProps) {
+export function SoundPage({onBack, monitorConnector}: SoundPageProps) {
   const state = createSoundPageState();
 
   return (
@@ -37,6 +38,7 @@ export function SoundPage({onBack}: SoundPageProps) {
         endpoints={state.speakers}
         unavailableLabel="No output device available"
         onSelect={state.selectSpeaker}
+        monitorConnector={monitorConnector}
       />
       <SoundDeviceSection
         title="Input"
@@ -46,6 +48,7 @@ export function SoundPage({onBack}: SoundPageProps) {
         endpoints={state.microphones}
         unavailableLabel="No input device available"
         onSelect={state.selectMicrophone}
+        monitorConnector={monitorConnector}
       />
 
       <AdvancedSettingsButton

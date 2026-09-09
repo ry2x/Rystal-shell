@@ -28,7 +28,7 @@ export default function ControlCenterPages({state, monitorConnector}: ControlCen
       }}
     >
       <PageContainer $type="named" name="main" revealed={state.revealed} geometry={geometry}>
-        <ControlCenterContent onOpenPage={state.openPage} />
+        <ControlCenterContent onOpenPage={state.openPage} monitorConnector={monitorConnector} />
       </PageContainer>
       <PageContainer $type="named" name="wifi" revealed={state.revealed} geometry={geometry}>
         <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
@@ -47,7 +47,7 @@ export default function ControlCenterPages({state, monitorConnector}: ControlCen
       <PageContainer $type="named" name="sound" revealed={state.revealed} geometry={geometry}>
         <box orientation={Gtk.Orientation.VERTICAL} hexpand halign={Gtk.Align.FILL}>
           <For each={state.soundLoaded.as(loaded => (loaded ? [true] : []))}>
-            {() => <SoundPage onBack={state.showMainPage} />}
+            {() => <SoundPage onBack={state.showMainPage} monitorConnector={monitorConnector} />}
           </For>
         </box>
       </PageContainer>

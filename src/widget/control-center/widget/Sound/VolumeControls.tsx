@@ -5,16 +5,22 @@ import Wp from 'gi://AstalWp';
 
 import {getVolumeIcon} from '@/lib/audio';
 import {scaleUiSize} from '@/lib/uiScale';
-import {setEndpointVolume, setMicrophoneVolume, toggleEndpointMute} from '@/stores/system/audio';
+import {
+  setEndpointVolume,
+  setMicrophoneVolume,
+  toggleEndpointMute,
+  toggleMicrophoneMute,
+} from '@/stores/system/audio';
 import {LucideIcon} from '@/widget/common/lucide';
 import {type SoundDeviceKind} from '@/widget/control-center/widget/Sound/types';
 
 export interface VolumeControlsProps {
   endpoint: Wp.Endpoint;
   kind: SoundDeviceKind;
+  monitorConnector?: string;
 }
 
-export default function VolumeControls({endpoint, kind}: VolumeControlsProps) {
+export default function VolumeControls({endpoint, kind, monitorConnector}: VolumeControlsProps) {
   const volume = createBinding(endpoint, 'volume');
   const muted = createBinding(endpoint, 'mute');
   const icon =
@@ -23,7 +29,7 @@ export default function VolumeControls({endpoint, kind}: VolumeControlsProps) {
       : muted.as(value => (value ? 'mic-off' : 'mic'));
 
   const setVolume = (value: number) => {
-    if (kind === 'output') setEndpointVolume(endpoint, value);
+    if (kind === 'output') setEndpointVolume(endpoint, value, monitorConnector);
     else setMicrophoneVolume(endpoint, value);
   };
 
@@ -58,7 +64,10 @@ export default function VolumeControls({endpoint, kind}: VolumeControlsProps) {
         <button
           class={muted.as(value => (value ? 'cc-sound-mute-btn muted' : 'cc-sound-mute-btn'))}
           tooltipText={muted.as(value => (value ? 'Unmute' : 'Mute'))}
-          onClicked={() => toggleEndpointMute(endpoint)}
+          onClicked={() => {
+            if (kind === 'output') toggleEndpointMute(endpoint, monitorConnector);
+            else toggleMicrophoneMute(endpoint, monitorConnector);
+          }}
         >
           <LucideIcon
             name={kind === 'output' ? muted.as(value => (value ? 'volume-x' : 'volume-2')) : icon}

@@ -13,7 +13,7 @@ usage() {
 Usage: run-memory-scenarios.sh [OPTIONS]
 
 Options:
-  --scenario NAME       launcher, launcher-no-theme, wallpaper, wallpaper-no-theme, power-menu, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, notifications, notifications-date-weather, notifications-date-weather-repeat, notifications-date-weather-close-wait, notifications-date-weather-hide-retained, or all (runs every scenario with AGS restart between each; default: all)
+  --scenario NAME       launcher, launcher-no-theme, wallpaper, wallpaper-no-theme, power-menu, theme-only, css-only, cc, cc-no-theme, date-weather, date-weather-no-theme, date-weather-css-only, osd, notifications, notifications-date-weather, notifications-date-weather-repeat, notifications-date-weather-close-wait, notifications-date-weather-hide-retained, or all (runs every scenario with AGS restart between each; default: all)
   --iterations N        Panel open/theme-change/close repetitions (default: 30)
   --notifications N     Number of random image notifications (default: 30)
   --settle-seconds N    Delay after UI and wallpaper operations (default: 2)
@@ -50,7 +50,7 @@ while (($#)); do
   esac
 done
 
-case "$scenario" in launcher|launcher-no-theme|wallpaper|wallpaper-no-theme|power-menu|theme-only|css-only|cc|cc-no-theme|date-weather|date-weather-no-theme|date-weather-css-only|notifications|notifications-date-weather|notifications-date-weather-repeat|notifications-date-weather-close-wait|notifications-date-weather-hide-retained|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
+case "$scenario" in launcher|launcher-no-theme|wallpaper|wallpaper-no-theme|power-menu|theme-only|css-only|cc|cc-no-theme|date-weather|date-weather-no-theme|date-weather-css-only|osd|notifications|notifications-date-weather|notifications-date-weather-repeat|notifications-date-weather-close-wait|notifications-date-weather-hide-retained|all) ;; *) printf 'Invalid scenario: %s\n' "$scenario" >&2; exit 2 ;; esac
 [[ $iterations =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--iterations must be a positive integer' >&2; exit 2; }
 [[ $notification_count =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--notifications must be a positive integer' >&2; exit 2; }
 [[ $settle_seconds =~ ^[0-9]+$ && $gc_wait_seconds =~ ^[0-9]+$ ]] || { printf '%s\n' 'wait values must be non-negative integers' >&2; exit 2; }
@@ -155,6 +155,7 @@ run_named_scenario() {
     date-weather) run_panel_scenario date-weather toggle-notif ;;
     date-weather-no-theme) run_panel_without_theme date-weather-no-theme toggle-notif ;;
     date-weather-css-only) run_date_weather_css_only_scenario ;;
+    osd) run_osd_scenario ;;
     notifications) run_notification_scenario ;;
     notifications-date-weather) run_notification_scenario true ;;
     notifications-date-weather-repeat) run_notification_scenario true 2 ;;
@@ -179,6 +180,7 @@ run_all_scenarios() {
     date-weather
     date-weather-no-theme
     date-weather-css-only
+    osd
     notifications
     notifications-date-weather
     notifications-date-weather-repeat
@@ -261,6 +263,17 @@ run_date_weather_css_only_scenario() {
   ags_request toggle-notif
   wait_for_settle "$settle_seconds"
   snapshot date-weather-css-only "$iterations" closed
+}
+
+run_osd_scenario() {
+  snapshot osd 0 baseline
+  for ((i = 1; i <= iterations; i++)); do
+    ags_request 'volume toggle'
+    ags_request 'volume toggle'
+    snapshot osd "$i" visible
+    wait_for_settle "$settle_seconds"
+    snapshot osd "$i" settled
+  done
 }
 
 run_notification_scenario() {

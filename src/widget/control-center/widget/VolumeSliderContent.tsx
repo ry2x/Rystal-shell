@@ -4,15 +4,20 @@ import Wp from 'gi://AstalWp';
 
 import {getVolumeIcon} from '@/lib/audio';
 import {scaleUiSize} from '@/lib/uiScale';
-import {setEndpointVolume} from '@/stores/system/audio';
+import {setEndpointVolume, toggleEndpointMute} from '@/stores/system/audio';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface VolumeSliderContentProps {
   speaker: Wp.Endpoint;
   onOpenSound: () => void;
+  monitorConnector: string;
 }
 
-export default function VolumeSliderContent({speaker, onOpenSound}: VolumeSliderContentProps) {
+export default function VolumeSliderContent({
+  speaker,
+  onOpenSound,
+  monitorConnector,
+}: VolumeSliderContentProps) {
   const volume = createBinding(speaker, 'volume');
   const volumeIcon = createBinding(speaker, 'volume_icon').as(getVolumeIcon);
 
@@ -20,7 +25,7 @@ export default function VolumeSliderContent({speaker, onOpenSound}: VolumeSlider
     <box class="cc-card" spacing={scaleUiSize(16)}>
       <button
         class="icon-btn"
-        onClicked={() => (speaker.mute = !speaker.mute)}
+        onClicked={() => toggleEndpointMute(speaker, monitorConnector)}
         tooltipText="Toggle Mute"
       >
         <LucideIcon name={volumeIcon} pixelSize={20} />
@@ -33,7 +38,9 @@ export default function VolumeSliderContent({speaker, onOpenSound}: VolumeSlider
         min={0}
         max={1}
         value={volume}
-        onChangeValue={(_self, _scroll, value: number) => setEndpointVolume(speaker, value)}
+        onChangeValue={(_self, _scroll, value: number) => {
+          setEndpointVolume(speaker, value, monitorConnector);
+        }}
       />
 
       <button

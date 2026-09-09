@@ -1,11 +1,11 @@
 import {createState} from 'ags';
 import {type Timer, timeout} from 'ags/time';
 
-import {sendNotification} from '@/stores/notification/send';
 import {
   BrightnessBackendController,
   clampBrightnessPercent,
 } from '@/stores/system/brightnessBackend';
+import {showBrightnessOsd} from '@/stores/system/osd';
 
 const KEYBOARD_STEP = 10;
 const DEFAULT_RESTORE_BRIGHTNESS = 0.25;
@@ -43,17 +43,6 @@ function cancelSetTimer() {
 }
 
 const brightnessBackend = new BrightnessBackendController();
-
-function notify(percent: number) {
-  sendNotification({
-    summary: `Brightness: ${percent}%`,
-    body:
-      brightnessBackend.current === 'ddcutil'
-        ? 'DDC/CI display brightness'
-        : 'System backlight brightness',
-    transient: true,
-  });
-}
 
 async function processApplyQueue() {
   const request = pendingApply;
@@ -108,11 +97,12 @@ async function flushScheduledApply() {
   await waitForApplyQueue();
 }
 
-export function setBrightness(value: number) {
+export function setBrightness(value: number, monitorConnector?: string | null) {
   const percent = clampBrightnessPercent(value * 100);
   const normalizedValue = percent / 100;
   rememberNonZeroBrightness(normalizedValue);
   setBrightnessState(normalizedValue);
+  showBrightnessOsd(normalizedValue, monitorConnector);
   scheduledTarget = percent;
 
   cancelSetTimer();
@@ -133,29 +123,29 @@ export function setBrightness(value: number) {
   });
 }
 
-export function toggleBrightnessDim() {
+export function toggleBrightnessDim(monitorConnector?: string | null) {
   const current = brightness();
   if (current > 0) {
     lastNonZeroBrightness = current;
-    setBrightness(0);
+    setBrightness(0, monitorConnector);
     return;
   }
 
-  setBrightness(lastNonZeroBrightness ?? DEFAULT_RESTORE_BRIGHTNESS);
+  setBrightness(lastNonZeroBrightness ?? DEFAULT_RESTORE_BRIGHTNESS, monitorConnector);
 }
 
-export function cycleBrightnessPreset() {
+export function cycleBrightnessPreset(monitorConnector?: string | null) {
   const current = brightness();
   const next = BRIGHTNESS_PRESETS.find(preset => preset > current) ?? BRIGHTNESS_PRESETS[0];
-  setBrightness(next);
+  setBrightness(next, monitorConnector);
 }
 
-async function performBrightnessChange(delta: number) {
+async function performBrightnessChange(delta: number, monitorConnector?: string | null) {
   try {
     await flushScheduledApply();
     const next = clampBrightnessPercent((await brightnessBackend.getPercent()) + delta);
     await requestBrightnessApply(next);
-    notify(next);
+    showBrightnessOsd(next / 100, monitorConnector);
     return next;
   } catch (error) {
     console.error('Failed to change brightness:', error);
@@ -163,8 +153,8 @@ async function performBrightnessChange(delta: number) {
   }
 }
 
-export function changeBrightness(delta: number): Promise<number> {
-  const operation = changeQueue.then(() => performBrightnessChange(delta));
+export function changeBrightness(delta: number, monitorConnector?: string | null): Promise<number> {
+  const operation = changeQueue.then(() => performBrightnessChange(delta, monitorConnector));
   changeQueue = operation.then(
     () => {},
     () => {}
@@ -172,16 +162,22 @@ export function changeBrightness(delta: number): Promise<number> {
   return operation;
 }
 
-async function performTemporaryBrightnessSet(percent: number) {
+async function performTemporaryBrightnessSet(percent: number, monitorConnector?: string | null) {
   await flushScheduledApply();
   const previous = await brightnessBackend.getPercent();
   const applied = await requestBrightnessApply(clampBrightnessPercent(percent));
   restoreBrightnessPercent ??= previous;
+  showBrightnessOsd(applied / 100, monitorConnector);
   return applied;
 }
 
-export function setTemporaryBrightness(percent: number): Promise<number> {
-  const operation = changeQueue.then(() => performTemporaryBrightnessSet(percent));
+export function setTemporaryBrightness(
+  percent: number,
+  monitorConnector?: string | null
+): Promise<number> {
+  const operation = changeQueue.then(() =>
+    performTemporaryBrightnessSet(percent, monitorConnector)
+  );
   changeQueue = operation.then(
     () => {},
     () => {}
@@ -189,18 +185,19 @@ export function setTemporaryBrightness(percent: number): Promise<number> {
   return operation;
 }
 
-async function performBrightnessRestore() {
+async function performBrightnessRestore(monitorConnector?: string | null) {
   await flushScheduledApply();
   if (restoreBrightnessPercent === null) throw new Error('No saved brightness to restore');
 
   const target = restoreBrightnessPercent;
   await requestBrightnessApply(target);
   restoreBrightnessPercent = null;
+  showBrightnessOsd(target / 100, monitorConnector);
   return target;
 }
 
-export function restoreBrightness(): Promise<number> {
-  const operation = changeQueue.then(performBrightnessRestore);
+export function restoreBrightness(monitorConnector?: string | null): Promise<number> {
+  const operation = changeQueue.then(() => performBrightnessRestore(monitorConnector));
   changeQueue = operation.then(
     () => {},
     () => {}

@@ -5,6 +5,7 @@ import {requestHandler} from '@/ipc';
 import {rystalShellDataDir, rystalShellInstance} from '@/lib/paths';
 import {cleanupRecording} from '@/stores/capture/recording';
 import {initCss} from '@/stores/shell/style';
+import {cleanupOsd} from '@/stores/system/osd';
 import ShellWindows from '@/widget/ShellWindows';
 
 app.start({
@@ -13,6 +14,7 @@ app.start({
   main() {
     app.connect('shutdown', () => {
       cleanupRecording();
+      cleanupOsd();
     });
     initCss();
 
