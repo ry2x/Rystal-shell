@@ -43,7 +43,7 @@ function clampValue(value: number) {
 }
 
 function resolveMonitorConnector(monitorConnector?: string | null) {
-  return monitorConnector || Hyprland.get_default().get_focused_monitor().name;
+  return monitorConnector ?? Hyprland.get_default().get_focused_monitor().name;
 }
 
 function cancelTimers() {

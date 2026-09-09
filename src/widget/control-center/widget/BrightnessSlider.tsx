@@ -9,8 +9,8 @@ import {LucideIcon} from '@/widget/common/lucide';
 
 function getBrightnessIcon(value: number) {
   if (value <= 0.2) return 'sun-dim';
-  if (value <= 0.8) return 'sun';
-  return 'sun-medium';
+  if (value <= 0.8) return 'sun-medium';
+  return 'sun';
 }
 
 export interface BrightnessSliderProps {

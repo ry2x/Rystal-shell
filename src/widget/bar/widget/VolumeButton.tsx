@@ -6,7 +6,7 @@ import Wp from 'gi://AstalWp';
 import {getVolumeIcon} from '@/lib/audio';
 import {scaleUiSize} from '@/lib/uiScale';
 import {toggleControlCenter} from '@/stores/shell/windowManager';
-import {adjustVolume} from '@/stores/system/audio';
+import {adjustVolume, volumeStep} from '@/stores/system/audio';
 import {LucideIcon} from '@/widget/common/lucide';
 
 export interface VolumeButtonProps {
@@ -22,8 +22,8 @@ export function VolumeButton({speaker, monitor}: VolumeButtonProps) {
       <Gtk.EventControllerScroll
         flags={Gtk.EventControllerScrollFlags.VERTICAL}
         onScroll={(_, _deltaX, deltaY) => {
-          if (deltaY > 0) adjustVolume(speaker, -0.05, monitor.get_connector());
-          else if (deltaY < 0) adjustVolume(speaker, 0.05, monitor.get_connector());
+          if (deltaY > 0) adjustVolume(speaker, -volumeStep, monitor.get_connector());
+          else if (deltaY < 0) adjustVolume(speaker, volumeStep, monitor.get_connector());
           return true;
         }}
       />
