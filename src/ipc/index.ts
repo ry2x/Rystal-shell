@@ -1,5 +1,6 @@
 import {brightnessCommands} from '@/ipc/brightness';
 import {cssCommands} from '@/ipc/css';
+import {microphoneCommands} from '@/ipc/microphone';
 import {notificationCommands} from '@/ipc/notifications';
 import {panelCommands} from '@/ipc/panels';
 import {powerProfileCommands} from '@/ipc/powerProfile';
@@ -17,6 +18,7 @@ const commands: readonly IpcCommand[] = [
   ...recordingCommands,
   ...brightnessCommands,
   ...volumeCommands,
+  ...microphoneCommands,
 ];
 
 export function requestHandler(request: string[], response: ResponseCallback) {

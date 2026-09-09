@@ -20,7 +20,12 @@ interface BrightnessOsdContent extends OsdContentBase {
   kind: 'brightness';
 }
 
-type OsdContent = VolumeOsdContent | BrightnessOsdContent;
+interface MicrophoneOsdContent extends OsdContentBase {
+  kind: 'microphone';
+  muted: boolean;
+}
+
+type OsdContent = VolumeOsdContent | BrightnessOsdContent | MicrophoneOsdContent;
 
 const [contentState, setContent] = createState<OsdContent | null>(null);
 const [visibleState, setVisible] = createState(false);
@@ -78,6 +83,15 @@ export function showBrightnessOsd(value: number, monitorConnector?: string | nul
   showOsd({
     kind: 'brightness',
     value: clampValue(value),
+    monitorConnector: resolveMonitorConnector(monitorConnector),
+  });
+}
+
+export function showMicrophoneOsd(value: number, muted: boolean, monitorConnector?: string | null) {
+  showOsd({
+    kind: 'microphone',
+    value: clampValue(value),
+    muted,
     monitorConnector: resolveMonitorConnector(monitorConnector),
   });
 }

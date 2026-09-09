@@ -48,6 +48,7 @@ export function SoundPage({onBack, monitorConnector}: SoundPageProps) {
         endpoints={state.microphones}
         unavailableLabel="No input device available"
         onSelect={state.selectMicrophone}
+        monitorConnector={monitorConnector}
       />
 
       <AdvancedSettingsButton

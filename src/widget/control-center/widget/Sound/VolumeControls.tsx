@@ -66,7 +66,7 @@ export default function VolumeControls({endpoint, kind, monitorConnector}: Volum
           tooltipText={muted.as(value => (value ? 'Unmute' : 'Mute'))}
           onClicked={() => {
             if (kind === 'output') toggleEndpointMute(endpoint, monitorConnector);
-            else toggleMicrophoneMute(endpoint);
+            else toggleMicrophoneMute(endpoint, monitorConnector);
           }}
         >
           <LucideIcon

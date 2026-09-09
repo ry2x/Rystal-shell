@@ -5,7 +5,7 @@ import {type Timer, timeout} from 'ags/time';
 import Wp from 'gi://AstalWp';
 import GSound from 'gi://GSound';
 
-import {showVolumeOsd} from '@/stores/system/osd';
+import {showMicrophoneOsd, showVolumeOsd} from '@/stores/system/osd';
 
 const DEVICE_REFRESH_DELAY_MS = 150;
 export const volumeStep = 0.05;
@@ -16,6 +16,7 @@ let lastVolumeSoundAt = 0;
 const audio = Wp.get_default().audio;
 
 export const defaultSpeaker = createBinding(audio, 'default_speaker');
+export const defaultMicrophone = createBinding(audio, 'default_microphone');
 
 export interface SoundPageState {
   speaker: Accessor<Wp.Endpoint | null>;
@@ -81,8 +82,18 @@ export function toggleEndpointMute(endpoint: Wp.Endpoint, monitorConnector?: str
   return setEndpointMute(endpoint, !endpoint.mute, monitorConnector);
 }
 
-export function toggleMicrophoneMute(endpoint: Wp.Endpoint) {
-  endpoint.mute = !endpoint.mute;
+export function setMicrophoneMute(
+  endpoint: Wp.Endpoint,
+  muted: boolean,
+  monitorConnector?: string | null
+) {
+  endpoint.mute = muted;
+  showMicrophoneOsd(endpoint.volume, muted, monitorConnector);
+  return muted;
+}
+
+export function toggleMicrophoneMute(endpoint: Wp.Endpoint, monitorConnector?: string | null) {
+  return setMicrophoneMute(endpoint, !endpoint.mute, monitorConnector);
 }
 
 export function adjustVolume(

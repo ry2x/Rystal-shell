@@ -25,6 +25,7 @@ export default function Osd({monitor}: OsdProps) {
   const icon = osdContent.as(content => {
     if (!content) return 'volume-2';
     if (content.kind === 'brightness') return getBrightnessIcon(content.value);
+    if (content.kind === 'microphone') return content.muted ? 'mic-off' : 'mic';
     if (content.muted) return 'volume-x';
     if (content.value <= 0) return 'volume-x';
     if (content.value <= 0.33) return 'volume';
@@ -33,11 +34,13 @@ export default function Osd({monitor}: OsdProps) {
   });
   const label = osdContent.as(content => {
     if (!content) return '';
-    if (content.kind === 'volume' && content.muted) return 'Muted';
+    if (content.kind !== 'brightness' && content.muted) return 'Muted';
     return `${Math.round(content.value * 100)}%`;
   });
   const levelClasses = osdContent.as(content =>
-    content?.kind === 'volume' && content.muted ? ['osd-level', 'muted'] : ['osd-level']
+    content && content.kind !== 'brightness' && content.muted
+      ? ['osd-level', 'muted']
+      : ['osd-level']
   );
   const pillClasses = osdRevealed.as(revealed =>
     revealed ? ['osd-pill', 'revealed'] : ['osd-pill']
