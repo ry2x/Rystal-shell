@@ -22,8 +22,8 @@ export function VolumeButton({speaker, monitor}: VolumeButtonProps) {
       <Gtk.EventControllerScroll
         flags={Gtk.EventControllerScrollFlags.VERTICAL}
         onScroll={(_, _deltaX, deltaY) => {
-          if (deltaY > 0) adjustVolume(speaker, -0.05);
-          else if (deltaY < 0) adjustVolume(speaker, 0.05);
+          if (deltaY > 0) adjustVolume(speaker, -0.05, monitor.get_connector());
+          else if (deltaY < 0) adjustVolume(speaker, 0.05, monitor.get_connector());
           return true;
         }}
       />

@@ -13,7 +13,11 @@ function getBrightnessIcon(value: number) {
   return 'sun-medium';
 }
 
-export default function BrightnessSlider() {
+export interface BrightnessSliderProps {
+  monitorConnector: string;
+}
+
+export default function BrightnessSlider({monitorConnector}: BrightnessSliderProps) {
   const icon = brightness.as(getBrightnessIcon);
 
   return (
@@ -21,7 +25,7 @@ export default function BrightnessSlider() {
       <button
         class="icon-btn"
         tooltipText="Dim to 0% / restore previous brightness"
-        onClicked={toggleBrightnessDim}
+        onClicked={() => toggleBrightnessDim(monitorConnector)}
       >
         <LucideIcon name={icon} pixelSize={20} />
       </button>
@@ -34,14 +38,14 @@ export default function BrightnessSlider() {
         max={1}
         value={brightness}
         onChangeValue={(_self, _scroll, val: number) => {
-          setBrightness(val);
+          setBrightness(val, monitorConnector);
         }}
       />
 
       <button
         class="icon-btn cc-value-button"
         tooltipText="Cycle brightness presets"
-        onClicked={cycleBrightnessPreset}
+        onClicked={() => cycleBrightnessPreset(monitorConnector)}
       >
         <label label={brightness.as(v => `${Math.round(v * 100)}%`)} />
       </button>

@@ -17,6 +17,7 @@ export interface SoundDeviceSectionProps {
   endpoints: Accessor<Wp.Endpoint[]>;
   unavailableLabel: string;
   onSelect: (endpoint: Wp.Endpoint) => Promise<void>;
+  monitorConnector?: string;
 }
 
 export default function SoundDeviceSection({
@@ -27,6 +28,7 @@ export default function SoundDeviceSection({
   endpoints,
   unavailableLabel,
   onSelect,
+  monitorConnector,
 }: SoundDeviceSectionProps) {
   return (
     <>
@@ -54,7 +56,7 @@ export default function SoundDeviceSection({
                 kind={kind}
                 onSelect={onSelect}
               />
-              <VolumeControls endpoint={value} kind={kind} />
+              <VolumeControls endpoint={value} kind={kind} monitorConnector={monitorConnector} />
             </box>
           )}
         </For>

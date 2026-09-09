@@ -7,6 +7,7 @@ import ControlCenter from '@/widget/control-center';
 import WifiPasswordDialog from '@/widget/control-center/widget/Connectivity/WifiPasswordDialog';
 import DateWeatherPopup from '@/widget/date-weather';
 import NotificationPopups from '@/widget/notification-popups';
+import Osd from '@/widget/osd';
 import PowerMenu from '@/widget/power-menu';
 import WallpaperSelector from '@/widget/wallpaper-selector';
 
@@ -24,6 +25,7 @@ export default function ShellWindows({monitors}: ShellWindowsProps) {
         <WifiPasswordDialog monitor={monitor} />,
         <DateWeatherPopup monitor={monitor} />,
         <NotificationPopups monitor={monitor} />,
+        <Osd monitor={monitor} />,
         <AppLauncher monitor={monitor} />,
         <WallpaperSelector monitor={monitor} />,
         <PowerMenu monitor={monitor} />,

@@ -1,4 +1,5 @@
 import {type IpcCommand, IpcUsageError} from '@/lib/ipcCommand';
+import {parsePercentage} from '@/lib/percentage';
 import {
   brightnessStep,
   changeBrightness,
@@ -8,12 +9,6 @@ import {
   restoreBrightness,
   setTemporaryBrightness,
 } from '@/stores/system/brightness';
-
-function parseBrightnessPercent(value: string) {
-  if (!/^\d+(?:\.\d+)?%?$/.test(value)) return null;
-  const percent = Number(value.replace(/%$/, ''));
-  return percent >= 0 && percent <= 100 ? percent : null;
-}
 
 const brightnessCommand: IpcCommand = {
   name: 'brightness',
@@ -51,7 +46,7 @@ const brightnessCommand: IpcCommand = {
       minArgs: 1,
       maxArgs: 1,
       async execute([rawPercent]) {
-        const percent = parseBrightnessPercent(rawPercent);
+        const percent = parsePercentage(rawPercent);
         if (percent === null) throw new IpcUsageError('Brightness must be between 0 and 100.');
         const value = await setTemporaryBrightness(percent);
         return `Brightness: ${value}%`;

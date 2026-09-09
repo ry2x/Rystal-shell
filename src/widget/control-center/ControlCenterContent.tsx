@@ -13,9 +13,13 @@ import VolumeSlider from '@/widget/control-center/widget/VolumeSlider';
 
 export interface ControlCenterContentProps {
   onOpenPage: (page: ControlCenterDetailPage) => void;
+  monitorConnector: string;
 }
 
-export default function ControlCenterContent({onOpenPage}: ControlCenterContentProps) {
+export default function ControlCenterContent({
+  onOpenPage,
+  monitorConnector,
+}: ControlCenterContentProps) {
   return (
     <box
       class="cc-main-panel"
@@ -46,8 +50,11 @@ export default function ControlCenterContent({onOpenPage}: ControlCenterContentP
             onOpenWifi={() => onOpenPage('wifi')}
             onOpenBluetooth={() => onOpenPage('bluetooth')}
           />
-          <VolumeSlider onOpenSound={() => onOpenPage('sound')} />
-          <BrightnessSlider />
+          <VolumeSlider
+            monitorConnector={monitorConnector}
+            onOpenSound={() => onOpenPage('sound')}
+          />
+          <BrightnessSlider monitorConnector={monitorConnector} />
           <MediaCard />
           <box orientation={Gtk.Orientation.HORIZONTAL} spacing={scaleUiSize(16)}>
             <SystemMetrics />

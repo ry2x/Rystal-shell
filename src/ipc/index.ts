@@ -5,6 +5,7 @@ import {panelCommands} from '@/ipc/panels';
 import {powerProfileCommands} from '@/ipc/powerProfile';
 import {recordingCommands} from '@/ipc/recording';
 import {type ResponseCallback} from '@/ipc/types';
+import {volumeCommands} from '@/ipc/volume';
 import {type IpcCommand, executeIpcRequest} from '@/lib/ipcCommand';
 import {rystalShellInstance} from '@/lib/paths';
 
@@ -15,6 +16,7 @@ const commands: readonly IpcCommand[] = [
   ...powerProfileCommands,
   ...recordingCommands,
   ...brightnessCommands,
+  ...volumeCommands,
 ];
 
 export function requestHandler(request: string[], response: ResponseCallback) {

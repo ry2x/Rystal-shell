@@ -5,7 +5,10 @@ import {type Timer, timeout} from 'ags/time';
 import Wp from 'gi://AstalWp';
 import GSound from 'gi://GSound';
 
+import {showVolumeOsd} from '@/stores/system/osd';
+
 const DEVICE_REFRESH_DELAY_MS = 150;
+export const volumeStep = 0.05;
 
 let volumeContext: GSound.Context | null = null;
 let lastVolumeSoundAt = 0;
@@ -48,21 +51,46 @@ function playVolumeFeedback() {
   playVolumeSound();
 }
 
-export function setEndpointVolume(endpoint: Wp.Endpoint, volume: number) {
-  endpoint.volume = Math.max(0, Math.min(1, volume));
+export function setEndpointVolume(
+  endpoint: Wp.Endpoint,
+  volume: number,
+  monitorConnector?: string | null
+) {
+  const nextVolume = Math.max(0, Math.min(1, volume));
+  endpoint.volume = nextVolume;
+  showVolumeOsd(nextVolume, endpoint.mute, monitorConnector);
   playVolumeFeedback();
+  return nextVolume;
 }
 
 export function setMicrophoneVolume(endpoint: Wp.Endpoint, volume: number) {
   endpoint.volume = Math.max(0, Math.min(1, volume));
 }
 
-export function toggleEndpointMute(endpoint: Wp.Endpoint) {
+export function setEndpointMute(
+  endpoint: Wp.Endpoint,
+  muted: boolean,
+  monitorConnector?: string | null
+) {
+  endpoint.mute = muted;
+  showVolumeOsd(endpoint.volume, muted, monitorConnector);
+  return muted;
+}
+
+export function toggleEndpointMute(endpoint: Wp.Endpoint, monitorConnector?: string | null) {
+  return setEndpointMute(endpoint, !endpoint.mute, monitorConnector);
+}
+
+export function toggleMicrophoneMute(endpoint: Wp.Endpoint) {
   endpoint.mute = !endpoint.mute;
 }
 
-export function adjustVolume(endpoint: Wp.Endpoint, delta: number) {
-  setEndpointVolume(endpoint, endpoint.volume + delta);
+export function adjustVolume(
+  endpoint: Wp.Endpoint,
+  delta: number,
+  monitorConnector?: string | null
+) {
+  return setEndpointVolume(endpoint, endpoint.volume + delta, monitorConnector);
 }
 
 async function setDefaultAudioEndpoint(nodeId: number) {
