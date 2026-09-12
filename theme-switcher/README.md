@@ -44,12 +44,36 @@ The script uses its bundled Matugen template and does not require a user-wide
 ## Usage
 
 ```bash
-# Set a specific wallpaper
+# Set a specific wallpaper using the saved mode
 theme-switch.sh set /path/to/wallpaper.jpg
 
-# Set a random wallpaper from $RYSTAL_SHELL_WALLPAPER_DIR (or ~/Pictures/Wallpapers)
+# Set a random wallpaper without changing the saved mode
 theme-switch.sh random
 
-# Refresh colors with current wallpaper
+# Refresh colors with the current wallpaper and saved mode
 theme-switch.sh refresh
+
+# Apply and save a mode using the current wallpaper
+theme-switch.sh mode light
+theme-switch.sh mode dark
+
+# Toggle and display the saved mode
+theme-switch.sh toggle
+theme-switch.sh status
+
+# Compatibility syntax: explicitly select and save a mode while changing a wallpaper
+theme-switch.sh --light set /path/to/wallpaper.jpg
 ```
+
+The selected mode is stored in `${RYSTAL_SHELL_STATE_DIR}/theme/mode`, or in
+`${XDG_STATE_HOME:-$HOME/.local/state}/rystal-shell/theme/mode` when the Rystal-shell state
+directory is not overridden. `set`, `random`, and `refresh` reuse this value. Existing
+installations without a saved value default to `dark`.
+
+The bundled switcher defines the command-line and state-file contract used by desktop
+integrators, but it updates only Rystal-shell. An integrator such as Ryprland may apply the same
+mode to GTK, Qt, and other applications in its extended implementation.
+
+Rystal-shell's Control Center exposes the same light/dark operation through its Appearance
+toggle. It reads the switcher's saved state instead of maintaining a second configuration value,
+and refreshes when the state file is changed by an external command.

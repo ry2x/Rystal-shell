@@ -96,6 +96,7 @@ Rystal-shell's Wallpaper Selector integrates with `theme-switch.sh` to update co
 
 The bundled standalone switcher updates only Rystal-shell. Ryprland and other desktop
 configurations may provide a more extensive implementation with the same command-line interface.
+The Appearance toggle in Control Center changes the saved light/dark mode through that interface.
 
 ### Caffeine integration
 

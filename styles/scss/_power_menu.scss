@@ -71,7 +71,7 @@ window.PowerMenu {
   &:focus,
   &.selected,
   &:hover {
-    color: $primary-fixed;
+    color: $on-primary-container;
     background-color: rgba($primary-container, 0.34);
     background-image: linear-gradient(
       145deg,
@@ -89,7 +89,7 @@ window.PowerMenu {
     transform: translateY(s(-5));
 
     image {
-      color: $primary-fixed;
+      color: $on-primary-container;
       -gtk-icon-shadow: 0 0 s(20) rgba($primary, 0.32);
       transform: scale(2.35);
     }
@@ -123,7 +123,7 @@ window.PowerMenu {
   box-shadow: none;
 
   image {
-    color: $primary-fixed;
+    color: $on-primary-container;
     -gtk-icon-shadow: 0 0 s(20) rgba($primary, 0.32);
   }
 }
@@ -132,7 +132,7 @@ window.PowerMenu {
   min-width: s(220);
   min-height: s(250);
   padding: s(24) s(18) s(28);
-  color: $primary-fixed;
+  color: $on-primary-container;
   background-color: rgba($primary-container, 0.34);
   background-image: linear-gradient(
     145deg,
@@ -211,7 +211,7 @@ window.PowerMenu {
 .power-menu-cancel {
   &:hover,
   &:focus {
-    color: $primary-fixed;
+    color: $on-primary-container;
     background-color: rgba($primary-container, 0.3);
     background-image: linear-gradient(to bottom, rgba($primary, 0.18), rgba($primary, 0.06));
     border-color: rgba($primary, 0.42);

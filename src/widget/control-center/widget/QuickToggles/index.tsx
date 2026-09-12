@@ -4,6 +4,7 @@ import {scaleUiSize} from '@/lib/uiScale';
 import BluetoothToggle from '@/widget/control-center/widget/QuickToggles/BluetoothToggle';
 import CaffeineToggle from '@/widget/control-center/widget/QuickToggles/CaffeineToggle';
 import PowerProfileToggle from '@/widget/control-center/widget/QuickToggles/PowerProfileToggle';
+import ThemeModeToggle from '@/widget/control-center/widget/QuickToggles/ThemeModeToggle';
 import WifiToggle from '@/widget/control-center/widget/QuickToggles/WifiToggle';
 
 export interface QuickTogglesProps {
@@ -21,6 +22,9 @@ export default function QuickToggles({onOpenWifi, onOpenBluetooth}: QuickToggles
       <box orientation={Gtk.Orientation.HORIZONTAL} spacing={scaleUiSize(16)} homogeneous>
         <PowerProfileToggle />
         <CaffeineToggle />
+      </box>
+      <box orientation={Gtk.Orientation.HORIZONTAL} spacing={scaleUiSize(16)} homogeneous>
+        <ThemeModeToggle />
       </box>
     </box>
   );

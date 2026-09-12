@@ -178,7 +178,7 @@ window.Bar {
       }
 
       image {
-        color: $primary-fixed;
+        color: $primary;
         -gtk-icon-shadow: 0 0 s(10) rgba($primary, 0.3);
       }
 
@@ -372,7 +372,7 @@ window.Bar {
           inset 0 0 s(7) rgba($primary, 0.06);
 
         image {
-          color: $primary-fixed;
+          color: $primary;
           -gtk-icon-shadow: 0 0 s(9) rgba($primary, 0.28);
         }
       }

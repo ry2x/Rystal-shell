@@ -3,6 +3,7 @@ import {type Timer, timeout} from 'ags/time';
 
 import {shellMotion} from '@/lib/motion';
 import {deactivateSidePanel} from '@/stores/shell/windowManager';
+import {refreshThemeMode} from '@/stores/system/themeMode';
 
 export type ControlCenterPage = 'main' | 'wifi' | 'bluetooth' | 'sound';
 export type ControlCenterDetailPage = Exclude<ControlCenterPage, 'main'>;
@@ -68,6 +69,7 @@ export function createControlCenterState(monitorConnector: string): ControlCente
 
   const showAnimated = () => {
     cancelHideTimer();
+    void refreshThemeMode().catch(() => {});
     setContentLoaded(true);
     setVisible(true);
     setRevealed(true);
