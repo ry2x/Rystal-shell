@@ -6,6 +6,7 @@ import {rystalShellDataDir, rystalShellInstance} from '@/lib/paths';
 import {cleanupRecording} from '@/stores/capture/recording';
 import {initCss} from '@/stores/shell/style';
 import {cleanupOsd} from '@/stores/system/osd';
+import {cleanupThemeMode} from '@/stores/system/themeMode';
 import ShellWindows from '@/widget/ShellWindows';
 
 app.start({
@@ -15,6 +16,7 @@ app.start({
     app.connect('shutdown', () => {
       cleanupRecording();
       cleanupOsd();
+      cleanupThemeMode();
     });
     initCss();
 
