@@ -1,78 +1,82 @@
-# Rystal-shell Configuration
+# Configuration
 
-`config.json.template` placed in this directory is a template configuration file for Rystal-shell.
-It contains various settings that can be customized to alter the behavior of the shell and some of the displayed information.
+Rystal-shell reads `config.json` once at startup. Restart the instance after editing it. Without a
+configuration file, it uses the defaults in [defaults.ts](../src/lib/config/defaults.ts).
 
-Rystal-shell has a default configuration settings, but you can create a custom configuration file by copying the template and modifying it according to your preferences.
+Object properties are merged with defaults; arrays such as `worldClocks` replace the entire default
+array. Invalid values fall back to defaults, unknown keys produce warnings, and an unreadable or
+invalid JSON file falls back to the full default configuration. See [parser.ts](../src/lib/config/parser.ts).
 
-> [!NOTE]
-> Default values are defined in
-> [`defaults.ts`](../src/lib/config/defaults.ts), and configuration validation is implemented in
-> [`parser.ts`](../src/lib/config/parser.ts).
-> If you want to change settings without creating a custom configuration file, modify the default
-> values in `defaults.ts`.
+## Create user configuration
 
-The user configuration may contain only the values that differ from the defaults. Missing object
-properties are filled individually from the defaults, while arrays such as `worldClocks` replace the
-default array in full. Invalid values fall back to their defaults, and unknown keys produce a warning.
-
-## 1. Placement
-
-The configuration file should be placed in the following directory:
+From the repository root, copy the template only if you do not already have a configuration:
 
 ```sh
-"${XDG_CONFIG_HOME:-$HOME/.config}/rystal-shell/config.json"
+config_dir="${RYSTAL_SHELL_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/rystal-shell}"
+mkdir -p "$config_dir"
+if [ ! -e "$config_dir/config.json" ]; then
+  cp config/config.json.template "$config_dir/config.json"
+fi
 ```
 
-run the following command to create the directory and copy the template:
+The template uses Tokyo as an example weather location; the built-in default is an empty string.
+You can instead create a minimal JSON file containing only your overrides:
 
-```sh
-mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/rystal-shell"
-cp ./config.json.template \
-  "${XDG_CONFIG_HOME:-$HOME/.config}/rystal-shell/config.json"
-```
-
-## 2. Configuration Options
-
-```jsonc
+```json
 {
-  "ui": {
-    "scale": "<Global Rystal-shell UI scale: 0.75, 1, 1.25, 1.5, or 2. default: 1; restart required>"
-  },
-  "weather": {
-    "location": "<Your preferred location; if left blank, the location will be determined from your IP address. e.g., 'New York, NY' ,'東京都練馬区'>"
-  },
-  "notifications": {
-    "maxCount": "<Maximum number of persistent notifications; positive integer. default: 30>"
-  },
-  "externalApps": {
-    "audioControl": "<Sound settings command. default: pavucontrol>",
-    "bluetoothSettings": "<Bluetooth settings command. default: blueman-manager>",
-    "wifiSettings": "<Wi-Fi settings command. default: nm-connection-editor>",
-    "updateManager": "<Update manager command. default: kitty --title PacUpdate par_tui>"
-  },
-  "worldClocks": [
-    { "label": "<Your preferred location>", "tz": "<Timezone of that location>" },
-    ... // default has 4 locations: London, Brisbane, New York, Los Angeles. You can add more or remove them as you want.
-  ],
-  "recorder": {
-    "savePath": "<Directory to save recorded videos. default: $HOME/Videos>",
-    "filenameFormat": "<Filename format for the recorded videos. default: 'recording_%Y-%m-%d_%H-%M-%S.mp4'>",
-    "recordAudio": "<Boolean(true/false) value indicating whether to record audio or not. default: true>",
-    "audioSource": "<Audio source for recording audio; 'system' or 'mic'. default: 'system'>"
-  },
-  "profile": {
-    "avatarPath": "<Profile picture; 512x512 .png format is recommended. default: $HOME/Profile/Profile.png>"
-  },
-  "brightness": {
-    "backend": "<Backend for brightness control; 'auto', 'brightnessctl', 'ddcutil'. default: 'auto'>"
-  }
+  "ui": {"scale": 1.25},
+  "weather": {"location": "Tokyo"}
 }
 ```
 
-External application commands are parsed into an argument array without invoking a shell. Quoted
-arguments and backslash escapes are supported, but shell features such as pipes, redirects, and
-environment-variable expansion are not. Restart Rystal-shell after changing these commands.
+## Options
 
-> [!NOTE]
-> If you'd like to add new settings, feel free to open an issue or submit a pull request!
+| Setting                          | Default                                 | Accepted value / purpose                            |
+| -------------------------------- | --------------------------------------- | --------------------------------------------------- |
+| `ui.scale`                       | `1`                                     | `0.75`, `1`, `1.25`, `1.5`, or `2`                  |
+| `weather.location`               | `""`                                    | Location string; empty uses IP-based location       |
+| `notifications.maxCount`         | `30`                                    | Positive integer; persistent notification limit     |
+| `brightness.backend`             | `"auto"`                                | `auto`, `brightnessctl`, or `ddcutil`               |
+| `externalApps.audioControl`      | `"pavucontrol"`                         | Sound settings command                              |
+| `externalApps.bluetoothSettings` | `"blueman-manager"`                     | Bluetooth settings command                          |
+| `externalApps.wifiSettings`      | `"nm-connection-editor"`                | Network settings command                            |
+| `externalApps.updateManager`     | `"kitty --title PacUpdate par_tui"`     | Package updater command                             |
+| `worldClocks`                    | London, Brisbane, New York, Los Angeles | Array of objects with `label` and IANA `tz` strings |
+| `recorder.savePath`              | `"~/Videos"`                            | Recording output directory                          |
+| `recorder.filenameFormat`        | `"recording_%Y-%m-%d_%H.%M.%S.mp4"`     | Recording filename format                           |
+| `recorder.recordAudio`           | `true`                                  | Boolean                                             |
+| `recorder.audioSource`           | `"system"`                              | `system` or `mic`                                   |
+| `profile.avatarPath`             | `"~/Profile/Profile.png"`               | Avatar path; a 512×512 PNG is suggested             |
+| `profile.handle`, `profile.os`   | Unset                                   | Optional profile display strings                    |
+
+External application commands are parsed into arguments without invoking a shell. Quoted arguments
+and backslash escapes are supported; pipes, redirects, and environment-variable expansion are not.
+Choose commands available on your system, especially when installing independently of Ryprland.
+
+See the [full template](config.json.template) for a complete JSON example.
+
+## Directory overrides
+
+Set overrides in the environment before starting the shell, its launcher, or its theme switcher.
+They are separate from `config.json`.
+
+| Variable                     | Default                                              | Purpose                                              |
+| ---------------------------- | ---------------------------------------------------- | ---------------------------------------------------- |
+| `RYSTAL_SHELL_CONFIG_DIR`    | `${XDG_CONFIG_HOME:-$HOME/.config}/rystal-shell`     | `config.json`, generated `theme.scss`, custom assets |
+| `RYSTAL_SHELL_DATA_DIR`      | `${XDG_DATA_HOME:-$HOME/.local/share}/rystal-shell`  | Runtime bundle, default styles, assets               |
+| `RYSTAL_SHELL_INSTANCE`      | `rystal-shell`                                       | AGS instance name and IPC target                     |
+| `RYSTAL_SHELL_CACHE_DIR`     | `${XDG_CACHE_HOME:-$HOME/.cache}/rystal-shell`       | Wallpaper and media caches                           |
+| `RYSTAL_SHELL_STATE_DIR`     | `${XDG_STATE_HOME:-$HOME/.local/state}/rystal-shell` | Application history and theme mode / wallpaper state |
+| `RYSTAL_SHELL_RUNTIME_DIR`   | `$XDG_RUNTIME_DIR/rystal-shell` in a normal session  | Compiled CSS, locks, Caffeine Remote marker          |
+| `RYSTAL_SHELL_WALLPAPER_DIR` | `$HOME/Pictures/Wallpapers`                          | Wallpaper scan directory                             |
+
+The application resolves XDG roots through GLib; see [paths.ts](../src/lib/paths.ts). The standalone
+switcher falls back to `/tmp/rystal-shell-$UID/theme` for its runtime files when neither runtime
+variable is set. Set `RYSTAL_SHELL_RUNTIME_DIR` explicitly when integrating outside a normal XDG
+session so all components share a root.
+
+`RYSTAL_SHELL_DATA_DIR` changes runtime lookup, while the deployment script always installs under
+`XDG_DATA_HOME`. `XDG_BIN_HOME` controls where the launcher and standalone switcher are installed,
+with `$HOME/.local/bin` as the fallback.
+
+[Back to overview](../README.md)
