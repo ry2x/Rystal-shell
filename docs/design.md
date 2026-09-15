@@ -8,8 +8,9 @@ However, I'm still a beginner with both GTK and Qt. One of the main reasons I ch
 
 I've been reading the GJS and Gnim documentation and doing my best to avoid memory leaks wherever possible.
 
-The following are the maintainer's historical observations, not a benchmark or memory limit.
-The original measurements did not record a revision, hardware configuration, or measurement method:
+> [!NOTE]
+> These are historical observations, not a benchmark or memory limit. The original measurements
+> did not record a revision, hardware configuration, or measurement method.
 
 - **Typical case:**
   - `around 270 ~ 350 MB` (usually around 300 MB)

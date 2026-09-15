@@ -4,9 +4,11 @@ Rystal-shell is a GTK4 desktop shell built with [AGS](https://github.com/aylur/a
 It provides panels, notifications, application and wallpaper launchers, and desktop controls.
 
 It can be installed independently or as part of [Ryprland](https://github.com/ry2x/Ryprland-dot/).
-Standalone installation requires no Ryprland dotfiles or helper scripts. The current implementation
-uses Hyprland APIs for workspaces, window focus, notifications, and capture; standalone installation
-still targets a Hyprland session.
+Standalone installation requires no Ryprland dotfiles or helper scripts.
+
+> [!IMPORTANT]
+> Standalone installation still requires a Hyprland session. Workspaces, window focus,
+> notifications, and capture use Hyprland APIs.
 
 [Demo video](https://github.com/user-attachments/assets/8cb65a27-2284-4302-b0b1-8c1be2ef4631)
 
@@ -14,9 +16,10 @@ still targets a Hyprland session.
 
 - **Standalone:** follow [Installation](docs/installation.md) to install dependencies, build, and run.
 - **Ryprland:** follow [Ryprland's installation guide](https://github.com/ry2x/Ryprland-dot/).
-  Its deployment helper installs the Rystal-shell launcher, and its dotfiles provide an extended
-  `theme-switch.sh`. Install the required packages as directed there; the helper does not install
-  system packages. Skip the standalone installers in that setup.
+
+> [!NOTE]
+> Ryprland provides its own deployment helper and extended `theme-switch.sh`.
+> Follow its package instructions and skip the standalone installers; the helper does not install system packages.
 
 ## Documentation
 

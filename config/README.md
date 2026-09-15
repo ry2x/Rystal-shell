@@ -1,7 +1,9 @@
 # Configuration
 
-Rystal-shell reads `config.json` once at startup. Restart the instance after editing it. Without a
-configuration file, it uses the defaults in [defaults.ts](../src/lib/config/defaults.ts).
+Rystal-shell uses the defaults in [defaults.ts](../src/lib/config/defaults.ts) when no configuration file exists.
+
+> [!IMPORTANT]
+> `config.json` is read only at startup. Restart the instance after editing it.
 
 Object properties are merged with defaults; arrays such as `worldClocks` replace the entire default
 array. Invalid values fall back to defaults, unknown keys produce warnings, and an unreadable or
@@ -19,8 +21,9 @@ if [ ! -e "$config_dir/config.json" ]; then
 fi
 ```
 
-The template uses Tokyo as an example weather location; the built-in default is an empty string.
-You can instead create a minimal JSON file containing only your overrides:
+> [!TIP]
+> You can create a minimal JSON file containing only your overrides.
+> The template uses Tokyo as an example weather location; the built-in default is an empty string.
 
 ```json
 {
@@ -49,8 +52,10 @@ You can instead create a minimal JSON file containing only your overrides:
 | `profile.avatarPath`             | `"~/Profile/Profile.png"`               | Avatar path; a 512×512 PNG is suggested             |
 | `profile.handle`, `profile.os`   | Unset                                   | Optional profile display strings                    |
 
-External application commands are parsed into arguments without invoking a shell. Quoted arguments
-and backslash escapes are supported; pipes, redirects, and environment-variable expansion are not.
+> [!IMPORTANT]
+> External application commands do not invoke a shell. Quoted arguments and backslash escapes
+> are supported; pipes, redirects, and environment-variable expansion are not.
+
 Choose commands available on your system, especially when installing independently of Ryprland.
 
 See the [full template](config.json.template) for a complete JSON example.
@@ -72,8 +77,10 @@ They are separate from `config.json`.
 
 The application resolves XDG roots through GLib; see [paths.ts](../src/lib/paths.ts). The standalone
 switcher falls back to `/tmp/rystal-shell-$UID/theme` for its runtime files when neither runtime
-variable is set. Set `RYSTAL_SHELL_RUNTIME_DIR` explicitly when integrating outside a normal XDG
-session so all components share a root.
+variable is set.
+
+> [!IMPORTANT]
+> Outside a normal XDG session, set `RYSTAL_SHELL_RUNTIME_DIR` explicitly so all components share a root.
 
 `RYSTAL_SHELL_DATA_DIR` changes runtime lookup, while the deployment script always installs under
 `XDG_DATA_HOME`. `XDG_BIN_HOME` controls where the launcher and standalone switcher are installed,

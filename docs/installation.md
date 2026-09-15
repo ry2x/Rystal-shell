@@ -1,7 +1,10 @@
 # Standalone installation
 
 Use this guide to install Rystal-shell without Ryprland. Run the commands from this repository's
-root after cloning. For an existing Ryprland installation, use its deployment helper instead.
+root after cloning.
+
+> [!IMPORTANT]
+> For an existing Ryprland installation, use its deployment helper instead of these standalone installers.
 
 ## Requirements
 
@@ -17,8 +20,9 @@ support where needed.
 | `dart-sass`                                   | Compile styles                               |
 | `imagemagick`, `webp-pixbuf-loader`, `gsound` | Image processing, WebP loading, and sounds   |
 
-`package.json` resolves AGS and Gnim from `/usr/share/ags/js`. Install the system runtime before
-running `pnpm install`.
+> [!IMPORTANT]
+> Install the system runtime before running `pnpm install`.
+> `package.json` resolves AGS and Gnim from `/usr/share/ags/js`.
 
 Install the packages for the controls you use:
 
@@ -48,9 +52,11 @@ pnpm install:launcher
 ```
 
 `deploy:user` builds and deploys the bundle, assets, and styles to
-`${XDG_DATA_HOME:-$HOME/.local/share}/rystal-shell`. It does not create user configuration or restart
-an existing instance. The previous deployment is kept in the adjacent `rystal-shell.previous`
-directory until the next deployment.
+`${XDG_DATA_HOME:-$HOME/.local/share}/rystal-shell`.
+
+> [!NOTE]
+> Deployment does not create user configuration or restart an existing instance.
+> The previous deployment is kept in the adjacent `rystal-shell.previous` directory until the next deployment.
 
 `install:launcher` installs `rystal-shell` in `${XDG_BIN_HOME:-$HOME/.local/bin}`. It refuses to
 replace an unmanaged launcher. Ensure this directory is in your session's `PATH`:
@@ -85,8 +91,10 @@ ags quit -i "${RYSTAL_SHELL_INSTANCE:-rystal-shell}"
 rystal-shell
 ```
 
-The quit command assumes the instance is running. User configuration remains in the config
-directory. A custom `RYSTAL_SHELL_DATA_DIR` changes where the launcher looks, but `deploy:user`
-always writes under `XDG_DATA_HOME`; keep those paths aligned.
+The quit command assumes the instance is running. User configuration remains in the config directory.
+
+> [!IMPORTANT]
+> A custom `RYSTAL_SHELL_DATA_DIR` changes where the launcher looks, but `deploy:user`
+> always writes under `XDG_DATA_HOME`. Keep those paths aligned to load the updated bundle.
 
 [Back to overview](../README.md)

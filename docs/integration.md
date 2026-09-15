@@ -11,8 +11,10 @@ hl.on("hyprland.start", function()
 end)
 ```
 
-The session must provide the same `PATH` and directory overrides as your terminal. A fixed startup
-delay is not a Rystal-shell requirement. Start optional services such as the wallpaper daemon and
+> [!IMPORTANT]
+> The session must provide the same `PATH` and directory overrides as your terminal.
+
+A fixed startup delay is not a Rystal-shell requirement. Start optional services such as the wallpaper daemon and
 idle daemon separately using your session configuration.
 
 ## Caffeine
@@ -25,13 +27,17 @@ Caffeine detects `hypridle` or `swayidle` and cycles through three states:
 | Enabled  | Rystal-shell stops the detected idle daemon                                                  |
 | Remote   | The daemon runs and a `caffeine-remote` marker asks an external suspend hook to skip suspend |
 
-The adapter restarts the daemon by its executable name without arguments. A custom `swayidle`
-command line or a service that automatically restarts stopped processes needs integration beyond
-this adapter. When no daemon is detected, the initial state is Enabled and the restart default is
-`hypridle`.
+> [!WARNING]
+> The adapter restarts the idle daemon by executable name without arguments. Custom `swayidle`
+> arguments or a service that automatically restarts stopped processes need additional integration.
 
-Remote mode requires your suspend command to check the marker; Rystal-shell does not install a
-suspend hook. For example, in a session with `XDG_RUNTIME_DIR` set:
+When no daemon is detected, the initial state is Enabled and the restart default is `hypridle`.
+
+> [!IMPORTANT]
+> Remote mode prevents suspend only if your suspend command checks the marker.
+> Rystal-shell does not install this hook. Use the same runtime directory for the hook and the shell.
+
+For example, in a session with `XDG_RUNTIME_DIR` set:
 
 ```sh
 runtime_root="${RYSTAL_SHELL_RUNTIME_DIR:-${XDG_RUNTIME_DIR:?}/rystal-shell}"
@@ -39,7 +45,6 @@ runtime_root="${RYSTAL_SHELL_RUNTIME_DIR:-${XDG_RUNTIME_DIR:?}/rystal-shell}"
 systemctl suspend
 ```
 
-Use the same runtime directory for the hook and Rystal-shell. See the
-[directory reference](../config/README.md#directory-overrides).
+See the [directory reference](../config/README.md#directory-overrides).
 
 [Back to overview](../README.md)

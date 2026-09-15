@@ -9,9 +9,9 @@ It coordinates:
 3. **Shell assets**: Generates Rystal-shell's launcher background via ImageMagick (`magick`).
 4. **Hot reload**: Requests the running Rystal-shell instance to reload its CSS.
 
-It does not theme Rofi, Kitty, Bat, Hyprland, or other applications. A desktop configuration
-that needs broader theme synchronization should provide its own `theme-switch.sh` earlier in
-`$PATH`.
+> [!NOTE]
+> This switcher themes only Rystal-shell. For Rofi, Kitty, Bat, Hyprland, or other applications,
+> provide an extended `theme-switch.sh` earlier in `$PATH`.
 
 ## Requirements
 
@@ -22,13 +22,15 @@ These dependencies are required only when installing the standalone theme switch
 - `imagemagick` (`magick`)
 - `util-linux` (`flock`)
 
-If Rystal-shell is installed through Ryprland, no setup in this directory is necessary.
-Follow Ryprland’s package and installation guide; it provides its own extended `theme-switch.sh`, which also
-updates the rest of the desktop theme.
+> [!IMPORTANT]
+> Ryprland users should skip this setup and follow Ryprland's package and installation guide.
+> It provides an extended `theme-switch.sh` that also updates the rest of the desktop.
 
 ## Installation (Standalone)
 
-Skip this section when using Ryprland.
+> [!CAUTION]
+> The installer replaces any existing `theme-switch.sh` at the destination with a symlink.
+> Run it only when this standalone switcher should own the command.
 
 From the Rystal-shell repository root, run the installer to symlink `theme-switch.sh` into `${XDG_BIN_HOME:-$HOME/.local/bin}`:
 
@@ -36,9 +38,8 @@ From the Rystal-shell repository root, run the installer to symlink `theme-switc
 ./theme-switcher/install.sh
 ```
 
-Ensure `${XDG_BIN_HOME:-$HOME/.local/bin}` is in your session's `PATH`. The installer replaces any
-existing `theme-switch.sh` at that path with a symlink, so use it only when this standalone switcher
-should own the command. Keep this checkout in place: the symlink uses the script and templates here.
+Ensure `${XDG_BIN_HOME:-$HOME/.local/bin}` is in your session's `PATH`.
+Keep this checkout in place: the symlink uses the script and templates here.
 
 The script uses its bundled Matugen template and does not require a user-wide
 `~/.config/matugen/config.toml`.
@@ -54,8 +55,10 @@ theme-switch.sh set /path/to/wallpaper.jpg
 ```
 
 The switcher does not start the daemon. Add it to your session autostart for subsequent logins.
-`refresh`, `mode`, and `toggle` require a wallpaper recorded by a successful `set` or `random` call;
-they cannot initialize colors from an empty state. `status` can be used before setup and returns `dark`.
+
+> [!IMPORTANT]
+> Run `set` or `random` successfully before using `refresh`, `mode`, or `toggle`.
+> These commands require a recorded wallpaper. `status` works before setup and returns `dark`.
 
 ## Usage
 
