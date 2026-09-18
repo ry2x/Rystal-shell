@@ -8,6 +8,7 @@ import MediaCard from '@/widget/control-center/widget/MediaCard';
 import QuickToggles from '@/widget/control-center/widget/QuickToggles';
 import ScreenCapture from '@/widget/control-center/widget/ScreenCapture';
 import SystemMetrics from '@/widget/control-center/widget/SystemMetrics';
+import ThemeModeButton from '@/widget/control-center/widget/ThemeModeButton';
 import UpdatesCard from '@/widget/control-center/widget/UpdatesCard';
 import VolumeSlider from '@/widget/control-center/widget/VolumeSlider';
 
@@ -29,9 +30,16 @@ export default function ControlCenterContent({
       vexpand
       halign={Gtk.Align.FILL}
     >
-      <box class="cc-main-header" spacing={scaleUiSize(12)} hexpand>
-        <LucideIcon name="settings-2" pixelSize={24} />
-        <label label="Control Center" class="cc-title" />
+      <box class="cc-main-header" spacing={scaleUiSize(8)} hexpand>
+        <LucideIcon name="settings-2" pixelSize={20} />
+        <label
+          label="Control Center"
+          class="cc-title"
+          halign={Gtk.Align.START}
+          xalign={0}
+          hexpand
+        />
+        <ThemeModeButton />
       </box>
       <scrolledwindow
         class="left-panel-scroll"
