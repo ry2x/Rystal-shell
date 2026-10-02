@@ -11,15 +11,15 @@ export interface AppItemProps {
   monitorConnector: string | null;
 }
 
-function createImageProp(iconStr: string): Partial<Gtk.Image.ConstructorProps> {
+function createImageProp(iconStr: string | null): Partial<Gtk.Image.ConstructorProps> {
   const iconProps: Partial<Gtk.Image.ConstructorProps> = {
     cssClasses: ['applauncher-item-icon'],
   };
 
-  if (iconStr.startsWith('/')) {
+  if (iconStr?.startsWith('/')) {
     iconProps.file = iconStr;
   } else {
-    iconProps.iconName = iconStr;
+    iconProps.iconName = iconStr || 'application-x-executable-symbolic';
   }
 
   return iconProps;
