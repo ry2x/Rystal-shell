@@ -11,6 +11,7 @@
     window.ControlCenter {
       .cc-main-panel .cc-main-header,
       .cc-main-panel .cc-card,
+      .cc-main-panel .cc-media-card,
       .cc-main-panel .cc-toggle-btn,
       .cc-advanced-settings-button,
       .cc-connectivity-header,
@@ -22,6 +23,7 @@
       }
 
       .cc-main-panel .cc-card:hover,
+      .cc-main-panel .cc-media-card:hover,
       .cc-main-panel .cc-toggle-btn:hover,
       .cc-advanced-settings-button:hover {
         @include glass.hover;
