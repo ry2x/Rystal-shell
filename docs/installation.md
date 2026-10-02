@@ -35,6 +35,7 @@ Install the packages for the controls you use:
 | Audio controls                          | `pipewire`, `pipewire-pulse`, `wireplumber`, `pavucontrol`          |
 | Recording and region selection          | `wf-recorder`, `slurp`                                              |
 | System monitor                          | `kitty`, `bottom` (`btm`)                                           |
+| Laptop battery display                  | `upower` (optional; `battery.show` defaults to `"auto"`)            |
 | Idle handling                           | `hypridle` or `swayidle`; see [Session integration](integration.md) |
 
 The default update-manager command is `kitty --title PacUpdate par_tui`. Install those tools or
