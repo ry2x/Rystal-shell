@@ -1,5 +1,9 @@
 # Development
 
+For checks and UI trials that must not operate the current desktop, start with
+[isolated testing](testing.md). `pnpm sandbox:check` runs checks and a build in a disposable copy;
+`pnpm sandbox` opens a private desktop in a window.
+
 Install the [build requirements](installation.md#requirements) and `direnv`, then run these commands
 from the repository root:
 
@@ -38,10 +42,12 @@ Use `pnpm format` to apply formatting.
 For memory or lifecycle changes, the diagnostics in `debug/` include:
 
 ```sh
-./debug/run-memory-scenarios.sh --scenario all --iterations 10
+./debug/run-memory-scenarios.sh --scenario all --iterations 10 --dry-run
 ```
 
-Review the script's options before running it against a live session.
+The scenario runner refuses live-session operations by default. `--allow-live-session` explicitly
+opts into desktop changes; `pnpm sandbox:smoke` is the isolated alternative and records PSS/RSS for
+its exact shell PID.
 
 > [!IMPORTANT]
 > Keep generated `.dev/`, `dist/`, local configuration, and `debug/results/` output out of commits.
