@@ -13,8 +13,8 @@ import {LucideIcon} from '@/widget/common/lucide';
 export interface CircularProgressProps<T> {
   variable: Accessor<T>;
   transformer: (value: T) => number;
-  icon: string;
-  label: string;
+  icon: string | Accessor<string>;
+  label: string | Accessor<string>;
   sublabel: string | Accessor<string>;
   cssClass: string;
 }
