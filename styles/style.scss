@@ -10,3 +10,6 @@
 @use 'scss/applauncher';
 @use 'scss/wallpaper_selector';
 @use 'scss/power_menu';
+@use 'scss/light';
+
+@include light.styles;

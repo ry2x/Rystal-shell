@@ -1,0 +1,174 @@
+@use 'variables' as *;
+@use 'light_controls';
+@use 'light_text';
+@use 'light_notifications';
+@use 'light_material' as glass;
+
+// Applied last so light surfaces also override each feature's glass treatment.
+// Detect the generated palette to support existing user themes without a mode flag.
+@mixin styles {
+  @if $is-light-theme {
+    window.ControlCenter {
+      .cc-main-panel .cc-main-header,
+      .cc-main-panel .cc-card,
+      .cc-main-panel .cc-media-card,
+      .cc-main-panel .cc-toggle-btn,
+      .cc-advanced-settings-button,
+      .cc-connectivity-header,
+      .cc-connectivity-list:not(.cc-wifi-connected-list):not(.cc-bt-connected-list),
+      .cc-sound-header,
+      .cc-sound-controls,
+      .cc-sound-unavailable {
+        @include glass.surface;
+      }
+
+      .cc-main-panel .cc-card:hover,
+      .cc-main-panel .cc-media-card:hover,
+      .cc-main-panel .cc-toggle-btn:hover,
+      .cc-advanced-settings-button:hover {
+        @include glass.hover;
+      }
+    }
+
+    window.DateWeatherPopup {
+      .widget-card,
+      .calendar-card,
+      .notif-header {
+        @include glass.surface;
+      }
+
+      .widget-card:hover {
+        @include glass.hover;
+      }
+    }
+
+    window.NotificationPopups .notif-card,
+    window.DateWeatherPopup .notif-card {
+      @include glass.surface($opacity: 0.52);
+
+      &:hover {
+        @include glass.hover($opacity: 0.52);
+      }
+
+      &.urgency-0 {
+        opacity: 1;
+      }
+
+      &.urgency-2 {
+        @include glass.surface($error-container, 0.72, rgba($error, 0.5));
+        color: $on-error-container;
+      }
+    }
+
+    .applauncher-window,
+    .applauncher-box-wrapper,
+    .cc-modal,
+    .osd-pill,
+    .power-menu-item,
+    .power-menu-confirmation-body,
+    tooltip.background,
+    .empty-state,
+    .empty-state:hover {
+      @include glass.surface($opacity: 0.66);
+      color: $text;
+    }
+
+    .applauncher-window {
+      border-color: rgba($primary, 0.5);
+    }
+
+    // The launcher has two nested surfaces; keep the inner layer translucent.
+    .applauncher-box-wrapper {
+      @include glass.surface($opacity: 0.18, $depth: 4);
+    }
+
+    .cc-modal,
+    .osd-pill,
+    tooltip.background {
+      @include glass.surface($opacity: 0.82);
+    }
+
+    // Popups float directly over the wallpaper without the panel's underlay.
+    window.NotificationPopups .notif-card {
+      @include glass.surface($opacity: 0.84);
+
+      &:hover {
+        @include glass.hover($opacity: 0.84);
+      }
+
+      &.urgency-2 {
+        @include glass.surface($error-container, 0.88, rgba($error, 0.5));
+      }
+    }
+
+    popover.tray-menu,
+    popover.tray-expander,
+    popover.tray-item-menu,
+    popover.menu,
+    popover.cc-detail-menu,
+    popover.cc-sound-device-menu {
+      > contents {
+        @include glass.surface($opacity: 0.86);
+        color: $text;
+      }
+    }
+
+    window.Bar {
+      .Workspaces,
+      .Volume,
+      .Clock,
+      .SysMetrics,
+      .ScrollerIndicator,
+      .Updates,
+      .Weather,
+      .Wifi,
+      .network-btn,
+      .Tray .tray-primary {
+        @include glass.surface($opacity: 0.28, $depth: 3);
+        box-shadow:
+          inset 0 0 0 s(1) rgba($outline, 0.24),
+          inset 0 s(1) rgba($surface-container-lowest, 0.7),
+          inset 0 s(-1) rgba($shadow, 0.05);
+
+        &:hover,
+        &:active {
+          @include glass.hover($opacity: 0.28, $depth: 3, $shade: 4%);
+          box-shadow:
+            inset 0 0 0 s(1) rgba($primary, 0.4),
+            inset 0 s(1) rgba($surface-container-lowest, 0.7),
+            0 0 s(10) rgba($primary, 0.08);
+
+          label {
+            text-shadow: none;
+          }
+
+          image {
+            -gtk-icon-shadow: none;
+          }
+        }
+      }
+    }
+
+    .wallpaper-path {
+      @include glass.surface($opacity: 0.54, $depth: 4);
+      color: $text;
+    }
+
+    // These interactive descendants use feature styles rather than glass.surface.
+    window.Bar .Workspaces button.workspace,
+    window.ControlCenter .cc-main-panel .cc-toggle-button,
+    window.ControlCenter .cc-connectivity-row,
+    window.ControlCenter .cc-sound-device-option,
+    window.DateWeatherPopup .calendar-card calendar grid label.day-number,
+    window.WallpaperSelector .wallpaper-card,
+    window.WallpaperSelector .wallpaper-card .wallpaper-light-overlay,
+    popover .tray-menu-btn,
+    popover .cc-menu-btn {
+      transition-property: color, transform, opacity;
+    }
+
+    @include light_controls.styles;
+    @include light_text.styles;
+    @include light_notifications.styles;
+  }
+}

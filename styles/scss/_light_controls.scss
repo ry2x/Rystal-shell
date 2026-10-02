@@ -1,0 +1,216 @@
+@use 'variables' as *;
+@use 'light_material' as glass;
+
+@mixin selected-surface {
+  @include glass.surface($primary-container, 0.58, rgba($primary, 0.42), 5);
+  color: $on-primary-container;
+}
+
+@mixin styles {
+  window.ControlCenter,
+  window.WifiPasswordDialog {
+    .cc-theme-mode-btn,
+    .cc-main-panel .power-btn,
+    .cc-main-panel .icon-btn,
+    .cc-wifi-page .cc-wifi-scan-btn,
+    .cc-wifi-page .cc-wifi-security,
+    .cc-wifi-page .cc-wifi-settings-button,
+    .cc-password-entry,
+    .cc-modal-action,
+    .cc-sound-mute-btn,
+    .cc-connectivity-error .cc-menu-btn {
+      @include glass.surface($opacity: 0.36, $depth: 4);
+      color: $text;
+    }
+
+    .cc-modal-action:hover,
+    .cc-sound-mute-btn:hover,
+    .cc-theme-mode-btn:hover,
+    .cc-main-panel .power-btn:hover,
+    .cc-main-panel .icon-btn:hover,
+    .cc-main-panel .power-btn:active,
+    .cc-main-panel .icon-btn:active,
+    .cc-wifi-page .cc-wifi-scan-btn:hover,
+    .cc-wifi-page .cc-wifi-settings-button:hover {
+      @include glass.hover($opacity: 0.36, $depth: 5, $shade: 4%);
+      color: $text;
+    }
+
+    .cc-main-panel .cc-toggle-btn.active,
+    .cc-main-panel .cc-toggle-btn.active:hover,
+    .cc-wifi-page .cc-connectivity-row.active,
+    .cc-bluetooth-page .cc-connectivity-row.active,
+    .cc-wifi-page .cc-connectivity-row.active:hover,
+    .cc-bluetooth-page .cc-connectivity-row.active:hover,
+    .cc-sound-device-card > button.toggle,
+    .cc-sound-device-card > button.toggle:hover,
+    .cc-modal-action.cc-primary-btn,
+    .cc-modal-action.cc-primary-btn:hover,
+    .cc-wifi-page .cc-wifi-scan-btn.scanning,
+    .cc-wifi-page .cc-wifi-scan-btn.scanning:hover {
+      @include selected-surface;
+    }
+
+    .cc-main-panel .power-btn.active-record,
+    .cc-main-panel .power-btn.active-record:hover,
+    .cc-modal-action.cc-danger-btn:hover,
+    .cc-sound-mute-btn.muted,
+    .cc-sound-mute-btn.muted:hover,
+    .cc-connectivity-error {
+      @include glass.surface($error-container, 0.68, rgba($error, 0.45), 5);
+      color: $on-error-container;
+    }
+
+    .cc-password-entry:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 s(2) rgba($primary, 0.18);
+    }
+
+    .cc-toggle-button:hover {
+      background-color: rgba($outline, 0.04);
+      background-image: none;
+    }
+
+    switch.cc-connectivity-switch {
+      @include glass.surface($surface-container-highest, 0.6, rgba($outline, 0.45), 3);
+
+      slider {
+        background-color: $outline;
+        background-image: none;
+        border-color: $outline;
+        box-shadow: 0 s(1) s(4) rgba($shadow, 0.1);
+      }
+
+      &:checked,
+      &:checked:hover {
+        @include glass.surface($primary, 0.85, rgba($primary, 0.65), 3);
+
+        slider {
+          background-color: $on-primary;
+          background-image: none;
+          border-color: $on-primary;
+        }
+      }
+    }
+  }
+
+  window.ControlCenter .volume-slider,
+  window.ControlCenter .brightness-slider,
+  window.ControlCenter .cc-sound-page .cc-sound-slider,
+  window.Osd .osd-level {
+    trough {
+      background-color: rgba($surface-container-highest, 0.65);
+      background-image: linear-gradient(to bottom, rgba($outline, 0.12), rgba($outline, 0.025));
+      border-color: rgba($outline, 0.24);
+      box-shadow:
+        inset 0 s(1) s(3) rgba($shadow, 0.08),
+        0 s(1) rgba($surface-container-lowest, 0.55);
+
+      highlight,
+      fill,
+      block.filled {
+        background-color: rgba($primary, 0.88);
+        background-image: linear-gradient(
+          105deg,
+          rgba($primary-fixed-dim, 0.25),
+          rgba($primary, 0.1)
+        );
+        box-shadow:
+          inset 0 s(1) rgba($surface-container-lowest, 0.32),
+          0 0 s(8) rgba($primary, 0.12);
+      }
+
+      slider,
+      slider:hover,
+      slider:active {
+        @include glass.surface($surface-container-lowest, 0.9, rgba($primary, 0.6), 3);
+      }
+    }
+  }
+
+  window.Osd .osd-level.muted trough block.filled {
+    background-color: $error;
+  }
+
+  window.DateWeatherPopup {
+    .notif-header-btn,
+    .calendar-card calendar header button {
+      @include glass.surface($opacity: 0.36, $depth: 4);
+      color: $text;
+    }
+
+    .notif-header-btn.dnd:hover,
+    .calendar-card calendar header button:hover {
+      @include glass.hover($opacity: 0.36, $depth: 5, $shade: 4%);
+      color: $text;
+    }
+
+    .notif-header-btn.dnd.active,
+    .notif-header-btn.dnd.active:hover,
+    .calendar-card calendar grid label.day-number:selected {
+      @include selected-surface;
+    }
+
+    .calendar-card calendar grid label.today,
+    .calendar-card calendar grid label.today:hover {
+      background-color: $primary;
+      background-image: none;
+      border-color: $primary;
+      color: $on-primary;
+      box-shadow: none;
+    }
+  }
+
+  .applauncher-input,
+  .applauncher-input:hover,
+  .applauncher-input:focus,
+  .applauncher-input:focus-visible,
+  .applauncher-input:focus-within,
+  .applauncher-item:focus,
+  .applauncher-item.selected,
+  .power-menu-item:focus,
+  .power-menu-item.selected,
+  .power-menu-confirmation-card {
+    @include selected-surface;
+  }
+
+  .applauncher-item:hover {
+    @include glass.hover($opacity: 0.36, $depth: 5, $shade: 4%);
+    color: $text;
+  }
+
+  .power-menu-item:hover {
+    @include glass.hover($opacity: 0.66, $depth: 8, $shade: 4%);
+    color: $text;
+  }
+
+  .applauncher-item.selected:hover,
+  .applauncher-item:focus:hover,
+  .power-menu-item.selected:hover,
+  .power-menu-item:focus:hover {
+    @include selected-surface;
+  }
+
+  .notif-action-btn,
+  .notif-close,
+  .power-menu-cancel,
+  .power-menu-confirm {
+    @include glass.surface($opacity: 0.36, $depth: 4);
+    color: $text;
+
+    &:hover,
+    &:active {
+      @include glass.hover($opacity: 0.36, $depth: 5, $shade: 4%);
+      color: $text;
+    }
+  }
+
+  .notif-close:hover,
+  .notif-close:active,
+  .power-menu-confirm:hover,
+  .power-menu-confirm:focus,
+  window.DateWeatherPopup .notif-header-btn.clear-all:hover {
+    @include glass.surface($error-container, 0.68, rgba($error, 0.5), 5);
+    color: $on-error-container;
+  }
+}

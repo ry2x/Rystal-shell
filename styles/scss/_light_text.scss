@@ -1,0 +1,82 @@
+@use 'variables' as *;
+@use 'light_material' as glass;
+
+@mixin styles {
+  window.Bar .Clock .time,
+  window.Bar .Clock .date,
+  window.ControlCenter .cc-main-panel .cc-title,
+  window.ControlCenter .cc-connectivity-header .cc-title,
+  window.ControlCenter .cc-sound-header .cc-title,
+  .cc-modal-title,
+  window.DateWeatherPopup .dw-title,
+  .weather-temp,
+  .empty-state-label,
+  tooltip label {
+    text-shadow: none;
+  }
+
+  .weather-icon,
+  .weather-info-icon,
+  .forecast-icon,
+  .cc-connectivity-error-icon,
+  .empty-state-icon,
+  .power-menu-confirmation image,
+  .power-menu-item:hover image,
+  .power-menu-item:focus image,
+  .power-menu-item.selected image {
+    -gtk-icon-shadow: 0 0 s(8) rgba($primary, 0.12);
+  }
+
+  .cc-toggle-status,
+  .cc-updates-status,
+  .cc-player-artist,
+  .cc-row-subtitle,
+  .circular-progress-sublabel,
+  .applauncher-item-desc,
+  .notif-card .notif-time,
+  .notif-card .notif-body,
+  window.DateWeatherPopup .calendar-card calendar grid label.day-name {
+    opacity: 1;
+    color: $text-dim;
+  }
+
+  .cc-advanced-settings-subtitle,
+  .cc-wifi-page .cc-wifi-signal,
+  .cc-bt-device-detail,
+  .cc-sound-device-option-route,
+  .cc-sound-unavailable,
+  .clock-dot,
+  .clock-date,
+  .weather-desc,
+  .weather-high,
+  .weather-low,
+  .weather-info,
+  .forecast-temps,
+  .world-clock-details,
+  .profile-card .profile-env,
+  .profile-card .profile-uptime,
+  .power-menu-confirmation-copy,
+  window.Bar .Clock .day {
+    color: $text-dim;
+  }
+
+  window.DateWeatherPopup .calendar-card calendar grid label.other-month {
+    opacity: 0.6;
+  }
+
+  .profile-card .profile-avatar {
+    box-shadow:
+      0 s(3) s(10) rgba($shadow, 0.12),
+      0 0 s(12) rgba($primary, 0.16);
+  }
+
+  .notif-card .notif-icon-container {
+    @include glass.surface($opacity: 0.28, $depth: 3);
+  }
+
+  .notif-card.urgency-2 .notif-body,
+  .notif-card.urgency-2 .notif-time,
+  .notif-card.urgency-2 .notif-app {
+    color: $on-error-container;
+  }
+}
