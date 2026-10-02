@@ -5,6 +5,9 @@
   "brightness": {
     "backend": "auto"
   },
+  "battery": {
+    "show": "auto"
+  },
   "weather": {
     "location": "Tokyo"
   },
