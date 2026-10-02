@@ -7,6 +7,7 @@ ROOT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd -P)
 COLLECTOR="$SCRIPT_DIR/collect-memory.sh"
 AGS_INSTANCE="${RYSTAL_SHELL_INSTANCE:-rystal-shell-dev}"
 export RYSTAL_SHELL_INSTANCE="$AGS_INSTANCE"
+source "$ROOT_DIR/scripts/sandbox/smoke-checks.sh"
 
 usage() {
   cat <<'EOF'
@@ -20,6 +21,7 @@ Options:
   --gc-wait-seconds N   Delay after clearing notifications (default: 15)
   --results-dir PATH    Output directory (default: debug/results/<timestamp>)
   --dry-run             Print planned commands without changing the desktop
+  --allow-live-session  Explicitly allow operations on the active desktop (unsafe for isolated tests)
   -h, --help            Show this help
 EOF
 }
@@ -35,6 +37,7 @@ current_results_dir=''
 memory_csv=''
 images_tsv=''
 dry_run=false
+allow_live_session=false
 
 while (($#)); do
   case "$1" in
@@ -45,6 +48,7 @@ while (($#)); do
     --gc-wait-seconds) gc_wait_seconds=${2:?missing value for --gc-wait-seconds}; shift 2 ;;
     --results-dir) results_dir=${2:?missing value for --results-dir}; shift 2 ;;
     --dry-run) dry_run=true; shift ;;
+    --allow-live-session) allow_live_session=true; shift ;;
     -h|--help) usage; exit 0 ;;
     *) printf 'Unknown option: %s\n' "$1" >&2; usage >&2; exit 2 ;;
   esac
@@ -54,6 +58,11 @@ case "$scenario" in launcher|launcher-no-theme|wallpaper|wallpaper-no-theme|powe
 [[ $iterations =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--iterations must be a positive integer' >&2; exit 2; }
 [[ $notification_count =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--notifications must be a positive integer' >&2; exit 2; }
 [[ $settle_seconds =~ ^[0-9]+$ && $gc_wait_seconds =~ ^[0-9]+$ ]] || { printf '%s\n' 'wait values must be non-negative integers' >&2; exit 2; }
+
+if ! "$dry_run" && [[ "${RYSTAL_SHELL_SANDBOX:-}" != 1 ]] && ! "$allow_live_session"; then
+  printf '%s\n' 'Refusing to change the active desktop. Use pnpm sandbox:smoke, --dry-run, or explicitly --allow-live-session.' >&2
+  exit 1
+fi
 
 if [[ -z $results_dir ]]; then
   results_dir="$ROOT_DIR/debug/results/$(date +%Y%m%dT%H%M%S)"
@@ -107,12 +116,18 @@ ags_request() {
   if "$dry_run"; then
     printf '+ ags request -i %q %q\n' "$AGS_INSTANCE" "$1"
   else
-    ags request -i "$AGS_INSTANCE" "$1"
+    checked_ags_request "$1"
   fi
 }
 
 randomize_theme() {
-  if "$dry_run"; then
+  if [[ "${RYSTAL_SHELL_SANDBOX:-}" == 1 ]]; then
+    if "$dry_run"; then
+      printf '+ %q random\n' "$ROOT_DIR/theme-switcher/theme-switch.sh"
+    else
+      "$ROOT_DIR/theme-switcher/theme-switch.sh" random
+    fi
+  elif "$dry_run"; then
     printf '+ direnv exec %q theme-switch.sh random\n' "$ROOT_DIR"
   else
     direnv exec "$ROOT_DIR" theme-switch.sh random
@@ -128,7 +143,14 @@ stop_ags() {
 }
 
 start_ags() {
-  if "$dry_run"; then
+  if [[ "${RYSTAL_SHELL_SANDBOX:-}" == 1 ]]; then
+    if "$dry_run"; then
+      printf '+ %q/dist/start-ags\n' "$ROOT_DIR"
+    else
+      "$ROOT_DIR/dist/start-ags" >"$current_results_dir/shell.log" 2>&1 &
+      export RYSTAL_SHELL_PID=$!
+    fi
+  elif "$dry_run"; then
     printf '+ %q/scripts/dev.sh\n' "$ROOT_DIR"
   else
     direnv exec "$ROOT_DIR" "$ROOT_DIR/scripts/dev.sh" >/dev/null 2>&1 &
@@ -296,10 +318,12 @@ run_notification_scenario() {
     scenario_name=notifications-date-weather-hide-retained
   fi
 
-  image_count=$(find "$HOME/Pictures" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) -print | wc -l)
-  if ((image_count < notification_count)); then
-    printf 'Need %s images under %s/Pictures; found %s\n' "$notification_count" "$HOME" "$image_count" >&2
-    exit 1
+  if ! "$dry_run"; then
+    image_count=$(find "$HOME/Pictures" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) -print | wc -l)
+    if ((image_count < notification_count)); then
+      printf 'Need %s images under %s/Pictures; found %s\n' "$notification_count" "$HOME" "$image_count" >&2
+      exit 1
+    fi
   fi
 
   snapshot "$scenario_name" 0 baseline
@@ -381,7 +405,10 @@ run_notification_scenario() {
   fi
 }
 
-for command in ags direnv notify-send pgrep ps awk find shuf stat killall; do require_command "$command"; done
+if ! "$dry_run"; then
+  for command in ags notify-send ps awk find shuf stat; do require_command "$command"; done
+  if [[ "${RYSTAL_SHELL_SANDBOX:-}" != 1 ]]; then require_command direnv; fi
+fi
 [[ -x $ROOT_DIR/theme-switcher/theme-switch.sh ]] || {
   printf 'Bundled theme switcher is not executable: %s\n' "$ROOT_DIR/theme-switcher/theme-switch.sh" >&2
   exit 1

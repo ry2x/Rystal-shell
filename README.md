@@ -27,6 +27,7 @@ Standalone installation requires no Ryprland dotfiles or helper scripts.
 - [Theme switcher](theme-switcher/README.md): standalone wallpaper and color generation
 - [Session integration](docs/integration.md): autostart and Caffeine
 - [Development](docs/development.md): isolated development and validation commands
+- [Isolated testing](docs/testing.md): disposable checks and a private desktop trial
 - [Design notes](docs/design.md): AGS choice and historical memory observations
 
 ## License

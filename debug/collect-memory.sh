@@ -4,7 +4,7 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: collect-memory.sh --output FILE --scenario NAME --iteration N --phase NAME
+Usage: collect-memory.sh --output FILE --scenario NAME --iteration N --phase NAME [--pid PID]
 
 Appends one CSV row containing PSS/RSS values from /proc/<pid>/smaps_rollup.
 EOF
@@ -14,6 +14,7 @@ output=''
 scenario=''
 iteration=''
 phase=''
+pid=${RYSTAL_SHELL_PID:-}
 
 while (($#)); do
   case "$1" in
@@ -21,6 +22,7 @@ while (($#)); do
     --scenario) scenario=${2:?missing value for --scenario}; shift 2 ;;
     --iteration) iteration=${2:?missing value for --iteration}; shift 2 ;;
     --phase) phase=${2:?missing value for --phase}; shift 2 ;;
+    --pid) pid=${2:?missing value for --pid}; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     *) printf 'Unknown option: %s\n' "$1" >&2; usage >&2; exit 2 ;;
   esac
@@ -31,7 +33,12 @@ if [[ -z $output || -z $scenario || -z $iteration || -z $phase ]]; then
   exit 2
 fi
 
-mapfile -t pids < <(pgrep -u "$UID" -f 'gjs -m .*/ags\.js' || true)
+if [[ -n "$pid" ]]; then
+  [[ "$pid" =~ ^[1-9][0-9]*$ ]] || { printf '%s\n' '--pid must be a positive integer' >&2; exit 2; }
+  pids=("$pid")
+else
+  mapfile -t pids < <(pgrep -u "$UID" -f 'gjs -m .*/ags\.js' || true)
+fi
 if ((${#pids[@]} != 1)); then
   printf 'Expected exactly one AGS GJS process, found %s: %s\n' "${#pids[@]}" "${pids[*]:-none}" >&2
   exit 1
