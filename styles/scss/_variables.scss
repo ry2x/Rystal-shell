@@ -14,6 +14,7 @@
 }
 
 // Base colors
+$is-light-theme: color.channel($surface, 'lightness', $space: hsl) >= 50%;
 $bg: color.adjust($surface, $alpha: -0.25);
 $bg-hover: color.adjust($on-surface, $alpha: -0.92);
 $border: color.adjust($outline, $alpha: -0.8);

@@ -1,0 +1,47 @@
+@use 'variables' as *;
+
+@mixin styles {
+  window.NotificationPopups,
+  window.DateWeatherPopup {
+    // Keep one small shadow inside the available space, also while hovered.
+    .notif-card,
+    .notif-card:hover,
+    .notif-card.urgency-2,
+    .notif-card.urgency-2:hover {
+      box-shadow:
+        inset 0 s(1) s(1) rgba($surface-container-lowest, 0.45),
+        0 s(2) s(12) s(-2) rgba($shadow, 0.09);
+    }
+
+    // Buttons keep the same glass shadows as Control Center's capture buttons.
+    // Keep the decorative icon inset so it does not add another blurred layer.
+    .notif-card .notif-icon-container {
+      &,
+      &:hover,
+      &:active {
+        box-shadow: inset 0 s(1) s(1) rgba($surface-container-lowest, 0.45);
+      }
+    }
+
+    .notif-card .notif-image {
+      box-shadow: none;
+    }
+
+    // Let the capture-button shadow fade before reaching the card's edge.
+    .notif-card .notif-actions {
+      margin-bottom: s(12);
+    }
+  }
+
+  window.NotificationPopups {
+    // Revealers clip their children; reserve space within each revealed item.
+    .notif-card {
+      margin: s(8) s(8) s(12);
+    }
+
+    // Preserve the card's horizontal position with the new internal margins.
+    .notification-popup-list {
+      padding: 0 s(14);
+    }
+  }
+}

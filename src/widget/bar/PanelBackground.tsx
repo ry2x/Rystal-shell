@@ -38,6 +38,12 @@ function drawBackground(
   colors: BarColors
 ) {
   const [backgroundRed, backgroundGreen, backgroundBlue] = hexToRgba(colors.surface);
+  // Match the SCSS surface-lightness check, including existing user themes.
+  const backgroundLightness =
+    (Math.max(backgroundRed, backgroundGreen, backgroundBlue) +
+      Math.min(backgroundRed, backgroundGreen, backgroundBlue)) /
+    2;
+  const backgroundOpacity = backgroundLightness >= 0.5 ? 0.8 : 0.75;
   const [accentRed, accentGreen, accentBlue, accentAlpha] = hexToRgba(colors.primary);
   const halfBorderWidth = BORDER_WIDTH / 2;
   const desktopX = geometry.dx + halfBorderWidth;
@@ -47,7 +53,7 @@ function drawBackground(
 
   context.setAntialias(Cairo.Antialias.BEST);
   context.setOperator(Cairo.Operator.OVER);
-  context.setSourceRGBA(backgroundRed, backgroundGreen, backgroundBlue, 0.75);
+  context.setSourceRGBA(backgroundRed, backgroundGreen, backgroundBlue, backgroundOpacity);
   context.rectangle(0, 0, width, height);
   context.fill();
 
