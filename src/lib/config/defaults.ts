@@ -3,6 +3,7 @@ import type {AppConfig} from './types';
 export const DEFAULT_CONFIG: AppConfig = {
   ui: {scale: 1},
   brightness: {backend: 'auto'},
+  battery: {show: 'auto'},
   weather: {location: ''},
   notifications: {maxCount: 30},
   externalApps: {

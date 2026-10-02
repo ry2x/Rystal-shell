@@ -34,23 +34,24 @@ fi
 
 ## Options
 
-| Setting                          | Default                                 | Accepted value / purpose                            |
-| -------------------------------- | --------------------------------------- | --------------------------------------------------- |
-| `ui.scale`                       | `1`                                     | `0.75`, `1`, `1.25`, `1.5`, or `2`                  |
-| `weather.location`               | `""`                                    | Location string; empty uses IP-based location       |
-| `notifications.maxCount`         | `30`                                    | Positive integer; persistent notification limit     |
-| `brightness.backend`             | `"auto"`                                | `auto`, `brightnessctl`, or `ddcutil`               |
-| `externalApps.audioControl`      | `"pavucontrol"`                         | Sound settings command                              |
-| `externalApps.bluetoothSettings` | `"blueman-manager"`                     | Bluetooth settings command                          |
-| `externalApps.wifiSettings`      | `"nm-connection-editor"`                | Network settings command                            |
-| `externalApps.updateManager`     | `"kitty --title PacUpdate par_tui"`     | Package updater command                             |
-| `worldClocks`                    | London, Brisbane, New York, Los Angeles | Array of objects with `label` and IANA `tz` strings |
-| `recorder.savePath`              | `"~/Videos"`                            | Recording output directory                          |
-| `recorder.filenameFormat`        | `"recording_%Y-%m-%d_%H.%M.%S.mp4"`     | Recording filename format                           |
-| `recorder.recordAudio`           | `true`                                  | Boolean                                             |
-| `recorder.audioSource`           | `"system"`                              | `system` or `mic`                                   |
-| `profile.avatarPath`             | `"~/Profile/Profile.png"`               | Avatar path; a 512×512 PNG is suggested             |
-| `profile.handle`, `profile.os`   | Unset                                   | Optional profile display strings                    |
+| Setting                          | Default                                 | Accepted value / purpose                                                 |
+| -------------------------------- | --------------------------------------- | ------------------------------------------------------------------------ |
+| `ui.scale`                       | `1`                                     | `0.75`, `1`, `1.25`, `1.5`, or `2`                                       |
+| `weather.location`               | `""`                                    | Location string; empty uses IP-based location                            |
+| `notifications.maxCount`         | `30`                                    | Positive integer; persistent notification limit                          |
+| `brightness.backend`             | `"auto"`                                | `auto`, `brightnessctl`, or `ddcutil`                                    |
+| `battery.show`                   | `"auto"`                                | `true`, `false`, or `auto`; battery status in the bar and control center |
+| `externalApps.audioControl`      | `"pavucontrol"`                         | Sound settings command                                                   |
+| `externalApps.bluetoothSettings` | `"blueman-manager"`                     | Bluetooth settings command                                               |
+| `externalApps.wifiSettings`      | `"nm-connection-editor"`                | Network settings command                                                 |
+| `externalApps.updateManager`     | `"kitty --title PacUpdate par_tui"`     | Package updater command                                                  |
+| `worldClocks`                    | London, Brisbane, New York, Los Angeles | Array of objects with `label` and IANA `tz` strings                      |
+| `recorder.savePath`              | `"~/Videos"`                            | Recording output directory                                               |
+| `recorder.filenameFormat`        | `"recording_%Y-%m-%d_%H.%M.%S.mp4"`     | Recording filename format                                                |
+| `recorder.recordAudio`           | `true`                                  | Boolean                                                                  |
+| `recorder.audioSource`           | `"system"`                              | `system` or `mic`                                                        |
+| `profile.avatarPath`             | `"~/Profile/Profile.png"`               | Avatar path; a 512×512 PNG is suggested                                  |
+| `profile.handle`, `profile.os`   | Unset                                   | Optional profile display strings                                         |
 
 > [!IMPORTANT]
 > External application commands do not invoke a shell. Quoted arguments and backslash escapes
@@ -59,6 +60,36 @@ fi
 Choose commands available on your system, especially when installing independently of Ryprland.
 
 See the [full template](config.json.template) for a complete JSON example.
+
+## Laptop battery
+
+The default `"auto"` detects a built-in laptop battery and replaces the GPU metric in the bar and
+control center when battery information is available. No configuration change is needed on a laptop:
+
+```json
+{
+  "battery": {"show": "auto"}
+}
+```
+
+Set `show` to `true` to explicitly enable battery display, or `false` to keep GPU usage and disable
+battery detection. Both `true` and `"auto"` require an available built-in battery to show the metric.
+
+The third resource metric shows the battery percentage (including `100%`) instead of GPU
+usage. The icon reflects charge level and charging; its tooltip shows charging, discharging,
+fully charged, or pending status. The control center's third circular gauge uses the same battery
+percentage, icon, and status tooltip. CPU and RAM remain in place. Missing or invalid `battery.show`
+values use `"auto"`.
+
+![Battery metrics in the bar and control center (mock battery at 57%, charging)](../docs/images/battery-control-center.png)
+
+Battery status requires the optional `upower` service. The store subscribes asynchronously to
+[UPower's composite DisplayDevice](https://upower.freedesktop.org/docs/UPower/) over the system
+D-Bus, including combined laptop batteries. A missing battery, unavailable service, or invalid
+reading falls back to GPU usage. UPS devices and peripheral batteries are excluded.
+Disabling the option creates no battery subscription; subscriptions are released when the last
+bar or control center observing battery status is destroyed. Restart the instance after changing
+the setting.
 
 ## Directory overrides
 

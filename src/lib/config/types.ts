@@ -17,6 +17,7 @@ interface ExternalAppsConfig {
 export interface AppConfig {
   ui: {scale: UiScale};
   brightness: {backend: BrightnessBackendConfig};
+  battery: {show: boolean | 'auto'};
   weather: {location: string};
   notifications: {maxCount: number};
   externalApps: ExternalAppsConfig;

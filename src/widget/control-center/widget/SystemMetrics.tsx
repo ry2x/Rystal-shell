@@ -1,11 +1,27 @@
+import {createComputed} from 'ags';
 import {Gtk} from 'ags/gtk4';
 
+import {getBatteryIcon, getBatteryTooltip} from '@/lib/battery';
+import {appConfig} from '@/lib/config';
 import {scaleUiSize} from '@/lib/uiScale';
+import {batteryState} from '@/stores/system/battery';
 import {cpuUsage, gpuUsage, openSystemMonitor, ramUsage} from '@/stores/system/system';
 import type {RamData} from '@/stores/system/system';
 import CircularProgress from '@/widget/common/CircularProgress';
 
 export default function SystemMetrics() {
+  const thirdMetric = createComputed(() => {
+    const battery = appConfig.battery.show !== false ? batteryState() : null;
+    return battery
+      ? {
+          percentage: battery.percentage,
+          icon: getBatteryIcon(battery),
+          label: 'Battery',
+          tooltip: getBatteryTooltip(battery),
+        }
+      : {percentage: gpuUsage(), icon: 'gpu', label: 'GPU', tooltip: 'GPU usage'};
+  });
+
   return (
     <box
       class="cc-card"
@@ -41,13 +57,17 @@ export default function SystemMetrics() {
       </box>
 
       <box halign={Gtk.Align.CENTER}>
-        <button class="cc-metric-button" onClicked={openSystemMonitor}>
+        <button
+          class="cc-metric-button"
+          onClicked={openSystemMonitor}
+          tooltipText={thirdMetric.as(metric => metric.tooltip)}
+        >
           <CircularProgress
-            variable={gpuUsage}
+            variable={thirdMetric.as(metric => metric.percentage)}
             transformer={(g: number) => g / 100}
-            icon="gpu"
-            label="GPU"
-            sublabel={gpuUsage.as(g => `${Math.round(g)}%`)}
+            icon={thirdMetric.as(metric => metric.icon)}
+            label={thirdMetric.as(metric => metric.label)}
+            sublabel={thirdMetric.as(metric => `${Math.round(metric.percentage)}%`)}
             cssClass="gpu-progress"
           />
         </button>

@@ -6,6 +6,7 @@ import {resolveConfig} from '../src/lib/config/parser.ts';
 const DEFAULT_CONFIG = {
   ui: {scale: 1},
   brightness: {backend: 'auto'},
+  battery: {show: 'auto'},
   weather: {location: ''},
   notifications: {maxCount: 30},
   externalApps: {
@@ -67,6 +68,23 @@ describe('resolveConfig', () => {
     for (const scale of [0.75, 1, 1.25, 1.5, 2]) {
       assert.equal(resolveConfig({ui: {scale}}).ui.scale, scale);
     }
+  });
+
+  it('defaults to automatic battery detection and accepts explicit visibility', () => {
+    assert.equal(resolveConfig({}).battery.show, 'auto');
+    assert.equal(resolveConfig({battery: {}}).battery.show, 'auto');
+    assert.equal(resolveConfig({battery: {show: 'auto'}}).battery.show, 'auto');
+    assert.equal(resolveConfig({battery: {show: true}}).battery.show, true);
+    assert.equal(resolveConfig({battery: {show: false}}).battery.show, false);
+  });
+
+  it('falls back for invalid battery visibility and reports unknown battery keys', context => {
+    const warnings = mockWarnings(context);
+    for (const show of ['true', 'false', 'AUTO', 1, null]) {
+      assert.equal(resolveConfig({battery: {show}}).battery.show, 'auto');
+    }
+    assert.equal(resolveConfig({battery: {show: true, typo: true}}).battery.show, true);
+    assert.equal(warnings.mock.callCount(), 6);
   });
 
   it('falls back for unsupported UI scales', context => {

@@ -11,6 +11,7 @@ export function resolveConfig(value: unknown): AppConfig {
   warnUnknownKeys('root', value, [
     'ui',
     'brightness',
+    'battery',
     'weather',
     'notifications',
     'externalApps',

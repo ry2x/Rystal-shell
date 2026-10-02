@@ -78,6 +78,15 @@ function resolveUi(root: ConfigObject): AppConfig['ui'] {
   return {...DEFAULT_CONFIG.ui};
 }
 
+function resolveBattery(root: ConfigObject): AppConfig['battery'] {
+  const section = readSection(root, 'battery');
+  if (section) warnUnknownKeys('battery', section, ['show']);
+  const show = section?.show;
+  if (typeof show === 'boolean' || show === 'auto') return {show};
+  if (show !== undefined) warnConfig('battery.show', "expected true, false, or 'auto'");
+  return {...DEFAULT_CONFIG.battery};
+}
+
 function resolveWeather(root: ConfigObject): AppConfig['weather'] {
   const section = readSection(root, 'weather');
   if (section) warnUnknownKeys('weather', section, ['location']);
@@ -189,6 +198,7 @@ export function resolveSections(root: ConfigObject): AppConfig {
   return {
     ui: resolveUi(root),
     brightness: resolveBrightness(root),
+    battery: resolveBattery(root),
     weather: resolveWeather(root),
     notifications: resolveNotifications(root),
     externalApps: resolveExternalApps(root),
