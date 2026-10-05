@@ -23,7 +23,6 @@ $bar-content-counter-scale: 1.3158;
 window.Bar {
   background: transparent;
   color: $text;
-  font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
 
   // Dummy elements: CSS color → JS/Cairo bridge (read via get_color())
   .bar-color-bg {
