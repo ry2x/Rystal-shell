@@ -17,6 +17,13 @@ end)
 A fixed startup delay is not a Rystal-shell requirement. Start optional services such as the wallpaper daemon and
 idle daemon separately using your session configuration.
 
+## Background blur
+
+On GTK 4.24 or later, Rystal-shell requests blur for the frame and panel backgrounds using
+the Wayland background effect protocol. Leave the compositor's blur enabled and make sure
+Rystal-shell does not inherit `ext_background_effect_manager_v1` in `GDK_WAYLAND_DISABLE`.
+On older GTK versions, use the compositor's layer rules for blur.
+
 ## Caffeine
 
 Caffeine detects `hypridle` or `swayidle` and cycles through three states:

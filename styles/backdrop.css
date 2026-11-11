@@ -1,0 +1,13 @@
+/* GTK 4.24+. Side and bottom panels share the bar's frame backdrop. */
+.frame-blur {
+  background: transparent;
+  backdrop-filter: blur(20px);
+}
+
+window.AppLauncher .applauncher-window,
+window.NotificationPopups .notif-card,
+window.Osd .osd-pill.revealed,
+window.WifiPasswordDialog .cc-password-modal,
+tooltip.background {
+  backdrop-filter: blur(20px);
+}

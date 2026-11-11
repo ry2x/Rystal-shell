@@ -90,6 +90,17 @@ function reloadCss(path: string) {
   reloadBarColors();
 }
 
+function installBackdropCss() {
+  // Earlier GTK releases lack backdrop-filter and can still use compositor layer rules.
+  if (Gtk.check_version(4, 24, 0) !== null) return;
+  const display = Gdk.Display.get_default();
+  if (!display) return;
+
+  const provider = new Gtk.CssProvider();
+  provider.load_from_path(`${rystalShellDataDir}/styles/backdrop.css`);
+  Gtk.StyleContext.add_provider_for_display(display, provider, Gtk.STYLE_PROVIDER_PRIORITY_USER);
+}
+
 function sassCommand(outputPath: string, useConfiguredTheme: boolean) {
   const command = ['sass', '--style=expanded', '--no-source-map', '--load-path', runtimeDir];
   if (useConfiguredTheme) command.push('--load-path', rystalShellConfigDir);
@@ -144,6 +155,7 @@ export function compileAndReloadCss(): Promise<boolean> {
 }
 
 export function initCss() {
+  installBackdropCss();
   ensureRuntimeDir();
   writeCurrentScale();
   let compiledCss: CompiledCss;

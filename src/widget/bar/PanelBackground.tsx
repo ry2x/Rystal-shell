@@ -10,6 +10,7 @@ import {
   barColors,
   createBarBackgroundGeometry,
 } from '@/stores/shell/barBackground';
+import FrameBlur from '@/widget/bar/FrameBlur';
 
 export interface PanelBackgroundProps {
   monitor: Gdk.Monitor;
@@ -17,6 +18,7 @@ export interface PanelBackgroundProps {
 
 const BORDER_WIDTH = scaleUi(3);
 const BORDER_RADIUS = scaleUi(16);
+const BORDER_INSET = BORDER_WIDTH / 2;
 
 function hexToRgba(hex: string): [number, number, number, number] {
   const value = hex.replace('#', '');
@@ -45,9 +47,8 @@ function drawBackground(
     2;
   const backgroundOpacity = backgroundLightness >= 0.5 ? 0.8 : 0.75;
   const [accentRed, accentGreen, accentBlue, accentAlpha] = hexToRgba(colors.primary);
-  const halfBorderWidth = BORDER_WIDTH / 2;
-  const desktopX = geometry.dx + halfBorderWidth;
-  const desktopY = halfBorderWidth;
+  const desktopX = geometry.dx + BORDER_INSET;
+  const desktopY = BORDER_INSET;
   const desktopWidth = width - geometry.dx - BORDER_WIDTH;
   const desktopHeight = height - geometry.bottomHeight - BORDER_WIDTH;
 
@@ -108,18 +109,22 @@ export default function PanelBackground({monitor}: PanelBackgroundProps) {
   });
 
   return (
-    <drawingarea
-      hexpand
-      vexpand
-      canTarget={false}
-      canFocus={false}
-      sensitive={false}
-      $={self => {
-        drawingArea = self;
-        self.set_draw_func((_area, context, width, height) => {
-          drawBackground(context, width, height, geometry.peek(), barColors.peek());
-        });
-      }}
-    />
+    <overlay hexpand vexpand canTarget={false}>
+      <FrameBlur geometry={geometry} borderInset={BORDER_INSET} />
+      <drawingarea
+        $type="overlay"
+        hexpand
+        vexpand
+        canTarget={false}
+        canFocus={false}
+        sensitive={false}
+        $={self => {
+          drawingArea = self;
+          self.set_draw_func((_area, context, width, height) => {
+            drawBackground(context, width, height, geometry.peek(), barColors.peek());
+          });
+        }}
+      />
+    </overlay>
   );
 }
