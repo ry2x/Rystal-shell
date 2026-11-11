@@ -1,24 +1,20 @@
 import Cairo from 'cairo';
 
 import {createEffect} from 'ags';
-import {Gdk, Gtk} from 'ags/gtk4';
+import {Gdk} from 'ags/gtk4';
 
-import {scaleUi} from '@/lib/uiScale';
 import {
   type BarBackgroundGeometry,
   type BarColors,
   barColors,
   createBarBackgroundGeometry,
 } from '@/stores/shell/barBackground';
-import FrameBlur from '@/widget/bar/FrameBlur';
+import FrameDrawingArea from '@/widget/bar/FrameDrawingArea';
+import {frameBorderWidth, getDesktopCutout} from '@/widget/bar/frameGeometry';
 
 export interface PanelBackgroundProps {
   monitor: Gdk.Monitor;
 }
-
-const BORDER_WIDTH = scaleUi(3);
-const BORDER_RADIUS = scaleUi(16);
-const BORDER_INSET = BORDER_WIDTH / 2;
 
 function hexToRgba(hex: string): [number, number, number, number] {
   const value = hex.replace('#', '');
@@ -46,61 +42,36 @@ function drawBackground(
       Math.min(backgroundRed, backgroundGreen, backgroundBlue)) /
     2;
   const backgroundOpacity = backgroundLightness >= 0.5 ? 0.8 : 0.75;
-  const [accentRed, accentGreen, accentBlue, accentAlpha] = hexToRgba(colors.primary);
-  const desktopX = geometry.dx + BORDER_INSET;
-  const desktopY = BORDER_INSET;
-  const desktopWidth = width - geometry.dx - BORDER_WIDTH;
-  const desktopHeight = height - geometry.bottomHeight - BORDER_WIDTH;
-
   context.setAntialias(Cairo.Antialias.BEST);
   context.setOperator(Cairo.Operator.OVER);
   context.setSourceRGBA(backgroundRed, backgroundGreen, backgroundBlue, backgroundOpacity);
   context.rectangle(0, 0, width, height);
   context.fill();
 
-  context.newPath();
-  context.arc(
-    desktopX + desktopWidth - BORDER_RADIUS,
-    desktopY + BORDER_RADIUS,
-    BORDER_RADIUS,
-    -Math.PI / 2,
-    0
-  );
-  context.arc(
-    desktopX + desktopWidth - BORDER_RADIUS,
-    desktopY + desktopHeight - BORDER_RADIUS,
-    BORDER_RADIUS,
-    0,
-    Math.PI / 2
-  );
-  context.arc(
-    desktopX + BORDER_RADIUS,
-    desktopY + desktopHeight - BORDER_RADIUS,
-    BORDER_RADIUS,
-    Math.PI / 2,
-    Math.PI
-  );
-  context.arc(
-    desktopX + BORDER_RADIUS,
-    desktopY + BORDER_RADIUS,
-    BORDER_RADIUS,
-    Math.PI,
-    (3 * Math.PI) / 2
-  );
-  context.closePath();
+  const cutout = getDesktopCutout(width, height, geometry);
+  if (cutout) {
+    const {x, y, width, height, radius} = cutout;
+    const [accentRed, accentGreen, accentBlue, accentAlpha] = hexToRgba(colors.primary);
+    context.newPath();
+    context.arc(x + width - radius, y + radius, radius, -Math.PI / 2, 0);
+    context.arc(x + width - radius, y + height - radius, radius, 0, Math.PI / 2);
+    context.arc(x + radius, y + height - radius, radius, Math.PI / 2, Math.PI);
+    context.arc(x + radius, y + radius, radius, Math.PI, (3 * Math.PI) / 2);
+    context.closePath();
 
-  context.setOperator(Cairo.Operator.CLEAR);
-  context.fillPreserve();
-  context.setOperator(Cairo.Operator.OVER);
-  context.setSourceRGBA(accentRed, accentGreen, accentBlue, accentAlpha);
-  context.setLineWidth(BORDER_WIDTH);
-  context.stroke();
+    context.setOperator(Cairo.Operator.CLEAR);
+    context.fillPreserve();
+    context.setOperator(Cairo.Operator.OVER);
+    context.setSourceRGBA(accentRed, accentGreen, accentBlue, accentAlpha);
+    context.setLineWidth(frameBorderWidth);
+    context.stroke();
+  }
   context.$dispose();
 }
 
 export default function PanelBackground({monitor}: PanelBackgroundProps) {
   const geometry = createBarBackgroundGeometry(monitor.get_connector());
-  let drawingArea: Gtk.DrawingArea | null = null;
+  let drawingArea: InstanceType<typeof FrameDrawingArea> | null = null;
 
   createEffect(() => {
     geometry();
@@ -109,22 +80,19 @@ export default function PanelBackground({monitor}: PanelBackgroundProps) {
   });
 
   return (
-    <overlay hexpand vexpand canTarget={false}>
-      <FrameBlur geometry={geometry} borderInset={BORDER_INSET} />
-      <drawingarea
-        $type="overlay"
-        hexpand
-        vexpand
-        canTarget={false}
-        canFocus={false}
-        sensitive={false}
-        $={self => {
-          drawingArea = self;
-          self.set_draw_func((_area, context, width, height) => {
-            drawBackground(context, width, height, geometry.peek(), barColors.peek());
-          });
-        }}
-      />
-    </overlay>
+    <FrameDrawingArea
+      hexpand
+      vexpand
+      canTarget={false}
+      canFocus={false}
+      sensitive={false}
+      $={self => {
+        drawingArea = self;
+        self.geometry = geometry;
+        self.set_draw_func((_area, context, width, height) => {
+          drawBackground(context, width, height, geometry.peek(), barColors.peek());
+        });
+      }}
+    />
   );
 }
