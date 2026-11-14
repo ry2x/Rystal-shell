@@ -1,0 +1,8 @@
+/* GTK 4.24+. */
+window.AppLauncher .applauncher-window,
+window.NotificationPopups .notif-card,
+window.Osd .osd-pill,
+window.WifiPasswordDialog .cc-password-modal,
+tooltip.background {
+  backdrop-filter: blur(20px);
+}
